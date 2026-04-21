@@ -6,12 +6,6 @@ derive tissue-level [S]/Km ratios from reported urinary / blood / serum
 biomarker concentrations without duplicating the curated reference ranges
 and partition coefficients.
 
-The mapping follows the Manuscript v6 Methods description:
-
-    "Supplementary Table S1 provides the complete mapping of Tier 2
-     lifestyle multipliers to their primary biomarker data sources,
-     published concentration ranges, and derived [S]/Km ratios."
-
 Public entry points:
 
 * :func:`get_biomarker_catalog` - raw catalogue (metadata + entries).
