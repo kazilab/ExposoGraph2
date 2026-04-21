@@ -31,7 +31,7 @@ def test_entries_are_typed_biomarker_entries():
 def test_lifestyle_factor_filter_returns_smoking_biomarkers():
     smoking = get_entries_for_lifestyle_factor("current_smoking")
     names = {e.biomarker for e in smoking}
-    # Canonical smoking biomarkers in the manuscript
+    # Canonical smoking biomarkers
     assert {"urinary_1_hydroxypyrene", "serum_cotinine"}.issubset(names)
     assert all(e.lifestyle_factor == "current_smoking" for e in smoking)
 
@@ -102,7 +102,7 @@ def test_biomarker_entry_to_dict_is_json_friendly():
     assert isinstance(payload["references"], list)
 
 
-def test_every_entry_declares_required_manuscript_fields():
+def test_every_entry_declared_fields():
     required_positive = (
         "partition_coefficient",
         "Km_uM",
