@@ -35,7 +35,7 @@
       {
         "priority": 4,
         "source": "IARC Monographs Vol. 100A-100F",
-        "scope": "Class-specific pathway context and carcinogen activation/detoxification framing across the manuscript exposure classes",
+        "scope": "Class-specific pathway context and carcinogen activation/detoxification framing across the exposure classes",
         "status": "supporting_reference"
       },
       {
@@ -968,7 +968,7 @@
       }
     },
     "CYP2A13": {
-      "_description": "Lung-specific P450 with higher benzene affinity than hepatic CYP2E1 at ambient (non-occupational) concentrations. Manuscript v6 Discussion: 'at ambient benzene concentrations, metabolism may be dominated by CYP2A13 and CYP2F1 in lung rather than CYP2E1 in liver'.",
+      "_description": "Lung-specific P450 with higher benzene affinity than hepatic CYP2E1 at ambient (non-occupational) concentrations. At ambient benzene concentrations, metabolism may be dominated by CYP2A13 and CYP2F1 in lung rather than CYP2E1 in liver.",
       "tissue_specificity": ["Lung", "Nasal"],
       "substrates": {
         "benzene": {
