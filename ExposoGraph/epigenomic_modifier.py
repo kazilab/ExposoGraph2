@@ -1,7 +1,6 @@
 """Epigenomic (promoter-methylation) modifier layer.
 
-Implements the epigenomic modifier module anticipated in ExposoGraph 2.0
-(Manuscript v6, Discussion / Future development):
+Implements the epigenomic modifier module anticipated in ExposoGraph 2.0:
 
     "An epigenomic modifier layer (CYP1A1/GSTP1/MGMT promoter methylation)
     will be developed as a parallel somatic modifier analogous to the CHIP
@@ -16,7 +15,7 @@ binary hyper/hypo-methylated flags. Hyper- vs hypo-methylation has opposite
 functional consequences depending on whether the gene is a bioactivator
 (CYP1A1/CYP1B1) or a detoxifier / repair enzyme (GSTP1, MGMT, OGG1).
 
-Mechanistic grounding (Manuscript v6, CHIP / Discussion sections):
+Mechanistic grounding:
 * GSTP1 promoter hypermethylation is a well-documented event in prostate,
   breast, and hepatic tumours; it reduces Phase II conjugation capacity.
 * MGMT promoter hypermethylation silences O6-methylguanine repair, amplifying
