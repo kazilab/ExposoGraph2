@@ -163,8 +163,7 @@ _CARCINOGEN_SPECS: tuple[Spec, ...] = (
         "DMBA",
         "DMBA",
         (
-            "Reference PAH-like polycyclic carcinogen included to mirror the "
-            "manuscript class example."
+            "Reference PAH-like polycyclic carcinogen."
         ),
         group="PAH",
     ),
@@ -240,7 +239,7 @@ _CARCINOGEN_SPECS: tuple[Spec, ...] = (
     _entity_spec(
         "DHT",
         "5a-DHT",
-        "Dihydrotestosterone node included to mirror the manuscript example.",
+        "Dihydrotestosterone node.",
         group="Androgen",
     ),
     _entity_spec(
@@ -1956,9 +1955,9 @@ def build_full_legends_graph(
     include_heavy_metals: bool = False,
     include_androgen_module: bool = False,
 ) -> KnowledgeGraph:
-    """Return a curated showcase graph aligned with the manuscript architecture.
+    """Return a curated graph.
 
-    By default this returns the manuscript-style 107-node / 124-edge showcase.
+    By default this returns 107-node / 124-edge.
     Set ``include_heavy_metals=True`` to upgrade the showcase with the bundled
     module-01 heavy-metal reference layer (133 nodes / 166 edges).
     """
