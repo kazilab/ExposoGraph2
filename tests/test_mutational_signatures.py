@@ -18,7 +18,7 @@ def test_catalog_has_expected_signatures_and_class_map():
     catalog = get_mutational_signature_catalog()
     sigs = catalog.get("signatures", {})
     class_map = catalog.get("carcinogen_class_map", {})
-    # Core manuscript-cited signatures must be present
+    # Core signatures must be present
     for required in ("SBS4", "SBS22", "SBS24", "SBS29", "SBS16", "SBS11"):
         assert required in sigs, f"Missing signature {required}"
     for required in ("PAH", "Aflatoxin", "Ethanol", "AlkylatingAgent"):
