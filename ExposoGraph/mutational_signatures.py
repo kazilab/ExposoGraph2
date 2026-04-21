@@ -1,7 +1,7 @@
 """COSMIC SBS mutational-signature endpoints for ExposoGraph 2.0.
 
 Provides a validation endpoint that links predicted per-class risk scores to
-COSMIC mutational signatures (Manuscript v6, Discussion):
+COSMIC mutational signatures:
 
     "mutational signatures provide a potential validation endpoint...
     linking ExposoGraph 2.0 predictions to tumor mutational signatures
