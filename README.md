@@ -14,7 +14,7 @@
 
 Build, curate, and export carcinogen metabolism knowledge graphs using LLM-powered extraction and manual entry, then run quantitative multi-carcinogen, tissue-aware risk analysis on the resulting graph.
 
-**ExposoGraph 2.0** expands coverage to **14 IARC carcinogen classes**, ships a bundled reference knowledge graph of **212 nodes / 313 edges**, retains a manuscript-aligned base showcase graph of **107 nodes / 124 edges**, and adds seven quantitative risk modules: enzyme flux modeling, exposure integration, multi-carcinogen interactions, tissue-specific subgraphs, population genomics, oxidative stress integration, toxicokinetic/toxicodynamic modeling, cross-species scaling, and a synthetic population simulator.
+**ExposoGraph 2.0** expands coverage to **14 IARC carcinogen classes**, ships a bundled reference knowledge graph of **212 nodes / 313 edges**, adds seven quantitative risk modules: enzyme flux modeling, exposure integration, multi-carcinogen interactions, tissue-specific subgraphs, population genomics, oxidative stress integration, toxicokinetic/toxicodynamic modeling, cross-species scaling, and a synthetic population simulator.
 
 Developed by: **Data analysis team @ KaziLab**
 Contact: **exposograph@kazilab.se**
@@ -327,7 +327,7 @@ summary.edge_count          # 313
 artifacts["graph_data_js"]  # bundled viewer export path
 ```
 
-#### Manuscript-Aligned Showcase Summary
+#### Summary
 
 The legacy `build_full_legends_*` showcase API remains available for the
 paper-aligned **107-node / 124-edge** base example graph. The current shipped
@@ -575,7 +575,7 @@ tests/
 └── test_storage.py
 ```
 
-`kinetic_parameters.json` remains the source for literature-backed Michaelis-Menten and Hill fits. `proxy_flux_parameters.json` and `proxy_flux_provenance.json` carry the receptor-mediated and semi-quantitative proxy blocks used for manuscript classes that do not yet have full measured kinetic calibration.
+`kinetic_parameters.json` remains the source for literature-backed Michaelis-Menten and Hill fits. `proxy_flux_parameters.json` and `proxy_flux_provenance.json` carry the receptor-mediated and semi-quantitative proxy blocks used for classes that do not yet have full measured kinetic calibration.
 
 ## Node & Edge Types
 
