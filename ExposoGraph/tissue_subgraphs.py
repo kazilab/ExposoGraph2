@@ -755,8 +755,7 @@ def filter_graph_by_tissue(
     return filtered
 
 
-# Manuscript v6 threshold sweep: the paper states
-#   "Sensitivity analysis across thresholds (0.10, 0.25, 0.50) shows that
+#   Sensitivity analysis across thresholds (0.10, 0.25, 0.50)
 #    tissue edge retention ranges shift by 8-15 percentage points".
 DEFAULT_THRESHOLD_SWEEP: tuple[float, ...] = (0.10, 0.25, 0.50)
 
@@ -791,10 +790,9 @@ def tissue_threshold_sweep(
 ) -> ThresholdSweepResult:
     """Sweep GTEx-expression thresholds across tissues and return retention stats.
 
-    Implements the sensitivity analysis described in Manuscript v6 Discussion:
     for each (tissue, threshold) pair, report the fraction of enzyme nodes and
     edges retained once ``filter_graph_by_tissue`` is applied. This lets
-    downstream callers reproduce the manuscript's 0.10 / 0.25 / 0.50 threshold
+    downstream callers reproduce 0.10 / 0.25 / 0.50 threshold
     comparison and identify threshold-sensitive tissues such as mammary.
     """
     if tissues is None:
