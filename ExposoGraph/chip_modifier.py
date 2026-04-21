@@ -1,10 +1,10 @@
 """Clonal hematopoiesis of indeterminate potential (CHIP) somatic modifier layer.
 
-Implements the CHIP module from ExposoGraph 2.0 (Manuscript v6, "CHIP somatic
-modifier layer") as a post-hoc somatic adjustment applied on top of germline
+Implements the CHIP module from ExposoGraph 2.0 (CHIP somatic
+modifier layer) as a post-hoc somatic adjustment applied on top of germline
 flux and interaction results.
 
-The module exposes two integration mechanisms described in the manuscript:
+The module exposes two integration mechanisms:
 
 1. Aggregate risk modifier (default 1.4x) applied to CHIP-positive individuals
    to reflect the 1.3-1.6x solid-tumor risk elevation observed in published
@@ -16,9 +16,9 @@ The module exposes two integration mechanisms described in the manuscript:
 
 Germline x CHIP interaction is modelled multiplicatively: the CHIP-adjusted
 risk is (germline risk) * (aggregate modifier) * (gene-specific pathway
-multiplier). This matches the manuscript's observation that CHIP-positive
-individuals in the top germline quintile show 2.3x composite scores vs 1.8x
-for CHIP-negative top-quintile individuals.
+multiplier). This matches with CHIP-positive individuals in the top germline 
+quintile show 2.3x composite scores vs 1.8x for CHIP-negative top-quintile 
+individuals.
 
 All parameters are model-derived conservative estimates grounded in published
 epidemiology; they are expected to be refined as CHIP-stratified expression
@@ -33,12 +33,12 @@ from typing import Any, Iterable
 
 # ── Constants ──────────────────────────────────────────────────────────────
 
-# Aggregate CHIP risk modifier (manuscript v6): conservative estimate based on
+# Aggregate CHIP risk modifier: conservative estimate based on
 # 1.3-1.6x solid-tumor risk elevations reported for CHIP-positive individuals
 # (Jaiswal 2017, Bolton 2020, Niroula 2021).
 AGGREGATE_CHIP_MODIFIER: float = 1.4
 
-# VAF threshold for calling CHIP. Manuscript v6: "somatic mutations in
+# VAF threshold for calling CHIP. somatic mutations in
 # hematologic malignancy-associated genes at variant allele frequency >=2%".
 VAF_THRESHOLD: float = 0.02
 
@@ -66,7 +66,7 @@ CHIP_DRIVER_GENES: frozenset[str] = frozenset(
 # the carcinogen classes whose risk is elevated when the driver is present,
 # with a multiplier and biological justification.
 #
-# Grounded in Manuscript v6: "DNMT3A and TET2 mutations ... may affect
+# "DNMT3A and TET2 mutations ... may affect
 # expression of carcinogen-metabolizing enzymes whose promoters are subject to
 # methylation-dependent silencing (CYP1A1, GSTP1, MGMT)"; "TP53 mutations in
 # CHIP clones may impair DNA damage response to carcinogen-induced adducts";
@@ -94,7 +94,7 @@ CHIP_GENE_EFFECTS: dict[str, dict[str, Any]] = {
             "TET2 loss impairs 5mC->5hmC conversion, leading to promoter "
             "hypermethylation and silencing of GSTP1 and OGG1 (TET-mediated "
             "demethylation of detoxification/repair gene promoters, "
-            "manuscript ref 56). Reduces Phase II conjugation of PAH and "
+            ". Reduces Phase II conjugation of PAH and "
             "oxidative-damage repair."
         ),
         "affected_enzymes": ("GSTP1", "OGG1", "MGMT"),
@@ -277,7 +277,7 @@ def compute_chip_modifier(
     """Translate a CHIP status into per-carcinogen-class multipliers.
 
     Multipliers from multiple driver genes combine multiplicatively (consistent
-    with the manuscript's finding that CHIP amplifies, rather than overrides,
+    with the finding that CHIP amplifies, rather than overrides,
     germline susceptibility).
     """
     if chip_status is None or not chip_status.present:
@@ -379,7 +379,7 @@ def combine_with_germline_profile(
     When ``germline_quintile`` is supplied (1-5), the helper also returns a
     ``quintile_interaction_ratio`` that estimates the multiplicative
     germline x CHIP amplification for the top-quintile vs bottom-quintile
-    contrast described in Manuscript v6 Results.
+    contrast.
     """
     adjusted = apply_chip_to_risk_map(germline_risk_scores, effect)
     aggregate_adjusted_total = sum(adjusted.values())
@@ -399,7 +399,7 @@ def combine_with_germline_profile(
     }
     if germline_quintile is not None and effect.chip_positive:
         # Approximate the top-vs-bottom quintile amplification reported in the
-        # manuscript (2.3x top-quintile CHIP+ vs 1.8x top-quintile CHIP-).
+        # 2.3x top-quintile CHIP+ vs 1.8x top-quintile CHIP-.
         result["quintile_interaction_ratio"] = round(
             2.3 / 1.8 if germline_quintile >= 4 else 1.0,
             4,
