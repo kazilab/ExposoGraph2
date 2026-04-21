@@ -29,7 +29,7 @@ class TestGenePanels:
             entry["pathway_id"] for entry in REFERENCE_KEGG_PATHWAYS
         ]
 
-    def test_reference_kegg_pathways_cover_manuscript_catalog(self):
+    def test_reference_kegg_pathways_cover_catalog(self):
         pathway_ids = {entry["pathway_id"] for entry in REFERENCE_KEGG_PATHWAYS}
         assert pathway_ids == {"hsa00980", "hsa00140", "hsa05204", "hsa05208"}
 
@@ -67,7 +67,7 @@ class TestGenePanels:
         assert warnings == []
         assert engine.node_count == 36
 
-    def test_extended_panel_matches_manuscript_phase_distribution(self):
+    def test_extended_panel_matches_phase_distribution(self):
         panel = build_full_panel()
         phase_i = [node for node in panel.nodes if node.phase == "I"]
         phase_ii = [node for node in panel.nodes if node.phase == "II"]
