@@ -5,8 +5,8 @@ enzyme kinetic parameters (Michaelis-Menten / Hill equation) with genotype
 and tissue expression modifiers.  Produces net flux ratios interpretable
 as individualized cancer-risk indicators.
 
-Primary measured kinetics live in ``kinetic_parameters.json``. Manuscript
-classes that currently require receptor-mediated or semi-quantitative proxy
+Primary measured kinetics live in ``kinetic_parameters.json``.
+Classes that currently require receptor-mediated or semi-quantitative proxy
 models load their coefficients from ``proxy_flux_parameters.json`` and
 supporting exposure defaults from ``exposure_database.json``.
 """
