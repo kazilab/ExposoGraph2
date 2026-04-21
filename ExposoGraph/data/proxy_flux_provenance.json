@@ -1,0 +1,379 @@
+{
+  "_metadata": {
+    "description": "Provenance annotations for proxy and receptor-mediated flux parameter blocks that supplement kinetic_parameters.json.",
+    "version": "1.0.0",
+    "created": "2026-04-20",
+    "schema": {
+      "sources": "Local repo files or bundled datasets used to justify the proxy term",
+      "parameter_basis": "How the coefficient was derived",
+      "confidence": "measured / low / estimated interpretation for the proxy term"
+    }
+  },
+  "classes": {
+    "AromaticAmines": {
+      "activation_terms": {
+        "CYP1A2": {
+          "sources": [
+            "reference_data.py:CYP1A2",
+            "example_graphs.py:NOH_4ABP",
+            "exposure_database.json:AromaticAmines"
+          ],
+          "parameter_basis": "Proxy Km aligned to local aromatic-amine/HCA CYP1A2 context; Vmax chosen as a comparative activation scale for 4-ABP N-hydroxylation.",
+          "confidence": "estimated"
+        },
+        "NAT1": {
+          "sources": [
+            "reference_data.py:NAT1",
+            "example_graphs.py:ABP_acetoxy"
+          ],
+          "parameter_basis": "Peripheral O-acetylation proxy for reactive aromatic-amine ester formation in bladder/breast-associated tissues.",
+          "confidence": "estimated"
+        }
+      },
+      "detox_terms": {
+        "NAT2": {
+          "sources": [
+            "reference_data.py:NAT2",
+            "exposure_database.json:genotype_multipliers"
+          ],
+          "parameter_basis": "Protective acetylation scale chosen to oppose NAT1-mediated activation and reflect slow-acetylator risk enrichment.",
+          "confidence": "estimated"
+        },
+        "GSTM1": {
+          "sources": [
+            "reference_data.py:GSTM1",
+            "exposure_database.json:genotype_multipliers"
+          ],
+          "parameter_basis": "GSH-conjugation attenuation proxy for aromatic-amine electrophiles.",
+          "confidence": "estimated"
+        },
+        "GSTP1": {
+          "sources": [
+            "reference_data.py:GSTP1"
+          ],
+          "parameter_basis": "Secondary GST proxy for tissue-local aromatic-amine handling.",
+          "confidence": "estimated"
+        }
+      },
+      "repair_terms": {
+        "XPC": {
+          "sources": [
+            "example_graphs.py:ABP_dG",
+            "reference_data.py:XPC"
+          ],
+          "parameter_basis": "NER damage-recognition share of aromatic-amine adduct attenuation.",
+          "confidence": "estimated"
+        },
+        "ERCC2": {
+          "sources": [
+            "example_graphs.py:ABP_dG",
+            "reference_data.py:ERCC2"
+          ],
+          "parameter_basis": "NER excision share of aromatic-amine adduct attenuation.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "EstrogenMetabolites": {
+      "activation_terms": {
+        "CYP1B1": {
+          "sources": [
+            "reference_data.py:CYP1B1",
+            "example_graphs.py:HydroxyE2"
+          ],
+          "parameter_basis": "Primary catalytic burden term for catechol-estrogen formation.",
+          "confidence": "estimated"
+        },
+        "CYP1A1": {
+          "sources": [
+            "reference_data.py:CYP1A1"
+          ],
+          "parameter_basis": "Secondary estrogen hydroxylation proxy.",
+          "confidence": "estimated"
+        },
+        "CYP1A2": {
+          "sources": [
+            "reference_data.py:CYP1A2"
+          ],
+          "parameter_basis": "Minor hepatic estrogen hydroxylation proxy.",
+          "confidence": "estimated"
+        }
+      },
+      "detox_terms": {
+        "COMT": {
+          "sources": [
+            "reference_data.py:COMT"
+          ],
+          "parameter_basis": "Primary catechol-estrogen detoxification term.",
+          "confidence": "estimated"
+        },
+        "SULT1E1": {
+          "sources": [
+            "reference_data.py:SULT1E1"
+          ],
+          "parameter_basis": "High-affinity sulfation attenuation term for estradiol/catechol estrogens.",
+          "confidence": "estimated"
+        },
+        "UGT2B7": {
+          "sources": [
+            "reference_data.py:UGT2B7"
+          ],
+          "parameter_basis": "Glucuronidation attenuation term for estrogen metabolites.",
+          "confidence": "estimated"
+        },
+        "GSTP1": {
+          "sources": [
+            "reference_data.py:GSTP1"
+          ],
+          "parameter_basis": "GSH-conjugation attenuation term for estrogen quinones.",
+          "confidence": "estimated"
+        }
+      },
+      "repair_terms": {
+        "XRCC1": {
+          "sources": [
+            "example_graphs.py:E2_Ade",
+            "reference_data.py:XRCC1"
+          ],
+          "parameter_basis": "BER scaffold share of depurinating estrogen-adduct attenuation.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "NDEA": {
+      "activation_terms": {
+        "CYP2A13": {
+          "sources": [
+            "interaction_parameters.json:CYP2A13/NDEA",
+            "parameter_provenance.json:pairs/CYP2A13/NDEA"
+          ],
+          "parameter_basis": "Direct reuse of local NDEA-specific Km and relative Vmax with a proxy absolute Vmax scale.",
+          "confidence": "low"
+        },
+        "CYP2E1": {
+          "sources": [
+            "wave2_classes.py:Dietary_NNitroso",
+            "exposure_database.json:DietaryNitroso"
+          ],
+          "parameter_basis": "Shared hepatic nitrosamine activation proxy.",
+          "confidence": "estimated"
+        },
+        "CYP2A6": {
+          "sources": [
+            "reference_data.py:CYP2A6"
+          ],
+          "parameter_basis": "Minor shared nitrosamine activation proxy.",
+          "confidence": "estimated"
+        }
+      },
+      "detox_terms": {
+        "GSTP1": {
+          "sources": [
+            "reference_data.py:GSTP1"
+          ],
+          "parameter_basis": "Secondary conjugation attenuation term for reactive NDEA intermediates.",
+          "confidence": "estimated"
+        }
+      },
+      "repair_terms": {
+        "MGMT": {
+          "sources": [
+            "reference_data.py:MGMT",
+            "wave2_classes.py:O6_methyl_dG"
+          ],
+          "parameter_basis": "Direct-reversal repair share used as the main alkyl-adduct attenuation term.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "VinylChloride": {
+      "activation_terms": {
+        "CYP2E1": {
+          "sources": [
+            "interaction_parameters.json:CYP2E1/vinyl_chloride",
+            "parameter_provenance.json:pairs/CYP2E1/vinyl_chloride"
+          ],
+          "parameter_basis": "Direct reuse of local vinyl-chloride Km and relative Vmax with a proxy absolute Vmax scale.",
+          "confidence": "medium"
+        }
+      },
+      "detox_terms": {
+        "GSTT1": {
+          "sources": [
+            "reference_data.py:GSTT1"
+          ],
+          "parameter_basis": "Primary conjugation attenuation term for reactive vinyl-chloride intermediates.",
+          "confidence": "estimated"
+        },
+        "GSTM1": {
+          "sources": [
+            "reference_data.py:GSTM1"
+          ],
+          "parameter_basis": "Secondary GST attenuation term.",
+          "confidence": "estimated"
+        },
+        "EPHX1": {
+          "sources": [
+            "reference_data.py:EPHX1"
+          ],
+          "parameter_basis": "Epoxide hydrolysis attenuation term.",
+          "confidence": "estimated"
+        },
+        "ALDH2": {
+          "sources": [
+            "reference_data.py:ALDH2"
+          ],
+          "parameter_basis": "Downstream aldehyde-handling attenuation term.",
+          "confidence": "estimated"
+        }
+      },
+      "repair_terms": {
+        "ERCC2": {
+          "sources": [
+            "example_graphs.py:EthenoG",
+            "reference_data.py:ERCC2"
+          ],
+          "parameter_basis": "NER share of etheno-adduct repair attenuation.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "UV_Radiation": {
+      "activation_terms": {
+        "UVB_photoproduct_burden": {
+          "sources": [
+            "exposure_database.json:UV_Radiation"
+          ],
+          "parameter_basis": "Damage-burden term scaled from cumulative DNA-damage-relative scenarios rather than enzyme kinetics.",
+          "confidence": "estimated"
+        },
+        "UVA_oxidative_tail": {
+          "sources": [
+            "exposure_database.json:UV_Radiation",
+            "oxidative_stress.py"
+          ],
+          "parameter_basis": "Smaller oxidative-damage tail accompanying UV exposure.",
+          "confidence": "estimated"
+        }
+      },
+      "repair_terms": {
+        "XPC": {
+          "sources": [
+            "reference_data.py:XPC"
+          ],
+          "parameter_basis": "NER recognition share of UV lesion attenuation.",
+          "confidence": "estimated"
+        },
+        "ERCC2": {
+          "sources": [
+            "reference_data.py:ERCC2"
+          ],
+          "parameter_basis": "NER helicase/excision share of UV lesion attenuation.",
+          "confidence": "estimated"
+        },
+        "OGG1": {
+          "sources": [
+            "reference_data.py:OGG1"
+          ],
+          "parameter_basis": "Oxidative-damage repair share for UV-associated lesions.",
+          "confidence": "estimated"
+        },
+        "POLH": {
+          "sources": [
+            "exposure_database.json:UV_Radiation"
+          ],
+          "parameter_basis": "Tolerance/bypass share for persistent UV photoproduct burden.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "ChlorinatedSolvent": {
+      "activation_terms": {
+        "CYP2E1": {
+          "sources": [
+            "kinetic_parameters.json:ChlorinatedSolvent/oxidation/CYP2E1_TCE"
+          ],
+          "parameter_basis": "Proxy absolute Vmax paired with bundled qualitative CLint label and bundled Km.",
+          "confidence": "low"
+        },
+        "GSTT1": {
+          "sources": [
+            "kinetic_parameters.json:ChlorinatedSolvent/GSH_conjugation/GSTT1_TCE"
+          ],
+          "parameter_basis": "Proxy absolute conjugation scale paired with bundled qualitative CLint label.",
+          "confidence": "low"
+        }
+      },
+      "detox_terms": {
+        "non_genotoxic_clearance_proxy": {
+          "sources": [
+            "kinetic_parameters.json:ChlorinatedSolvent"
+          ],
+          "parameter_basis": "A fixed downstream-clearance share opposing TCE bioactivation burden.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "Dioxin": {
+      "signal": {
+        "sources": [
+          "kinetic_parameters.json:Dioxin/AhR_signaling/AhR_binding"
+        ],
+        "parameter_basis": "Direct reuse of bundled EC50/Kd values to define an AhR occupancy surrogate.",
+        "confidence": "moderate"
+      },
+      "activation_terms": {
+        "CYP1A1": {
+          "sources": [
+            "kinetic_parameters.json:Dioxin/AhR_signaling/AhR_binding"
+          ],
+          "parameter_basis": "Direct reuse of bundled CYP1A1 induction factor.",
+          "confidence": "moderate"
+        },
+        "CYP1B1": {
+          "sources": [
+            "kinetic_parameters.json:Dioxin/AhR_signaling/AhR_binding"
+          ],
+          "parameter_basis": "Direct reuse of bundled CYP1B1 induction factor.",
+          "confidence": "moderate"
+        }
+      },
+      "detox_terms": {
+        "AHRR_feedback": {
+          "sources": [
+            "wave2_classes.py:Dioxins_AhR"
+          ],
+          "parameter_basis": "Heuristic negative-feedback share opposing sustained AhR activation.",
+          "confidence": "estimated"
+        }
+      }
+    },
+    "HeavyMetal": {
+      "activation_terms": {
+        "general_ROS": {
+          "sources": [
+            "kinetic_parameters.json:HeavyMetal/oxidative_stress/general_ROS"
+          ],
+          "parameter_basis": "Saturating ROS-burden proxy for indirect genotoxicity.",
+          "confidence": "estimated"
+        },
+        "cadmium_stress_proxy": {
+          "sources": [
+            "kinetic_parameters.json:HeavyMetal/cadmium"
+          ],
+          "parameter_basis": "Saturating cadmium-like mitochondrial/DNA-damage proxy.",
+          "confidence": "estimated"
+        }
+      },
+      "detox_terms": {
+        "AS3MT": {
+          "sources": [
+            "kinetic_parameters.json:HeavyMetal/biotransformation/AS3MT"
+          ],
+          "parameter_basis": "Proxy absolute Vmax paired with bundled qualitative CLint label and bundled Km.",
+          "confidence": "low"
+        }
+      }
+    }
+  }
+}

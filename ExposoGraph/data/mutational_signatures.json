@@ -1,0 +1,178 @@
+{
+  "_metadata": {
+    "description": "COSMIC SBS mutational signature endpoints for ExposoGraph 2.0 carcinogen classes",
+    "source": "COSMIC Mutational Signatures v3.4 (https://cancer.sanger.ac.uk/signatures/)",
+    "manuscript_context": "v6 Discussion: linking ExposoGraph 2.0 predictions to tumor mutational signatures represents an important future direction",
+    "version": "1.0.0",
+    "created": "2026-04-20",
+    "confidence_notes": "High-confidence entries have direct experimental and epidemiological attribution to the listed aetiology; medium-confidence entries are associations reported in at least one pan-cancer analysis; exploratory entries are hypothesis-generating."
+  },
+  "signatures": {
+    "SBS4": {
+      "aetiology": "Tobacco smoking",
+      "dominant_mutation": "C>A transversions",
+      "description": "Attributed to direct DNA damage by polycyclic aromatic hydrocarbons in tobacco smoke; prevalent in lung (squamous and adenocarcinoma), larynx, and head & neck cancers.",
+      "references": ["Alexandrov 2020 Nature", "COSMIC v3.4"],
+      "confidence": "high"
+    },
+    "SBS92": {
+      "aetiology": "Tobacco smoking (bladder; second tobacco signature)",
+      "dominant_mutation": "C>T at TpC and T>C at TpC",
+      "description": "Second tobacco-associated signature identified in bladder urothelial carcinoma, attributable to smoke-derived carcinogens excreted in urine.",
+      "references": ["Kucab 2019 Cell", "COSMIC v3.4"],
+      "confidence": "high"
+    },
+    "SBS29": {
+      "aetiology": "Tobacco chewing and related nitrosamines",
+      "dominant_mutation": "C>A",
+      "description": "Found in oral cavity tumours of tobacco chewers; linked to tobacco-specific nitrosamines (NNK, NNN) and HCA-like agents.",
+      "references": ["Alexandrov 2020 Nature"],
+      "confidence": "high"
+    },
+    "SBS24": {
+      "aetiology": "Aflatoxin B1 exposure",
+      "dominant_mutation": "C>A, particularly at CpG with strand bias",
+      "description": "Signature of AFB1-induced N7-guanine adducts; characteristic of hepatocellular carcinomas from aflatoxin-endemic regions.",
+      "references": ["Huang 2017 PNAS", "Zhang 2017 Genome Res"],
+      "confidence": "high"
+    },
+    "SBS22": {
+      "aetiology": "Aristolochic acid exposure",
+      "dominant_mutation": "T>A in CTG context",
+      "description": "Highly specific T>A transversions caused by aristolactam-DNA adducts; common in urothelial and hepatic cancers in East Asian populations.",
+      "references": ["Hoang 2013 Sci Transl Med", "Ng 2017 Sci Transl Med"],
+      "confidence": "high"
+    },
+    "SBS16": {
+      "aetiology": "Alcohol / acetaldehyde metabolism",
+      "dominant_mutation": "T>C at ApT context",
+      "description": "Associated with chronic alcohol consumption and ALDH2 deficiency; observed primarily in hepatocellular and esophageal squamous carcinoma.",
+      "references": ["Letouze 2017 Nat Commun", "Takeshima 2019 Cancer Sci"],
+      "confidence": "high"
+    },
+    "SBS11": {
+      "aetiology": "Alkylating agent exposure (e.g., temozolomide, nitrosoureas)",
+      "dominant_mutation": "C>T at CpC/CpT",
+      "description": "Canonical alkylator signature associated with O6-methylguanine adduct formation; amplified when MGMT is silenced.",
+      "references": ["Alexandrov 2013 Nature"],
+      "confidence": "high"
+    },
+    "SBS2": {
+      "aetiology": "APOBEC cytidine deaminase activity",
+      "dominant_mutation": "C>T at TCW (W=A/T)",
+      "description": "AID/APOBEC family deamination; indirectly amplified by inflammation and viral / oxidative-stress contexts including benzene toxicity and CHIP.",
+      "references": ["Roberts 2013 Nat Genet"],
+      "confidence": "medium"
+    },
+    "SBS13": {
+      "aetiology": "APOBEC cytidine deaminase activity (co-occurring with SBS2)",
+      "dominant_mutation": "C>G at TCW",
+      "description": "Kataegis partner of SBS2; same upstream aetiology as SBS2.",
+      "references": ["Roberts 2013 Nat Genet"],
+      "confidence": "medium"
+    },
+    "SBS18": {
+      "aetiology": "Reactive oxygen species / 8-oxoG damage",
+      "dominant_mutation": "C>A at CCN",
+      "description": "Mitochondrial and cytosolic ROS produce 8-oxoguanine lesions; linked to heavy-metal (Cr VI, Cd) exposure and benzene metabolites.",
+      "references": ["Viel 2017 Clin Cancer Res"],
+      "confidence": "medium"
+    },
+    "SBS88": {
+      "aetiology": "Colibactin (E. coli pks+) exposure",
+      "dominant_mutation": "T>N at ATA / TTT context",
+      "description": "Microbially produced colibactin crosslinks; implicated in colorectal and appendiceal cancers from gut-microbiome exposure.",
+      "references": ["Pleguezuelos-Manzano 2020 Nature"],
+      "confidence": "medium"
+    },
+    "SBS42": {
+      "aetiology": "Occupational haloalkane exposure",
+      "dominant_mutation": "C>A / C>T mix",
+      "description": "Associated with occupational exposure to chlorinated solvents (e.g., trichloroethylene) in cholangiocarcinoma and kidney cancer.",
+      "references": ["Mimaki 2020 Hepatology"],
+      "confidence": "medium"
+    }
+  },
+  "carcinogen_class_map": {
+    "PAH": {
+      "primary": ["SBS4"],
+      "secondary": ["SBS92", "SBS18"],
+      "notes": "Primary tobacco-smoke signature; SBS92 in urothelial lineage; SBS18 when oxidative stress dominates."
+    },
+    "Tobacco_PAH": {
+      "primary": ["SBS4"],
+      "secondary": ["SBS92"],
+      "notes": "Alias grouping for tobacco-derived PAH exposure."
+    },
+    "Nitrosamine": {
+      "primary": ["SBS29", "SBS11"],
+      "secondary": ["SBS4"],
+      "notes": "SBS29 for smokeless tobacco / NNK; SBS11 when MGMT silenced."
+    },
+    "NDMA": {
+      "primary": ["SBS11"],
+      "secondary": ["SBS29"],
+      "notes": "N-nitrosodimethylamine yields O6-methylguanine adducts; SBS11 canonical."
+    },
+    "AlkylatingAgent": {
+      "primary": ["SBS11"],
+      "secondary": [],
+      "notes": "Therapy-related or environmental alkylators."
+    },
+    "Aflatoxin": {
+      "primary": ["SBS24"],
+      "secondary": [],
+      "notes": "Highly specific hepatic signature."
+    },
+    "HCA": {
+      "primary": ["SBS29"],
+      "secondary": ["SBS4"],
+      "notes": "HCA attribution shares N-hydroxy-arylamine chemistry with tobacco-specific nitrosamines."
+    },
+    "AromaticAmines": {
+      "primary": ["SBS29"],
+      "secondary": ["SBS4"],
+      "notes": "4-ABP / benzidine adducts overlap with HCA / tobacco signatures."
+    },
+    "Aldehyde": {
+      "primary": ["SBS16"],
+      "secondary": [],
+      "notes": "Acetaldehyde / formaldehyde signature, ALDH2-deficiency amplified."
+    },
+    "Ethanol": {
+      "primary": ["SBS16"],
+      "secondary": [],
+      "notes": "Alcohol consumption acts via acetaldehyde."
+    },
+    "Benzene": {
+      "primary": ["SBS18"],
+      "secondary": ["SBS2", "SBS13"],
+      "notes": "ROS and APOBEC-like secondary activation reported in benzene exposure studies."
+    },
+    "HeavyMetal": {
+      "primary": ["SBS18"],
+      "secondary": [],
+      "notes": "Cr(VI), Cd, Ni act primarily through oxidative-stress ROS generation."
+    },
+    "Dioxin": {
+      "primary": [],
+      "secondary": ["SBS4", "SBS18"],
+      "notes": "Dioxins act mainly as AhR-mediated amplifiers rather than direct mutagens."
+    },
+    "ChlorinatedSolvent": {
+      "primary": ["SBS42"],
+      "secondary": ["SBS18"],
+      "notes": "Trichloroethylene / perchloroethylene."
+    },
+    "Estrogen": {
+      "primary": [],
+      "secondary": ["SBS18"],
+      "notes": "Catechol-estrogen quinones generate ROS; no dedicated endogenous SBS signature in COSMIC."
+    },
+    "Colibactin": {
+      "primary": ["SBS88"],
+      "secondary": [],
+      "notes": "Gut microbiome colibactin exposure; colorectal / appendiceal."
+    }
+  }
+}

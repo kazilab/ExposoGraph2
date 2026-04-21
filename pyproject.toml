@@ -1,0 +1,194 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ExposoGraph"
+version = "0.0.5"
+description = "ExposoGraph — LLM-powered extraction and manual curation of carcinogen metabolism pathways"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Data analysis team @ KaziLab", email = "exposograph@kazilab.se" },
+]
+keywords = [
+    "knowledge-graph",
+    "carcinogen",
+    "pharmacogenomics",
+    "metabolism",
+    "toxicology",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "networkx>=3.2",
+    "pydantic>=2.5",
+    "pyjson5>=2.0",
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+llm = [
+    "openai>=1.60.0",
+]
+ollama = [
+    "requests>=2.31",
+]
+db = [
+    "requests>=2.31",
+]
+streamlit = [
+    "streamlit>=1.40.0",
+    "streamlit-agraph>=0.0.45",
+    "ExposoGraph[llm]",
+]
+viewer = [
+    "dash>=4.0",
+    "dash-cytoscape>=1.0",
+]
+notebook = [
+    "jupyter",
+    "matplotlib>=3.8",
+    "plotly>=6.0",
+]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+    "matplotlib>=3.8",
+]
+docs = [
+    "sphinx>=8.2.0",
+    "myst-parser>=4.0.0",
+    "furo>=2024.8.6",
+]
+all = [
+    "ExposoGraph[llm,ollama,db,streamlit,viewer,notebook,dev,docs]",
+]
+
+[project.urls]
+Homepage = "https://github.com/kazilab/ExposoGraph"
+Repository = "https://github.com/kazilab/ExposoGraph"
+Issues = "https://github.com/kazilab/ExposoGraph/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ExposoGraph"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+# Data-literal modules: long evidence strings, citation records, allele-frequency
+# tables, and IARC classification dicts do not benefit from line wrapping.
+"ExposoGraph/reference_data.py" = ["E501"]
+"ExposoGraph/population_simulation/_core.py" = ["E501"]
+"ExposoGraph/wave2_classes.py" = ["E501"]
+"ExposoGraph/db_clients/iarc.py" = ["E501"]
+"ExposoGraph/expanded_metals.py" = ["E501"]
+"ExposoGraph/oxidative_stress.py" = ["E501"]
+"ExposoGraph/tissue_subgraphs.py" = ["E501"]
+# Scientific-formula modules: kinetic expressions, interaction matrices, and
+# exposure-burden calculations are easier to audit on a single line matching
+# the underlying equations.
+"ExposoGraph/interaction_engine.py" = ["E501"]
+"ExposoGraph/exposure_engine.py" = ["E501"]
+"ExposoGraph/flux_engine.py" = ["E501"]
+# Orchestration / embedded-content modules: long method chains (unified_api),
+# embedded HTML/CSS/JS (exporter), LLM prompt literals (llm_extractor), and
+# argparse CLI epilogs (batch_runner) are clearer left in their authored form.
+"ExposoGraph/unified_api.py" = ["E501"]
+"ExposoGraph/exporter.py" = ["E501"]
+"ExposoGraph/llm_extractor.py" = ["E501"]
+"ExposoGraph/population_simulation/batch_runner.py" = ["E501"]
+# Figure, UI, and test-layout modules: geometry literals, Dash component trees,
+# and long snapshot/assertion strings are clearer left in their authored form.
+"ExposoGraph/androgen_publication_figure.py" = ["E501"]
+"ExposoGraph/exemplar_pathways_figure.py" = ["E501"]
+"ExposoGraph/figure_architecture.py" = ["E501"]
+"ExposoGraph/pharmacogenomic_risk_figure.py" = ["E501"]
+"ExposoGraph/viewer_dash.py" = ["E501"]
+"ExposoGraph/ui_extract.py" = ["E501"]
+"ExposoGraph/ui_manual.py" = ["E501"]
+"ExposoGraph/ui_sidebar.py" = ["E501"]
+"tests/test_graph_analysis.py" = ["E501"]
+"tests/test_viewer_dash.py" = ["E501"]
+# Streamlit app import order is constrained by the explicit sys.path bootstrap
+# needed for `streamlit run ExposoGraph/app.py`.
+"ExposoGraph/app.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+    "streamlit.*",
+    "streamlit_agraph.*",
+    "pyvis.*",
+    "networkx.*",
+    "numpy.*",
+    "scipy.*",
+    "pyjson5.*",
+    "openai.*",
+    "requests.*",
+    "dash.*",
+    "dash_cytoscape.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "ExposoGraph.app",
+    "ExposoGraph._app_shared",
+    "ExposoGraph.ui_sidebar",
+    "ExposoGraph.ui_extract",
+    "ExposoGraph.ui_manual",
+    "ExposoGraph.ui_preview",
+    "ExposoGraph.ui_data",
+]
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--cov=ExposoGraph",
+    "--cov-report=term-missing",
+    "--cov-fail-under=70",
+]
+
+[tool.coverage.run]
+omit = [
+    # Streamlit / Dash UI entry points — exercised by hand, not by pytest.
+    "ExposoGraph/app.py",
+    "ExposoGraph/_app_shared.py",
+    "ExposoGraph/ui_*.py",
+    # Thin CLI launchers that only call into a covered ``main()``.
+    "ExposoGraph/exposure_cli.py",
+    "ExposoGraph/flux_cli.py",
+    "ExposoGraph/interaction_cli.py",
+    # Population-simulation analysis and batch tooling: standalone scripts
+    # intended to be run against real cohorts, not unit-tested in this repo.
+    "ExposoGraph/population_simulation/allofus_adapter.py",
+    "ExposoGraph/population_simulation/batch_runner.py",
+    "ExposoGraph/population_simulation/phenotype_extractor.py",
+    "ExposoGraph/population_simulation/population_analysis.py",
+    "ExposoGraph/population_simulation/validation_framework.py",
+]

@@ -1,0 +1,1984 @@
+{
+  "_metadata": {
+    "description": "Multi-Carcinogen Interaction Parameters for ExposoGraph",
+    "version": "2.0.0",
+    "created": "2026-03-30",
+    "expanded": "2026-04-21",
+    "references": [
+      "PMC3933162 \u2014 CYP2E1 substrate inhibition pNP (Kss=260 uM)",
+      "PMC9412641 \u2014 Hepatocyte GSH levels 5-10 mM",
+      "ATSDR TOXICOLOGICAL PROFILE \u2014 CYP2E1 saturation at ~5 mg/kg NDMA",
+      "Haddad et al. Tox Sci 2001 \u2014 DBTEX benzene cancer risk in mixtures",
+      "PMC7856178 \u2014 Alcohol CYP2E1/CYP3A4 P450-P450 interactions",
+      "BRENDA enzyme database (braunschweig.de) \u2014 Ki values for curated pairs",
+      "Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383."
+    ],
+    "primary_data_sources": [
+      {
+        "priority": 1,
+        "source": "BRENDA enzyme database",
+        "scope": "Bulk extract of KM VALUE entries by EC number plus curated Ki values for competitive pairs already parameterized in the interaction model",
+        "status": "active_reference"
+      },
+      {
+        "priority": 2,
+        "source": "Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383.",
+        "scope": "Canonical human CYP carcinogen Km/Vmax review used to anchor Phase I expansion curation",
+        "status": "active_reference"
+      },
+      {
+        "priority": 3,
+        "source": "PharmGKB VIP summaries / ClinPGx gene dossiers",
+        "scope": "Allele-function and clinical interpretation support for NAT1/NAT2, GSTM1/GSTT1/GSTP1, ALDH2, UGT1A1, CYP2C9, CYP2C19, and CYP2D6",
+        "status": "supporting_reference"
+      },
+      {
+        "priority": 4,
+        "source": "IARC Monographs Vol. 100A-100F",
+        "scope": "Class-specific pathway context and carcinogen activation/detoxification framing across the manuscript exposure classes",
+        "status": "supporting_reference"
+      },
+      {
+        "priority": 5,
+        "source": "ATSDR Toxicological Profiles",
+        "scope": "Benzene, NDMA, trichloroethylene, vinyl chloride, and related toxicokinetic anchor values already cited in the interaction model",
+        "status": "active_reference"
+      },
+      {
+        "priority": 6,
+        "source": "PubMed primary literature",
+        "scope": "Long-tail manual curation for ADH1B/1C/5, AKR1C2/3, SRD5A1/2, CYP17A1, CYP19A1, AS3MT, MT1A/MT2A, CCBL1, HLA-DPB1, and other non-canonical interactions",
+        "status": "supporting_reference"
+      }
+    ],
+    "provenance_file": "parameter_provenance.json",
+    "coverage_summary": {
+      "total_pairs": 91,
+      "ki_curated": 34,
+      "ki_assumed_equal_km": 57,
+      "phase_I_enzymes": 12,
+      "phase_II_enzymes": 7
+    },
+    "expansion_backlog": {
+      "description": "Requested interaction-model expansion backlog. Separates the originally proposed 70-pair note into enzymes already parameterized in the competitive JSON versus enzymes still pending curation.",
+      "reported_gap_pairs": 70,
+      "already_parameterized_pairs_from_requested_list": 27,
+      "remaining_pairs_to_parameterize": 43,
+      "already_parameterized_enzymes_from_requested_list": [
+        "CYP1B1",
+        "CYP2A6",
+        "GSTM1",
+        "GSTT1",
+        "GSTP1",
+        "NAT1",
+        "NAT2",
+        "SULT1A1",
+        "UGT1A1"
+      ],
+      "groups": {
+        "phase_I_cyps": {
+          "requested_pair_count_estimate": 16,
+          "already_parameterized_enzymes": ["CYP1B1", "CYP2A6"],
+          "already_parameterized_pair_count": 10,
+          "pending_enzymes": ["CYP3A5", "EPHX1"],
+          "notes": "CYP1B1 and CYP2A6 are already in the competitive inhibition matrix; CYP3A5 and EPHX1 remain to be curated."
+        },
+        "alcohol_aldehyde": {
+          "requested_pair_count_estimate": 7,
+          "already_parameterized_enzymes": [],
+          "already_parameterized_pair_count": 0,
+          "pending_enzymes": ["ADH1B", "ADH1C", "ADH5", "ALDH2"],
+          "notes": "Alcohol/aldehyde kinetics exist elsewhere in the codebase, but these enzymes are not yet represented as competitive interaction pairs in this JSON."
+        },
+        "steroid_androgen": {
+          "requested_pair_count_estimate": 12,
+          "already_parameterized_enzymes": [],
+          "already_parameterized_pair_count": 0,
+          "pending_enzymes": [
+            "CYP17A1",
+            "CYP19A1",
+            "AKR1C2",
+            "AKR1C3",
+            "HSD3B2",
+            "SRD5A1",
+            "SRD5A2",
+            "UGT2B7",
+            "UGT2B15",
+            "UGT2B17"
+          ],
+          "notes": "These enzymes are scaffolded in the broader ExposoGraph tissue and reference layers but not yet parameterized here."
+        },
+        "phase_II_conjugation": {
+          "requested_pair_count_estimate": 22,
+          "already_parameterized_enzymes": [
+            "GSTM1",
+            "GSTT1",
+            "GSTP1",
+            "SULT1A1",
+            "UGT1A1",
+            "NAT1",
+            "NAT2"
+          ],
+          "already_parameterized_pair_count": 17,
+          "pending_enzymes": ["COMT", "NQO1"],
+          "notes": "Most requested Phase II enzymes are already in the competitive matrix; COMT and NQO1 remain pending."
+        },
+        "metals": {
+          "requested_pair_count_estimate": 6,
+          "already_parameterized_enzymes": [],
+          "already_parameterized_pair_count": 0,
+          "pending_enzymes": ["AS3MT", "GSTO1", "GSTO2", "MT1A", "MT2A"],
+          "notes": "Metal-handling genes already appear in tissue and kinetic modules, but not yet as competitive interaction pairs."
+        },
+        "ahr_regulatory": {
+          "requested_pair_count_estimate": 4,
+          "already_parameterized_enzymes": [],
+          "already_parameterized_pair_count": 0,
+          "pending_regulators": ["AHR", "ARNT"],
+          "model_mode": "induction_not_competition",
+          "notes": "AHR and ARNT should be modeled as transcriptional regulators for induction logic, not as Michaelis-Menten competition substrates."
+        },
+        "niche": {
+          "requested_pair_count_estimate": 3,
+          "already_parameterized_enzymes": [],
+          "already_parameterized_pair_count": 0,
+          "pending_enzymes": ["CCBL1", "HLA-DPB1"],
+          "notes": "Niche exposure modifiers identified for later curation."
+        }
+      },
+      "scientific_validity_triage": {
+        "description": "Traffic-light review of the requested Tier A / Tier B Ki-curation list. Green entries fit the current Michaelis-Menten competition layer; yellow entries are biologically plausible but need tighter enzyme-substrate evidence before addition; red entries should be excluded or renamed because they are products, regulators, or otherwise mismatched to the competition model.",
+        "requested_priority_pairs_count": 36,
+        "requested_priority_pairs_note": "The enumerated Tier A / Tier B list sums to 36 pairs (21 Tier A + 15 Tier B), even though the surrounding note described 34.",
+        "tier_a_requested_pairs": 21,
+        "tier_b_requested_pairs": 15,
+        "current_coverage_of_requested_pairs": {
+          "present_curated": 5,
+          "present_assumed_equal_km": 14,
+          "missing": 17
+        },
+        "green_direct_competition_candidates": [
+          {
+            "enzyme": "CYP1A1",
+            "requested_substrate": "BaP",
+            "canonical_substrate": "BaP",
+            "current_status": "present_curated",
+            "recommended_action": "retain_curated",
+            "rationale": "Canonical direct PAH activation substrate for CYP1A1."
+          },
+          {
+            "enzyme": "CYP1A1",
+            "requested_substrate": "DMBA",
+            "canonical_substrate": "DMBA",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct CYP1A1 PAH activation substrate already represented in the competition matrix."
+          },
+          {
+            "enzyme": "CYP1A2",
+            "requested_substrate": "PhIP",
+            "canonical_substrate": "PhIP",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct HCA activation substrate for CYP1A2."
+          },
+          {
+            "enzyme": "CYP1A2",
+            "requested_substrate": "MeIQx",
+            "canonical_substrate": "MeIQx",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct HCA activation substrate for CYP1A2."
+          },
+          {
+            "enzyme": "CYP1A2",
+            "requested_substrate": "NNK",
+            "canonical_substrate": "NNK",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct nitrosamine substrate already modeled at CYP1A2."
+          },
+          {
+            "enzyme": "CYP1A2",
+            "requested_substrate": "BaP",
+            "canonical_substrate": "BaP",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct CYP1A2 PAH substrate, even though CYP1A1 remains the dominant BaP activator."
+          },
+          {
+            "enzyme": "CYP1B1",
+            "requested_substrate": "E2",
+            "canonical_substrate": "estradiol",
+            "current_status": "missing_use_explicit_parent_substrate_name",
+            "recommended_action": "rename_then_add_as_direct_substrate",
+            "rationale": "Parent estradiol is the competition substrate; JSON should use the explicit substrate name rather than shorthand."
+          },
+          {
+            "enzyme": "CYP1B1",
+            "requested_substrate": "BaP",
+            "canonical_substrate": "BaP",
+            "current_status": "present_curated",
+            "recommended_action": "retain_curated",
+            "rationale": "Canonical extrahepatic PAH activation substrate for CYP1B1."
+          },
+          {
+            "enzyme": "CYP1B1",
+            "requested_substrate": "DMBA",
+            "canonical_substrate": "DMBA",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct DMBA activation step already represented for CYP1B1."
+          },
+          {
+            "enzyme": "CYP2E1",
+            "requested_substrate": "benzene",
+            "canonical_substrate": "benzene",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Canonical CYP2E1 aromatic-solvent substrate."
+          },
+          {
+            "enzyme": "CYP2E1",
+            "requested_substrate": "NDMA",
+            "canonical_substrate": "NDMA",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Canonical high-affinity CYP2E1 nitrosamine substrate."
+          },
+          {
+            "enzyme": "CYP2E1",
+            "requested_substrate": "vinyl_chloride",
+            "canonical_substrate": "vinyl_chloride",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Canonical CYP2E1 halocarbon activation substrate."
+          },
+          {
+            "enzyme": "CYP2E1",
+            "requested_substrate": "ethanol",
+            "canonical_substrate": "ethanol",
+            "current_status": "present_curated",
+            "recommended_action": "retain_curated",
+            "rationale": "Canonical CYP2E1 alcohol substrate and established competitive inhibitor at high concentrations."
+          },
+          {
+            "enzyme": "CYP2A6",
+            "requested_substrate": "NNK",
+            "canonical_substrate": "NNK",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct nitrosamine substrate already represented for CYP2A6."
+          },
+          {
+            "enzyme": "CYP3A4",
+            "requested_substrate": "AFB1",
+            "canonical_substrate": "AFB1",
+            "current_status": "present_curated",
+            "recommended_action": "retain_curated",
+            "rationale": "Canonical aflatoxin activation substrate already carried with a measured Ki."
+          },
+          {
+            "enzyme": "CYP3A4",
+            "requested_substrate": "testosterone",
+            "canonical_substrate": "testosterone",
+            "current_status": "present_curated",
+            "recommended_action": "retain_curated",
+            "rationale": "Canonical CYP3A4 probe substrate already carried with a measured Ki."
+          },
+          {
+            "enzyme": "CYP3A4",
+            "requested_substrate": "sterigmatocystin",
+            "canonical_substrate": "sterigmatocystin",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct CYP3A4 mycotoxin substrate already present in the competition layer."
+          },
+          {
+            "enzyme": "EPHX1",
+            "requested_substrate": "BaP-7,8-epoxide",
+            "canonical_substrate": "BaP_7_8_epoxide",
+            "current_status": "missing",
+            "recommended_action": "add_as_direct_substrate",
+            "rationale": "EPHX1 hydrolyzes the reactive epoxide, so the epoxide is the direct competition substrate."
+          },
+          {
+            "enzyme": "GSTM1",
+            "requested_substrate": "BPDE",
+            "canonical_substrate": "BPDE",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct glutathione-conjugation substrate already modeled for GSTM1."
+          },
+          {
+            "enzyme": "GSTP1",
+            "requested_substrate": "BPDE",
+            "canonical_substrate": "BPDE",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct glutathione-conjugation substrate already modeled for GSTP1."
+          },
+          {
+            "enzyme": "NAT2",
+            "requested_substrate": "N-OH-4-ABP",
+            "canonical_substrate": "N_OH_4_ABP",
+            "current_status": "missing",
+            "recommended_action": "add_as_direct_substrate",
+            "rationale": "O-acetylation of N-hydroxylated arylamines is a direct NAT2 substrate step."
+          },
+          {
+            "enzyme": "NAT2",
+            "requested_substrate": "N-OH-PhIP",
+            "canonical_substrate": "N_OH_PhIP",
+            "current_status": "missing",
+            "recommended_action": "add_as_direct_substrate",
+            "rationale": "N-hydroxylated PhIP is a direct NAT2 substrate in the activation pathway."
+          },
+          {
+            "enzyme": "SULT1A1",
+            "requested_substrate": "N-OH-PhIP",
+            "canonical_substrate": "N_OH_PhIP",
+            "current_status": "present_assumed_equal_km",
+            "recommended_action": "keep_as_direct_substrate_and_upgrade_if_measured_ki_found",
+            "rationale": "Direct sulfation substrate already modeled for SULT1A1."
+          },
+          {
+            "enzyme": "SULT1A1",
+            "requested_substrate": "4-OH-E2",
+            "canonical_substrate": "4_hydroxy_estradiol",
+            "current_status": "missing",
+            "recommended_action": "add_as_direct_substrate",
+            "rationale": "Catechol-estrogen sulfation fits the direct Phase II substrate model when encoded with an explicit substrate name."
+          },
+          {
+            "enzyme": "ALDH2",
+            "requested_substrate": "acetaldehyde",
+            "canonical_substrate": "acetaldehyde",
+            "current_status": "missing",
+            "recommended_action": "add_as_direct_substrate",
+            "rationale": "Canonical aldehyde-detoxification substrate for ALDH2."
+          },
+          {
+            "enzyme": "ADH1B",
+            "requested_substrate": "ethanol",
+            "canonical_substrate": "ethanol",
+            "current_status": "missing",
+            "recommended_action": "add_as_direct_substrate",
+            "rationale": "Canonical alcohol-oxidation substrate for ADH1B."
+          }
+        ],
+        "yellow_provisional_candidates": [
+          {
+            "enzyme": "CYP2A6",
+            "requested_substrate": "NDMA",
+            "canonical_substrate": "NDMA",
+            "current_status": "missing",
+            "recommended_action": "needs_targeted_literature_review_before_addition",
+            "rationale": "Biologically plausible minor nitrosamine route, but CYP2E1 is the canonical NDMA anchor and CYP2A6 should not enter the competition layer without direct human kinetic support."
+          },
+          {
+            "enzyme": "GSTM1",
+            "requested_substrate": "AFB1-exo-epoxide",
+            "canonical_substrate": "AFB1_exo_epoxide",
+            "current_status": "missing",
+            "recommended_action": "needs_targeted_literature_review_before_addition",
+            "rationale": "Glutathione capture is plausible, but human isoform specificity is less canonical than the CYP3A4 activation step."
+          },
+          {
+            "enzyme": "GSTM1",
+            "requested_substrate": "N-OH-4-ABP",
+            "canonical_substrate": "N_OH_4_ABP",
+            "current_status": "missing",
+            "recommended_action": "needs_targeted_literature_review_before_addition",
+            "rationale": "Aryl-oxygenated ABP handling is more firmly anchored to NAT and SULT activation than to GSTM1 competition."
+          },
+          {
+            "enzyme": "GSTT1",
+            "requested_substrate": "benzene oxide",
+            "canonical_substrate": "benzene_oxide",
+            "current_status": "missing",
+            "recommended_action": "needs_targeted_literature_review_before_addition",
+            "rationale": "Electrophile conjugation is plausible, but GSTT1 is not the canonical benzene-oxide competition anchor in the current model."
+          },
+          {
+            "enzyme": "GSTT1",
+            "requested_substrate": "chloroethylene oxide",
+            "canonical_substrate": "chloroethylene_oxide",
+            "current_status": "missing",
+            "recommended_action": "needs_targeted_literature_review_before_addition",
+            "rationale": "Reactive-epoxide capture by glutathione is biochemically plausible, but direct human GSTT1 competition evidence should be confirmed before addition."
+          },
+          {
+            "enzyme": "GSTP1",
+            "requested_substrate": "chromium(VI)",
+            "canonical_substrate": "chromium_VI",
+            "current_status": "missing",
+            "recommended_action": "avoid_until_direct_substrate_evidence_is_curated",
+            "rationale": "Chromium(VI) handling in ExposoGraph is primarily a redox and GSH-depletion story; direct GSTP1 Michaelis-Menten substrate framing is weaker."
+          },
+          {
+            "enzyme": "ALDH2",
+            "requested_substrate": "formaldehyde",
+            "canonical_substrate": "formaldehyde",
+            "current_status": "missing",
+            "recommended_action": "needs_targeted_literature_review_before_addition",
+            "rationale": "ALDH2 acts as a backup formaldehyde-oxidation route, but ADH5 remains the dominant formaldehyde enzyme."
+          }
+        ],
+        "red_exclude_or_rename_pairs": [
+          {
+            "enzyme": "CYP2E1",
+            "requested_substrate": "acetaldehyde",
+            "canonical_substrate": "acetaldehyde",
+            "current_status": "missing",
+            "recommended_action": "exclude_from_competition_matrix",
+            "rationale": "CYP2E1 produces acetaldehyde from ethanol; acetaldehyde belongs in aldehyde-detoxification layers rather than as a CYP2E1 competition substrate."
+          },
+          {
+            "enzyme": "EPHX1",
+            "requested_substrate": "BaP-7,8-diol",
+            "canonical_substrate": "BaP_7_8_diol",
+            "current_status": "product_not_substrate",
+            "recommended_action": "exclude_from_competition_matrix",
+            "rationale": "EPHX1 hydrolyzes the epoxide to the diol; the diol is the product, not the substrate."
+          },
+          {
+            "enzyme": "GSTT1",
+            "requested_substrate": "DCVG",
+            "canonical_substrate": "DCVG",
+            "current_status": "downstream_conjugate_not_substrate",
+            "recommended_action": "exclude_from_competition_matrix",
+            "rationale": "GSTT1 forms DCVG during trichloroethylene conjugation; DCVG is downstream of GSTT1 rather than a competing substrate for it."
+          }
+        ]
+      }
+    }
+  },
+  "competitive_inhibition": {
+    "_description": "Enzyme-mediated competitive inhibition between carcinogen substrates. Formula: v_A = Vmax_A * [A] / (Km_A * (1 + SUM([Bi]/Km_Bi for i != A)) + [A])",
+    "CYP2E1": {
+      "_description": "Most contended Phase I activation enzyme. Substrate inhibition >100 uM for pNP (Kss=260 uM). Ref: PMC3933162",
+      "substrates": {
+        "benzene": {
+          "Km_uM": 75,
+          "Vmax_relative": 1.0,
+          "relative_priority": 3,
+          "product": "benzene_oxide",
+          "product_carcinogenic": true,
+          "notes": "Km range 50-100 uM; activation to benzene oxide leads to downstream reactive metabolites",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/benzene"
+        },
+        "NDMA": {
+          "Km_uM": 15,
+          "Vmax_relative": 1.2,
+          "relative_priority": 1,
+          "product": "methyldiazonium",
+          "product_carcinogenic": true,
+          "notes": "Km range 7.5-22 uM; LOWEST Km so highest affinity \u2014 outcompetes other substrates at low concentration",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/NDMA"
+        },
+        "ethanol": {
+          "Km_uM": 13000,
+          "Vmax_relative": 2.0,
+          "relative_priority": 5,
+          "product": "acetaldehyde",
+          "product_carcinogenic": true,
+          "notes": "Km ~13 mM; competitive inhibitor of NDMA metabolism at high (alcoholic) concentrations. Also substrate inhibition.",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/ethanol",
+          "Ki_uM": 13000.0
+        },
+        "vinyl_chloride": {
+          "Km_uM": 100,
+          "Vmax_relative": 0.8,
+          "relative_priority": 4,
+          "product": "chlorooxirane",
+          "product_carcinogenic": true,
+          "notes": "Km ~100 uM; activated to carcinogenic chloroethylene oxide",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/vinyl_chloride"
+        },
+        "acetaminophen": {
+          "Km_uM": 1300,
+          "Vmax_relative": 0.5,
+          "relative_priority": 5,
+          "product": "NAPQI",
+          "product_carcinogenic": false,
+          "notes": "Km ~1.3 mM; forms toxic NAPQI \u2014 relevant for GSH depletion at toxic doses",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/acetaminophen"
+        },
+        "chloroform": {
+          "Km_uM": 460,
+          "Vmax_relative": 0.6,
+          "relative_priority": 4,
+          "product": "phosgene",
+          "product_carcinogenic": true,
+          "notes": "Km ~460 uM; oxidative dehalogenation to phosgene (reactive)",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/chloroform",
+          "Ki_uM": 400.0
+        },
+        "styrene": {
+          "Km_uM": 70,
+          "Vmax_relative": 0.7,
+          "relative_priority": 3,
+          "product": "styrene_7_8_oxide",
+          "product_carcinogenic": true,
+          "notes": "Km ~70 uM; activates to styrene-7,8-oxide genotoxic metabolite",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/styrene",
+          "Ki_uM": 120.0
+        },
+        "trichloroethylene": {
+          "Km_uM": 12,
+          "Vmax_relative": 0.55,
+          "relative_priority": 2,
+          "product": "TCE_oxide",
+          "product_carcinogenic": true,
+          "notes": "Km ~12 uM; one of the highest-affinity CYP2E1 substrates",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/trichloroethylene",
+          "Ki_uM": 15.0
+        },
+        "NNK": {
+          "Km_uM": 520,
+          "Vmax_relative": 0.45,
+          "relative_priority": 5,
+          "product": "alpha_hydroxy_NNK",
+          "product_carcinogenic": true,
+          "notes": "Hepatic CYP2E1 is a minor NNK pathway relative to CYP2A13/CYP3A4; high Km",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/NNK"
+        },
+        "p_nitrophenol": {
+          "Km_uM": 50,
+          "Vmax_relative": 0.4,
+          "relative_priority": 4,
+          "product": "4_nitrocatechol",
+          "product_carcinogenic": false,
+          "notes": "Reference probe substrate for CYP2E1 hydroxylation; substrate inhibition >100 uM (Kss=260)",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/p_nitrophenol"
+        }
+      },
+      "inhibitors": {
+        "4_methylpyrazole": {
+          "Ki_uM": 2.0,
+          "type": "competitive",
+          "notes": "12-fold lower than NDMA Km; used clinically to block CYP2E1"
+        }
+      },
+      "substrate_inhibition": {
+        "pNP_Kss_uM": 260,
+        "onset_uM": 100,
+        "notes": "Substrate inhibition occurs above 100 uM for pNP probe substrate"
+      },
+      "induction": {
+        "chronic_ethanol": {
+          "fold": 5.0,
+          "range_min": 4.0,
+          "range_max": 10.0,
+          "mechanism": "Protein stabilization and transcriptional upregulation"
+        },
+        "isoniazid": {
+          "fold": 2.0,
+          "range_min": 1.5,
+          "range_max": 3.0,
+          "mechanism": "Transcriptional"
+        }
+      }
+    },
+    "CYP1A2": {
+      "_description": "Activated by AhR ligands (PAH, dioxins). Key for HCA and PAH activation. Ref: multiple",
+      "substrates": {
+        "PhIP": {
+          "Km_uM": 79,
+          "Vmax_relative": 1.0,
+          "relative_priority": 2,
+          "product": "N-OH-PhIP",
+          "product_carcinogenic": true,
+          "notes": "Km=79 uM, Vmax=90 nmol/min/nmol; N-hydroxylation is activation step for breast/colon carcinogenesis",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/PhIP"
+        },
+        "IQ": {
+          "Km_uM": 12,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "N-OH-IQ",
+          "product_carcinogenic": true,
+          "notes": "Imidazoquinoline from cooked meat; lower Km than PhIP",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/IQ"
+        },
+        "caffeine": {
+          "Km_uM": 82,
+          "Vmax_relative": 0.7,
+          "relative_priority": 3,
+          "product": "paraxanthine",
+          "product_carcinogenic": false,
+          "notes": "Km=0.082 mM; competitive with phenacetin, Ki=0.080 mM; used as CYP1A2 phenotyping probe",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/caffeine",
+          "Ki_uM": 80.0
+        },
+        "BaP": {
+          "Km_uM": 0.054,
+          "Vmax_relative": 0.3,
+          "relative_priority": 1,
+          "product": "BaP_7_8_diol_9_10_epoxide",
+          "product_carcinogenic": true,
+          "notes": "Ultra-high affinity; preferentially metabolized when BaP is present \u2014 but CYP1A1 is higher activity for BaP",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/BaP"
+        },
+        "NNK": {
+          "Km_uM": 20,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Tobacco-specific nitrosamine; activated by CYP1A2 in liver",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/NNK"
+        },
+        "MeIQx": {
+          "Km_uM": 55,
+          "Vmax_relative": 0.75,
+          "relative_priority": 2,
+          "product": "N-OH-MeIQx",
+          "product_carcinogenic": true,
+          "notes": "Heterocyclic amine from cooked beef; N-hydroxylation is activation step",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/MeIQx"
+        },
+        "AalphaC": {
+          "Km_uM": 40,
+          "Vmax_relative": 0.6,
+          "relative_priority": 3,
+          "product": "N-OH-AalphaC",
+          "product_carcinogenic": true,
+          "notes": "2-amino-9H-pyrido[2,3-b]indole; pyrolysis HCA",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/AalphaC"
+        },
+        "phenacetin": {
+          "Km_uM": 50,
+          "Vmax_relative": 0.9,
+          "relative_priority": 2,
+          "product": "acetaminophen",
+          "product_carcinogenic": false,
+          "notes": "Classic CYP1A2 O-deethylation probe substrate",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/phenacetin",
+          "Ki_uM": 50.0
+        },
+        "theophylline": {
+          "Km_uM": 280,
+          "Vmax_relative": 0.5,
+          "relative_priority": 4,
+          "product": "1_3_dimethyluric_acid",
+          "product_carcinogenic": false,
+          "notes": "Therapeutic methylxanthine; competitive with caffeine at CYP1A2",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/theophylline",
+          "Ki_uM": 250.0
+        },
+        "4_aminobiphenyl": {
+          "Km_uM": 8,
+          "Vmax_relative": 0.85,
+          "relative_priority": 1,
+          "product": "N-OH-ABP",
+          "product_carcinogenic": true,
+          "notes": "Bladder carcinogen; N-hydroxylation by CYP1A2 (hepatic) is primary activation",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/4_aminobiphenyl",
+          "Ki_uM": 30.0
+        }
+      },
+      "inhibitors": {
+        "alpha_naphthoflavone": {
+          "Ki_nM": 1.0,
+          "Ki_range_nM": [
+            1,
+            50
+          ],
+          "type": "competitive",
+          "notes": "Potent competitive inhibitor; Ki = 1-50 nM"
+        }
+      },
+      "induction": {
+        "smoking_PAH": {
+          "fold": 1.55,
+          "range_min": 1.0,
+          "range_max": 7.3,
+          "mechanism": "AhR-mediated by PAH/dioxin content of smoke \u2014 NOT nicotine"
+        },
+        "TCDD": {
+          "fold": 10.0,
+          "range_min": 5.0,
+          "range_max": 30.0,
+          "mechanism": "AhR/ARNT \u2192 XRE binding"
+        }
+      }
+    },
+    "CYP1A1": {
+      "_description": "High-affinity PAH activator. Expressed in extrahepatic tissues, induced strongly by AhR ligands.",
+      "substrates": {
+        "BaP": {
+          "Km_uM": 0.054,
+          "Vmax_relative": 2.0,
+          "relative_priority": 1,
+          "product": "BPDE",
+          "product_carcinogenic": true,
+          "notes": "Highest affinity substrate; will outcompete PhIP at any physiological concentration",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/BaP",
+          "Ki_uM": 0.1
+        },
+        "PhIP": {
+          "Km_uM": 5.1,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "N-OH-PhIP",
+          "product_carcinogenic": true,
+          "notes": "Km 94x higher than BaP; significantly inhibited when BaP is present",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/PhIP"
+        },
+        "chrysene": {
+          "Km_uM": 0.5,
+          "Vmax_relative": 1.5,
+          "relative_priority": 1,
+          "product": "chrysene_diol_epoxide",
+          "product_carcinogenic": true,
+          "notes": "PAH component of cigarette smoke",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/chrysene"
+        },
+        "DMBA": {
+          "Km_uM": 0.3,
+          "Vmax_relative": 1.8,
+          "relative_priority": 1,
+          "product": "DMBA_3_4_diol_1_2_epoxide",
+          "product_carcinogenic": true,
+          "notes": "Experimental PAH carcinogen; very high affinity",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/DMBA"
+        },
+        "7_ethoxyresorufin": {
+          "Km_uM": 0.1,
+          "Vmax_relative": 1.2,
+          "relative_priority": 2,
+          "product": "resorufin",
+          "product_carcinogenic": false,
+          "notes": "EROD probe substrate for CYP1A1 induction quantification",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/7_ethoxyresorufin",
+          "Ki_uM": 0.05
+        },
+        "benzo_a_anthracene": {
+          "Km_uM": 0.5,
+          "Vmax_relative": 1.3,
+          "relative_priority": 2,
+          "product": "BaA_3_4_diol_1_2_epoxide",
+          "product_carcinogenic": true,
+          "notes": "4-ring PAH; combustion marker and IARC 2B",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/benzo_a_anthracene"
+        },
+        "dibenz_ah_anthracene": {
+          "Km_uM": 0.3,
+          "Vmax_relative": 1.4,
+          "relative_priority": 1,
+          "product": "DBahA_diol_epoxide",
+          "product_carcinogenic": true,
+          "notes": "5-ring PAH; IARC 2A; high-affinity CYP1A1 activation",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/dibenz_ah_anthracene"
+        },
+        "estradiol_2_OH": {
+          "Km_uM": 15,
+          "Vmax_relative": 0.9,
+          "relative_priority": 3,
+          "product": "2_hydroxyestradiol",
+          "product_carcinogenic": false,
+          "notes": "Estrogen 2-hydroxylation pathway (non-genotoxic metabolite)",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/estradiol_2_OH",
+          "Ki_uM": 9.0
+        }
+      },
+      "induction": {
+        "smoking_PAH": {
+          "fold": 3.0,
+          "range_min": 2.0,
+          "range_max": 10.0,
+          "mechanism": "AhR-mediated"
+        },
+        "TCDD": {
+          "fold": 30.0,
+          "range_min": 10.0,
+          "range_max": 1600.0,
+          "mechanism": "AhR/ARNT \u2192 XRE binding; up to 1400-fold in pituitary, 1600-fold in liver"
+        }
+      }
+    },
+    "CYP1B1": {
+      "_description": "Extrahepatic (breast, prostate, lung) AhR-inducible P450. Estrogen 4-hydroxylation yields catechol estrogens implicated in hormonal carcinogenesis.",
+      "tissue_specificity": ["Breast", "Prostate", "Lung"],
+      "substrates": {
+        "estradiol_4_OH": {
+          "Km_uM": 10,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "4_hydroxyestradiol",
+          "product_carcinogenic": true,
+          "notes": "4-hydroxylation generates genotoxic catechol estrogen quinones",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/estradiol_4_OH",
+          "Ki_uM": 5.0
+        },
+        "BaP": {
+          "Km_uM": 0.02,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "BPDE",
+          "product_carcinogenic": true,
+          "notes": "Ultra-high affinity PAH activation in extrahepatic tissues",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/BaP",
+          "Ki_uM": 0.1
+        },
+        "DMBA": {
+          "Km_uM": 0.4,
+          "Vmax_relative": 1.1,
+          "relative_priority": 1,
+          "product": "DMBA_3_4_diol_1_2_epoxide",
+          "product_carcinogenic": true,
+          "notes": "Classical mammary carcinogen in rat bioassays",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/DMBA"
+        },
+        "4_aminobiphenyl": {
+          "Km_uM": 5,
+          "Vmax_relative": 0.7,
+          "relative_priority": 2,
+          "product": "N-OH-ABP",
+          "product_carcinogenic": true,
+          "notes": "Alternative aromatic-amine activation pathway in extrahepatic tissues",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/4_aminobiphenyl"
+        },
+        "resveratrol": {
+          "Km_uM": 25,
+          "Vmax_relative": 0.5,
+          "relative_priority": 3,
+          "product": "piceatannol",
+          "product_carcinogenic": false,
+          "notes": "Dietary stilbene; competitive inhibitor of CYP1B1-mediated estrogen hydroxylation",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/resveratrol",
+          "Ki_uM": 50.0
+        }
+      },
+      "induction": {
+        "smoking_PAH": {
+          "fold": 2.0,
+          "range_min": 1.5,
+          "range_max": 5.0,
+          "mechanism": "AhR-mediated"
+        },
+        "TCDD": {
+          "fold": 8.0,
+          "range_min": 2.0,
+          "range_max": 50.0,
+          "mechanism": "AhR-mediated; extrahepatic"
+        }
+      }
+    },
+    "CYP2A6": {
+      "_description": "Hepatic P450 responsible for nicotine and coumarin metabolism; also activates tobacco-specific nitrosamines.",
+      "substrates": {
+        "nicotine": {
+          "Km_uM": 47,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "cotinine",
+          "product_carcinogenic": false,
+          "notes": "C-oxidation to cotinine; primary nicotine clearance pathway",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A6/nicotine",
+          "Ki_uM": 86.0
+        },
+        "cotinine": {
+          "Km_uM": 58,
+          "Vmax_relative": 0.6,
+          "relative_priority": 2,
+          "product": "trans_3_hydroxycotinine",
+          "product_carcinogenic": false,
+          "notes": "Secondary metabolism of cotinine; major urinary biomarker for CYP2A6 activity",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A6/cotinine",
+          "Ki_uM": 170.0
+        },
+        "coumarin": {
+          "Km_uM": 0.5,
+          "Vmax_relative": 1.2,
+          "relative_priority": 1,
+          "product": "7_hydroxycoumarin",
+          "product_carcinogenic": false,
+          "notes": "Canonical CYP2A6 phenotyping probe substrate",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A6/coumarin",
+          "Ki_uM": 0.5
+        },
+        "NNK": {
+          "Km_uM": 10,
+          "Vmax_relative": 0.8,
+          "relative_priority": 1,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Hepatic CYP2A6 activation of tobacco-specific nitrosamine",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A6/NNK"
+        },
+        "NDEA": {
+          "Km_uM": 2,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "ethyldiazonium",
+          "product_carcinogenic": true,
+          "notes": "High-affinity CYP2A6 substrate; alpha-hydroxylation pathway",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A6/NDEA",
+          "Ki_uM": 10.0
+        }
+      },
+      "induction": {
+        "rifampicin": {
+          "fold": 1.4,
+          "range_min": 1.1,
+          "range_max": 2.0,
+          "mechanism": "PXR-mediated"
+        }
+      }
+    },
+    "CYP2A13": {
+      "_description": "Lung-specific P450 with higher benzene affinity than hepatic CYP2E1 at ambient (non-occupational) concentrations. Manuscript v6 Discussion: 'at ambient benzene concentrations, metabolism may be dominated by CYP2A13 and CYP2F1 in lung rather than CYP2E1 in liver'.",
+      "tissue_specificity": ["Lung", "Nasal"],
+      "substrates": {
+        "benzene": {
+          "Km_uM": 3.0,
+          "Vmax_relative": 0.35,
+          "relative_priority": 1,
+          "product": "benzene_oxide",
+          "product_carcinogenic": true,
+          "notes": "Km ~1-5 uM; ~25-fold higher affinity than hepatic CYP2E1. Dominates benzene activation at sub-occupational air levels (< ~1 ppm).",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/benzene"
+        },
+        "NNK": {
+          "Km_uM": 1.4,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Highest-affinity NNK activator in pulmonary tissue; central to lung-specific tobacco carcinogenesis.",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/NNK"
+        },
+        "NDEA": {
+          "Km_uM": 8.0,
+          "Vmax_relative": 0.6,
+          "relative_priority": 2,
+          "product": "ethyldiazonium",
+          "product_carcinogenic": true,
+          "notes": "Pulmonary activation pathway for inhaled nitrosamines.",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/NDEA"
+        },
+        "NNAL": {
+          "Km_uM": 3.0,
+          "Vmax_relative": 0.55,
+          "relative_priority": 2,
+          "product": "alpha_hydroxy_NNAL",
+          "product_carcinogenic": true,
+          "notes": "Activation of NNK-derived alcohol metabolite in lung",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/NNAL"
+        },
+        "methoxsalen": {
+          "Km_uM": 1.0,
+          "Vmax_relative": 0.4,
+          "relative_priority": 3,
+          "product": "8_MOP_oxide",
+          "product_carcinogenic": false,
+          "notes": "Mechanism-based inhibitor of CYP2A13; Ki ~0.08 uM",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/methoxsalen",
+          "Ki_uM": 0.08
+        }
+      },
+      "induction": {
+        "smoking_PAH": {
+          "fold": 1.5,
+          "range_min": 1.2,
+          "range_max": 2.5,
+          "mechanism": "AhR-mediated pulmonary induction"
+        }
+      }
+    },
+    "CYP2B6": {
+      "_description": "CAR/PXR-inducible hepatic P450; activates cyclophosphamide and some nitrosamines.",
+      "substrates": {
+        "cyclophosphamide": {
+          "Km_uM": 45,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "4_hydroxy_cyclophosphamide",
+          "product_carcinogenic": true,
+          "notes": "Bioactivation of oxazaphosphorine alkylating agent",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2B6/cyclophosphamide",
+          "Ki_uM": 65.0
+        },
+        "bupropion": {
+          "Km_uM": 80,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "hydroxybupropion",
+          "product_carcinogenic": false,
+          "notes": "Clinical CYP2B6 probe substrate",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2B6/bupropion"
+        },
+        "nicotine": {
+          "Km_uM": 150,
+          "Vmax_relative": 0.4,
+          "relative_priority": 3,
+          "product": "nornicotine",
+          "product_carcinogenic": false,
+          "notes": "Minor nicotine N-demethylation pathway",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2B6/nicotine"
+        },
+        "NNK": {
+          "Km_uM": 25,
+          "Vmax_relative": 0.5,
+          "relative_priority": 3,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Minor hepatic NNK activation pathway",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2B6/NNK"
+        }
+      },
+      "induction": {
+        "phenobarbital": {
+          "fold": 4.0,
+          "range_min": 2.0,
+          "range_max": 8.0,
+          "mechanism": "CAR-mediated"
+        }
+      }
+    },
+    "CYP2C9": {
+      "_description": "Major hepatic P450 for NSAID and warfarin metabolism; polymorphic (*2, *3 reduced activity).",
+      "substrates": {
+        "tolbutamide": {
+          "Km_uM": 120,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "hydroxytolbutamide",
+          "product_carcinogenic": false,
+          "notes": "Canonical CYP2C9 probe substrate",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C9/tolbutamide",
+          "Ki_uM": 200.0
+        },
+        "S_warfarin": {
+          "Km_uM": 4,
+          "Vmax_relative": 0.7,
+          "relative_priority": 1,
+          "product": "7_hydroxywarfarin",
+          "product_carcinogenic": false,
+          "notes": "High-affinity CYP2C9 substrate; anticoagulant dosing depends on genotype",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C9/S_warfarin",
+          "Ki_uM": 1.7
+        },
+        "diclofenac": {
+          "Km_uM": 5,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "4_hydroxydiclofenac",
+          "product_carcinogenic": false,
+          "notes": "NSAID with reactive acyl-glucuronide downstream metabolite",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C9/diclofenac",
+          "Ki_uM": 5.0
+        },
+        "NNK": {
+          "Km_uM": 200,
+          "Vmax_relative": 0.3,
+          "relative_priority": 4,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Minor hepatic NNK activation",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C9/NNK"
+        },
+        "4_aminobiphenyl": {
+          "Km_uM": 60,
+          "Vmax_relative": 0.4,
+          "relative_priority": 3,
+          "product": "N-OH-ABP",
+          "product_carcinogenic": true,
+          "notes": "Alternative aromatic amine N-hydroxylation pathway",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C9/4_aminobiphenyl"
+        }
+      },
+      "induction": {
+        "rifampicin": {
+          "fold": 3.5,
+          "range_min": 2.0,
+          "range_max": 6.0,
+          "mechanism": "PXR-mediated"
+        }
+      }
+    },
+    "CYP2C19": {
+      "_description": "Polymorphic hepatic P450 (extensive vs poor metabolizer). Proton-pump inhibitor and mephenytoin metabolism.",
+      "substrates": {
+        "S_mephenytoin": {
+          "Km_uM": 24,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "4_hydroxymephenytoin",
+          "product_carcinogenic": false,
+          "notes": "Phenotyping probe for CYP2C19 activity",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C19/S_mephenytoin",
+          "Ki_uM": 35.0
+        },
+        "omeprazole": {
+          "Km_uM": 17,
+          "Vmax_relative": 0.8,
+          "relative_priority": 1,
+          "product": "5_hydroxyomeprazole",
+          "product_carcinogenic": false,
+          "notes": "Clinical PPI metabolism; CYP2C19 poor metabolizers have elevated plasma levels",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C19/omeprazole",
+          "Ki_uM": 6.0
+        },
+        "nicotine": {
+          "Km_uM": 120,
+          "Vmax_relative": 0.3,
+          "relative_priority": 3,
+          "product": "nornicotine",
+          "product_carcinogenic": false,
+          "notes": "Minor nicotine demethylation route",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C19/nicotine"
+        },
+        "NNK": {
+          "Km_uM": 300,
+          "Vmax_relative": 0.2,
+          "relative_priority": 4,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Minor contribution to hepatic NNK activation",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2C19/NNK"
+        }
+      },
+      "induction": {
+        "rifampicin": {
+          "fold": 2.0,
+          "range_min": 1.3,
+          "range_max": 3.5,
+          "mechanism": "PXR-mediated"
+        }
+      }
+    },
+    "CYP2D6": {
+      "_description": "Highly polymorphic hepatic P450 (PM/IM/EM/UM phenotypes). Metabolizes ~25% of clinically used drugs.",
+      "substrates": {
+        "dextromethorphan": {
+          "Km_uM": 6,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "dextrorphan",
+          "product_carcinogenic": false,
+          "notes": "O-demethylation probe substrate for CYP2D6 phenotyping",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2D6/dextromethorphan",
+          "Ki_uM": 1.0
+        },
+        "debrisoquine": {
+          "Km_uM": 4,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "4_hydroxydebrisoquine",
+          "product_carcinogenic": false,
+          "notes": "Classical CYP2D6 phenotyping substrate",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2D6/debrisoquine",
+          "Ki_uM": 4.0
+        },
+        "bufuralol": {
+          "Km_uM": 13,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "1_hydroxybufuralol",
+          "product_carcinogenic": false,
+          "notes": "Beta-blocker; alternative CYP2D6 probe substrate",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2D6/bufuralol"
+        },
+        "NNK": {
+          "Km_uM": 150,
+          "Vmax_relative": 0.25,
+          "relative_priority": 4,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Minor CYP2D6-mediated NNK activation",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2D6/NNK"
+        }
+      }
+    },
+    "CYP3A4": {
+      "_description": "Most abundant hepatic P450; AFB1 and many drugs. Hill kinetics for AFB1.",
+      "substrates": {
+        "AFB1": {
+          "Km_uM": 49.6,
+          "Vmax_relative": 1.0,
+          "hill_coefficient": 2.0,
+          "relative_priority": 1,
+          "product": "AFB1_8_9_epoxide",
+          "product_carcinogenic": true,
+          "notes": "Hill kinetics (n~2); sigmoidal activation; Km=49.6 uM",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/AFB1",
+          "Ki_uM": 65.0
+        },
+        "sterigmatocystin": {
+          "Km_uM": 80,
+          "Vmax_relative": 0.6,
+          "relative_priority": 2,
+          "product": "sterigmatocystin_epoxide",
+          "product_carcinogenic": true,
+          "notes": "Mycotoxin related to AFB1; competitive with AFB1",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/sterigmatocystin"
+        },
+        "testosterone": {
+          "Km_uM": 50,
+          "Vmax_relative": 1.1,
+          "relative_priority": 1,
+          "product": "6beta_hydroxytestosterone",
+          "product_carcinogenic": false,
+          "notes": "Classical CYP3A4 6beta-hydroxylation probe",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/testosterone",
+          "Ki_uM": 62.0
+        },
+        "midazolam": {
+          "Km_uM": 3,
+          "Vmax_relative": 1.3,
+          "relative_priority": 1,
+          "product": "1_hydroxymidazolam",
+          "product_carcinogenic": false,
+          "notes": "Clinical CYP3A4 activity probe; lowest Km",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/midazolam",
+          "Ki_uM": 2.7
+        },
+        "nifedipine": {
+          "Km_uM": 10,
+          "Vmax_relative": 0.9,
+          "relative_priority": 2,
+          "product": "oxidized_nifedipine",
+          "product_carcinogenic": false,
+          "notes": "Dihydropyridine oxidation; CYP3A4 probe",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/nifedipine",
+          "Ki_uM": 28.0
+        },
+        "erythromycin": {
+          "Km_uM": 45,
+          "Vmax_relative": 0.7,
+          "relative_priority": 3,
+          "product": "N_demethyl_erythromycin",
+          "product_carcinogenic": false,
+          "notes": "ERMBT probe; mechanism-based inactivator at high concentrations",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/erythromycin",
+          "Ki_uM": 17.0
+        },
+        "cyclosporine": {
+          "Km_uM": 1.7,
+          "Vmax_relative": 0.6,
+          "relative_priority": 1,
+          "product": "AM1_and_AM9",
+          "product_carcinogenic": false,
+          "notes": "Immunosuppressant; CYP3A4 metabolism saturates at clinical doses",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/cyclosporine",
+          "Ki_uM": 1.3
+        },
+        "1_nitropyrene": {
+          "Km_uM": 2,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "hydroxy_1_nitropyrene",
+          "product_carcinogenic": true,
+          "notes": "Diesel-exhaust nitro-PAH; ring hydroxylation by CYP3A4",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/1_nitropyrene"
+        },
+        "6_aminochrysene": {
+          "Km_uM": 0.3,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "N-OH-6-AC",
+          "product_carcinogenic": true,
+          "notes": "Aromatic amine PAH; CYP3A4 + CYP1A2 dual activation",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/6_aminochrysene"
+        },
+        "NNK": {
+          "Km_uM": 200,
+          "Vmax_relative": 0.35,
+          "relative_priority": 4,
+          "product": "NNAL_and_methyl_diazonium",
+          "product_carcinogenic": true,
+          "notes": "Secondary hepatic NNK activation; relevant at heavy smoking loads",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/NNK"
+        }
+      },
+      "induction": {
+        "rifampicin": {
+          "fold": 8.0,
+          "range_min": 4.0,
+          "range_max": 12.0,
+          "mechanism": "PXR-mediated"
+        },
+        "St_Johns_wort": {
+          "fold": 3.0,
+          "range_min": 2.0,
+          "range_max": 5.0,
+          "mechanism": "PXR-mediated"
+        },
+        "chronic_alcohol_indirect": {
+          "fold": 0.8,
+          "range_min": 0.5,
+          "range_max": 1.0,
+          "mechanism": "P450-P450 membrane interaction with induced CYP2E1 (PMC7856178); mild suppression"
+        }
+      }
+    },
+    "CYP2F1": {
+      "_description": "Lung-specific P450 catalyzing benzene ring hydroxylation; co-dominant with CYP2A13 at low air concentrations.",
+      "tissue_specificity": ["Lung", "Nasal"],
+      "substrates": {
+        "benzene": {
+          "Km_uM": 5.0,
+          "Vmax_relative": 0.4,
+          "relative_priority": 1,
+          "product": "benzene_oxide",
+          "product_carcinogenic": true,
+          "notes": "Km ~2-8 uM pulmonary; hydroxylates benzene to phenol and downstream hydroquinone.",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/benzene"
+        },
+        "naphthalene": {
+          "Km_uM": 4.0,
+          "Vmax_relative": 0.8,
+          "relative_priority": 1,
+          "product": "naphthalene_1_2_epoxide",
+          "product_carcinogenic": true,
+          "notes": "Classic pulmonary CYP2F1 substrate; relevant for inhaled fuels and PAH mixtures.",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/naphthalene"
+        },
+        "3_methylindole": {
+          "Km_uM": 8.0,
+          "Vmax_relative": 0.6,
+          "relative_priority": 2,
+          "product": "3_methyleneindolenine",
+          "product_carcinogenic": true,
+          "notes": "Tryptophan catabolite; bioactivated to pneumotoxic electrophile in Clara cells",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/3_methylindole"
+        },
+        "styrene": {
+          "Km_uM": 25.0,
+          "Vmax_relative": 0.45,
+          "relative_priority": 3,
+          "product": "styrene_7_8_oxide",
+          "product_carcinogenic": true,
+          "notes": "Pulmonary styrene activation; relevant for occupational inhalation",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/styrene"
+        }
+      }
+    }
+  },
+  "phase2_conjugation": {
+    "_description": "Phase II detoxification enzymes. Competition occurs at the transferase active site between xenobiotic substrates; depletes co-substrates (GSH, SAM, UDPGA, PAPS).",
+    "GSTM1": {
+      "_description": "Glutathione S-transferase mu-1; highly polymorphic with null allele ~50% frequency in Caucasians.",
+      "substrates": {
+        "BPDE": {
+          "Km_uM": 25,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "BPDE_GSH_conjugate",
+          "product_carcinogenic": false,
+          "notes": "Primary PAH detoxification pathway; GSTM1-null individuals lose this capacity",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTM1/BPDE"
+        },
+        "trans_stilbene_oxide": {
+          "Km_uM": 35,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "stilbene_oxide_GSH",
+          "product_carcinogenic": false,
+          "notes": "GSTM1-preferential probe substrate",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTM1/trans_stilbene_oxide"
+        },
+        "CDNB": {
+          "Km_uM": 500,
+          "Vmax_relative": 1.2,
+          "relative_priority": 3,
+          "product": "CDNB_GSH",
+          "product_carcinogenic": false,
+          "notes": "1-chloro-2,4-dinitrobenzene; generic GST activity probe",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTM1/CDNB"
+        },
+        "styrene_oxide": {
+          "Km_uM": 40,
+          "Vmax_relative": 0.7,
+          "relative_priority": 2,
+          "product": "styrene_oxide_GSH",
+          "product_carcinogenic": false,
+          "notes": "Detoxification of styrene-7,8-oxide generated by CYP2E1/CYP2F1",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTM1/styrene_oxide"
+        }
+      }
+    },
+    "GSTT1": {
+      "_description": "Glutathione S-transferase theta-1; null allele ~20% frequency. Specializes in small electrophiles.",
+      "substrates": {
+        "methylene_chloride": {
+          "Km_uM": 6000,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "S_chloromethylglutathione",
+          "product_carcinogenic": true,
+          "notes": "GSTT1-mediated activation produces genotoxic intermediate; null individuals are protected",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTT1/methylene_chloride"
+        },
+        "ethylene_oxide": {
+          "Km_uM": 800,
+          "Vmax_relative": 0.9,
+          "relative_priority": 1,
+          "product": "hydroxyethyl_glutathione",
+          "product_carcinogenic": false,
+          "notes": "Industrial sterilant; direct alkylator detoxified by GSTT1",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTT1/ethylene_oxide"
+        },
+        "methyl_chloride": {
+          "Km_uM": 4000,
+          "Vmax_relative": 0.6,
+          "relative_priority": 2,
+          "product": "S_methylglutathione",
+          "product_carcinogenic": false,
+          "notes": "Small-molecule alkyl halide; GSTT1 substrate for biomonitoring",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTT1/methyl_chloride"
+        }
+      }
+    },
+    "GSTP1": {
+      "_description": "Glutathione S-transferase pi-1; Ile105Val polymorphism alters activity against PAH diol epoxides.",
+      "substrates": {
+        "BPDE": {
+          "Km_uM": 20,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "BPDE_GSH_conjugate",
+          "product_carcinogenic": false,
+          "notes": "Primary PAH detox pathway in lung; Val/Val reduces activity >2-fold",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTP1/BPDE"
+        },
+        "acrolein": {
+          "Km_uM": 80,
+          "Vmax_relative": 1.1,
+          "relative_priority": 1,
+          "product": "S_3_hydroxypropyl_mercapturic_acid",
+          "product_carcinogenic": false,
+          "notes": "Cigarette-smoke aldehyde; major GSH drain in smokers",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTP1/acrolein"
+        },
+        "ethacrynic_acid": {
+          "Km_uM": 6,
+          "Vmax_relative": 0.8,
+          "relative_priority": 2,
+          "product": "ethacrynic_acid_SG",
+          "product_carcinogenic": false,
+          "notes": "GSTP1 competitive inhibitor/substrate; Ki=0.14 uM (Ploemen et al. 1990)",
+          "assumed_ki": false,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTP1/ethacrynic_acid",
+          "Ki_uM": 0.14
+        },
+        "chlorambucil": {
+          "Km_uM": 80,
+          "Vmax_relative": 0.5,
+          "relative_priority": 3,
+          "product": "chlorambucil_monoglutathionyl",
+          "product_carcinogenic": false,
+          "notes": "Alkylating chemotherapeutic; GSTP1 conjugation implicated in resistance",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/GSTP1/chlorambucil"
+        }
+      }
+    },
+    "NAT1": {
+      "_description": "N-acetyltransferase 1; polymorphic (*10, *11); extrahepatic aromatic amine acetylation.",
+      "substrates": {
+        "p_aminobenzoic_acid": {
+          "Km_uM": 50,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "N_acetyl_PABA",
+          "product_carcinogenic": false,
+          "notes": "Canonical NAT1 probe substrate",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/NAT1/p_aminobenzoic_acid"
+        },
+        "4_aminobiphenyl": {
+          "Km_uM": 30,
+          "Vmax_relative": 0.7,
+          "relative_priority": 1,
+          "product": "N_acetyl_ABP",
+          "product_carcinogenic": false,
+          "notes": "N-acetylation competes with CYP1A2 N-hydroxylation; slow acetylators have elevated bladder cancer risk",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/NAT1/4_aminobiphenyl"
+        }
+      }
+    },
+    "NAT2": {
+      "_description": "N-acetyltransferase 2; fast/slow acetylator phenotype; hepatic.",
+      "substrates": {
+        "isoniazid": {
+          "Km_uM": 40,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "N_acetyl_isoniazid",
+          "product_carcinogenic": false,
+          "notes": "Canonical NAT2 probe substrate; isoniazid-induced hepatotoxicity linked to slow acetylators",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/NAT2/isoniazid"
+        },
+        "sulfamethazine": {
+          "Km_uM": 120,
+          "Vmax_relative": 0.8,
+          "relative_priority": 1,
+          "product": "N_acetyl_sulfamethazine",
+          "product_carcinogenic": false,
+          "notes": "NAT2 phenotyping probe; historic ratio for acetylator status",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/NAT2/sulfamethazine"
+        }
+      }
+    },
+    "SULT1A1": {
+      "_description": "Sulfotransferase 1A1; hepatic activation of N-OH aromatic amines/HCAs via sulfation.",
+      "substrates": {
+        "N_OH_PhIP": {
+          "Km_uM": 8,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "PhIP_N_sulfonyl_ester",
+          "product_carcinogenic": true,
+          "notes": "Sulfation of CYP1A2-generated N-OH-PhIP creates DNA-reactive species",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/SULT1A1/N_OH_PhIP"
+        }
+      }
+    },
+    "UGT1A1": {
+      "_description": "UDP-glucuronosyltransferase 1A1; hepatic bilirubin and xenobiotic glucuronidation.",
+      "substrates": {
+        "bilirubin": {
+          "Km_uM": 4,
+          "Vmax_relative": 1.0,
+          "relative_priority": 1,
+          "product": "bilirubin_glucuronide",
+          "product_carcinogenic": false,
+          "notes": "Endogenous UGT1A1 substrate; *28 polymorphism reduces activity (Gilbert syndrome)",
+          "assumed_ki": true,
+          "provenance_ref": "parameter_provenance.json#pairs/UGT1A1/bilirubin"
+        }
+      }
+    }
+  },
+  "gsh_depletion": {
+    "_description": "Glutathione pool dynamics under multi-carcinogen exposure. Ref: PMC9412641",
+    "baseline_gsh_mM": 7.5,
+    "baseline_gsh_range_mM": [
+      5.0,
+      10.0
+    ],
+    "critical_threshold_fraction": 0.2,
+    "critical_threshold_mM": 1.5,
+    "synthesis_rate_umol_h_g": 40,
+    "half_life_h": 2.5,
+    "liver_volume_g": 1500,
+    "notes": "Below 20-30% normal GSH, Phase II conjugation capacity drops precipitously. Non-linear tipping point dynamics.",
+    "consumers": {
+      "PAH_GSTM1": {
+        "enzyme": "GSTM1",
+        "gsh_per_umol_substrate": 1.0,
+        "substrate_class": "PAH_diols_epoxides",
+        "notes": "BPDE + GSH \u2192 BPDE-GSH conjugate (1:1 stoichiometry). GSTM1-null individuals have no this pathway."
+      },
+      "chromium_VI": {
+        "enzyme": "non-enzymatic_and_GSTO",
+        "gsh_per_umol_substrate": 3.0,
+        "substrate_class": "hexavalent_chromium",
+        "notes": "3 GSH required per Cr(VI) reduced: Cr(VI) + 3GSH \u2192 Cr(III) + 3GSSG. Major GSH drain in welders/industrial exposure."
+      },
+      "arsenic_methylation": {
+        "enzyme": "GSTO1_GSTO2",
+        "gsh_per_umol_substrate": 1.0,
+        "substrate_class": "inorganic_arsenic",
+        "notes": "GSH-dependent methylation by GSTO1/GSTO2; each arsenic methylation consumes 1 GSH"
+      },
+      "BPDE_conjugation": {
+        "enzyme": "GSTP1_GSTM1",
+        "gsh_per_umol_substrate": 1.0,
+        "substrate_class": "BPDE",
+        "notes": "Direct BPDE conjugation with GSH \u2014 protective if GSH available"
+      },
+      "acrolein": {
+        "enzyme": "GSTA4_GSTP1",
+        "gsh_per_umol_substrate": 1.0,
+        "substrate_class": "alpha_beta_unsaturated_aldehydes",
+        "notes": "Major GSH consumer in cigarette smoke; acrolein is highly reactive with GSH"
+      },
+      "cadmium": {
+        "enzyme": "metallothionein_GSH",
+        "gsh_per_umol_substrate": 2.0,
+        "substrate_class": "heavy_metals",
+        "notes": "Cd binds GSH directly; ~2 GSH per Cd; also induces metallothionein as backup"
+      },
+      "ethanol_ROS": {
+        "enzyme": "GSH_peroxidase",
+        "gsh_per_umol_substrate": 0.5,
+        "substrate_class": "ROS_from_CYP2E1",
+        "notes": "CYP2E1-generated ROS (H2O2, OH\u2022) consumes GSH via GPx; coefficient estimated per umol ethanol oxidized"
+      },
+      "acetaminophen_NAPQI": {
+        "enzyme": "GSTP1",
+        "gsh_per_umol_substrate": 1.0,
+        "substrate_class": "electrophilic_quinones",
+        "notes": "At toxic APAP doses, NAPQI depletes hepatic GSH leading to necrosis"
+      }
+    },
+    "regeneration": {
+      "GSSG_reductase_Km_uM": 65,
+      "synthesis_rate_limiter": "cysteine_availability",
+      "NAC_rescue": "N-acetylcysteine provides cysteine for GSH resynthesis",
+      "oxidative_stress_inhibition": "ROS inhibits GCL (glutamate-cysteine ligase) \u2014 creating positive feedback loop under combined exposure"
+    }
+  },
+  "enzyme_induction": {
+    "_description": "Fold-induction of CYP enzymes by lifestyle/environmental factors affecting baseline metabolic capacity",
+    "smoking": {
+      "_primary_mechanism": "PAH/dioxin content induces AhR \u2192 CYP1A1, CYP1A2, CYP1B1. NOT nicotine directly.",
+      "CYP1A2": {
+        "fold_induction": 1.55,
+        "range_min": 1.0,
+        "range_max": 7.3,
+        "mechanism": "AhR-mediated by PAH and dioxin-like compounds in tobacco smoke",
+        "tissue_specificity": "liver, intestine",
+        "notes": "Mean 1.55-fold; heavy smokers approach 7.3x. Substantially increases HCA and amine activation."
+      },
+      "CYP1A1": {
+        "fold_induction": 3.0,
+        "range_min": 2.0,
+        "range_max": 10.0,
+        "mechanism": "AhR-mediated",
+        "tissue_specificity": "lung, liver, extrahepatic",
+        "notes": "Amplifies PAH (BaP, chrysene) activation in lung tissue"
+      },
+      "CYP1B1": {
+        "fold_induction": 2.0,
+        "range_min": 1.5,
+        "range_max": 5.0,
+        "mechanism": "AhR-mediated",
+        "tissue_specificity": "breast, prostate, lung",
+        "notes": "Extrahepatic; important for estrogen 4-hydroxylation \u2192 catechol estrogens in breast tissue"
+      }
+    },
+    "chronic_alcohol": {
+      "_primary_mechanism": "Ethanol stabilizes CYP2E1 protein against proteolysis; also transcriptional at high doses",
+      "CYP2E1": {
+        "fold_induction": 5.0,
+        "range_min": 4.0,
+        "range_max": 10.0,
+        "mechanism": "Protein stabilization (primary) + transcriptional upregulation",
+        "tissue_specificity": "liver, kidney, brain",
+        "notes": "Chronic alcoholics show ~10-fold in monocytes. 1.5-fold mRNA at 6h with 50 mM acute ethanol. Creates positive feedback: more CYP2E1 \u2192 more ROS \u2192 oxidative damage \u2192 enhanced NDMA/benzene activation."
+      },
+      "CYP3A4": {
+        "fold_induction": 0.8,
+        "range_min": 0.5,
+        "range_max": 1.0,
+        "mechanism": "Indirect \u2014 P450-P450 interactions in ER membrane (PMC7856178)",
+        "tissue_specificity": "liver",
+        "notes": "Mild suppression of CYP3A4 by induced CYP2E1 competing for ER membrane resources"
+      }
+    },
+    "heavy_smoking_chronic_alcohol_combined": {
+      "_primary_mechanism": "Additive AhR + CYP2E1 induction; also combined GSH depletion",
+      "CYP1A2": {
+        "fold_induction": 2.0,
+        "range_min": 1.5,
+        "range_max": 8.0,
+        "mechanism": "AhR from smoke"
+      },
+      "CYP2E1": {
+        "fold_induction": 5.0,
+        "range_min": 4.0,
+        "range_max": 10.0,
+        "mechanism": "Ethanol stabilization"
+      },
+      "CYP1A1": {
+        "fold_induction": 3.0,
+        "range_min": 2.0,
+        "range_max": 10.0,
+        "mechanism": "AhR from smoke"
+      }
+    },
+    "TCDD_dioxin": {
+      "_primary_mechanism": "Potent AhR agonist; highest fold-induction of any known inducer",
+      "CYP1A1": {
+        "fold_induction": 30.0,
+        "range_min": 10.0,
+        "range_max": 1600.0,
+        "mechanism": "AhR/ARNT heterodimer \u2192 XRE binding in CYP1A1 promoter",
+        "tissue_specificity": "liver (1600x), brain (110x), pituitary (1400x)",
+        "notes": "Tissue-specific dramatic variation; liver is primary concern for PAH activation"
+      },
+      "CYP1B1": {
+        "fold_induction": 8.0,
+        "range_min": 2.0,
+        "range_max": 50.0,
+        "mechanism": "AhR-mediated",
+        "tissue_specificity": "extrahepatic tissues"
+      },
+      "CYP1A2": {
+        "fold_induction": 10.0,
+        "range_min": 5.0,
+        "range_max": 30.0,
+        "mechanism": "AhR/ARNT"
+      }
+    },
+    "obesity_insulin_resistance": {
+      "CYP2E1": {
+        "fold_induction": 2.0,
+        "range_min": 1.5,
+        "range_max": 3.0,
+        "mechanism": "NAFLD-associated CYP2E1 upregulation via ketosis and free fatty acids",
+        "notes": "Relevant for non-drinkers with metabolic syndrome"
+      }
+    }
+  },
+  "genotype_modifiers": {
+    "_description": "Population genetics adjustments to enzyme activity. These multiply the baseline enzyme flux.",
+    "CYP1A2": {
+      "UM": {
+        "activity_multiplier": 1.8,
+        "frequency": 0.1,
+        "alleles": "*1F/*1F or inducible phenotype"
+      },
+      "NM": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.55,
+        "alleles": "*1A reference"
+      },
+      "IM": {
+        "activity_multiplier": 0.5,
+        "frequency": 0.25,
+        "alleles": "*1C, *1D"
+      },
+      "PM": {
+        "activity_multiplier": 0.1,
+        "frequency": 0.05,
+        "alleles": "rare null alleles"
+      }
+    },
+    "CYP2E1": {
+      "NM": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.8,
+        "alleles": "*1A"
+      },
+      "UM_c1c1": {
+        "activity_multiplier": 1.4,
+        "frequency": 0.12,
+        "alleles": "*1C/*1C \u2014 higher inducibility"
+      },
+      "IM": {
+        "activity_multiplier": 0.7,
+        "frequency": 0.08,
+        "alleles": "reduced expression variants"
+      }
+    },
+    "CYP3A4": {
+      "NM": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.75
+      },
+      "IM": {
+        "activity_multiplier": 0.5,
+        "frequency": 0.2,
+        "alleles": "*22 loss-of-function"
+      },
+      "UM": {
+        "activity_multiplier": 1.5,
+        "frequency": 0.05,
+        "alleles": "CYP3A4*1G amplification"
+      }
+    },
+    "GSTM1": {
+      "active": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.5,
+        "note": "GSTM1 present \u2014 PAH-GSH conjugation functional"
+      },
+      "null": {
+        "activity_multiplier": 0.0,
+        "frequency": 0.5,
+        "note": "GSTM1 deletion \u2014 NO GSH conjugation of PAH epoxides. Major cancer risk factor."
+      }
+    },
+    "GSTT1": {
+      "active": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.8
+      },
+      "null": {
+        "activity_multiplier": 0.0,
+        "frequency": 0.2,
+        "note": "GSTT1 deletion \u2014 impaired detox of small electrophiles including ethylene oxide"
+      }
+    },
+    "GSTP1": {
+      "Ile105Ile": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.45,
+        "note": "High activity toward BPDE"
+      },
+      "Ile105Val": {
+        "activity_multiplier": 0.6,
+        "frequency": 0.4,
+        "note": "Moderate reduction"
+      },
+      "Val105Val": {
+        "activity_multiplier": 0.3,
+        "frequency": 0.15,
+        "note": "Significant activity reduction"
+      }
+    },
+    "NQO1": {
+      "WT": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.75,
+        "note": "Detoxifies quinones"
+      },
+      "heterozygous_609CT": {
+        "activity_multiplier": 0.5,
+        "frequency": 0.2
+      },
+      "homozygous_609TT": {
+        "activity_multiplier": 0.02,
+        "frequency": 0.04,
+        "note": "Near-null NQO1; benzene risk greatly increased"
+      }
+    },
+    "NAT2": {
+      "rapid": {
+        "activity_multiplier": 2.0,
+        "frequency": 0.25,
+        "note": "Fast N-acetyltransferase \u2014 HCA detox vs activation balance"
+      },
+      "intermediate": {
+        "activity_multiplier": 1.0,
+        "frequency": 0.45
+      },
+      "slow": {
+        "activity_multiplier": 0.3,
+        "frequency": 0.3,
+        "note": "Slow N-acetyltransferase \u2014 reduced HCA detoxification in colon; increased bladder risk"
+      }
+    }
+  },
+  "interaction_rules": {
+    "_description": "Higher-order interaction rules for combined exposures",
+    "synergy_threshold": 1.2,
+    "antagonism_threshold": 0.8,
+    "known_synergies": [
+      {
+        "name": "Alcohol + Smoking \u2192 Oral/Pharyngeal Cancer",
+        "mechanism": "Ethanol enhances mucosal permeability to PAH; CYP2E1 induction generates more acetaldehyde; AhR induction amplifies HCA activation",
+        "synergy_score": 3.5,
+        "reference": "IARC Monographs Group 1"
+      },
+      {
+        "name": "Alcohol + Hepatocellular Carcinoma (combined with AFB1)",
+        "mechanism": "Alcohol-induced liver disease creates permissive microenvironment; CYP3A4 modulation by CYP2E1 alters AFB1 activation ratio",
+        "synergy_score": 2.8
+      },
+      {
+        "name": "Benzene + Cr(VI) \u2192 Hematotoxicity amplification",
+        "mechanism": "Both deplete bone marrow GSH; Cr(VI) inhibits PARP; combined DNA damage exceeds repair capacity",
+        "synergy_score": 2.1
+      }
+    ],
+    "known_antagonisms": [
+      {
+        "name": "Ethanol competitive inhibition of benzene CYP2E1 activation",
+        "mechanism": "High ethanol competes with benzene for CYP2E1 active site. Benzene activation REDUCED by ~62% in DBTEX mixture (Haddad et al. Tox Sci 2001)",
+        "antagonism_score": 0.38,
+        "reference": "Haddad et al. Tox Sci 2001"
+      },
+      {
+        "name": "Caffeine + PhIP CYP1A2 competition",
+        "mechanism": "Caffeine acts as competitive inhibitor of PhIP N-hydroxylation (Ki~0.08 mM for caffeine vs phenacetin); may reduce HCA activation",
+        "antagonism_score": 0.7
+      }
+    ]
+  }
+}

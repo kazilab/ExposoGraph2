@@ -1,0 +1,977 @@
+{
+  "metadata": {
+    "title": "ExposoGraph Exposure Integration Database",
+    "version": "1.0.0",
+    "date": "2026-03-30",
+    "authors": ["Kenneth J. Pienta (Johns Hopkins University)", "Julhash U. Kazi (Lund University)"],
+    "sources": [
+      "NHANES 2007-2018 (CDC/NCHS)",
+      "EPA IRIS (Integrated Risk Information System)",
+      "ATSDR (Agency for Toxic Substances and Disease Registry)",
+      "FDA Total Diet Study",
+      "OSHA Permissible Exposure Limits",
+      "NIOSH Recommended Exposure Limits",
+      "NIAAA 2023 NSDUH",
+      "IARC Monographs (Volumes 100A-100F, 132)",
+      "PMID:15322857 (NHANES 1-OHPyr)",
+      "PMID:11477514 (US HCA intake)",
+      "Taylor & Francis 2024 (Dietary Nitrosamines)"
+    ],
+    "description": "Population-level exposure data for all 14 ExposoGraph carcinogen classes. Provides exposure scenarios (from unexposed to occupational high), biomarker reference values, estimated tissue concentrations, and regulatory benchmarks for integration with genotype-based flux scoring.",
+    "units_note": "tissue_conc_uM = estimated target tissue or blood concentration in micromolar; daily_intake_ug_kg = daily intake in micrograms per kilogram body weight",
+    "genotype_modifier_note": "Genotype modifiers are applied multiplicatively: flux_ratio (from ExposoGraph) × exposure_multiplier = combined risk score"
+  },
+  "carcinogen_classes": {
+    "PAH": {
+      "class_id": 1,
+      "class_label": "A. Polycyclic Aromatic Hydrocarbons (PAHs)",
+      "index_carcinogen": "Benzo[a]pyrene (BaP)",
+      "iarc_classification": "Group 1",
+      "primary_targets": ["Lung", "Skin", "Bladder", "Colon"],
+      "key_enzymes_activation": ["CYP1A1", "CYP1B1", "EPHX1"],
+      "key_enzymes_detox": ["GSTM1", "GSTT1", "GSTP1", "UGT1A1"],
+      "exposure_scenarios": {
+        "unexposed": {
+          "label": "Minimal exposure (rural non-smoker, no occupational)",
+          "estimated_tissue_conc_uM": 0.001,
+          "daily_intake_ug_kg": 0.001,
+          "multiplier_vs_baseline": 0.2,
+          "source": "ATSDR; EPA background estimates"
+        },
+        "general_population": {
+          "label": "Typical US adult (non-smoker, urban)",
+          "biomarker": "Urinary 1-OHPyr 79.8 ng/L (74.2 ng/g creatinine)",
+          "estimated_tissue_conc_uM": 0.005,
+          "daily_intake_ug_kg": 0.005,
+          "multiplier_vs_baseline": 1.0,
+          "air_concentration_ng_m3": 2.0,
+          "source": "NHANES 1999-2000; PMID:15322857"
+        },
+        "smoker": {
+          "label": "Current smoker (1 pack/day, ~20 cigarettes)",
+          "estimated_tissue_conc_uM": 0.015,
+          "daily_intake_ug_kg": 0.015,
+          "multiplier_vs_baseline": 3.0,
+          "note": "Cigarette smoke major PAH source; 1-OHPyr ~3x higher in smokers vs non-smokers",
+          "source": "NHANES; ATSDR ToxProfile PAH"
+        },
+        "heavy_grilled_meat_diet": {
+          "label": "Daily grilled/charred meat consumer",
+          "estimated_tissue_conc_uM": 0.010,
+          "daily_intake_ug_kg": 0.010,
+          "multiplier_vs_baseline": 2.0,
+          "dietary_bap_ug_day": 0.3,
+          "note": "Grilled/charred meat 0.1-10 ng/g BaP; total dietary BaP ~0.1-0.4 μg/day typical US diet",
+          "source": "FDA Total Diet Study"
+        },
+        "smoker_heavy_grilled_meat": {
+          "label": "Smoker + daily grilled/charred meat diet",
+          "estimated_tissue_conc_uM": 0.035,
+          "daily_intake_ug_kg": 0.035,
+          "multiplier_vs_baseline": 7.0,
+          "source": "Combined smoking + dietary PAH estimates"
+        },
+        "occupational_high": {
+          "label": "Coke oven / foundry / road paving worker",
+          "estimated_tissue_conc_uM": 0.5,
+          "daily_intake_ug_kg": 0.5,
+          "multiplier_vs_baseline": 100.0,
+          "air_concentration_ng_m3": 200.0,
+          "note": "Occupational PAH 10-100x general population; 1-OHPyr >1000 ng/g creatinine in coke oven workers",
+          "source": "OSHA; occupational cohort studies; NIOSH"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": 1.0,
+        "unit": "per mg/kg-day",
+        "adaf_adjusted_value": 2.0,
+        "source": "EPA IRIS; CASRN 50-32-8"
+      },
+      "epa_inhalation_unit_risk": {
+        "value": 1e-3,
+        "unit": "per μg/m³",
+        "source": "EPA IRIS"
+      },
+      "regulatory_limits": {
+        "OSHA_PEL_coal_tar_pitch_volatiles": "0.2 mg/m³ (cyclohexane-soluble fraction)",
+        "NIOSH_REL_coke_oven_emissions": "lowest feasible concentration",
+        "EPA_ambient_air_guidance": "no safe level; minimize exposure"
+      },
+      "population_prevalence_notes": "Urban air: 0.2-20 ng/m³; Rural: 0.1-1 ng/m³. Dietary BaP 0.1-0.4 μg/day typical US adult"
+    },
+
+    "HCA": {
+      "class_id": 2,
+      "class_label": "B. Heterocyclic Amines (HCAs)",
+      "index_carcinogen": "PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine)",
+      "iarc_classification": "Group 2A (PhIP); Group 2B (MeIQx)",
+      "primary_targets": ["Colon", "Breast", "Prostate", "Pancreas"],
+      "key_enzymes_activation": ["CYP1A2", "SULT1A1", "NAT2"],
+      "key_enzymes_detox": ["NAT2", "UGT1A1", "GSTP1"],
+      "exposure_scenarios": {
+        "vegetarian_low_meat": {
+          "label": "Vegetarian / very low meat intake",
+          "estimated_tissue_conc_uM": 0.0005,
+          "daily_intake_ng_person": 50,
+          "daily_intake_ng_kg": 0.5,
+          "multiplier_vs_baseline": 0.1,
+          "source": "PMID:11477514"
+        },
+        "general_population": {
+          "label": "Average US adult (mixed diet)",
+          "biomarker": "Urinary PhIP metabolites; estimated ~9 ng/kg/day total HA",
+          "estimated_tissue_conc_uM": 0.005,
+          "daily_intake_ng_person": 554,
+          "daily_intake_ng_kg": 9.0,
+          "multiplier_vs_baseline": 1.0,
+          "phip_fraction": 0.68,
+          "note": "US population average total HA intake ~9 ng/kg/day; PhIP ~67-70% of total",
+          "source": "PMID:11477514; Pan et al. 2011"
+        },
+        "moderate_meat_diet": {
+          "label": "Moderate meat eater (daily chicken/beef)",
+          "estimated_tissue_conc_uM": 0.025,
+          "daily_intake_ng_person": 2000,
+          "daily_intake_ng_kg": 28,
+          "multiplier_vs_baseline": 3.0,
+          "source": "NCI HCA estimation tool; PMID:11477514"
+        },
+        "high_meat_well_done": {
+          "label": "High red meat consumer, well-done/pan-fried",
+          "estimated_tissue_conc_uM": 0.08,
+          "daily_intake_ng_person": 8000,
+          "daily_intake_ng_kg": 100,
+          "multiplier_vs_baseline": 10.0,
+          "note": "Pan-fried meats largest source; well-done chicken highest PhIP levels (per NCI food preparation studies)",
+          "source": "NCI HCA database; Sinha et al. 2005"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": null,
+        "note": "No EPA IRIS entry for PhIP specifically; EFSA 2015 reviewed HCAs",
+        "source": "EFSA 2015 risk assessment on HCAs in cooked meat"
+      },
+      "regulatory_limits": {
+        "note": "No specific regulatory limits for HCAs in food; FDA monitors via Total Diet Study"
+      },
+      "exposure_categories_from_literature": {
+        "low": "<3 ng/kg/day",
+        "moderate": "3-15 ng/kg/day",
+        "high": ">15 ng/kg/day"
+      }
+    },
+
+    "AromaticAmines": {
+      "class_id": 3,
+      "class_label": "C. Aromatic Amines (Bladder Carcinogens)",
+      "index_carcinogen": "4-Aminobiphenyl (4-ABP)",
+      "iarc_classification": "Group 1 (4-ABP, 2-naphthylamine, benzidine)",
+      "primary_targets": ["Bladder", "Breast", "Kidney"],
+      "key_enzymes_activation": ["CYP1A2", "NAT1"],
+      "key_enzymes_detox": ["NAT2", "GSTs"],
+      "exposure_scenarios": {
+        "nonsmoker_no_occupational": {
+          "label": "Non-smoker, no occupational exposure",
+          "estimated_tissue_conc_uM": 0.001,
+          "daily_intake_ug_day": 0.01,
+          "multiplier_vs_baseline": 0.3,
+          "source": "NHANES; background dietary exposure"
+        },
+        "general_population": {
+          "label": "Typical US adult (includes dietary sources)",
+          "estimated_tissue_conc_uM": 0.005,
+          "daily_intake_ug_day": 0.05,
+          "multiplier_vs_baseline": 1.0,
+          "note": "Dietary sources: grilled meats, tobacco combustion products (environmental)",
+          "source": "ATSDR ToxProfile; PMID:12435693"
+        },
+        "smoker": {
+          "label": "Current smoker",
+          "estimated_tissue_conc_uM": 0.05,
+          "multiplier_vs_baseline": 10.0,
+          "note": "Tobacco smoke major source of 4-ABP; smokers have 3-10x higher 4-ABP-hemoglobin adducts",
+          "source": "NHANES; IARC Monograph Vol 99"
+        },
+        "occupational_dye_rubber": {
+          "label": "Occupational (dye, rubber, or chemical manufacturing)",
+          "estimated_tissue_conc_uM": 0.2,
+          "multiplier_vs_baseline": 40.0,
+          "note": "Historical industrial exposures (benzidine, 4-ABP) largely banned; residual risk in legacy industries",
+          "source": "OSHA; NIOSH; IARC Monograph Vol 1 and 99"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": null,
+        "note": "EPA IRIS: 4-aminobiphenyl oral slope factor: 0.50 per mg/kg-day (provisional)",
+        "source": "EPA IRIS CASRN 92-67-1"
+      },
+      "regulatory_limits": {
+        "OSHA_4ABP_PEL": "Carcinogen — no permissible exposure; use required engineering controls",
+        "note": "2-naphthylamine, benzidine, 4-ABP, 4-nitrobiphenyl — OSHA 29 CFR 1910.1003-.1016"
+      }
+    },
+
+    "TobaccoNitrosamines": {
+      "class_id": 4,
+      "class_label": "D. Tobacco-Specific Nitrosamines (TSNAs)",
+      "index_carcinogen": "NNK (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone)",
+      "iarc_classification": "Group 1 (NNK, NNN)",
+      "primary_targets": ["Lung", "Esophagus", "Pancreas", "Oral cavity"],
+      "key_enzymes_activation": ["CYP2A6", "CYP2A13", "CYP2E1", "CYP1A1"],
+      "key_enzymes_detox": ["AKR1C", "GSTM1", "GSTT1", "MGMT"],
+      "exposure_scenarios": {
+        "never_smoker": {
+          "label": "Never smoker (no tobacco use)",
+          "estimated_tissue_conc_uM": 0.0,
+          "daily_intake_ng_day": 0,
+          "multiplier_vs_baseline": 0.0,
+          "note": "TSNAs virtually absent in non-tobacco users; trace dietary exposure negligible",
+          "source": "NHANES cotinine; NIAAA 2023"
+        },
+        "secondhand_smoke": {
+          "label": "Non-smoker with regular secondhand smoke exposure",
+          "estimated_tissue_conc_uM": 0.001,
+          "multiplier_vs_baseline": 0.1,
+          "biomarker": "Urinary NNAL (NNK metabolite) detectable in SHS-exposed nonsmokers",
+          "source": "Hecht 2003; PMID:14618640"
+        },
+        "general_population": {
+          "label": "General population reference (non-smoker baseline)",
+          "estimated_tissue_conc_uM": 0.001,
+          "daily_intake_ng_day": 10,
+          "multiplier_vs_baseline": 1.0,
+          "source": "NHANES urinary cotinine / NNAL reference"
+        },
+        "smoker_half_pack": {
+          "label": "Smoker (10 cigarettes/day, 0.5 pack/day)",
+          "estimated_tissue_conc_uM": 0.1,
+          "daily_intake_ug_day": 1.0,
+          "multiplier_vs_baseline": 100.0,
+          "pack_years_per_decade": 5,
+          "source": "Hecht 2002; urinary NNAL data"
+        },
+        "smoker_one_pack": {
+          "label": "Smoker (20 cigarettes/day, 1 pack/day)",
+          "estimated_tissue_conc_uM": 0.2,
+          "daily_intake_ug_day": 2.0,
+          "multiplier_vs_baseline": 200.0,
+          "pack_years_per_decade": 10,
+          "source": "Hecht 2002; PMID:12379477"
+        },
+        "heavy_smoker": {
+          "label": "Heavy smoker (>40 cigarettes/day, 2+ pack/day)",
+          "estimated_tissue_conc_uM": 0.5,
+          "daily_intake_ug_day": 5.0,
+          "multiplier_vs_baseline": 500.0,
+          "source": "IARC Monograph Vol 100E; Hecht 2002"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "NNK_inhalation_unit_risk": 1.8e-4,
+        "unit": "per μg/m³",
+        "source": "EPA IRIS CASRN 64091-91-4"
+      },
+      "regulatory_limits": {
+        "FDA_TSNA_smokeless_tobacco": "No maximum limit set; monitoring program active",
+        "note": "FDA requires TSNA reporting for cigarettes under FSPTCA 2009"
+      }
+    },
+
+    "AflatoxinB1": {
+      "class_id": 5,
+      "class_label": "E. Aflatoxin B1 (AFB1) / Mycotoxins",
+      "index_carcinogen": "Aflatoxin B1 (AFB1)",
+      "iarc_classification": "Group 1",
+      "primary_targets": ["Liver (HCC)", "Lung", "Kidney"],
+      "key_enzymes_activation": ["CYP3A4", "CYP1A2"],
+      "key_enzymes_detox": ["GSTM1", "EPHX1", "ABCB1", "AKR"],
+      "exposure_scenarios": {
+        "us_low_exposure": {
+          "label": "Typical US adult (strict FDA regulation)",
+          "estimated_tissue_conc_uM": 0.0001,
+          "daily_intake_ug_kg_bw": 0.005,
+          "multiplier_vs_baseline": 1.0,
+          "biomarker": "AFB1-albumin adducts detectable in ~1-3% of US blood samples",
+          "note": "US FDA action level: 20 ppb total aflatoxins; estimated dietary exposure <0.01 μg/kg BW/day",
+          "source": "FDA; IARC 1993; ATSDR"
+        },
+        "high_processed_grain": {
+          "label": "US consumer high in corn/peanut products (aged/stored grains)",
+          "estimated_tissue_conc_uM": 0.001,
+          "daily_intake_ug_kg_bw": 0.05,
+          "multiplier_vs_baseline": 10.0,
+          "source": "FDA Total Diet Study; USDA monitoring"
+        },
+        "developing_country_moderate": {
+          "label": "Developing country (moderate aflatoxin-endemic diet)",
+          "estimated_tissue_conc_uM": 0.05,
+          "daily_intake_ug_kg_bw": 1.0,
+          "multiplier_vs_baseline": 200.0,
+          "note": "Sub-Saharan Africa, parts of Asia: 10-100x higher than US; dietary intake up to 2 μg/kg BW/day",
+          "source": "IARC; Wild & Turner 2002; WHO AFB1 risk assessment"
+        },
+        "developing_country_high": {
+          "label": "Developing country (high-endemic area, staple grain diet)",
+          "estimated_tissue_conc_uM": 0.2,
+          "daily_intake_ug_kg_bw": 2.0,
+          "multiplier_vs_baseline": 400.0,
+          "source": "IARC Monograph Vol 82; Groopman 1997"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": 1.0,
+        "unit": "per μg/kg-day (hepatitis B surface antigen negative)",
+        "hbsag_positive_value": 11.0,
+        "note": "Synergistic interaction with HBV; 30-fold increase in HCC risk for HBV+AFB1 co-exposure",
+        "source": "EPA IRIS; Ross et al. 1992"
+      },
+      "regulatory_limits": {
+        "FDA_action_level_total_aflatoxins": "20 ppb (μg/kg) in food",
+        "FDA_action_level_milk": "0.5 ppb (M1)",
+        "EU_maximum_level_AFB1": "2 ppb in food",
+        "EU_maximum_level_cereals": "2 ppb"
+      }
+    },
+
+    "EstrogenMetabolites": {
+      "class_id": 6,
+      "class_label": "F. Estrogen Metabolites (Catechol Estrogens)",
+      "index_carcinogen": "4-Hydroxyestradiol (4-OHE2) / Estradiol-3,4-quinone",
+      "iarc_classification": "Group 1 (estrogen-progestogen contraceptives, HRT)",
+      "primary_targets": ["Breast", "Endometrium", "Ovary", "Kidney"],
+      "key_enzymes_activation": ["CYP1B1", "CYP1A1", "CYP1A2"],
+      "key_enzymes_detox": ["COMT", "UGT2B7", "UGT2B15", "GSTP1"],
+      "exposure_scenarios": {
+        "premenopausal_no_exogenous": {
+          "label": "Premenopausal woman, endogenous estrogen only",
+          "estimated_tissue_conc_uM": 0.01,
+          "serum_estradiol_pg_mL": 150,
+          "multiplier_vs_baseline": 1.0,
+          "source": "NHANES; Rosner et al. 2008"
+        },
+        "postmenopausal_no_hrt": {
+          "label": "Postmenopausal woman, no HRT",
+          "estimated_tissue_conc_uM": 0.002,
+          "serum_estradiol_pg_mL": 15,
+          "multiplier_vs_baseline": 0.2,
+          "source": "NHANES; estradiol reference ranges"
+        },
+        "postmenopausal_hrt_combined": {
+          "label": "Postmenopausal woman on combined estrogen-progestogen HRT",
+          "estimated_tissue_conc_uM": 0.05,
+          "multiplier_vs_baseline": 5.0,
+          "note": "Combined E+P HRT: IARC Group 1 carcinogen; breast cancer RR ~1.5-2.0",
+          "source": "WHI; IARC Monograph Vol 91 and 100A"
+        },
+        "obesity_related_high_estrogen": {
+          "label": "Postmenopausal woman with obesity (elevated aromatase)",
+          "estimated_tissue_conc_uM": 0.015,
+          "multiplier_vs_baseline": 1.5,
+          "note": "Adipose aromatase converts androgens to estrogens; major driver of postmenopausal breast cancer",
+          "source": "IARC; van den Brandt 2000"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": null,
+        "note": "No standard EPA IRIS slope factor for estradiol; IARC provides qualitative Group 1 classification",
+        "source": "IARC Monograph Vol 100A"
+      },
+      "regulatory_limits": {
+        "FDA_approval": "Estrogens: FDA-approved medications; label includes cancer risk warnings",
+        "IARC_classification": "Steroidal estrogens Group 1 carcinogen"
+      }
+    },
+
+    "Benzene": {
+      "class_id": 7,
+      "class_label": "G. Benzene / Small-Molecule Solvents",
+      "index_carcinogen": "Benzene",
+      "iarc_classification": "Group 1",
+      "primary_targets": ["Bone marrow (AML/MDS)", "Lymphoma", "Kidney"],
+      "key_enzymes_activation": ["CYP2E1", "CYP2F1"],
+      "key_enzymes_detox": ["NQO1", "GSTs", "EPHX1"],
+      "exposure_scenarios": {
+        "unexposed_rural": {
+          "label": "Rural non-smoker, no occupational exposure",
+          "estimated_tissue_conc_uM": 0.005,
+          "air_concentration_ug_m3": 0.5,
+          "multiplier_vs_baseline": 0.2,
+          "source": "EPA outdoor air monitoring"
+        },
+        "general_population": {
+          "label": "Typical US adult (urban, non-smoker)",
+          "estimated_tissue_conc_uM": 0.03,
+          "air_concentration_ug_m3": 3.0,
+          "blood_benzene_ug_L": 0.05,
+          "multiplier_vs_baseline": 1.0,
+          "note": "Urban air: 1-10 μg/m³ (0.3-3 ppb); indoor from gasoline/solvents: 2-20 μg/m³",
+          "source": "EPA IRIS; NHANES volatile organic compounds"
+        },
+        "smoker": {
+          "label": "Current smoker",
+          "estimated_tissue_conc_uM": 0.2,
+          "multiplier_vs_baseline": 6.0,
+          "note": "Smokers: 6-10x higher benzene metabolite levels than nonsmokers",
+          "source": "NHANES; ATSDR ToxProfile Benzene"
+        },
+        "urban_high_traffic": {
+          "label": "Urban commuter / high traffic exposure",
+          "estimated_tissue_conc_uM": 0.1,
+          "air_concentration_ug_m3": 10.0,
+          "multiplier_vs_baseline": 3.0,
+          "source": "EPA air toxics monitoring"
+        },
+        "occupational_petroleum": {
+          "label": "Petroleum / chemical / oil refinery worker",
+          "estimated_tissue_conc_uM": 5.0,
+          "multiplier_vs_baseline": 150.0,
+          "note": "OSHA PEL 1 ppm (3.19 mg/m³); occupational: 1-10 μM blood level",
+          "osha_PEL_ppm": 1.0,
+          "source": "OSHA 29 CFR 1910.1028; Rothman et al. 1997"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": 0.055,
+        "unit": "per mg/kg-day (oral)",
+        "inhalation_unit_risk": 2.2e-6,
+        "inhalation_unit_risk_unit": "per μg/m³",
+        "source": "EPA IRIS CASRN 71-43-2"
+      },
+      "regulatory_limits": {
+        "OSHA_PEL": "1 ppm (3.19 mg/m³) TWA",
+        "OSHA_STEL": "5 ppm (15 min)",
+        "NIOSH_REL": "lowest feasible concentration",
+        "EPA_ambient_water_MCL": "5 μg/L",
+        "EPA_MCLG": "zero"
+      }
+    },
+
+    "VinylChloride": {
+      "class_id": 7.5,
+      "class_label": "G2. Vinyl Chloride",
+      "index_carcinogen": "Vinyl Chloride (VCM)",
+      "iarc_classification": "Group 1",
+      "primary_targets": ["Liver (angiosarcoma)", "Brain", "Lung", "Lymphoma"],
+      "key_enzymes_activation": ["CYP2E1"],
+      "key_enzymes_detox": ["GSTs", "ALDH2", "EH"],
+      "exposure_scenarios": {
+        "general_population": {
+          "label": "Typical US adult (trace environmental)",
+          "estimated_tissue_conc_uM": 0.001,
+          "air_concentration_ppb": 0.02,
+          "multiplier_vs_baseline": 1.0,
+          "source": "EPA ambient air monitoring"
+        },
+        "near_contaminated_site": {
+          "label": "Resident near PVC plant or contaminated site",
+          "estimated_tissue_conc_uM": 0.05,
+          "multiplier_vs_baseline": 50.0,
+          "source": "ATSDR ToxProfile VCM; EPA site assessments"
+        },
+        "occupational": {
+          "label": "PVC manufacturing / industrial worker",
+          "estimated_tissue_conc_uM": 2.0,
+          "multiplier_vs_baseline": 2000.0,
+          "osha_PEL_ppm": 1.0,
+          "source": "OSHA 29 CFR 1910.1017; IARC Monograph Vol 97"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": 0.72,
+        "unit": "per mg/kg-day",
+        "inhalation_unit_risk": 8.8e-6,
+        "inhalation_unit_risk_unit": "per μg/m³",
+        "source": "EPA IRIS CASRN 75-01-4"
+      },
+      "regulatory_limits": {
+        "OSHA_PEL": "1 ppm TWA",
+        "EPA_MCL_drinking_water": "0.002 mg/L (2 μg/L)"
+      }
+    },
+
+    "HeavyMetals": {
+      "class_id": 10,
+      "class_label": "J. Heavy Metals (As, Cd, Cr(VI), Ni, Pb)",
+      "index_carcinogen": "Arsenic (inorganic), Cadmium, Chromium(VI)",
+      "iarc_classification": "Group 1 (As, Cd, Cr(VI), Ni compounds)",
+      "primary_targets": ["Lung", "Bladder", "Kidney", "Skin", "Liver"],
+      "key_enzymes_activation": ["CYP1A1", "CYP2E1"],
+      "key_enzymes_detox": ["GSTM1", "GSTT1", "MT (metallothionein)", "ABCC2", "GSH"],
+      "exposure_scenarios": {
+        "general_population": {
+          "label": "Typical US adult (NHANES reference)",
+          "biomarkers": {
+            "blood_cadmium_ug_L": 0.27,
+            "urinary_arsenic_total_ug_L": 7.91,
+            "blood_lead_ug_dL": 1.2,
+            "urinary_mercury_ug_L": 0.5
+          },
+          "estimated_tissue_conc_uM": {
+            "arsenic": 0.1,
+            "cadmium": 0.002,
+            "lead": 0.06,
+            "mercury": 0.003
+          },
+          "multiplier_vs_baseline": 1.0,
+          "note": "NHANES 2007-2012: Blood Cd GM 0.27 μg/L; urinary As GM 7.91 μg/L creatinine-adjusted",
+          "source": "NHANES 2007-2012; CDC fourth national report on human exposure to environmental chemicals"
+        },
+        "smoker": {
+          "label": "Current smoker (elevated Cd from tobacco)",
+          "biomarkers": {
+            "blood_cadmium_ug_L": 0.54,
+            "note": "Blood Cd ~2x higher in smokers (cotinine ≥10 ng/mL)"
+          },
+          "multiplier_vs_baseline": 2.0,
+          "source": "NHANES; ATSDR ToxProfile Cadmium"
+        },
+        "high_seafood_fish": {
+          "label": "High seafood consumer (elevated As/Hg)",
+          "estimated_tissue_conc_uM": {
+            "arsenic": 1.0,
+            "mercury": 0.05
+          },
+          "multiplier_vs_baseline": 3.0,
+          "note": "Seafood organic As typically less carcinogenic; inorganic As is the primary concern",
+          "source": "FDA seafood advisory; EPA fish consumption"
+        },
+        "arsenic_endemic_well_water": {
+          "label": "Groundwater As area (Bangladesh / West Bengal / US Southwest)",
+          "estimated_tissue_conc_uM": {
+            "arsenic": 5.0
+          },
+          "water_arsenic_ug_L": 200,
+          "multiplier_vs_baseline": 50.0,
+          "note": "EPA MCL 10 μg/L; some well water areas >100-500 μg/L; WHO limit 10 μg/L",
+          "source": "ATSDR; EPA; Argos 2010 Bangladesh cohort"
+        },
+        "occupational_chromium_vi": {
+          "label": "Chrome plating / stainless steel welding / leather tanning worker",
+          "estimated_tissue_conc_uM": {
+            "chromium_vi": 2.0
+          },
+          "air_concentration_ug_m3": 10.0,
+          "multiplier_vs_baseline_chromium": 1000.0,
+          "osha_PEL_cr_vi_ug_m3": 5.0,
+          "osha_action_level_ug_m3": 2.5,
+          "note": "OSHA PEL Cr(VI): 5 μg/m³; action level 2.5 μg/m³; NCI occupational cohort RR lung cancer ~4-15",
+          "source": "OSHA 29 CFR 1910.1026; IARC Monograph Vol 49"
+        },
+        "occupational_cadmium": {
+          "label": "Battery / pigment / smelting worker (Cd exposure)",
+          "blood_cadmium_ug_L": 5.0,
+          "urinary_cadmium_ug_g_creatinine": 5.0,
+          "multiplier_vs_baseline": 20.0,
+          "source": "OSHA 29 CFR 1910.1027; ATSDR"
+        }
+      },
+      "epa_cancer_slope_factors": {
+        "arsenic_inorganic_oral": {"value": 1.5, "unit": "per mg/kg-day"},
+        "arsenic_inhalation_unit_risk": {"value": 4.3e-3, "unit": "per μg/m³"},
+        "cadmium_oral": {"value": null, "note": "No oral slope factor; primary route inhalation"},
+        "cadmium_inhalation_unit_risk": {"value": 1.8e-3, "unit": "per μg/m³"},
+        "chromium_vi_inhalation_unit_risk": {"value": 1.2e-2, "unit": "per μg/m³"},
+        "source": "EPA IRIS"
+      },
+      "population_multicontaminant": {
+        "note": "~22% of US population has all 4 metals (Pb/Cd/Hg/As) above population median simultaneously",
+        "source": "Zota et al.; NHANES multi-metal analyses"
+      },
+      "regulatory_limits": {
+        "EPA_MCL_arsenic_water": "10 μg/L",
+        "OSHA_PEL_arsenic_inorganic": "10 μg/m³",
+        "OSHA_PEL_cadmium": "5 μg/m³",
+        "OSHA_PEL_chromium_vi": "5 μg/m³",
+        "OSHA_action_level_chromium_vi": "2.5 μg/m³"
+      }
+    },
+
+    "Aldehyde": {
+      "class_id": 11,
+      "class_label": "K. Formaldehyde / Aldehydes (Class 11)",
+      "index_carcinogen": "Acetaldehyde (from ethanol) / Formaldehyde",
+      "iarc_classification": "Group 1 (formaldehyde, acetaldehyde associated with alcohol)",
+      "primary_targets": ["Liver", "Esophagus", "Nasopharynx", "Colon", "Bone marrow"],
+      "key_enzymes_activation": ["ADH1B", "ADH1C", "ADH5"],
+      "key_enzymes_detox": ["ALDH2", "FANCD2"],
+      "exposure_scenarios": {
+        "nondrinker": {
+          "label": "Nondrinker (endogenous formaldehyde only)",
+          "tissue_conc_uM": 0.5,
+          "note": "Endogenous formaldehyde: ~50-100 μM in blood (continuously produced); exogenous contribution negligible in non-drinkers. Acetaldehyde tissue conc ~0.",
+          "acetaldehyde_tissue_conc_uM": 0.0,
+          "formaldehyde_blood_uM": 75,
+          "multiplier_vs_baseline": 0.05,
+          "source": "Pontel 2015; PMC7758861"
+        },
+        "light_drinker": {
+          "label": "Light drinker (1-7 drinks/week, ~2-10 g/day ethanol)",
+          "tissue_conc_uM": 5,
+          "blood_acetaldehyde_uM": 5,
+          "ethanol_g_per_day": 5,
+          "drinks_per_week_range": [1, 7],
+          "multiplier_vs_baseline": 1.0,
+          "source": "NIAAA; Salaspuro 2007"
+        },
+        "moderate_drinker": {
+          "label": "Moderate drinker (7-14 drinks/week, ~10-20 g/day)",
+          "tissue_conc_uM": 20,
+          "blood_acetaldehyde_uM": 20,
+          "ethanol_g_per_day": 15,
+          "drinks_per_week_range": [7, 14],
+          "multiplier_vs_baseline": 4.0,
+          "source": "NIAAA; Seitz & Stickel 2007"
+        },
+        "heavy_drinker": {
+          "label": "Heavy drinker (>14 drinks/week, >20 g/day)",
+          "tissue_conc_uM": 50,
+          "blood_acetaldehyde_uM": 50,
+          "ethanol_g_per_day": 60,
+          "drinks_per_week_range": [15, 50],
+          "multiplier_vs_baseline": 10.0,
+          "source": "NIAAA 2023 NSDUH; IARC Monograph Vol 100E"
+        },
+        "ALDH2_heterozygote_moderate": {
+          "label": "ALDH2*1/*2 heterozygote + moderate drinking",
+          "tissue_conc_uM": 80,
+          "blood_acetaldehyde_uM": 80,
+          "multiplier_vs_baseline": 16.0,
+          "note": "ALDH2*1/*2: 6x higher blood acetaldehyde after ethanol; impaired acetaldehyde clearance; OR 2.34 for ESCC",
+          "source": "PMC4376259; Yokoyama 1998"
+        },
+        "ALDH2_homozygote_any_drinking": {
+          "label": "ALDH2*2/*2 homozygote + any drinking",
+          "tissue_conc_uM": 200,
+          "blood_acetaldehyde_uM": 200,
+          "multiplier_vs_baseline": 40.0,
+          "note": "ALDH2*2/*2: 19x higher acetaldehyde; severe flushing; most avoid drinking but when consumed, extremely high risk",
+          "source": "IARC; Yokoyama 1998; PMC7941978"
+        },
+        "formaldehyde_occupational": {
+          "label": "Occupational formaldehyde exposure (funeral/lab/manufacturing)",
+          "tissue_conc_uM": 5.0,
+          "air_ppm": 0.5,
+          "multiplier_vs_baseline": 3.0,
+          "note": "OSHA PEL 0.75 ppm TWA, 2 ppm STEL; endogenous already ~50-100 μM; exogenous adds incrementally",
+          "osha_PEL_ppm": 0.75,
+          "osha_STEL_ppm": 2.0,
+          "source": "OSHA 29 CFR 1910.1048; NIOSH REL 0.016 ppm"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "formaldehyde_inhalation_unit_risk": 1.3e-5,
+        "unit": "per μg/m³",
+        "source": "EPA IRIS CASRN 50-00-0"
+      },
+      "regulatory_limits": {
+        "OSHA_formaldehyde_PEL": "0.75 ppm TWA",
+        "OSHA_formaldehyde_STEL": "2.0 ppm (15-min)",
+        "NIOSH_formaldehyde_REL": "0.016 ppm (ceiling 0.1 ppm)",
+        "ACGIH_formaldehyde_TLV": "0.1 ppm ceiling"
+      },
+      "population_prevalence_notes": "~50% US adults are current drinkers (NIAAA 2023); 5.8% heavy drinkers. Blood ethanol after 1 drink: 2-5 mM; after heavy drinking: 20-50 mM."
+    },
+
+    "Dioxins_AhR": {
+      "class_id": 12,
+      "class_label": "L. Dioxins / AhR Pathway Activators (Class 12)",
+      "index_carcinogen": "TCDD (2,3,7,8-Tetrachlorodibenzo-p-dioxin)",
+      "iarc_classification": "Group 1 (TCDD)",
+      "primary_targets": ["Liver", "Lung", "Breast", "Lymphoma", "Sarcoma"],
+      "key_enzymes_activation": ["AhR", "ARNT", "CYP1A1", "CYP1B1"],
+      "key_enzymes_detox": ["AHRR", "CYP1A2", "NQO1", "GSTP1"],
+      "exposure_scenarios": {
+        "general_population": {
+          "label": "Typical US adult (background dietary dioxin)",
+          "estimated_tissue_conc_uM": 0.0001,
+          "estimated_TEQ_pg_g_lipid": 5.0,
+          "daily_intake_pg_TEQ_day": 1.0,
+          "multiplier_vs_baseline": 1.0,
+          "note": "WHO-TEQ; dietary exposure primary (90%+ from animal fats, dairy, fish)",
+          "source": "EPA Dioxin Reassessment 2012; WHO-ECEH 1998-2000"
+        },
+        "high_fatty_fish_diet": {
+          "label": "High fatty fish / animal fat consumer",
+          "estimated_tissue_conc_uM": 0.001,
+          "estimated_TEQ_pg_g_lipid": 25.0,
+          "multiplier_vs_baseline": 5.0,
+          "source": "EPA; EFSA 2018 dioxin assessment"
+        },
+        "near_industrial_source": {
+          "label": "Resident near municipal waste incinerator or industrial site",
+          "estimated_tissue_conc_uM": 0.005,
+          "multiplier_vs_baseline": 50.0,
+          "source": "EPA; ATSDR ToxProfile Dioxins"
+        },
+        "occupational_herbicide_agent_orange": {
+          "label": "Vietnam-era Agent Orange / herbicide manufacturing worker",
+          "estimated_tissue_conc_uM": 0.1,
+          "estimated_TEQ_pg_g_lipid": 500.0,
+          "multiplier_vs_baseline": 500.0,
+          "note": "TCDD levels in Agent Orange-exposed veterans: 100-1000 pg/g lipid vs background ~5",
+          "source": "VA/NAS Agent Orange reports; IARC Monograph Vol 100F"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "TCDD_inhalation_unit_risk": 3.8e-5,
+        "unit": "per μg/m³",
+        "TCDD_oral_slope_factor": 1.0e5,
+        "note": "Extremely potent — oral SF 10^5 per mg/kg-day",
+        "source": "EPA IRIS CASRN 1746-01-6"
+      },
+      "regulatory_limits": {
+        "EPA_water_quality_criterion_TCDD": "1.3 × 10⁻¹⁴ mol/L (human health)",
+        "FDA_dioxin_tolerance_fish": "no established tolerance; action level 1 ppt TEQ",
+        "WHO_tolerable_weekly_intake": "14 pg WHO-TEQ/kg BW/week (2001)"
+      }
+    },
+
+    "DietaryNitroso": {
+      "class_id": 13,
+      "class_label": "M. Dietary N-Nitroso Compounds (NDMA/NDEA)",
+      "index_carcinogen": "NDMA (N-Nitrosodimethylamine)",
+      "iarc_classification": "Group 2A (NDMA, NDEA)",
+      "primary_targets": ["Liver", "Esophagus", "Stomach", "Colon", "Kidney"],
+      "key_enzymes_activation": ["CYP2E1", "CYP2A6"],
+      "key_enzymes_detox": ["MGMT", "GSTP1", "GSTs", "ALDH2"],
+      "exposure_scenarios": {
+        "general_population_low_processed_meat": {
+          "label": "General population, low processed meat intake",
+          "estimated_tissue_conc_uM": 0.001,
+          "daily_intake_ug_person": 0.05,
+          "multiplier_vs_baseline": 0.5,
+          "source": "Taylor & Francis 2024; FDA monitoring"
+        },
+        "general_population": {
+          "label": "Average US adult (some processed meat, tap water)",
+          "estimated_tissue_conc_uM": 0.005,
+          "daily_intake_ug_person": 0.15,
+          "multiplier_vs_baseline": 1.0,
+          "note": "US mean dietary intake: 0.1-0.2 μg/person/day; processed meats >40% of daily nitrosamine exposure",
+          "source": "Taylor & Francis 2024; FDA Total Diet Study"
+        },
+        "high_processed_meat": {
+          "label": "High processed meat consumer (daily hotdogs/sausages)",
+          "estimated_tissue_conc_uM": 0.05,
+          "daily_intake_ug_person": 5.0,
+          "multiplier_vs_baseline": 30.0,
+          "note": "Hotdogs: 159.24 μg/g NDMA (highest); sausages/burgers: 2.36-2.37 μg/g",
+          "source": "Taylor & Francis 2024; European Food Safety Authority"
+        },
+        "contaminated_water_above_advisory": {
+          "label": "Drinking water above EPA advisory (NDMA >0.07 μg/L)",
+          "estimated_tissue_conc_uM": 0.02,
+          "daily_intake_ug_person": 1.0,
+          "multiplier_vs_baseline": 10.0,
+          "note": "Water NDMA: median 0.004 μg/L, mean 0.008 μg/L; EPA health advisory 0.07 μg/L",
+          "source": "EPA; IARC; Stern et al. 1997"
+        },
+        "occupational_rubber_tanning": {
+          "label": "Rubber manufacturing / tanning / amine-exposed worker",
+          "estimated_tissue_conc_uM": 0.5,
+          "multiplier_vs_baseline": 100.0,
+          "source": "IARC Monograph Vol 17; OSHA occupational exposure data"
+        }
+      },
+      "bmdl10": {
+        "value": 29,
+        "unit": "μg/kg BW/day",
+        "note": "BMDL10 for nitrosamines (benchmark dose lower confidence bound for 10% response)",
+        "source": "EFSA 2023; Taylor & Francis 2024"
+      },
+      "epa_cancer_slope_factor": {
+        "NDMA_oral": {"value": 51, "unit": "per mg/kg-day"},
+        "NDMA_inhalation_unit_risk": {"value": 1.4e-2, "unit": "per μg/m³"},
+        "source": "EPA IRIS CASRN 62-75-9"
+      },
+      "regulatory_limits": {
+        "EPA_health_advisory_NDMA_water": "0.07 μg/L (70 ng/L)",
+        "FDA_NDMA_drug_limit": "0.096 μg/day (96 ng/day) acceptable intake",
+        "EU_drinking_water_guidance": "0.1 μg/L"
+      }
+    },
+
+    "ChlorinatedSolvents": {
+      "class_id": 14,
+      "class_label": "N. Chlorinated Solvents / TCE (Class 14)",
+      "index_carcinogen": "Trichloroethylene (TCE)",
+      "iarc_classification": "Group 1 (TCE), Group 2A (PCE, DCM)",
+      "primary_targets": ["Kidney (RCC)", "Liver", "Lymphoma (NHL)", "Cervix"],
+      "key_enzymes_activation": ["CYP2E1", "GSTT1 (inverted role — bioactivation)"],
+      "key_enzymes_detox": ["GSTP1", "EH", "ALDH"],
+      "exposure_scenarios": {
+        "general_population": {
+          "label": "Typical US adult (trace indoor air, background)",
+          "estimated_tissue_conc_uM": 0.01,
+          "air_concentration_ug_m3": 0.5,
+          "multiplier_vs_baseline": 1.0,
+          "note": "EPA MCL 5 μg/L for TCE in drinking water",
+          "source": "EPA; ATSDR ToxProfile TCE"
+        },
+        "near_superfund_site": {
+          "label": "Resident near TCE-contaminated superfund site",
+          "estimated_tissue_conc_uM": 0.5,
+          "water_concentration_ug_L": 50.0,
+          "air_concentration_ug_m3": 20.0,
+          "multiplier_vs_baseline": 50.0,
+          "note": "Environmental air near contaminated sites: 1-100 μg/m³",
+          "source": "ATSDR; EPA Superfund TCE reports"
+        },
+        "occupational_moderate": {
+          "label": "Occupational TCE (metal degreasing, dry cleaning)",
+          "estimated_tissue_conc_uM": 5.0,
+          "air_concentration_ppm": 10.0,
+          "multiplier_vs_baseline": 500.0,
+          "note": "ACGIH TLV 10 ppm; historical OSHA PEL 100 ppm; internal dose: 0.1-10 μM blood level occupational",
+          "source": "OSHA; ACGIH; Raaschou-Nielsen 2003"
+        },
+        "occupational_high": {
+          "label": "High occupational TCE (pre-regulatory era, dry cleaning)",
+          "estimated_tissue_conc_uM": 50.0,
+          "air_concentration_ppm": 100.0,
+          "multiplier_vs_baseline": 5000.0,
+          "note": "Historical OSHA PEL was 100 ppm; now 10 ppm under modern standards",
+          "source": "IARC Monograph Vol 106; Purdue 2011 NCI case-control"
+        }
+      },
+      "special_pharmacogenomic_note": "GSTT1 has INVERTED role for TCE: GSTT1-positive individuals generate reactive TCE-glutathione conjugates (DCVG/DCVC) that accumulate in renal tubular cells → higher kidney cancer risk. GSTT1-null individuals are paradoxically PROTECTED against TCE-related RCC.",
+      "epa_cancer_slope_factor": {
+        "TCE_oral": {"value": 0.005, "unit": "per mg/kg-day"},
+        "TCE_inhalation_unit_risk": {"value": 4.1e-6, "unit": "per μg/m³"},
+        "source": "EPA IRIS CASRN 79-01-6 (2011)"
+      },
+      "regulatory_limits": {
+        "EPA_MCL_TCE_water": "5 μg/L",
+        "OSHA_PEL_TCE": "currently no PEL; ACGIH TLV 10 ppm",
+        "ACGIH_TLV_TCE": "10 ppm (54 mg/m³) TWA"
+      }
+    },
+
+    "UV_Radiation": {
+      "class_id": 9,
+      "class_label": "I. Ultraviolet Radiation (UV/NER)",
+      "index_carcinogen": "Solar UV radiation (UVB 290-320 nm; UVA 320-400 nm)",
+      "iarc_classification": "Group 1 (solar radiation, UV-emitting tanning devices)",
+      "primary_targets": ["Skin (melanoma, SCC, BCC)", "Eye (uveal melanoma)"],
+      "key_enzymes_activation": [],
+      "key_enzymes_detox": ["XPC", "XPA", "XPD (ERCC2)", "XPG", "PCNA", "POLH"],
+      "exposure_scenarios": {
+        "minimal": {
+          "label": "Indoor worker, minimal sun exposure, always SPF50+",
+          "cumulative_MED_per_year": 10,
+          "estimated_DNA_damage_relative": 0.1,
+          "multiplier_vs_baseline": 0.2,
+          "source": "WHO UV Index guidelines"
+        },
+        "general_population": {
+          "label": "Typical US adult (mixed indoor/outdoor, moderate sunscreen use)",
+          "cumulative_MED_per_year": 100,
+          "estimated_DNA_damage_relative": 1.0,
+          "multiplier_vs_baseline": 1.0,
+          "source": "WHO; IARC Monograph Vol 100D"
+        },
+        "outdoor_worker": {
+          "label": "Outdoor worker (farmer, construction, lifeguard)",
+          "cumulative_MED_per_year": 500,
+          "estimated_DNA_damage_relative": 5.0,
+          "multiplier_vs_baseline": 5.0,
+          "source": "OSHA; WHO"
+        },
+        "tanning_bed_user": {
+          "label": "Regular indoor tanning bed user (1-2x/week)",
+          "cumulative_MED_per_year": 800,
+          "estimated_DNA_damage_relative": 8.0,
+          "multiplier_vs_baseline": 8.0,
+          "note": "IARC Group 1: melanoma OR ~1.75 in ever-users; OR ~2.5 in first use before age 35",
+          "source": "IARC Monograph Vol 100D; El Ghissassi 2009"
+        }
+      },
+      "epa_cancer_slope_factor": {
+        "value": null,
+        "note": "UV radiation not regulated via EPA slope factor; IARC Group 1 based on epidemiology",
+        "source": "IARC Monograph Vol 100D"
+      },
+      "regulatory_limits": {
+        "WHO_UV_index_guidance": "UV index >3: sun protection recommended; >6: extra protection",
+        "NIOSH_outdoor_UV": "Limit cumulative daily dose; PPE for outdoor workers"
+      }
+    }
+  },
+
+  "exposure_questionnaire_schema": {
+    "sections": {
+      "smoking": {
+        "label": "Tobacco Use",
+        "questions": [
+          {"id": "smoking_status", "text": "Do you currently smoke cigarettes?", "type": "select", "options": ["never", "former", "current"]},
+          {"id": "cigarettes_per_day", "text": "If current/former smoker: cigarettes per day at peak?", "type": "number", "unit": "cigarettes/day"},
+          {"id": "pack_years", "text": "Estimated pack-years (packs/day × years)?", "type": "number", "unit": "pack-years"},
+          {"id": "secondhand_smoke", "text": "Regular secondhand smoke exposure (home/work)?", "type": "boolean"}
+        ]
+      },
+      "alcohol": {
+        "label": "Alcohol Consumption",
+        "questions": [
+          {"id": "alcohol_status", "text": "Do you drink alcohol?", "type": "select", "options": ["nondrinker", "light", "moderate", "heavy"]},
+          {"id": "drinks_per_week", "text": "Approximate drinks per week (1 drink = 14g ethanol)?", "type": "number", "unit": "drinks/week"},
+          {"id": "binge_episodes", "text": "Binge drinking episodes per month (≥5 drinks/occasion men, ≥4 women)?", "type": "number", "unit": "episodes/month"}
+        ]
+      },
+      "diet": {
+        "label": "Dietary Exposures",
+        "questions": [
+          {"id": "grilled_meat_frequency", "text": "How often do you eat grilled/charred meats?", "type": "select", "options": ["never", "monthly", "weekly", "daily"]},
+          {"id": "processed_meat_frequency", "text": "How often do you eat processed meats (hotdogs, sausage, bacon, deli meats)?", "type": "select", "options": ["never", "monthly", "weekly", "daily"]},
+          {"id": "red_meat_servings", "text": "Red meat servings per week?", "type": "number", "unit": "servings/week"},
+          {"id": "seafood_frequency", "text": "Fish/seafood servings per week?", "type": "number", "unit": "servings/week"},
+          {"id": "aflatoxin_exposure", "text": "Do you live in or travel frequently to regions with high aflatoxin exposure (parts of Africa, South/Southeast Asia)?", "type": "boolean"}
+        ]
+      },
+      "occupation": {
+        "label": "Occupational Exposures",
+        "questions": [
+          {"id": "occupation_category", "text": "Which best describes your occupation?", "type": "select", "options": ["office_indoor", "healthcare", "agriculture", "construction_outdoor", "manufacturing_industrial", "petroleum_chemical", "mining_metals", "dry_cleaning_solvents", "firefighting", "funeral_embalming", "other"]},
+          {"id": "occupation_years", "text": "Years in current or most hazardous occupation?", "type": "number", "unit": "years"},
+          {"id": "occupational_chemicals", "text": "Have you had occupational exposure to any of these?", "type": "multiselect", "options": ["PAHs_coke_oven", "benzene_petroleum", "chromium_vi", "arsenic", "cadmium_batteries", "formaldehyde", "TCE_solvents", "PCBs_dioxins", "asbestos", "coal_dust", "diesel_exhaust", "none"]},
+          {"id": "ppe_use", "text": "Did/do you use personal protective equipment consistently?", "type": "select", "options": ["always", "usually", "sometimes", "rarely", "never"]}
+        ]
+      },
+      "residential": {
+        "label": "Residential Environment",
+        "questions": [
+          {"id": "urban_rural", "text": "Primary residential environment?", "type": "select", "options": ["urban_high_traffic", "urban_typical", "suburban", "rural_agricultural", "rural_low_exposure"]},
+          {"id": "proximity_industrial", "text": "Within 1 mile of industrial facility, power plant, or hazardous waste site?", "type": "boolean"},
+          {"id": "water_source", "text": "Primary drinking water source?", "type": "select", "options": ["municipal_treated", "well_water_tested", "well_water_untested", "bottled_water"]},
+          {"id": "arsenic_endemic_area", "text": "Well water in area with known arsenic contamination?", "type": "boolean"},
+          {"id": "indoor_air_quality", "text": "Home built before 1980 or significant renovation with new materials?", "type": "boolean"},
+          {"id": "sun_exposure", "text": "Average outdoor sun exposure?", "type": "select", "options": ["minimal", "moderate", "high_outdoor_worker", "tanning_bed_user"]}
+        ]
+      }
+    }
+  },
+
+  "flux_model_integration": {
+    "description": "How to combine ExposoGraph flux ratios with exposure data",
+    "formula": "exposure_weighted_risk = flux_ratio × exposure_multiplier",
+    "flux_ratio_definition": "Activation_Score / Detoxification_Score computed by ExposoGraph from patient genotypes",
+    "baseline_flux_ratio": 1.0,
+    "risk_thresholds": {
+      "low": {"max": 0.8, "label": "Reduced Risk", "color": "green"},
+      "average": {"min": 0.8, "max": 2.0, "label": "Population Average Risk", "color": "yellow"},
+      "elevated": {"min": 2.0, "max": 10.0, "label": "Elevated Risk", "color": "orange"},
+      "high": {"min": 10.0, "label": "High Risk", "color": "red"}
+    },
+    "genotype_modifiers": {
+      "GSTM1_null": {"PAH": 2.0, "AflatoxinB1": 2.5, "AromaticAmines": 1.5, "HeavyMetals": 1.8},
+      "GSTT1_null": {"PAH": 1.5, "Benzene": 1.8, "ChlorinatedSolvents": 0.5},
+      "NAT2_slow": {"AromaticAmines": 2.5, "HCA": 0.7},
+      "CYP1A1_high_activity": {"PAH": 1.8, "HCA": 1.5},
+      "CYP2E1_high_activity": {"Benzene": 1.8, "VinylChloride": 2.0, "DietaryNitroso": 1.6},
+      "ALDH2_heterozygote": {"Aldehyde": 6.0},
+      "ALDH2_homozygous_variant": {"Aldehyde": 19.0},
+      "CYP2A6_PM": {"TobaccoNitrosamines": 0.4},
+      "CYP3A4_high_activity": {"AflatoxinB1": 1.5},
+      "EPHX1_low_activity_Y113H": {"PAH": 1.7}
+    }
+  }
+}

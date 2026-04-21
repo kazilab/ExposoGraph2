@@ -1,0 +1,1084 @@
+{
+  "metadata": {
+    "source": "GTEx v8 via Human Protein Atlas (proteinatlas.org); literature-based defaults for genes without HPA coverage",
+    "unit": "nTPM (normalized transcripts per million)",
+    "tissues": [
+      "Liver",
+      "Lung",
+      "Prostate",
+      "Bladder",
+      "Colon",
+      "Breast",
+      "Kidney",
+      "Esophagus"
+    ],
+    "date": "2026-03-30",
+    "genes_total": 53,
+    "weight_threshold": 0.01,
+    "weight_note": "Tissues with expression <1% of the gene's maximum tissue value are assigned weight=0.0 (considered not expressed)"
+  },
+  "expression": {
+    "CYP1A1": {
+      "Liver": 61.8,
+      "Lung": 9.9,
+      "Prostate": 0.6,
+      "Bladder": 59.6,
+      "Colon": 2.1,
+      "Breast": 14.0,
+      "Kidney": 1.4,
+      "Esophagus": 1.8
+    },
+    "CYP1A2": {
+      "Liver": 478.4,
+      "Lung": 0.4,
+      "Prostate": 0.1,
+      "Bladder": 0.1,
+      "Colon": 0.1,
+      "Breast": 0.1,
+      "Kidney": 0.2,
+      "Esophagus": 0.2
+    },
+    "CYP1B1": {
+      "Liver": 6.6,
+      "Lung": 15.8,
+      "Prostate": 32.7,
+      "Bladder": 32.8,
+      "Colon": 3.4,
+      "Breast": 27.5,
+      "Kidney": 22.5,
+      "Esophagus": 7.1
+    },
+    "CYP2A6": {
+      "Liver": 1507.9,
+      "Lung": 0.3,
+      "Prostate": 0.1,
+      "Bladder": 0.4,
+      "Colon": 0.0,
+      "Breast": 8.8,
+      "Kidney": 0.2,
+      "Esophagus": 0.0
+    },
+    "CYP2E1": {
+      "Liver": 9697.0,
+      "Lung": 2.4,
+      "Prostate": 5.0,
+      "Bladder": 3.4,
+      "Colon": 4.8,
+      "Breast": 2.8,
+      "Kidney": 8.5,
+      "Esophagus": 15.9
+    },
+    "CYP3A4": {
+      "Liver": 3367.1,
+      "Lung": 0.0,
+      "Prostate": 0.1,
+      "Bladder": 0.0,
+      "Colon": 2.9,
+      "Breast": 0.2,
+      "Kidney": 4.2,
+      "Esophagus": 0.4
+    },
+    "GSTM1": {
+      "Liver": 569.8,
+      "Lung": 27.6,
+      "Prostate": 46.2,
+      "Bladder": 110.6,
+      "Colon": 36.0,
+      "Breast": 54.8,
+      "Kidney": 34.9,
+      "Esophagus": 145.2
+    },
+    "GSTP1": {
+      "Liver": 62.2,
+      "Lung": 655.1,
+      "Prostate": 406.0,
+      "Bladder": 553.3,
+      "Colon": 419.7,
+      "Breast": 395.3,
+      "Kidney": 809.0,
+      "Esophagus": 2859.0
+    },
+    "NAT2": {
+      "Liver": 120.1,
+      "Lung": 0.1,
+      "Prostate": 0.4,
+      "Bladder": 0.0,
+      "Colon": 14.0,
+      "Breast": 1.0,
+      "Kidney": 1.8,
+      "Esophagus": 0.1
+    },
+    "ALDH2": {
+      "Liver": 801.4,
+      "Lung": 105.1,
+      "Prostate": 32.4,
+      "Bladder": 51.7,
+      "Colon": 68.7,
+      "Breast": 76.6,
+      "Kidney": 165.7,
+      "Esophagus": 69.1
+    },
+    "ADH1B": {
+      "Liver": 5476.4,
+      "Lung": 348.0,
+      "Prostate": 23.9,
+      "Bladder": 295.3,
+      "Colon": 185.0,
+      "Breast": 889.7,
+      "Kidney": 70.6,
+      "Esophagus": 97.0
+    },
+    "CYP2A13": {
+      "Liver": 1.9,
+      "Lung": 0.1,
+      "Prostate": 0.0,
+      "Bladder": 0.1,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "CYP3A5": {
+      "Liver": 319.4,
+      "Lung": 9.5,
+      "Prostate": 23.3,
+      "Bladder": 9.7,
+      "Colon": 26.6,
+      "Breast": 7.7,
+      "Kidney": 12.1,
+      "Esophagus": 22.9
+    },
+    "EPHX1": {
+      "Liver": 1594.1,
+      "Lung": 138.4,
+      "Prostate": 110.1,
+      "Bladder": 138.5,
+      "Colon": 79.5,
+      "Breast": 160.4,
+      "Kidney": 103.3,
+      "Esophagus": 156.8
+    },
+    "NQO1": {
+      "Liver": 4.9,
+      "Lung": 33.6,
+      "Prostate": 19.4,
+      "Bladder": 66.7,
+      "Colon": 80.2,
+      "Breast": 249.0,
+      "Kidney": 78.5,
+      "Esophagus": 145.3
+    },
+    "COMT": {
+      "Liver": 268.0,
+      "Lung": 87.6,
+      "Prostate": 80.2,
+      "Bladder": 76.5,
+      "Colon": 74.1,
+      "Breast": 77.5,
+      "Kidney": 100.3,
+      "Esophagus": 184.9
+    },
+    "ABCB1": {
+      "Liver": 26.1,
+      "Lung": 6.0,
+      "Prostate": 4.0,
+      "Bladder": 3.4,
+      "Colon": 15.6,
+      "Breast": 3.6,
+      "Kidney": 31.5,
+      "Esophagus": 2.9
+    },
+    "XRCC1": {
+      "Liver": 10.8,
+      "Lung": 16.6,
+      "Prostate": 16.5,
+      "Bladder": 20.9,
+      "Colon": 20.8,
+      "Breast": 18.6,
+      "Kidney": 16.9,
+      "Esophagus": 16.6
+    },
+    "MGMT": {
+      "Liver": 125.9,
+      "Lung": 16.4,
+      "Prostate": 20.8,
+      "Bladder": 24.8,
+      "Colon": 20.5,
+      "Breast": 28.4,
+      "Kidney": 37.1,
+      "Esophagus": 19.6
+    },
+    "UGT1A1": {
+      "Liver": 344.8,
+      "Lung": 0.2,
+      "Prostate": 0.2,
+      "Bladder": 9.3,
+      "Colon": 2.8,
+      "Breast": 0.2,
+      "Kidney": 3.7,
+      "Esophagus": 3.3
+    },
+    "SRD5A2": {
+      "Liver": 56.8,
+      "Lung": 0.6,
+      "Prostate": 15.7,
+      "Bladder": 1.5,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.2,
+      "Esophagus": 0.0
+    },
+    "CYP19A1": {
+      "Liver": 0.1,
+      "Lung": 0.6,
+      "Prostate": 0.3,
+      "Bladder": 3.2,
+      "Colon": 0.2,
+      "Breast": 2.0,
+      "Kidney": 0.1,
+      "Esophagus": 0.1
+    },
+    "GSTT1": {
+      "Liver": 200,
+      "Lung": 30,
+      "Prostate": 20,
+      "Bladder": 40,
+      "Colon": 30,
+      "Breast": 25,
+      "Kidney": 80,
+      "Esophagus": 37.5
+    },
+    "NAT1": {
+      "Liver": 40,
+      "Lung": 20,
+      "Prostate": 15,
+      "Bladder": 30,
+      "Colon": 35,
+      "Breast": 25,
+      "Kidney": 20,
+      "Esophagus": 24.2
+    },
+    "SULT1A1": {
+      "Liver": 300,
+      "Lung": 20,
+      "Prostate": 15,
+      "Bladder": 30,
+      "Colon": 40,
+      "Breast": 25,
+      "Kidney": 25,
+      "Esophagus": 25.8
+    },
+    "UGT2B7": {
+      "Liver": 400,
+      "Lung": 5,
+      "Prostate": 5,
+      "Bladder": 10,
+      "Colon": 15,
+      "Breast": 10,
+      "Kidney": 30,
+      "Esophagus": 12.5
+    },
+    "UGT2B17": {
+      "Liver": 200,
+      "Lung": 5,
+      "Prostate": 50,
+      "Bladder": 10,
+      "Colon": 10,
+      "Breast": 5,
+      "Kidney": 15,
+      "Esophagus": 15.8
+    },
+    "UGT2B15": {
+      "Liver": 250,
+      "Lung": 5,
+      "Prostate": 40,
+      "Bladder": 10,
+      "Colon": 10,
+      "Breast": 5,
+      "Kidney": 20,
+      "Esophagus": 15.0
+    },
+    "AKR1C2": {
+      "Liver": 200,
+      "Lung": 50,
+      "Prostate": 30,
+      "Bladder": 40,
+      "Colon": 30,
+      "Breast": 40,
+      "Kidney": 30,
+      "Esophagus": 36.7
+    },
+    "AKR1C3": {
+      "Liver": 100,
+      "Lung": 40,
+      "Prostate": 50,
+      "Bladder": 30,
+      "Colon": 30,
+      "Breast": 60,
+      "Kidney": 30,
+      "Esophagus": 40.0
+    },
+    "ABCC2": {
+      "Liver": 250,
+      "Lung": 5,
+      "Prostate": 3,
+      "Bladder": 5,
+      "Colon": 10,
+      "Breast": 3,
+      "Kidney": 60,
+      "Esophagus": 14.3
+    },
+    "ABCG2": {
+      "Liver": 100,
+      "Lung": 10,
+      "Prostate": 5,
+      "Bladder": 10,
+      "Colon": 15,
+      "Breast": 10,
+      "Kidney": 50,
+      "Esophagus": 16.7
+    },
+    "OGG1": {
+      "Liver": 20,
+      "Lung": 15,
+      "Prostate": 15,
+      "Bladder": 15,
+      "Colon": 15,
+      "Breast": 15,
+      "Kidney": 15,
+      "Esophagus": 15.0
+    },
+    "ERCC2": {
+      "Liver": 15,
+      "Lung": 15,
+      "Prostate": 15,
+      "Bladder": 15,
+      "Colon": 15,
+      "Breast": 15,
+      "Kidney": 15,
+      "Esophagus": 15.0
+    },
+    "XPC": {
+      "Liver": 20,
+      "Lung": 18,
+      "Prostate": 18,
+      "Bladder": 20,
+      "Colon": 20,
+      "Breast": 18,
+      "Kidney": 18,
+      "Esophagus": 18.7
+    },
+    "FANCD2": {
+      "Liver": 10,
+      "Lung": 10,
+      "Prostate": 8,
+      "Bladder": 10,
+      "Colon": 10,
+      "Breast": 10,
+      "Kidney": 10,
+      "Esophagus": 9.7
+    },
+    "PARP1": {
+      "Liver": 30,
+      "Lung": 25,
+      "Prostate": 25,
+      "Bladder": 30,
+      "Colon": 30,
+      "Breast": 25,
+      "Kidney": 25,
+      "Esophagus": 26.7
+    },
+    "AS3MT": {
+      "Liver": 100,
+      "Lung": 5,
+      "Prostate": 3,
+      "Bladder": 5,
+      "Colon": 5,
+      "Breast": 3,
+      "Kidney": 10,
+      "Esophagus": 5.2
+    },
+    "GSTO1": {
+      "Liver": 80,
+      "Lung": 30,
+      "Prostate": 20,
+      "Bladder": 30,
+      "Colon": 30,
+      "Breast": 25,
+      "Kidney": 40,
+      "Esophagus": 29.2
+    },
+    "GSTO2": {
+      "Liver": 60,
+      "Lung": 20,
+      "Prostate": 15,
+      "Bladder": 20,
+      "Colon": 20,
+      "Breast": 15,
+      "Kidney": 30,
+      "Esophagus": 20.0
+    },
+    "MT1A": {
+      "Liver": 50,
+      "Lung": 20,
+      "Prostate": 10,
+      "Bladder": 15,
+      "Colon": 15,
+      "Breast": 15,
+      "Kidney": 30,
+      "Esophagus": 17.5
+    },
+    "MT2A": {
+      "Liver": 80,
+      "Lung": 30,
+      "Prostate": 20,
+      "Bladder": 25,
+      "Colon": 25,
+      "Breast": 20,
+      "Kidney": 50,
+      "Esophagus": 28.3
+    },
+    "SLC11A1": {
+      "Liver": 5,
+      "Lung": 20,
+      "Prostate": 5,
+      "Bladder": 5,
+      "Colon": 10,
+      "Breast": 5,
+      "Kidney": 5,
+      "Esophagus": 8.3
+    },
+    "HLA-DPB1": {
+      "Liver": 10,
+      "Lung": 20,
+      "Prostate": 10,
+      "Bladder": 10,
+      "Colon": 15,
+      "Breast": 10,
+      "Kidney": 10,
+      "Esophagus": 12.5
+    },
+    "ADH1C": {
+      "Liver": 3000,
+      "Lung": 200,
+      "Prostate": 15,
+      "Bladder": 150,
+      "Colon": 100,
+      "Breast": 400,
+      "Kidney": 40,
+      "Esophagus": 150.8
+    },
+    "ADH5": {
+      "Liver": 150,
+      "Lung": 80,
+      "Prostate": 50,
+      "Bladder": 60,
+      "Colon": 70,
+      "Breast": 60,
+      "Kidney": 80,
+      "Esophagus": 66.7
+    },
+    "AHR": {
+      "Liver": 30,
+      "Lung": 40,
+      "Prostate": 25,
+      "Bladder": 35,
+      "Colon": 40,
+      "Breast": 30,
+      "Kidney": 25,
+      "Esophagus": 32.5
+    },
+    "ARNT": {
+      "Liver": 30,
+      "Lung": 30,
+      "Prostate": 25,
+      "Bladder": 25,
+      "Colon": 30,
+      "Breast": 25,
+      "Kidney": 25,
+      "Esophagus": 26.7
+    },
+    "AHRR": {
+      "Liver": 5,
+      "Lung": 15,
+      "Prostate": 5,
+      "Bladder": 10,
+      "Colon": 5,
+      "Breast": 5,
+      "Kidney": 5,
+      "Esophagus": 7.5
+    },
+    "CCBL1": {
+      "Liver": 50,
+      "Lung": 10,
+      "Prostate": 10,
+      "Bladder": 10,
+      "Colon": 10,
+      "Breast": 10,
+      "Kidney": 100,
+      "Esophagus": 25.0
+    },
+    "CYP17A1": {
+      "Liver": 5,
+      "Lung": 2,
+      "Prostate": 10,
+      "Bladder": 2,
+      "Colon": 2,
+      "Breast": 5,
+      "Kidney": 2,
+      "Esophagus": 3.8
+    },
+    "HSD3B2": {
+      "Liver": 2,
+      "Lung": 1,
+      "Prostate": 5,
+      "Bladder": 1,
+      "Colon": 1,
+      "Breast": 2,
+      "Kidney": 1,
+      "Esophagus": 1.8
+    },
+    "SRD5A1": {
+      "Liver": 50,
+      "Lung": 20,
+      "Prostate": 30,
+      "Bladder": 15,
+      "Colon": 20,
+      "Breast": 20,
+      "Kidney": 15,
+      "Esophagus": 20.0
+    }
+  },
+  "weights": {
+    "CYP1A1": {
+      "Liver": 1.0,
+      "Lung": 0.1602,
+      "Prostate": 0.0,
+      "Bladder": 0.9644,
+      "Colon": 0.034,
+      "Breast": 0.2265,
+      "Kidney": 0.0227,
+      "Esophagus": 0.0291
+    },
+    "CYP1A2": {
+      "Liver": 1.0,
+      "Lung": 0.0,
+      "Prostate": 0.0,
+      "Bladder": 0.0,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "CYP1B1": {
+      "Liver": 0.2012,
+      "Lung": 0.4817,
+      "Prostate": 0.997,
+      "Bladder": 1.0,
+      "Colon": 0.1037,
+      "Breast": 0.8384,
+      "Kidney": 0.686,
+      "Esophagus": 0.2165
+    },
+    "CYP2A6": {
+      "Liver": 1.0,
+      "Lung": 0.0,
+      "Prostate": 0.0,
+      "Bladder": 0.0,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "CYP2E1": {
+      "Liver": 1.0,
+      "Lung": 0.0,
+      "Prostate": 0.0,
+      "Bladder": 0.0,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "CYP3A4": {
+      "Liver": 1.0,
+      "Lung": 0.0,
+      "Prostate": 0.0,
+      "Bladder": 0.0,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "GSTM1": {
+      "Liver": 1.0,
+      "Lung": 0.0484,
+      "Prostate": 0.0811,
+      "Bladder": 0.1941,
+      "Colon": 0.0632,
+      "Breast": 0.0962,
+      "Kidney": 0.0612,
+      "Esophagus": 0.2548
+    },
+    "GSTP1": {
+      "Liver": 0.0218,
+      "Lung": 0.2291,
+      "Prostate": 0.142,
+      "Bladder": 0.1935,
+      "Colon": 0.1468,
+      "Breast": 0.1383,
+      "Kidney": 0.283,
+      "Esophagus": 1.0
+    },
+    "NAT2": {
+      "Liver": 1.0,
+      "Lung": 0.0,
+      "Prostate": 0.0,
+      "Bladder": 0.0,
+      "Colon": 0.1166,
+      "Breast": 0.0,
+      "Kidney": 0.015,
+      "Esophagus": 0.0
+    },
+    "ALDH2": {
+      "Liver": 1.0,
+      "Lung": 0.1311,
+      "Prostate": 0.0404,
+      "Bladder": 0.0645,
+      "Colon": 0.0857,
+      "Breast": 0.0956,
+      "Kidney": 0.2068,
+      "Esophagus": 0.0862
+    },
+    "ADH1B": {
+      "Liver": 1.0,
+      "Lung": 0.0635,
+      "Prostate": 0.0,
+      "Bladder": 0.0539,
+      "Colon": 0.0338,
+      "Breast": 0.1625,
+      "Kidney": 0.0129,
+      "Esophagus": 0.0177
+    },
+    "CYP2A13": {
+      "Liver": 1.0,
+      "Lung": 0.0526,
+      "Prostate": 0.0,
+      "Bladder": 0.0526,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "CYP3A5": {
+      "Liver": 1.0,
+      "Lung": 0.0297,
+      "Prostate": 0.0729,
+      "Bladder": 0.0304,
+      "Colon": 0.0833,
+      "Breast": 0.0241,
+      "Kidney": 0.0379,
+      "Esophagus": 0.0717
+    },
+    "EPHX1": {
+      "Liver": 1.0,
+      "Lung": 0.0868,
+      "Prostate": 0.0691,
+      "Bladder": 0.0869,
+      "Colon": 0.0499,
+      "Breast": 0.1006,
+      "Kidney": 0.0648,
+      "Esophagus": 0.0984
+    },
+    "NQO1": {
+      "Liver": 0.0197,
+      "Lung": 0.1349,
+      "Prostate": 0.0779,
+      "Bladder": 0.2679,
+      "Colon": 0.3221,
+      "Breast": 1.0,
+      "Kidney": 0.3153,
+      "Esophagus": 0.5835
+    },
+    "COMT": {
+      "Liver": 1.0,
+      "Lung": 0.3269,
+      "Prostate": 0.2993,
+      "Bladder": 0.2854,
+      "Colon": 0.2765,
+      "Breast": 0.2892,
+      "Kidney": 0.3743,
+      "Esophagus": 0.6899
+    },
+    "ABCB1": {
+      "Liver": 0.8286,
+      "Lung": 0.1905,
+      "Prostate": 0.127,
+      "Bladder": 0.1079,
+      "Colon": 0.4952,
+      "Breast": 0.1143,
+      "Kidney": 1.0,
+      "Esophagus": 0.0921
+    },
+    "XRCC1": {
+      "Liver": 0.5167,
+      "Lung": 0.7943,
+      "Prostate": 0.7895,
+      "Bladder": 1.0,
+      "Colon": 0.9952,
+      "Breast": 0.89,
+      "Kidney": 0.8086,
+      "Esophagus": 0.7943
+    },
+    "MGMT": {
+      "Liver": 1.0,
+      "Lung": 0.1303,
+      "Prostate": 0.1652,
+      "Bladder": 0.197,
+      "Colon": 0.1628,
+      "Breast": 0.2256,
+      "Kidney": 0.2947,
+      "Esophagus": 0.1557
+    },
+    "UGT1A1": {
+      "Liver": 1.0,
+      "Lung": 0.0,
+      "Prostate": 0.0,
+      "Bladder": 0.027,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0107,
+      "Esophagus": 0.0
+    },
+    "SRD5A2": {
+      "Liver": 1.0,
+      "Lung": 0.0106,
+      "Prostate": 0.2764,
+      "Bladder": 0.0264,
+      "Colon": 0.0,
+      "Breast": 0.0,
+      "Kidney": 0.0,
+      "Esophagus": 0.0
+    },
+    "CYP19A1": {
+      "Liver": 0.0312,
+      "Lung": 0.1875,
+      "Prostate": 0.0937,
+      "Bladder": 1.0,
+      "Colon": 0.0625,
+      "Breast": 0.625,
+      "Kidney": 0.0312,
+      "Esophagus": 0.0312
+    },
+    "GSTT1": {
+      "Liver": 1.0,
+      "Lung": 0.15,
+      "Prostate": 0.1,
+      "Bladder": 0.2,
+      "Colon": 0.15,
+      "Breast": 0.125,
+      "Kidney": 0.4,
+      "Esophagus": 0.1875
+    },
+    "NAT1": {
+      "Liver": 1.0,
+      "Lung": 0.5,
+      "Prostate": 0.375,
+      "Bladder": 0.75,
+      "Colon": 0.875,
+      "Breast": 0.625,
+      "Kidney": 0.5,
+      "Esophagus": 0.605
+    },
+    "SULT1A1": {
+      "Liver": 1.0,
+      "Lung": 0.0667,
+      "Prostate": 0.05,
+      "Bladder": 0.1,
+      "Colon": 0.1333,
+      "Breast": 0.0833,
+      "Kidney": 0.0833,
+      "Esophagus": 0.086
+    },
+    "UGT2B7": {
+      "Liver": 1.0,
+      "Lung": 0.0125,
+      "Prostate": 0.0125,
+      "Bladder": 0.025,
+      "Colon": 0.0375,
+      "Breast": 0.025,
+      "Kidney": 0.075,
+      "Esophagus": 0.0312
+    },
+    "UGT2B17": {
+      "Liver": 1.0,
+      "Lung": 0.025,
+      "Prostate": 0.25,
+      "Bladder": 0.05,
+      "Colon": 0.05,
+      "Breast": 0.025,
+      "Kidney": 0.075,
+      "Esophagus": 0.079
+    },
+    "UGT2B15": {
+      "Liver": 1.0,
+      "Lung": 0.02,
+      "Prostate": 0.16,
+      "Bladder": 0.04,
+      "Colon": 0.04,
+      "Breast": 0.02,
+      "Kidney": 0.08,
+      "Esophagus": 0.06
+    },
+    "AKR1C2": {
+      "Liver": 1.0,
+      "Lung": 0.25,
+      "Prostate": 0.15,
+      "Bladder": 0.2,
+      "Colon": 0.15,
+      "Breast": 0.2,
+      "Kidney": 0.15,
+      "Esophagus": 0.1835
+    },
+    "AKR1C3": {
+      "Liver": 1.0,
+      "Lung": 0.4,
+      "Prostate": 0.5,
+      "Bladder": 0.3,
+      "Colon": 0.3,
+      "Breast": 0.6,
+      "Kidney": 0.3,
+      "Esophagus": 0.4
+    },
+    "ABCC2": {
+      "Liver": 1.0,
+      "Lung": 0.02,
+      "Prostate": 0.012,
+      "Bladder": 0.02,
+      "Colon": 0.04,
+      "Breast": 0.012,
+      "Kidney": 0.24,
+      "Esophagus": 0.0572
+    },
+    "ABCG2": {
+      "Liver": 1.0,
+      "Lung": 0.1,
+      "Prostate": 0.05,
+      "Bladder": 0.1,
+      "Colon": 0.15,
+      "Breast": 0.1,
+      "Kidney": 0.5,
+      "Esophagus": 0.167
+    },
+    "OGG1": {
+      "Liver": 1.0,
+      "Lung": 0.75,
+      "Prostate": 0.75,
+      "Bladder": 0.75,
+      "Colon": 0.75,
+      "Breast": 0.75,
+      "Kidney": 0.75,
+      "Esophagus": 0.75
+    },
+    "ERCC2": {
+      "Liver": 1.0,
+      "Lung": 1.0,
+      "Prostate": 1.0,
+      "Bladder": 1.0,
+      "Colon": 1.0,
+      "Breast": 1.0,
+      "Kidney": 1.0,
+      "Esophagus": 1.0
+    },
+    "XPC": {
+      "Liver": 1.0,
+      "Lung": 0.9,
+      "Prostate": 0.9,
+      "Bladder": 1.0,
+      "Colon": 1.0,
+      "Breast": 0.9,
+      "Kidney": 0.9,
+      "Esophagus": 0.935
+    },
+    "FANCD2": {
+      "Liver": 1.0,
+      "Lung": 1.0,
+      "Prostate": 0.8,
+      "Bladder": 1.0,
+      "Colon": 1.0,
+      "Breast": 1.0,
+      "Kidney": 1.0,
+      "Esophagus": 0.97
+    },
+    "PARP1": {
+      "Liver": 1.0,
+      "Lung": 0.8333,
+      "Prostate": 0.8333,
+      "Bladder": 1.0,
+      "Colon": 1.0,
+      "Breast": 0.8333,
+      "Kidney": 0.8333,
+      "Esophagus": 0.89
+    },
+    "AS3MT": {
+      "Liver": 1.0,
+      "Lung": 0.05,
+      "Prostate": 0.03,
+      "Bladder": 0.05,
+      "Colon": 0.05,
+      "Breast": 0.03,
+      "Kidney": 0.1,
+      "Esophagus": 0.052
+    },
+    "GSTO1": {
+      "Liver": 1.0,
+      "Lung": 0.375,
+      "Prostate": 0.25,
+      "Bladder": 0.375,
+      "Colon": 0.375,
+      "Breast": 0.3125,
+      "Kidney": 0.5,
+      "Esophagus": 0.365
+    },
+    "GSTO2": {
+      "Liver": 1.0,
+      "Lung": 0.3333,
+      "Prostate": 0.25,
+      "Bladder": 0.3333,
+      "Colon": 0.3333,
+      "Breast": 0.25,
+      "Kidney": 0.5,
+      "Esophagus": 0.3333
+    },
+    "MT1A": {
+      "Liver": 1.0,
+      "Lung": 0.4,
+      "Prostate": 0.2,
+      "Bladder": 0.3,
+      "Colon": 0.3,
+      "Breast": 0.3,
+      "Kidney": 0.6,
+      "Esophagus": 0.35
+    },
+    "MT2A": {
+      "Liver": 1.0,
+      "Lung": 0.375,
+      "Prostate": 0.25,
+      "Bladder": 0.3125,
+      "Colon": 0.3125,
+      "Breast": 0.25,
+      "Kidney": 0.625,
+      "Esophagus": 0.3538
+    },
+    "SLC11A1": {
+      "Liver": 0.25,
+      "Lung": 1.0,
+      "Prostate": 0.25,
+      "Bladder": 0.25,
+      "Colon": 0.5,
+      "Breast": 0.25,
+      "Kidney": 0.25,
+      "Esophagus": 0.415
+    },
+    "HLA-DPB1": {
+      "Liver": 0.5,
+      "Lung": 1.0,
+      "Prostate": 0.5,
+      "Bladder": 0.5,
+      "Colon": 0.75,
+      "Breast": 0.5,
+      "Kidney": 0.5,
+      "Esophagus": 0.625
+    },
+    "ADH1C": {
+      "Liver": 1.0,
+      "Lung": 0.0667,
+      "Prostate": 0.0,
+      "Bladder": 0.05,
+      "Colon": 0.0333,
+      "Breast": 0.1333,
+      "Kidney": 0.0133,
+      "Esophagus": 0.0503
+    },
+    "ADH5": {
+      "Liver": 1.0,
+      "Lung": 0.5333,
+      "Prostate": 0.3333,
+      "Bladder": 0.4,
+      "Colon": 0.4667,
+      "Breast": 0.4,
+      "Kidney": 0.5333,
+      "Esophagus": 0.4447
+    },
+    "AHR": {
+      "Liver": 0.75,
+      "Lung": 1.0,
+      "Prostate": 0.625,
+      "Bladder": 0.875,
+      "Colon": 1.0,
+      "Breast": 0.75,
+      "Kidney": 0.625,
+      "Esophagus": 0.8125
+    },
+    "ARNT": {
+      "Liver": 1.0,
+      "Lung": 1.0,
+      "Prostate": 0.8333,
+      "Bladder": 0.8333,
+      "Colon": 1.0,
+      "Breast": 0.8333,
+      "Kidney": 0.8333,
+      "Esophagus": 0.89
+    },
+    "AHRR": {
+      "Liver": 0.3333,
+      "Lung": 1.0,
+      "Prostate": 0.3333,
+      "Bladder": 0.6667,
+      "Colon": 0.3333,
+      "Breast": 0.3333,
+      "Kidney": 0.3333,
+      "Esophagus": 0.5
+    },
+    "CCBL1": {
+      "Liver": 0.5,
+      "Lung": 0.1,
+      "Prostate": 0.1,
+      "Bladder": 0.1,
+      "Colon": 0.1,
+      "Breast": 0.1,
+      "Kidney": 1.0,
+      "Esophagus": 0.25
+    },
+    "CYP17A1": {
+      "Liver": 0.5,
+      "Lung": 0.2,
+      "Prostate": 1.0,
+      "Bladder": 0.2,
+      "Colon": 0.2,
+      "Breast": 0.5,
+      "Kidney": 0.2,
+      "Esophagus": 0.38
+    },
+    "HSD3B2": {
+      "Liver": 0.4,
+      "Lung": 0.2,
+      "Prostate": 1.0,
+      "Bladder": 0.2,
+      "Colon": 0.2,
+      "Breast": 0.4,
+      "Kidney": 0.2,
+      "Esophagus": 0.36
+    },
+    "SRD5A1": {
+      "Liver": 1.0,
+      "Lung": 0.4,
+      "Prostate": 0.6,
+      "Bladder": 0.3,
+      "Colon": 0.4,
+      "Breast": 0.4,
+      "Kidney": 0.3,
+      "Esophagus": 0.4
+    }
+  }
+}

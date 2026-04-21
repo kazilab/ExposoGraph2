@@ -1,0 +1,514 @@
+{
+  "_metadata": {
+    "description": "Data-driven proxy and receptor-mediated parameter blocks for ExposoGraph flux modeling. These values are heuristic or semi-quantitative scaffolds for manuscript classes lacking full substrate-specific Michaelis-Menten calibration in kinetic_parameters.json.",
+    "version": "1.0.0",
+    "created": "2026-04-20",
+    "schema": {
+      "model_kind": "proxy class family",
+      "exposure_default": "Where the default substrate or damage burden should be sourced from",
+      "activation_terms": "Activation or damage-burden terms contributing to total_activation",
+      "detox_terms": "Clearance, conjugation, feedback, or repair terms contributing to total_detox",
+      "repair_terms": "Repair-capacity terms scaled from total activation burden"
+    }
+  },
+  "classes": {
+    "AromaticAmines": {
+      "model_kind": "semi_quantitative_proxy",
+      "exposure_default": {
+        "source": "exposure_database",
+        "class": "AromaticAmines",
+        "scenario": "general_population",
+        "field": "estimated_tissue_conc_uM"
+      },
+      "unit_note": "Semi-quantitative 4-ABP proxy integrating CYP1A2/NAT1 activation with NAT2, GST, and NER attenuation.",
+      "activation_terms": {
+        "CYP1A2": {
+          "gene": "CYP1A2",
+          "equation": "michaelis_menten",
+          "vmax": 60.0,
+          "km": 79.0,
+          "confidence": "estimated",
+          "note": "4-ABP N-hydroxylation proxy anchored to local CYP1A2 aromatic-amine/HCA context.",
+          "provenance_ref": "classes.AromaticAmines.activation_terms.CYP1A2"
+        },
+        "NAT1": {
+          "gene": "NAT1",
+          "equation": "michaelis_menten",
+          "vmax": 10.0,
+          "km": 0.01,
+          "confidence": "estimated",
+          "note": "Peripheral O-acetylation proxy for reactive aromatic-amine ester formation.",
+          "supported_tissues": ["bladder", "colon", "breast", "lung"],
+          "provenance_ref": "classes.AromaticAmines.activation_terms.NAT1"
+        }
+      },
+      "detox_terms": {
+        "NAT2": {
+          "gene": "NAT2",
+          "equation": "michaelis_menten",
+          "vmax": 18.0,
+          "km": 0.01,
+          "confidence": "estimated",
+          "note": "Protective N-acetylation proxy; slow-acetylator states reduce this term.",
+          "supported_tissues": ["liver", "intestine", "bladder"],
+          "provenance_ref": "classes.AromaticAmines.detox_terms.NAT2"
+        },
+        "GSTM1": {
+          "gene": "GSTM1",
+          "equation": "michaelis_menten",
+          "vmax": 9.0,
+          "km": 0.02,
+          "confidence": "estimated",
+          "note": "GST conjugation proxy attenuating aromatic-amine electrophiles.",
+          "supported_tissues": ["bladder", "breast", "kidney", "liver"],
+          "provenance_ref": "classes.AromaticAmines.detox_terms.GSTM1"
+        },
+        "GSTP1": {
+          "gene": "GSTP1",
+          "equation": "michaelis_menten",
+          "vmax": 7.0,
+          "km": 0.02,
+          "confidence": "estimated",
+          "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling.",
+          "provenance_ref": "classes.AromaticAmines.detox_terms.GSTP1"
+        }
+      },
+      "repair_terms": {
+        "XPC": {
+          "gene": "XPC",
+          "scale": 0.35,
+          "confidence": "estimated",
+          "note": "NER recognition proxy for dG-C8-4-ABP adduct removal.",
+          "supported_tissues": ["bladder", "breast", "kidney", "liver"],
+          "provenance_ref": "classes.AromaticAmines.repair_terms.XPC"
+        },
+        "ERCC2": {
+          "gene": "ERCC2",
+          "scale": 0.2,
+          "confidence": "estimated",
+          "note": "NER excision-capacity proxy for aromatic-amine adduct burden.",
+          "supported_tissues": ["bladder", "breast", "kidney", "liver"],
+          "provenance_ref": "classes.AromaticAmines.repair_terms.ERCC2"
+        }
+      }
+    },
+    "EstrogenMetabolites": {
+      "model_kind": "semi_quantitative_proxy",
+      "exposure_default": {
+        "source": "exposure_database",
+        "class": "EstrogenMetabolites",
+        "scenario": "premenopausal_no_exogenous",
+        "field": "estimated_tissue_conc_uM"
+      },
+      "unit_note": "Semi-quantitative estrogen-quinone burden proxy using CYP1B1-centered activation and COMT/SULT1E1/UGT detoxification.",
+      "activation_terms": {
+        "CYP1B1": {
+          "gene": "CYP1B1",
+          "equation": "michaelis_menten",
+          "vmax": 18.0,
+          "km": 0.015,
+          "confidence": "estimated",
+          "note": "Primary catechol-estrogen activation proxy for 4-hydroxyestradiol formation.",
+          "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1B1"
+        },
+        "CYP1A1": {
+          "gene": "CYP1A1",
+          "equation": "michaelis_menten",
+          "vmax": 8.0,
+          "km": 0.02,
+          "confidence": "estimated",
+          "note": "Secondary estrogen bioactivation proxy.",
+          "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1A1"
+        },
+        "CYP1A2": {
+          "gene": "CYP1A2",
+          "equation": "michaelis_menten",
+          "vmax": 4.0,
+          "km": 0.025,
+          "confidence": "estimated",
+          "note": "Minor hepatic estrogen hydroxylation proxy.",
+          "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1A2"
+        }
+      },
+      "detox_terms": {
+        "COMT": {
+          "gene": "COMT",
+          "equation": "michaelis_menten",
+          "vmax": 16.0,
+          "km": 0.01,
+          "confidence": "estimated",
+          "note": "Catechol-estrogen O-methylation proxy limiting quinone formation.",
+          "supported_tissues": ["breast", "brain", "endometrium", "liver"],
+          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.COMT"
+        },
+        "SULT1E1": {
+          "gene": "SULT1E1",
+          "equation": "michaelis_menten",
+          "vmax": 12.0,
+          "km": 0.008,
+          "confidence": "estimated",
+          "note": "High-affinity sulfation proxy for estradiol/catechol-estrogen inactivation.",
+          "supported_tissues": ["liver", "endometrium", "breast", "placenta"],
+          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.SULT1E1"
+        },
+        "UGT2B7": {
+          "gene": "UGT2B7",
+          "equation": "michaelis_menten",
+          "vmax": 10.0,
+          "km": 0.02,
+          "confidence": "estimated",
+          "note": "Glucuronidation proxy for estrogen-metabolite disposal.",
+          "supported_tissues": ["liver", "kidney", "gi_tract", "mammary"],
+          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.UGT2B7"
+        },
+        "GSTP1": {
+          "gene": "GSTP1",
+          "equation": "michaelis_menten",
+          "vmax": 6.0,
+          "km": 0.025,
+          "confidence": "estimated",
+          "note": "GSH conjugation proxy for estrogen quinone electrophiles.",
+          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.GSTP1"
+        }
+      },
+      "repair_terms": {
+        "XRCC1": {
+          "gene": "XRCC1",
+          "scale": 0.25,
+          "confidence": "estimated",
+          "note": "BER scaffold proxy for depurinating estrogen-adduct repair.",
+          "supported_tissues": ["breast", "endometrium", "ovary", "kidney", "liver"],
+          "provenance_ref": "classes.EstrogenMetabolites.repair_terms.XRCC1"
+        }
+      }
+    },
+    "NDEA": {
+      "model_kind": "semi_quantitative_proxy",
+      "exposure_default": {
+        "source": "exposure_database",
+        "class": "DietaryNitroso",
+        "scenario": "general_population",
+        "field": "estimated_tissue_conc_uM"
+      },
+      "unit_note": "Semi-quantitative NDEA-specific dietary nitroso proxy anchored to local CYP2A13 interaction parameters.",
+      "activation_terms": {
+        "CYP2A13": {
+          "gene": "CYP2A13",
+          "equation": "michaelis_menten",
+          "vmax": 120.0,
+          "vmax_relative": 0.6,
+          "km": 8.0,
+          "confidence": "low",
+          "note": "NDEA-specific alpha-hydroxylation proxy using local CYP2A13 Km/Vmax-relative data.",
+          "supported_tissues": ["lung", "nasal_mucosa"],
+          "provenance_ref": "classes.NDEA.activation_terms.CYP2A13"
+        },
+        "CYP2E1": {
+          "gene": "CYP2E1",
+          "equation": "michaelis_menten",
+          "vmax": 36.0,
+          "km": 20.0,
+          "confidence": "estimated",
+          "note": "Secondary hepatic NDEA activation proxy aligned to dietary nitroso exposure context.",
+          "provenance_ref": "classes.NDEA.activation_terms.CYP2E1"
+        },
+        "CYP2A6": {
+          "gene": "CYP2A6",
+          "equation": "michaelis_menten",
+          "vmax": 12.0,
+          "km": 30.0,
+          "confidence": "estimated",
+          "note": "Minor NDEA activation proxy for shared nitrosamine metabolism.",
+          "supported_tissues": ["liver", "nasal_mucosa", "esophagus"],
+          "provenance_ref": "classes.NDEA.activation_terms.CYP2A6"
+        }
+      },
+      "detox_terms": {
+        "GSTP1": {
+          "gene": "GSTP1",
+          "equation": "michaelis_menten",
+          "vmax": 8.0,
+          "km": 0.02,
+          "confidence": "estimated",
+          "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
+          "provenance_ref": "classes.NDEA.detox_terms.GSTP1"
+        }
+      },
+      "repair_terms": {
+        "MGMT": {
+          "gene": "MGMT",
+          "scale": 0.45,
+          "confidence": "estimated",
+          "note": "Direct-reversal repair proxy for O6-ethylguanine-like alkylation burden.",
+          "supported_tissues": ["liver", "esophagus", "stomach", "colon", "kidney"],
+          "provenance_ref": "classes.NDEA.repair_terms.MGMT"
+        }
+      }
+    },
+    "VinylChloride": {
+      "model_kind": "semi_quantitative_proxy",
+      "exposure_default": {
+        "source": "exposure_database",
+        "class": "VinylChloride",
+        "scenario": "general_population",
+        "field": "estimated_tissue_conc_uM"
+      },
+      "unit_note": "Semi-quantitative vinyl-chloride proxy integrating CYP2E1 activation with GST/epoxide-hydrolase and repair attenuation.",
+      "activation_terms": {
+        "CYP2E1": {
+          "gene": "CYP2E1",
+          "equation": "michaelis_menten",
+          "vmax": 90.0,
+          "vmax_relative": 0.8,
+          "km": 100.0,
+          "confidence": "medium",
+          "note": "Vinyl-chloride oxidation proxy using local CYP2E1 Km/Vmax-relative interaction parameters.",
+          "provenance_ref": "classes.VinylChloride.activation_terms.CYP2E1"
+        }
+      },
+      "detox_terms": {
+        "GSTT1": {
+          "gene": "GSTT1",
+          "equation": "michaelis_menten",
+          "vmax": 14.0,
+          "km": 30.0,
+          "confidence": "estimated",
+          "note": "GST conjugation proxy attenuating chloroethylene-oxide burden.",
+          "supported_tissues": ["liver", "kidney", "brain", "lung"],
+          "provenance_ref": "classes.VinylChloride.detox_terms.GSTT1"
+        },
+        "GSTM1": {
+          "gene": "GSTM1",
+          "equation": "michaelis_menten",
+          "vmax": 9.0,
+          "km": 30.0,
+          "confidence": "estimated",
+          "note": "Secondary GST detoxification proxy for vinyl-chloride metabolites.",
+          "supported_tissues": ["liver", "lung", "kidney"],
+          "provenance_ref": "classes.VinylChloride.detox_terms.GSTM1"
+        },
+        "EPHX1": {
+          "gene": "EPHX1",
+          "equation": "michaelis_menten",
+          "vmax": 7.0,
+          "km": 20.0,
+          "confidence": "estimated",
+          "note": "Epoxide hydrolysis proxy for reactive vinyl-chloride intermediates.",
+          "supported_tissues": ["liver", "lung"],
+          "provenance_ref": "classes.VinylChloride.detox_terms.EPHX1"
+        },
+        "ALDH2": {
+          "gene": "ALDH2",
+          "equation": "michaelis_menten",
+          "vmax": 5.0,
+          "km": 50.0,
+          "confidence": "estimated",
+          "note": "Aldehyde-handling proxy for downstream chloroacetaldehyde burden.",
+          "supported_tissues": ["liver", "lung"],
+          "provenance_ref": "classes.VinylChloride.detox_terms.ALDH2"
+        }
+      },
+      "repair_terms": {
+        "ERCC2": {
+          "gene": "ERCC2",
+          "scale": 0.35,
+          "confidence": "estimated",
+          "note": "NER proxy for etheno-adduct repair burden.",
+          "supported_tissues": ["liver", "brain", "lung"],
+          "provenance_ref": "classes.VinylChloride.repair_terms.ERCC2"
+        }
+      }
+    },
+    "UV_Radiation": {
+      "model_kind": "damage_repair_proxy",
+      "exposure_default": {
+        "source": "exposure_database",
+        "class": "UV_Radiation",
+        "scenario": "general_population",
+        "field": "estimated_DNA_damage_relative"
+      },
+      "unit_note": "Relative UV damage burden (general-population default = 1.0 DNA-damage unit) versus NER/BER repair capacity.",
+      "activation_terms": {
+        "UVB_photoproduct_burden": {
+          "equation": "hill",
+          "vmax": 14.0,
+          "k50": 1.0,
+          "hill_n": 1.0,
+          "confidence": "estimated",
+          "note": "Relative cyclobutane-pyrimidine-dimer / 6-4 photoproduct burden.",
+          "supported_tissues": ["skin", "eye"],
+          "provenance_ref": "classes.UV_Radiation.activation_terms.UVB_photoproduct_burden"
+        },
+        "UVA_oxidative_tail": {
+          "equation": "hill",
+          "vmax": 5.0,
+          "k50": 1.5,
+          "hill_n": 1.0,
+          "confidence": "estimated",
+          "note": "Relative oxidative DNA-damage tail accompanying solar/tanning UV exposure.",
+          "supported_tissues": ["skin", "eye"],
+          "provenance_ref": "classes.UV_Radiation.activation_terms.UVA_oxidative_tail"
+        }
+      },
+      "repair_terms": {
+        "XPC": {
+          "gene": "XPC",
+          "scale": 0.35,
+          "confidence": "estimated",
+          "note": "NER damage-recognition proxy for UV photoproducts.",
+          "supported_tissues": ["skin", "eye"],
+          "provenance_ref": "classes.UV_Radiation.repair_terms.XPC"
+        },
+        "ERCC2": {
+          "gene": "ERCC2",
+          "scale": 0.25,
+          "confidence": "estimated",
+          "note": "NER helicase/excision proxy for UV-induced lesions.",
+          "supported_tissues": ["skin", "eye"],
+          "provenance_ref": "classes.UV_Radiation.repair_terms.ERCC2"
+        },
+        "OGG1": {
+          "gene": "OGG1",
+          "scale": 0.15,
+          "confidence": "estimated",
+          "note": "Repair proxy for UV-associated oxidative lesions.",
+          "supported_tissues": ["skin", "eye"],
+          "provenance_ref": "classes.UV_Radiation.repair_terms.OGG1"
+        },
+        "POLH": {
+          "gene": "POLH",
+          "scale": 0.1,
+          "confidence": "estimated",
+          "note": "Tolerance/bypass proxy for persistent UV photoproduct burden.",
+          "supported_tissues": ["skin", "eye"],
+          "provenance_ref": "classes.UV_Radiation.repair_terms.POLH"
+        }
+      }
+    },
+    "ChlorinatedSolvent": {
+      "model_kind": "semi_quantitative_proxy",
+      "exposure_default": {
+        "source": "kinetic_parameters",
+        "field": "TCE"
+      },
+      "unit_note": "Semi-quantitative TCE-centered proxy built from qualitative oxidation and GSTT1 conjugation data.",
+      "activation_terms": {
+        "CYP2E1": {
+          "gene": "CYP2E1",
+          "equation": "michaelis_menten",
+          "vmax": 80.0,
+          "km": 85.0,
+          "relative_capacity": "moderate",
+          "confidence": "low",
+          "note": "TCE oxidation proxy using qualitative CLint scaling.",
+          "provenance_ref": "classes.ChlorinatedSolvent.activation_terms.CYP2E1"
+        },
+        "GSTT1": {
+          "gene": "GSTT1",
+          "equation": "michaelis_menten",
+          "vmax": 18.0,
+          "km": 25.0,
+          "relative_capacity": "low_to_moderate",
+          "confidence": "low",
+          "note": "GSTT1 conjugation is modeled as bioactivation to reactive kidney metabolites.",
+          "supported_tissues": ["kidney", "liver"],
+          "provenance_ref": "classes.ChlorinatedSolvent.activation_terms.GSTT1"
+        }
+      },
+      "detox_terms": {
+        "non_genotoxic_clearance_proxy": {
+          "scale_of": "CYP2E1",
+          "scale": 0.6,
+          "confidence": "estimated",
+          "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
+          "provenance_ref": "classes.ChlorinatedSolvent.detox_terms.non_genotoxic_clearance_proxy"
+        }
+      }
+    },
+    "Dioxin": {
+      "model_kind": "receptor_mediated_proxy",
+      "exposure_default": {
+        "source": "kinetic_parameters",
+        "field": "TCDD"
+      },
+      "unit_note": "Receptor-mediated induction score scaled from TCDD exposure (uM converted to nM).",
+      "signal": {
+        "equation": "hill",
+        "substrate_scale": 1000.0,
+        "vmax": 1.0,
+        "k50": 0.5,
+        "hill_n": 1.0,
+        "kd_nM": 0.1,
+        "confidence": "moderate",
+        "note": "AhR occupancy surrogate used to drive downstream induction burden.",
+        "supported_tissues": ["liver", "lung", "skin", "adipose"],
+        "provenance_ref": "classes.Dioxin.signal"
+      },
+      "activation_terms": {
+        "CYP1A1": {
+          "gene": "CYP1A1",
+          "induction_factor": 50.0,
+          "confidence": "moderate",
+          "note": "AhR-mediated CYP1A1 induction score rather than catalytic flux.",
+          "provenance_ref": "classes.Dioxin.activation_terms.CYP1A1"
+        },
+        "CYP1B1": {
+          "gene": "CYP1B1",
+          "induction_factor": 20.0,
+          "confidence": "moderate",
+          "note": "AhR-mediated CYP1B1 induction score rather than catalytic flux.",
+          "provenance_ref": "classes.Dioxin.activation_terms.CYP1B1"
+        }
+      },
+      "detox_terms": {
+        "AHRR_feedback": {
+          "scale_of_signal": 8.0,
+          "confidence": "estimated",
+          "note": "Estimated negative-feedback burden opposing sustained AhR activation.",
+          "provenance_ref": "classes.Dioxin.detox_terms.AHRR_feedback"
+        }
+      }
+    },
+    "HeavyMetal": {
+      "model_kind": "semi_quantitative_proxy",
+      "exposure_default": {
+        "source": "kinetic_parameters",
+        "field": "arsenic"
+      },
+      "unit_note": "Semi-quantitative proxy balancing ROS-generation burden against AS3MT-mediated arsenic methylation.",
+      "activation_terms": {
+        "general_ROS": {
+          "equation": "saturating",
+          "scale": 5.0,
+          "km": 1.0,
+          "confidence": "estimated",
+          "note": "Indirect genotoxicity proxy for oxidative DNA damage burden.",
+          "supported_tissues": ["bladder", "lung", "skin", "liver"],
+          "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
+        },
+        "cadmium_stress_proxy": {
+          "equation": "saturating",
+          "scale": 2.0,
+          "km": 0.5,
+          "confidence": "estimated",
+          "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure.",
+          "supported_tissues": ["kidney", "liver", "lung", "prostate"],
+          "provenance_ref": "classes.HeavyMetal.activation_terms.cadmium_stress_proxy"
+        }
+      },
+      "detox_terms": {
+        "AS3MT": {
+          "gene": "AS3MT",
+          "equation": "michaelis_menten",
+          "vmax": 200.0,
+          "km": 50.0,
+          "relative_capacity": "moderate",
+          "confidence": "low",
+          "note": "AS3MT methylation proxy representing arsenic biotransformation capacity.",
+          "supported_tissues": ["liver"],
+          "provenance_ref": "classes.HeavyMetal.detox_terms.AS3MT"
+        }
+      }
+    }
+  }
+}
