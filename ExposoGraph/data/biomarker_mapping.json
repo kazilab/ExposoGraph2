@@ -1,7 +1,7 @@
 {
   "_metadata": {
-    "description": "ExposoGraph 2.0 Supplementary Table S1 — biomarker → tissue-level [S]/Km mapping for each Tier 2 lifestyle multiplier.",
-    "manuscript_context": "v6 Methods / Exposure integration module: 'Supplementary Table S1 provides the complete mapping of Tier 2 lifestyle multipliers to their primary biomarker data sources, published concentration ranges, and derived [S]/Km ratios.'",
+    "description": "Biomarker → tissue-level [S]/Km mapping for each Tier 2 lifestyle multiplier.",
+    "context": "v6 Methods / Exposure integration module: 'The complete mapping of Tier 2 lifestyle multipliers to their primary biomarker data sources, published concentration ranges, and derived [S]/Km ratios.'",
     "version": "1.0.0",
     "created": "2026-04-20",
     "schema": {
