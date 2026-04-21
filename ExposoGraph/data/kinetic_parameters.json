@@ -1,0 +1,675 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2026-03-30",
+    "description": "Quantitative kinetic parameter database for ExposoGraph metabolic flux modeling. All parameters derived from published literature. Confidence flags: high (multiple concordant studies), moderate (single study or derived), low (estimated from related substrates), estimated (extrapolated or inferred).",
+    "units": {
+      "Km": "μM",
+      "Vmax_P450": "pmol/min/pmol P450",
+      "Vmax_enzyme": "varies per enzyme class (see notes)",
+      "CLint": "varies — ratio of Vmax/Km in same units",
+      "kcat": "s-1"
+    },
+    "exposure_defaults_uM": {
+      "BaP": 0.1,
+      "AFB1": 0.05,
+      "ethanol": 500,
+      "acetaldehyde": 10,
+      "NNK": 0.01,
+      "NDMA": 0.1,
+      "PhIP": 0.05,
+      "benzene": 20,
+      "arsenic": 1.0,
+      "cadmium": 0.5,
+      "TCDD": 0.001,
+      "TCE": 10
+    }
+  },
+  "carcinogen_classes": {
+    "PAH": {
+      "index_carcinogen": "Benzo[a]pyrene",
+      "description": "Polycyclic aromatic hydrocarbons — require metabolic activation to reactive diol-epoxide intermediates",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "activation": {
+          "CYP1A1": {
+            "reaction": "BaP → BaP-7,8-oxide",
+            "Km_uM": 0.054,
+            "Vmax_pmol_min_pmolP450": 59.4,
+            "CLint": 1100,
+            "confidence": "high",
+            "notes": "Primary activation enzyme; extremely high affinity (very low Km)",
+            "sources": ["Chaudhary & Willett", "Shimada et al."],
+            "tissue_expression": ["lung", "liver", "lymphocyte", "placenta"]
+          },
+          "CYP1B1": {
+            "reaction": "BaP → BaP-7,8-oxide",
+            "Km_uM": 0.35,
+            "Vmax_pmol_min_pmolP450": 5.0,
+            "CLint": 14.3,
+            "confidence": "moderate",
+            "notes": "Vmax approximate (~5.0); lower efficiency than CYP1A1",
+            "sources": ["Chaudhary & Willett"],
+            "tissue_expression": ["lung", "prostate", "breast", "colon"]
+          },
+          "EPHX1": {
+            "reaction": "BaP-7,8-oxide → BaP-7,8-diol",
+            "Km_uM": 5.0,
+            "Vmax_nmol_min_mg": 200.0,
+            "CLint": 40.0,
+            "confidence": "moderate",
+            "notes": "Required intermediate step toward ultimate carcinogen BPDE; Vmax in nmol/min/mg microsomal protein",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver", "lung", "intestine"]
+          }
+        },
+        "detoxification": {
+          "GSTM1": {
+            "reaction": "BPDE → BPDE-GSH conjugate",
+            "Km_uM": 50.0,
+            "kcat_s": 1.2,
+            "CLint_s_per_uM": 0.024,
+            "null_allele_effect": "complete_loss_of_function",
+            "confidence": "moderate",
+            "notes": "GSTM1-null (gene deletion) = zero activity. ~25-fold increase for (-)-anti-DBPDE substrate. GST P1-1 data applied.",
+            "sources": ["GST P1-1 kinetics literature", "GSTM1 null polymorphism studies"],
+            "tissue_expression": ["liver", "lung", "colon", "kidney"]
+          },
+          "GSTP1": {
+            "reaction": "BPDE → BPDE-GSH conjugate",
+            "Km_uM": 25.0,
+            "kcat_s": 1.2,
+            "CLint_s_per_uM": 0.048,
+            "confidence": "moderate",
+            "notes": "Higher CLint than GSTM1 due to lower Km; expressed in lung",
+            "sources": ["GST kinetics literature"],
+            "tissue_expression": ["lung", "placenta", "lymphocyte", "liver"]
+          }
+        }
+      },
+      "epidemiological_validation": {
+        "GSTM1_null_lung_cancer_OR": {"value": "1.22-1.46", "source": "Meta-analyses"},
+        "CYP1A1_high_GSTM1_null_lung_cancer_OR": {"value": "4.67", "source": "Combined genotype studies"}
+      }
+    },
+    "Aflatoxin": {
+      "index_carcinogen": "Aflatoxin B1 (AFB1)",
+      "description": "Mycotoxin requiring CYP-mediated epoxidation to the reactive AFB1-8,9-epoxide (AFBO); AFQ1 is a detoxification product",
+      "kinetics_model": "mixed",
+      "pathways": {
+        "activation": {
+          "CYP3A4": {
+            "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
+            "Km_uM": 49.6,
+            "Vmax_pmol_min_pmolP450": 43.6,
+            "CLint": 0.879,
+            "hill_n": 2.0,
+            "kinetics_model": "hill",
+            "notes": "Hill kinetics (n≈2, cooperative). ISEF-corrected. CYP3A4 contributes ~45% of total AFB1 metabolism in HLM.",
+            "confidence": "high",
+            "sources": ["Lootens et al. 2022 PMC9469084"],
+            "tissue_expression": ["liver", "intestine", "lung"]
+          },
+          "CYP1A2": {
+            "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
+            "Km_uM": 58.2,
+            "Vmax_pmol_min_pmolP450": 283.0,
+            "CLint": 4.86,
+            "kinetics_model": "michaelis_menten",
+            "notes": "Michaelis-Menten. ISEF-corrected. CYP1A2 contributes ~49% of total AFB1 metabolism in HLM. Also: Gallagher 1994 values Km=41μM, Vmax=2.63 nmol/min/nmol — consistent.",
+            "confidence": "high",
+            "sources": ["Lootens et al. 2022 PMC9469084", "PMID:8975785"],
+            "tissue_expression": ["liver"]
+          }
+        },
+        "detoxification": {
+          "CYP3A4_AFQ1": {
+            "reaction": "AFB1 → AFQ1 (hydroxylation, non-reactive detox product)",
+            "Km_uM": 160.0,
+            "Vmax_pmol_min_pmolP450": 67.0,
+            "CLint": 0.42,
+            "confidence": "moderate",
+            "notes": "Km is average of 140-180 μM affinity range; ~67 total turnover estimate",
+            "sources": ["PMID:8975785", "Hill model estimates"],
+            "tissue_expression": ["liver"]
+          },
+          "GSTA1": {
+            "reaction": "AFBO → AFBO-GSH conjugate",
+            "Km_uM": 10.0,
+            "CLint_relative": 1.0,
+            "confidence": "low",
+            "notes": "GSTA1 is the main AFB1-epoxide conjugating enzyme in human liver; exact human Km is not well-established — estimate from rat/human comparison",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver"]
+          }
+        }
+      },
+      "fraction_contribution": {
+        "CYP3A4_activation": 0.45,
+        "CYP1A2_activation": 0.49,
+        "other": 0.06
+      }
+    },
+    "Aldehyde": {
+      "index_carcinogen": "Acetaldehyde (from ethanol metabolism)",
+      "description": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "ethanol_oxidation": {
+          "ADH1B_star1": {
+            "diplotype": "*1/*1",
+            "reaction": "Ethanol → Acetaldehyde",
+            "Km_uM": 16.0,
+            "Vmax_U_per_mg": 0.18,
+            "CLint": 11.25,
+            "genotype_label": "slow metabolizer (β1β1)",
+            "confidence": "high",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "stomach", "intestine"]
+          },
+          "ADH1B_star2": {
+            "diplotype": "*2/*2",
+            "reaction": "Ethanol → Acetaldehyde",
+            "Km_uM": 1900.0,
+            "Vmax_U_per_mg": 4.8,
+            "CLint": 2.53,
+            "genotype_label": "fast metabolizer (β2β2); high Vmax but very high Km — generates more AcH at drinking concentrations",
+            "confidence": "high",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "stomach", "intestine"]
+          }
+        },
+        "acetaldehyde_clearance": {
+          "ALDH2_star1": {
+            "diplotype": "*1/*1",
+            "reaction": "Acetaldehyde → Acetate",
+            "Km_uM": 0.20,
+            "Vmax_U_per_mg": 0.60,
+            "CLint": 3000.0,
+            "genotype_label": "wildtype — extremely high affinity and activity",
+            "confidence": "high",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "heart", "muscle"]
+          },
+          "ALDH2_star2_homozygous": {
+            "diplotype": "*2/*2",
+            "reaction": "Acetaldehyde → Acetate",
+            "Km_uM": 4.6,
+            "Vmax_U_per_mg": 0.017,
+            "CLint": 3.70,
+            "genotype_label": "variant homozygous — ~800-fold reduction in CLint vs wildtype",
+            "activity_fraction": 0.001,
+            "confidence": "high",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "heart", "muscle"]
+          },
+          "ALDH2_star1_star2": {
+            "diplotype": "*1/*2",
+            "reaction": "Acetaldehyde → Acetate",
+            "activity_fraction": 0.25,
+            "genotype_label": "heterozygote — partial dominance model; retains ~25% of homozygous wildtype activity",
+            "confidence": "moderate",
+            "notes": "ALDH2*2 is dominant-negative; heterozygote retains only ~25% wildtype CLint",
+            "sources": ["PMC3525274 — partial dominance model"],
+            "tissue_expression": ["liver", "heart", "muscle"]
+          },
+          "ALDH1A1": {
+            "reaction": "Acetaldehyde → Acetate (backup pathway)",
+            "Km_uM": 33.0,
+            "Vmax_U_per_mg": 0.63,
+            "CLint": 19.09,
+            "genotype_label": "backup enzyme — lower affinity than ALDH2*1 but expressed ubiquitously",
+            "confidence": "high",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "lung", "stomach", "kidney"]
+          }
+        },
+        "formaldehyde_oxidation": {
+          "ADH5": {
+            "reaction": "Formaldehyde → Formate",
+            "Km_uM": 300.0,
+            "Vmax_relative": "moderate",
+            "CLint_relative": "low",
+            "confidence": "low",
+            "notes": "ADH5 (GSNO reductase/FDH) handles formaldehyde; quantitative human kinetics sparse",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver", "ubiquitous"]
+          }
+        }
+      },
+      "epidemiological_validation": {
+        "ALDH2_heterozygote_ESCC_OR": {"value": "2.34-6.50", "source": "Asian cohort studies"},
+        "note": "800-fold CLint reduction in *2/*2; heterozygote ~25% wildtype — consistent with dose-response OR pattern"
+      }
+    },
+    "Nitrosamine": {
+      "index_carcinogen": "NNK (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone)",
+      "description": "Tobacco-specific nitrosamine. α-hydroxylation by CYP2A13 generates reactive methylating and pyridyloxobutylating species.",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "activation": {
+          "CYP2A13": {
+            "reaction": "NNK → 4-hydroxy-NNK (α-hydroxylation, major activation)",
+            "Km_uM": 3.6,
+            "Vmax_pmol_min_pmolP450": 13.8,
+            "CLint": 3.83,
+            "confidence": "high",
+            "sources": ["PMID:12975327"],
+            "tissue_expression": ["lung", "nasal mucosa"]
+          },
+          "CYP2A13_methyl": {
+            "reaction": "NNK → methyl-hydroxy-NNK",
+            "Km_uM": null,
+            "Vmax_pmol_min_pmolP450": 4.6,
+            "CLint": null,
+            "confidence": "moderate",
+            "notes": "Km not separately reported for this branch; Vmax from same study",
+            "sources": ["PMID:12975327"],
+            "tissue_expression": ["lung", "nasal mucosa"]
+          },
+          "CYP2A6": {
+            "reaction": "NNK → α-hydroxy-NNK (much lower efficiency than CYP2A13)",
+            "Km_uM": null,
+            "Vmax_pmol_min_pmolP450": null,
+            "CLint_relative_to_CYP2A13": 0.005,
+            "confidence": "moderate",
+            "notes": "CYP2A6 has much higher Km and ~200-fold lower Vmax/Km than CYP2A13. Numeric parameters not extracted — relative efficiency used.",
+            "sources": ["Jalas et al. 2005"],
+            "tissue_expression": ["liver", "lung"]
+          }
+        },
+        "detoxification": {
+          "carbonyl_reduction": {
+            "reaction": "NNK → NNAL (reduction, detoxification product)",
+            "Km_uM": null,
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "Carbonyl reduction to NNAL (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanol) — major competing pathway; exact kinetics not provided",
+            "sources": ["Hecht SS nitrosamine review"],
+            "tissue_expression": ["liver", "lung", "blood"]
+          }
+        }
+      }
+    },
+    "NDMA": {
+      "index_carcinogen": "N-Nitrosodimethylamine (NDMA)",
+      "description": "Volatile nitrosamine formed endogenously and from diet/water. CYP2E1-mediated α-hydroxylation generates formaldehyde and methyldiazonium ion.",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "activation": {
+          "CYP2E1": {
+            "reaction": "NDMA → hydroxymethylnitrosamine (α-demethylation)",
+            "Km_uM_range": [7.5, 22.0],
+            "Km_uM": 14.75,
+            "Vmax_pmol_min_mg_range": [34, 173],
+            "Vmax_pmol_min_mg": 103.5,
+            "confidence": "high",
+            "notes": "Range reflects studies with/without cytochrome b5. With b5: Km=22 μM, Vmax=173 pmol/min/mg. Without b5: Km=7.5 μM, Vmax=34 pmol/min/mg. Saturation at ~5 mg/kg oral dose. Used midpoint estimates here.",
+            "sources": ["PMID:1444447", "PMID:20577029"],
+            "tissue_expression": ["liver", "lung", "esophagus", "kidney"]
+          },
+          "CYP2E1_with_b5": {
+            "reaction": "NDMA → hydroxymethylnitrosamine (with cytochrome b5)",
+            "Km_uM": 22.0,
+            "Vmax_pmol_min_mg": 173.0,
+            "confidence": "high",
+            "sources": ["PMID:1444447"],
+            "tissue_expression": ["liver"]
+          }
+        },
+        "detoxification": {
+          "note": "No major enzymatic detoxification pathway identified for NDMA; clearance is primarily through activation and conjugation of formaldehyde downstream",
+          "ADH5_formaldehyde": {
+            "reaction": "Formaldehyde (downstream) → Formate",
+            "CLint_relative": "low",
+            "confidence": "low",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver", "ubiquitous"]
+          }
+        }
+      }
+    },
+    "HCA": {
+      "index_carcinogen": "PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine)",
+      "description": "Heterocyclic amine formed in cooked meat. N-hydroxylation by CYP1A2/CYP1A1/CYP1B1 generates reactive N-OH-PhIP.",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "activation": {
+          "CYP1A2": {
+            "reaction": "PhIP → N-OH-PhIP (N-hydroxylation)",
+            "Km_uM": 79.0,
+            "Vmax_nmol_min_nmolP450": 90.0,
+            "CLint": 1.14,
+            "confidence": "high",
+            "notes": "Major hepatic activating enzyme for PhIP",
+            "sources": ["Turesky et al., referenced in PMC1829392"],
+            "tissue_expression": ["liver"]
+          },
+          "CYP1A1": {
+            "reaction": "PhIP → N-OH-PhIP (N-hydroxylation)",
+            "Km_uM": 5.1,
+            "Vmax_nmol_min_nmolP450": 16.0,
+            "CLint": 3.14,
+            "notes": "2.75× higher catalytic efficiency than CYP1A2 due to very low Km. Extrahepatic significance.",
+            "confidence": "high",
+            "sources": ["PMC1829392"],
+            "tissue_expression": ["lung", "lymphocyte", "colon", "mammary"]
+          },
+          "CYP1B1": {
+            "reaction": "PhIP → N-OH-PhIP + 4-OH-PhIP",
+            "Km_uM": 4.5,
+            "Vmax_nmol_min_nmolP450": 0.2,
+            "CLint": 0.044,
+            "notes": "Very low Vmax despite low Km → 80-fold lower efficiency than CYP1A1. Produces both N-OH (activation) and 4-OH (detox) products.",
+            "confidence": "high",
+            "sources": ["PMC1829392"],
+            "tissue_expression": ["prostate", "breast", "colon", "lung"]
+          }
+        },
+        "detoxification": {
+          "SULT1A1": {
+            "reaction": "N-OH-PhIP → N-sulfonyloxy-PhIP (further activation) OR competing detox sulfation",
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "Sulfotransferases can both activate (N-O-sulfonylation) and detoxify N-OH-PhIP depending on tissue context; numerical kinetics not well established for human enzymes",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver", "colon", "prostate"]
+          },
+          "NAT2": {
+            "reaction": "PhIP → PhIP-N-acetate (competing N-acetylation pathway)",
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "NAT2 genotype modulates PhIP carcinogenicity — slow acetylators may have altered risk",
+            "sources": ["HCA literature"],
+            "tissue_expression": ["liver", "colon"]
+          }
+        }
+      }
+    },
+    "Benzene": {
+      "index_carcinogen": "Benzene",
+      "description": "Industrial/environmental chemical. CYP2E1-mediated oxidation to phenol, then further to catechol and benzoquinone — reactive hematotoxic/leukemogenic metabolites.",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "activation": {
+          "CYP2E1_liver": {
+            "reaction": "Benzene → Benzene oxide → Phenol (hepatic)",
+            "Km_uM": 75.0,
+            "Km_uM_range": [50, 100],
+            "CLint_fraction": 0.50,
+            "confidence": "moderate",
+            "notes": "CYP2E1 responsible for ~50% of phenol metabolism at 20 μM substrate concentration. Km range 50-100 μM; midpoint used.",
+            "sources": ["PMID:11701230"],
+            "tissue_expression": ["liver"]
+          },
+          "CYP2F2_lung": {
+            "reaction": "Benzene → Phenol (pulmonary, lung-specific)",
+            "Km_uM": null,
+            "CLint_relative": "significant",
+            "confidence": "low",
+            "notes": "CYP2F2 is significant in pulmonary microsomes; human-specific lung metabolism. Quantitative Km not extracted.",
+            "sources": ["PMID:11701230"],
+            "tissue_expression": ["lung"]
+          }
+        },
+        "detoxification": {
+          "NQO1": {
+            "reaction": "Benzoquinone → Hydroquinone (reduction, protective)",
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "NQO1 (NAD(P)H quinone oxidoreductase) reduces benzoquinone to less reactive hydroquinone. NQO1*2 null variant associated with increased benzene toxicity. Quantitative kinetics not in provided data.",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver", "bone_marrow", "lung"]
+          },
+          "GSTT1": {
+            "reaction": "Benzene oxide → Benzene-GSH (detoxification)",
+            "CLint_relative": "low_to_moderate",
+            "confidence": "low",
+            "notes": "GSTT1-null associated with benzene hematotoxicity. Quantitative kinetics not provided.",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver", "erythrocyte"]
+          }
+        }
+      }
+    },
+    "HeavyMetal": {
+      "index_carcinogen": "Arsenic (inorganic)",
+      "description": "Heavy metals including arsenic, cadmium, chromium. Mechanism involves indirect genotoxicity — oxidative stress, DNA repair inhibition, epigenetic dysregulation rather than direct enzyme-mediated metabolism. Limited Michaelis-Menten parameters available.",
+      "kinetics_model": "semi_quantitative",
+      "pathways": {
+        "biotransformation": {
+          "AS3MT": {
+            "reaction": "Inorganic arsenic → methylarsonate (MMA) → dimethylarsinate (DMA) — methylation series",
+            "Km_uM": 50.0,
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "AS3MT (arsenic methyltransferase) kinetics estimated from rodent and limited human data. DMA generally less toxic than inorganic arsenic.",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["liver"]
+          }
+        },
+        "oxidative_stress": {
+          "general_ROS": {
+            "reaction": "Arsenic → ROS generation → oxidative DNA damage",
+            "mechanism": "indirect_genotoxicity",
+            "confidence": "estimated",
+            "notes": "No Michaelis-Menten parameters applicable. Risk modeled via indirect genotoxicity score.",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["bladder", "lung", "skin", "liver"]
+          }
+        },
+        "cadmium": {
+          "index_carcinogen": "Cadmium",
+          "reaction": "Cadmium → metallothionein binding (protective) or mitochondrial/DNA damage",
+          "mechanism": "indirect_genotoxicity",
+          "Km_uM": null,
+          "confidence": "estimated",
+          "notes": "Metallothionein induction protects at low doses; overwhelmed at higher exposures. No standard enzyme kinetics apply.",
+          "sources": ["Literature estimates"],
+          "tissue_expression": ["kidney", "liver", "lung", "prostate"]
+        }
+      },
+      "confidence_overall": "low",
+      "notes": "Heavy metal carcinogenicity modeling is semi-quantitative. Enzyme kinetics not applicable to primary mechanism. Use oxidative stress / DNA repair inhibition scores as proxies."
+    },
+    "Dioxin": {
+      "index_carcinogen": "TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)",
+      "description": "Persistent organic pollutant acting through AhR signaling rather than direct metabolic activation. Induces CYP1A1/CYP1B1 expression, amplifying downstream PAH activation.",
+      "kinetics_model": "receptor_mediated",
+      "pathways": {
+        "AhR_signaling": {
+          "AhR_binding": {
+            "reaction": "TCDD → AhR complex → CYP1A1/CYP1B1 induction",
+            "Kd_nM": 0.1,
+            "EC50_nM": 0.5,
+            "induction_factor_CYP1A1": 50.0,
+            "induction_factor_CYP1B1": 20.0,
+            "confidence": "moderate",
+            "notes": "Receptor-mediated mechanism. Very high potency (Kd ~0.1 nM). TEF (toxic equivalency factor) = 1.0 by definition.",
+            "sources": ["IARC Monographs; TCDD TEF literature"],
+            "tissue_expression": ["liver", "lung", "skin", "adipose"]
+          }
+        }
+      },
+      "confidence_overall": "low",
+      "notes": "Quantitative enzyme kinetics not applicable. Model via AhR-mediated induction amplifying PAH pathway fluxes. TEF approach recommended for dioxin-like compounds."
+    },
+    "ChlorinatedSolvent": {
+      "index_carcinogen": "Trichloroethylene (TCE)",
+      "description": "TCE oxidized by CYP2E1/CYP1A2 to trichloroethylene oxide → trichloroacetaldehyde → trichloroacetic acid and other metabolites. Also conjugated to GSH via GSTT1.",
+      "kinetics_model": "michaelis_menten",
+      "pathways": {
+        "oxidation": {
+          "CYP2E1_TCE": {
+            "reaction": "TCE → trichloroethylene oxide",
+            "Km_uM": 85.0,
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "Km estimated from TCE oxidation in human liver microsomes; Vmax data limited. CYP2E1 is primary enzyme.",
+            "sources": ["Literature estimates; TCE toxicokinetics reviews"],
+            "tissue_expression": ["liver", "kidney"]
+          }
+        },
+        "GSH_conjugation": {
+          "GSTT1_TCE": {
+            "reaction": "TCE → TCE-GSH (GSTT1-mediated) → reactive kidney metabolites",
+            "CLint_relative": "low_to_moderate",
+            "confidence": "low",
+            "notes": "GSTT1-mediated pathway generates nephrotoxic/genotoxic metabolites (S-dichlorovinyl-L-cysteine). GSTT1-null may be paradoxically protective.",
+            "sources": ["Literature estimates"],
+            "tissue_expression": ["kidney", "liver"]
+          }
+        }
+      },
+      "confidence_overall": "low",
+      "notes": "TCE kinetics are reasonably understood in animal models; human-specific quantitative parameters are limited. Confidence low for quantitative flux."
+    }
+  },
+  "genotype_modifiers": {
+    "description": "Scaling factors applied to Vmax for each metabolizer phenotype class. Special cases override the standard scale.",
+    "standard_scale": {
+      "PM": 0.0,
+      "IM": 0.5,
+      "NM": 1.0,
+      "RM": 1.5,
+      "UM": 2.0,
+      "null": 0.0
+    },
+    "special_cases": {
+      "ALDH2_star1_star2": {
+        "phenotype": "heterozygote",
+        "activity_fraction": 0.25,
+        "mechanism": "dominant_negative",
+        "note": "ALDH2*2 is dominant-negative; heterozygote retains only ~25% of *1/*1 activity",
+        "source": "PMC3525274"
+      },
+      "GSTM1_null": {
+        "phenotype": "null/null",
+        "activity_fraction": 0.0,
+        "mechanism": "gene_deletion",
+        "note": "GSTM1-null is a complete gene deletion polymorphism (~50% population frequency)",
+        "source": "GSTM1 null polymorphism literature"
+      },
+      "GSTT1_null": {
+        "phenotype": "null/null",
+        "activity_fraction": 0.0,
+        "mechanism": "gene_deletion",
+        "note": "GSTT1-null is a complete gene deletion polymorphism (~20% population frequency)",
+        "source": "GSTT1 null polymorphism literature"
+      }
+    }
+  },
+  "tissue_expression_weights": {
+    "description": "Relative enzyme expression levels by tissue (1.0 = high/reference expression, scaled 0-1). Based on GTEx and microsomal protein data.",
+    "CYP1A1": {
+      "liver": 0.3,
+      "lung": 1.0,
+      "lymphocyte": 0.5,
+      "prostate": 0.3,
+      "colon": 0.4,
+      "breast": 0.2,
+      "kidney": 0.3,
+      "bladder": 0.2
+    },
+    "CYP1B1": {
+      "liver": 0.2,
+      "lung": 0.6,
+      "prostate": 1.0,
+      "breast": 0.8,
+      "colon": 0.7,
+      "lymphocyte": 0.4,
+      "kidney": 0.4,
+      "bladder": 0.3
+    },
+    "CYP1A2": {
+      "liver": 1.0,
+      "lung": 0.05,
+      "prostate": 0.05,
+      "colon": 0.1,
+      "breast": 0.05,
+      "kidney": 0.1,
+      "bladder": 0.05
+    },
+    "CYP3A4": {
+      "liver": 1.0,
+      "intestine": 0.8,
+      "lung": 0.1,
+      "prostate": 0.2,
+      "colon": 0.3,
+      "kidney": 0.2,
+      "bladder": 0.1
+    },
+    "CYP2A13": {
+      "lung": 1.0,
+      "nasal_mucosa": 0.9,
+      "liver": 0.05,
+      "prostate": 0.1,
+      "colon": 0.1
+    },
+    "CYP2A6": {
+      "liver": 1.0,
+      "lung": 0.1,
+      "nasal_mucosa": 0.2,
+      "prostate": 0.05
+    },
+    "CYP2E1": {
+      "liver": 1.0,
+      "lung": 0.3,
+      "esophagus": 0.4,
+      "kidney": 0.3,
+      "brain": 0.2,
+      "prostate": 0.1,
+      "bladder": 0.1
+    },
+    "EPHX1": {
+      "liver": 1.0,
+      "lung": 0.7,
+      "intestine": 0.6,
+      "prostate": 0.3,
+      "kidney": 0.5
+    },
+    "GSTM1": {
+      "liver": 1.0,
+      "lung": 0.5,
+      "colon": 0.6,
+      "kidney": 0.7,
+      "prostate": 0.3,
+      "lymphocyte": 0.4,
+      "bladder": 0.3
+    },
+    "GSTP1": {
+      "lung": 1.0,
+      "lymphocyte": 0.8,
+      "placenta": 1.0,
+      "liver": 0.4,
+      "prostate": 0.7,
+      "colon": 0.5,
+      "kidney": 0.5,
+      "breast": 0.6,
+      "bladder": 0.5
+    },
+    "ADH1B": {
+      "liver": 1.0,
+      "stomach": 0.6,
+      "intestine": 0.5,
+      "lung": 0.1,
+      "prostate": 0.1
+    },
+    "ALDH2": {
+      "liver": 1.0,
+      "heart": 0.8,
+      "muscle": 0.7,
+      "lung": 0.3,
+      "kidney": 0.4,
+      "prostate": 0.2
+    },
+    "ALDH1A1": {
+      "liver": 1.0,
+      "lung": 0.7,
+      "stomach": 0.6,
+      "kidney": 0.5,
+      "prostate": 0.4,
+      "bladder": 0.3
+    }
+  }
+}

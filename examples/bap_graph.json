@@ -1,0 +1,311 @@
+{
+  "nodes": [
+    {
+      "id": "BaP",
+      "label": "Benzo[a]pyrene",
+      "type": "Carcinogen",
+      "detail": "Group 1 PAH carcinogen found in tobacco smoke, grilled food, and combustion exhaust",
+      "group": "PAH",
+      "iarc": "Group 1",
+      "source_db": "IARC",
+      "evidence": "IARC Monograph Vol. 92 (2010), Group 1 carcinogen",
+      "tier": null
+    },
+    {
+      "id": "CYP1A1",
+      "label": "CYP1A1",
+      "type": "Enzyme",
+      "detail": "Phase I cytochrome P450 enzyme that epoxidizes BaP",
+      "phase": "I",
+      "role": "Activation",
+      "source_db": "NCBI Gene; KEGG",
+      "evidence": "Major BaP activation enzyme in lung and liver",
+      "tissue": "lung; liver",
+      "variant": "CYP1A1*2C (rs1048943)",
+      "phenotype": "increased activity",
+      "activity_score": 1.0,
+      "tier": 1
+    },
+    {
+      "id": "CYP1B1",
+      "label": "CYP1B1",
+      "type": "Enzyme",
+      "detail": "Phase I cytochrome P450 enzyme contributing to BaP activation",
+      "phase": "I",
+      "role": "Activation",
+      "source_db": "NCBI Gene",
+      "evidence": "Extrahepatic BaP activation; high expression in lung, breast",
+      "tissue": "lung; breast",
+      "variant": "CYP1B1*3 (rs1056836)",
+      "phenotype": "altered substrate specificity",
+      "activity_score": 0.5,
+      "tier": 2
+    },
+    {
+      "id": "EPHX1",
+      "label": "EPHX1",
+      "type": "Enzyme",
+      "detail": "Microsomal epoxide hydrolase converting BaP-7,8-epoxide to BaP-7,8-diol",
+      "phase": "I",
+      "role": "Activation",
+      "source_db": "NCBI Gene",
+      "evidence": "Hydrolysis step in BaP activation cascade"
+    },
+    {
+      "id": "BaP_epoxide",
+      "label": "BaP-7,8-epoxide",
+      "type": "Metabolite",
+      "detail": "First-pass epoxide metabolite of BaP",
+      "reactivity": "High"
+    },
+    {
+      "id": "BaP_diol",
+      "label": "BaP-7,8-diol",
+      "type": "Metabolite",
+      "detail": "Intermediate dihydrodiol metabolite of BaP",
+      "reactivity": "Intermediate"
+    },
+    {
+      "id": "BPDE",
+      "label": "BPDE",
+      "type": "Metabolite",
+      "detail": "Benzo[a]pyrene-7,8-diol-9,10-epoxide — the ultimate carcinogenic metabolite",
+      "reactivity": "High"
+    },
+    {
+      "id": "BPDE_dG",
+      "label": "BPDE-N2-dG",
+      "type": "DNA_Adduct",
+      "detail": "Major bulky DNA adduct formed by BPDE covalently binding guanine at N2"
+    },
+    {
+      "id": "8oxodG",
+      "label": "8-oxo-dG",
+      "type": "DNA_Adduct",
+      "detail": "Oxidative DNA lesion produced via BaP-mediated ROS generation"
+    },
+    {
+      "id": "GSTM1",
+      "label": "GSTM1",
+      "type": "Enzyme",
+      "detail": "Phase II glutathione S-transferase detoxifying BPDE via GSH conjugation",
+      "phase": "II",
+      "role": "Detoxification",
+      "source_db": "NCBI Gene; PharmVar",
+      "evidence": "GSTM1-null polymorphism associated with increased cancer risk",
+      "variant": "GSTM1-null",
+      "phenotype": "absent enzyme activity",
+      "activity_score": 0.0,
+      "tier": 1
+    },
+    {
+      "id": "GSTP1",
+      "label": "GSTP1",
+      "type": "Enzyme",
+      "detail": "Phase II glutathione S-transferase conjugating BPDE",
+      "phase": "II",
+      "role": "Detoxification",
+      "source_db": "NCBI Gene",
+      "evidence": "Expressed in lung; role in BPDE detoxification",
+      "tissue": "lung"
+    },
+    {
+      "id": "BPDE_GSH",
+      "label": "BPDE-GSH",
+      "type": "Metabolite",
+      "detail": "Glutathione conjugate of BPDE — detoxified product",
+      "reactivity": "Low"
+    },
+    {
+      "id": "ABCB1",
+      "label": "ABCB1",
+      "type": "Enzyme",
+      "detail": "Phase III efflux transporter (P-glycoprotein) exporting BPDE-GSH",
+      "phase": "III",
+      "role": "Transport",
+      "source_db": "NCBI Gene"
+    },
+    {
+      "id": "ABCC2",
+      "label": "ABCC2",
+      "type": "Enzyme",
+      "detail": "Phase III MRP2 efflux transporter for glutathione conjugates",
+      "phase": "III",
+      "role": "Transport",
+      "source_db": "NCBI Gene"
+    },
+    {
+      "id": "XPC",
+      "label": "XPC",
+      "type": "Enzyme",
+      "detail": "NER damage recognition factor for bulky DNA adducts",
+      "role": "Repair",
+      "group": "DNA Repair (NER)",
+      "source_db": "NCBI Gene",
+      "evidence": "Initiates global genome NER of BPDE-DNA adducts"
+    },
+    {
+      "id": "ERCC2",
+      "label": "ERCC2/XPD",
+      "type": "Enzyme",
+      "detail": "NER helicase involved in DNA damage verification and opening",
+      "role": "Repair",
+      "group": "DNA Repair (NER)",
+      "source_db": "NCBI Gene"
+    },
+    {
+      "id": "OGG1",
+      "label": "OGG1",
+      "type": "Enzyme",
+      "detail": "Base excision repair glycosylase removing 8-oxo-dG lesions",
+      "role": "Repair",
+      "group": "DNA Repair (BER)",
+      "source_db": "NCBI Gene"
+    },
+    {
+      "id": "hsa05204",
+      "label": "Chemical Carcinogenesis — DNA adducts",
+      "type": "Pathway",
+      "source_db": "KEGG"
+    },
+    {
+      "id": "hsa00980",
+      "label": "Xenobiotic metabolism by CYP450",
+      "type": "Pathway",
+      "source_db": "KEGG"
+    },
+    {
+      "id": "Lung",
+      "label": "Lung",
+      "type": "Tissue"
+    }
+  ],
+  "edges": [
+    {
+      "source": "CYP1A1",
+      "target": "BaP_epoxide",
+      "type": "ACTIVATES",
+      "label": "epoxidation of BaP to BaP-7,8-epoxide",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "CYP1B1",
+      "target": "BaP_epoxide",
+      "type": "ACTIVATES",
+      "label": "epoxidation of BaP to BaP-7,8-epoxide",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "EPHX1",
+      "target": "BaP_diol",
+      "type": "ACTIVATES",
+      "label": "hydrolysis of BaP-7,8-epoxide to BaP-7,8-diol",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BPDE",
+      "type": "ACTIVATES",
+      "label": "second epoxidation to BPDE (ultimate carcinogen)",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "BPDE",
+      "target": "BPDE_dG",
+      "type": "FORMS_ADDUCT",
+      "label": "covalent binding to guanine N2",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "XPC",
+      "target": "BPDE_dG",
+      "type": "REPAIRS",
+      "label": "NER damage recognition",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "ERCC2",
+      "target": "BPDE_dG",
+      "type": "REPAIRS",
+      "label": "NER helicase activity",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "OGG1",
+      "target": "8oxodG",
+      "type": "REPAIRS",
+      "label": "BER glycosylase removes 8-oxo-dG",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "GSTM1",
+      "target": "BPDE",
+      "type": "DETOXIFIES",
+      "label": "glutathione conjugation of BPDE",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "GSTP1",
+      "target": "BPDE",
+      "type": "DETOXIFIES",
+      "label": "glutathione conjugation of BPDE",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "GSTM1",
+      "target": "BPDE_GSH",
+      "type": "DETOXIFIES",
+      "label": "produces glutathione conjugate",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "ABCB1",
+      "target": "BPDE_GSH",
+      "type": "TRANSPORTS",
+      "label": "efflux of BPDE-GSH conjugate",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "ABCC2",
+      "target": "BPDE_GSH",
+      "type": "TRANSPORTS",
+      "label": "MRP2 efflux of BPDE-GSH conjugate",
+      "carcinogen": "BaP"
+    },
+    {
+      "source": "BaP",
+      "target": "hsa05204",
+      "type": "PATHWAY"
+    },
+    {
+      "source": "CYP1A1",
+      "target": "hsa05204",
+      "type": "PATHWAY"
+    },
+    {
+      "source": "CYP1A1",
+      "target": "hsa00980",
+      "type": "PATHWAY"
+    },
+    {
+      "source": "CYP1B1",
+      "target": "hsa00980",
+      "type": "PATHWAY"
+    },
+    {
+      "source": "CYP1A1",
+      "target": "Lung",
+      "type": "EXPRESSED_IN"
+    },
+    {
+      "source": "CYP1B1",
+      "target": "Lung",
+      "type": "EXPRESSED_IN"
+    },
+    {
+      "source": "GSTP1",
+      "target": "Lung",
+      "type": "EXPRESSED_IN"
+    }
+  ]
+}

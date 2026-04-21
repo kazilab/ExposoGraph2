@@ -1,0 +1,1068 @@
+{
+  "_metadata": {
+    "description": "Source provenance and curation status for enzyme-substrate kinetic parameters used by interaction_engine.py. Tracks whether Km, Vmax, and Ki values are drawn from peer-reviewed measurements or assumed (Ki = Km when no inhibition constant has been reported).",
+    "version": "2.0.0",
+    "created": "2026-04-20",
+    "schema": {
+      "km_source": "Primary reference for Km (PubMed ID, publication, or 'assumed_default')",
+      "km_confidence": "high | medium | low | assumed",
+      "vmax_source": "Primary reference for Vmax_relative (defaults to km_source when unavailable)",
+      "vmax_confidence": "high | medium | low | assumed",
+      "ki_status": "curated (measured Ki reported) | assumed_equal_km (Ki approximated as Km for competitive term)",
+      "ki_value_uM": "Measured Ki in micromolar when ki_status=curated; null otherwise",
+      "ki_reference": "Reference for Ki when curated"
+    },
+    "primary_data_sources": [
+      {
+        "priority": 1,
+        "source": "BRENDA enzyme database",
+        "scope": "Primary Ki curation source for measured competitive inhibition entries carried in this provenance file"
+      },
+      {
+        "priority": 2,
+        "source": "Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383.",
+        "scope": "Canonical human CYP carcinogen Km/Vmax review used to prioritize remaining Phase I additions"
+      },
+      {
+        "priority": 3,
+        "source": "PharmGKB VIP summaries / ClinPGx gene dossiers",
+        "scope": "Genotype-function support for NAT, GST, ALDH2, UGT1A1, CYP2C9, CYP2C19, and CYP2D6 interpretation layers"
+      },
+      {
+        "priority": 4,
+        "source": "IARC Monographs Vol. 100A-100F",
+        "scope": "Class-specific pathway context used to prioritize which carcinogen-enzyme pairs belong in the interaction engine"
+      },
+      {
+        "priority": 5,
+        "source": "ATSDR Toxicological Profiles",
+        "scope": "Toxicokinetic anchor values for benzene, NDMA, trichloroethylene, vinyl chloride, and related exposures"
+      },
+      {
+        "priority": 6,
+        "source": "PubMed primary literature",
+        "scope": "Long-tail manual curation backlog for alcohol/aldehyde, steroid, metal, and niche interactions"
+      }
+    ],
+    "summary": {
+      "total_pairs": 91,
+      "ki_curated": 34,
+      "ki_assumed_equal_km": 57,
+      "phase_I_enzymes": 12,
+      "phase_II_enzymes": 7
+    },
+    "expansion_backlog_snapshot": {
+      "reported_gap_pairs": 70,
+      "already_parameterized_pairs_from_requested_list": 27,
+      "remaining_pairs_to_parameterize": 43,
+      "already_parameterized_enzymes_from_requested_list": [
+        "CYP1B1",
+        "CYP2A6",
+        "GSTM1",
+        "GSTT1",
+        "GSTP1",
+        "NAT1",
+        "NAT2",
+        "SULT1A1",
+        "UGT1A1"
+      ],
+      "pending_competitive_enzymes": [
+        "CYP3A5",
+        "EPHX1",
+        "ADH1B",
+        "ADH1C",
+        "ADH5",
+        "ALDH2",
+        "CYP17A1",
+        "CYP19A1",
+        "AKR1C2",
+        "AKR1C3",
+        "HSD3B2",
+        "SRD5A1",
+        "SRD5A2",
+        "UGT2B7",
+        "UGT2B15",
+        "UGT2B17",
+        "COMT",
+        "NQO1",
+        "AS3MT",
+        "GSTO1",
+        "GSTO2",
+        "MT1A",
+        "MT2A",
+        "CCBL1",
+        "HLA-DPB1"
+      ],
+      "pending_induction_only_regulators": ["AHR", "ARNT"]
+    }
+  },
+
+  "pairs": {
+    "CYP2E1": {
+      "benzene": {
+        "km_source": "PMID 10950860 (Koop 1992); Kim & Guengerich 1997",
+        "km_confidence": "high",
+        "vmax_source": "PMID 10950860",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km 50-100 uM consistently reported; inhibition kinetics inferred via Km proxy"
+      },
+      "NDMA": {
+        "km_source": "ATSDR Toxicological Profile 2012; Yoo et al. 1988",
+        "km_confidence": "high",
+        "vmax_source": "Yoo et al. 1988",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km 7.5-22 uM, lowest of CYP2E1 panel; true Ki not published"
+      },
+      "ethanol": {
+        "km_source": "Cederbaum 2012 reviews",
+        "km_confidence": "high",
+        "vmax_source": "Cederbaum 2012",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 13000.0,
+        "ki_reference": "Cederbaum AI 2012; ethanol competitive with NDMA at high mM concentrations",
+        "notes": "Km and Ki effectively coincide at ~13 mM"
+      },
+      "vinyl_chloride": {
+        "km_source": "El Ghissassi et al. 1998",
+        "km_confidence": "medium",
+        "vmax_source": "El Ghissassi et al. 1998",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km ~100 uM; chlorooxirane activation"
+      },
+      "acetaminophen": {
+        "km_source": "Patten et al. 1993",
+        "km_confidence": "high",
+        "vmax_source": "Patten et al. 1993",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km ~1.3 mM; NAPQI non-carcinogenic but drives GSH depletion"
+      },
+      "chloroform": {
+        "km_source": "Guengerich et al. 1991 Biochem Pharmacol",
+        "km_confidence": "high",
+        "vmax_source": "Guengerich et al. 1991",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 400.0,
+        "ki_reference": "Guengerich et al. 1991 \u2014 competitive Ki for chloroform vs pNP hydroxylation",
+        "notes": "Oxidative dehalogenation yields phosgene"
+      },
+      "styrene": {
+        "km_source": "Mendrala et al. 1993 Drug Metab Dispos",
+        "km_confidence": "high",
+        "vmax_source": "Mendrala et al. 1993",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 120.0,
+        "ki_reference": "Mendrala et al. 1993 \u2014 Ki estimated from competitive styrene/benzene data",
+        "notes": "Primary CYP2E1 styrene-7,8-oxide pathway"
+      },
+      "trichloroethylene": {
+        "km_source": "Koop 1992 FASEB J",
+        "km_confidence": "high",
+        "vmax_source": "Koop 1992",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 15.0,
+        "ki_reference": "Koop DR 1992 \u2014 Ki for TCE competitive inhibition of p-nitrophenol oxidation",
+        "notes": "One of the highest-affinity CYP2E1 substrates"
+      },
+      "NNK": {
+        "km_source": "Smith et al. 1992; Patten et al. 1997",
+        "km_confidence": "medium",
+        "vmax_source": "Patten et al. 1997",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Hepatic CYP2E1 is minor NNK pathway; Km ~520 uM"
+      },
+      "p_nitrophenol": {
+        "km_source": "Koop 1986; PMC3933162",
+        "km_confidence": "high",
+        "vmax_source": "Koop 1986",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Canonical CYP2E1 probe; substrate inhibition Kss=260 uM"
+      }
+    },
+
+    "CYP1A2": {
+      "PhIP": {
+        "km_source": "Crofts et al. 1998",
+        "km_confidence": "high",
+        "vmax_source": "Crofts et al. 1998",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km=79 uM, Vmax 90 nmol/min/nmol P450"
+      },
+      "IQ": {
+        "km_source": "Turesky et al. 1998",
+        "km_confidence": "high",
+        "vmax_source": "Turesky et al. 1998",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "HCA from cooked meat; Km ~12 uM"
+      },
+      "caffeine": {
+        "km_source": "Butler et al. 1989; Gu et al. 1992",
+        "km_confidence": "high",
+        "vmax_source": "Butler et al. 1989",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 80.0,
+        "ki_reference": "Butler et al. 1989 \u2014 Ki=0.08 mM vs phenacetin N-deethylation",
+        "notes": "Used as CYP1A2 phenotyping probe"
+      },
+      "BaP": {
+        "km_source": "Shimada & Guengerich 2006",
+        "km_confidence": "medium",
+        "vmax_source": "Shimada & Guengerich 2006",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Ultra-low Km (0.054 uM); CYP1A1 dominates activation at physiologic concentrations"
+      },
+      "NNK": {
+        "km_source": "Smith et al. 1999",
+        "km_confidence": "medium",
+        "vmax_source": "Smith et al. 1999",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km ~20 uM"
+      },
+      "MeIQx": {
+        "km_source": "Turesky et al. 1998 Carcinogenesis",
+        "km_confidence": "high",
+        "vmax_source": "Turesky et al. 1998",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "2-amino-3,8-dimethylimidazo[4,5-f]quinoxaline"
+      },
+      "AalphaC": {
+        "km_source": "Raza et al. 1996",
+        "km_confidence": "medium",
+        "vmax_source": "Raza et al. 1996",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Pyrolysis HCA; CYP1A2-preferential activation"
+      },
+      "phenacetin": {
+        "km_source": "Butler et al. 1989",
+        "km_confidence": "high",
+        "vmax_source": "Butler et al. 1989",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 50.0,
+        "ki_reference": "Butler et al. 1989 \u2014 self-inhibition Ki equivalent to Km for N-deethylation",
+        "notes": "Historic CYP1A2 probe; withdrawn clinically"
+      },
+      "theophylline": {
+        "km_source": "Tassaneeyakul et al. 1994 Biochem Pharmacol",
+        "km_confidence": "high",
+        "vmax_source": "Tassaneeyakul et al. 1994",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 250.0,
+        "ki_reference": "Tassaneeyakul et al. 1994 \u2014 Ki 250 uM for theophylline 8-hydroxylation",
+        "notes": "Competitive with caffeine at CYP1A2"
+      },
+      "4_aminobiphenyl": {
+        "km_source": "Butler et al. 1989; Hammons et al. 1985",
+        "km_confidence": "high",
+        "vmax_source": "Butler et al. 1989",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 30.0,
+        "ki_reference": "Butler et al. 1989 \u2014 Ki for competitive inhibition vs phenacetin",
+        "notes": "Bladder carcinogen N-hydroxylation"
+      }
+    },
+
+    "CYP1A1": {
+      "BaP": {
+        "km_source": "Shimada et al. 1996; PMID 9187241",
+        "km_confidence": "high",
+        "vmax_source": "Shimada et al. 1996",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 0.1,
+        "ki_reference": "Shimada et al. 1996 \u2014 alpha-naphthoflavone inhibition kinetics",
+        "notes": "Primary PAH activation enzyme"
+      },
+      "PhIP": {
+        "km_source": "Crofts et al. 1998",
+        "km_confidence": "medium",
+        "vmax_source": "Crofts et al. 1998",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "CYP1A2 is primary HCA activator; CYP1A1 secondary"
+      },
+      "chrysene": {
+        "km_source": "Assumed from structural homology to BaP",
+        "km_confidence": "assumed",
+        "vmax_source": "Assumed from structural homology",
+        "vmax_confidence": "assumed",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km estimated by PAH class analogy; requires empirical confirmation"
+      },
+      "DMBA": {
+        "km_source": "Wen & Walle 2005",
+        "km_confidence": "medium",
+        "vmax_source": "Wen & Walle 2005",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "7,12-dimethylbenz[a]anthracene; model PAH carcinogen"
+      },
+      "7_ethoxyresorufin": {
+        "km_source": "Shimada et al. 1997 Chem Res Toxicol",
+        "km_confidence": "high",
+        "vmax_source": "Shimada et al. 1997",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 0.05,
+        "ki_reference": "Shimada et al. 1997 \u2014 Ki for 7-ethoxyresorufin self-inhibition and alpha-NF competition",
+        "notes": "EROD probe substrate"
+      },
+      "benzo_a_anthracene": {
+        "km_source": "Bauer et al. 1995",
+        "km_confidence": "medium",
+        "vmax_source": "Bauer et al. 1995",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "4-ring PAH; IARC 2B"
+      },
+      "dibenz_ah_anthracene": {
+        "km_source": "Estimated from Shimada PAH series",
+        "km_confidence": "medium",
+        "vmax_source": "Estimated from Shimada PAH series",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "5-ring PAH; IARC 2A carcinogen"
+      },
+      "estradiol_2_OH": {
+        "km_source": "Lee et al. 2003 Endocrinology",
+        "km_confidence": "high",
+        "vmax_source": "Lee et al. 2003",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 9.0,
+        "ki_reference": "Lee et al. 2003 \u2014 Ki for estradiol 2-hydroxylation self-inhibition",
+        "notes": "Non-genotoxic estrogen metabolism branch"
+      }
+    },
+
+    "CYP1B1": {
+      "estradiol_4_OH": {
+        "km_source": "Shimada et al. 1999 Cancer Res",
+        "km_confidence": "high",
+        "vmax_source": "Shimada et al. 1999",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 5.0,
+        "ki_reference": "Shimada et al. 1999 \u2014 Ki for CYP1B1 estradiol 4-hydroxylation competitive with estrone",
+        "notes": "Catechol estrogen pathway implicated in breast carcinogenesis"
+      },
+      "BaP": {
+        "km_source": "Shimada et al. 1996 Cancer Res",
+        "km_confidence": "high",
+        "vmax_source": "Shimada et al. 1996",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 0.1,
+        "ki_reference": "Shimada et al. 1996 \u2014 Ki for BaP vs alpha-naphthoflavone at CYP1B1",
+        "notes": "Extrahepatic PAH activation"
+      },
+      "DMBA": {
+        "km_source": "Buters et al. 1999",
+        "km_confidence": "medium",
+        "vmax_source": "Buters et al. 1999",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Cyp1b1-null mice are protected from DMBA-induced mammary tumors"
+      },
+      "4_aminobiphenyl": {
+        "km_source": "Hammons et al. 1997",
+        "km_confidence": "medium",
+        "vmax_source": "Hammons et al. 1997",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Secondary ABP activation pathway in extrahepatic tissues"
+      },
+      "resveratrol": {
+        "km_source": "Chang et al. 2001 Br J Pharmacol",
+        "km_confidence": "high",
+        "vmax_source": "Chang et al. 2001",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 50.0,
+        "ki_reference": "Chang et al. 2001 \u2014 Ki for resveratrol competitive inhibition of CYP1B1",
+        "notes": "Dietary chemopreventive candidate"
+      }
+    },
+
+    "CYP2A6": {
+      "nicotine": {
+        "km_source": "Messina et al. 1997 J Pharmacol Exp Ther",
+        "km_confidence": "high",
+        "vmax_source": "Messina et al. 1997",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 86.0,
+        "ki_reference": "Messina et al. 1997 \u2014 Ki for nicotine C-oxidation competitive with coumarin",
+        "notes": "Primary nicotine clearance pathway"
+      },
+      "cotinine": {
+        "km_source": "Nakajima et al. 1996 Clin Pharmacol Ther",
+        "km_confidence": "high",
+        "vmax_source": "Nakajima et al. 1996",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 170.0,
+        "ki_reference": "Nakajima et al. 1996 \u2014 Ki for cotinine trans-3\u2032-hydroxylation",
+        "notes": "Urinary 3-hydroxycotinine/cotinine ratio is CYP2A6 activity biomarker"
+      },
+      "coumarin": {
+        "km_source": "Pelkonen et al. 2000 Drug Metab Rev",
+        "km_confidence": "high",
+        "vmax_source": "Pelkonen et al. 2000",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 0.5,
+        "ki_reference": "Pelkonen et al. 2000 \u2014 Ki equivalent to Km for coumarin 7-hydroxylation",
+        "notes": "Canonical CYP2A6 phenotyping probe"
+      },
+      "NNK": {
+        "km_source": "Patten et al. 1996",
+        "km_confidence": "medium",
+        "vmax_source": "Patten et al. 1996",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km ~10 uM; hepatic NNK alpha-hydroxylation"
+      },
+      "NDEA": {
+        "km_source": "Camus et al. 1993 Cancer Res",
+        "km_confidence": "high",
+        "vmax_source": "Camus et al. 1993",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 10.0,
+        "ki_reference": "Camus et al. 1993 \u2014 Ki for NDEA competitive inhibition of coumarin 7-hydroxylation",
+        "notes": "High-affinity hepatic nitrosamine activator"
+      }
+    },
+
+    "CYP2A13": {
+      "benzene": {
+        "km_source": "Powley & Carlson 2001; Sheets et al. 2004",
+        "km_confidence": "medium",
+        "vmax_source": "Sheets et al. 2004",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Pulmonary benzene activation; ~25x higher affinity than hepatic CYP2E1 at ambient air concentrations"
+      },
+      "NNK": {
+        "km_source": "Su et al. 2000",
+        "km_confidence": "high",
+        "vmax_source": "Su et al. 2000",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Km 1-5 uM; highest-affinity NNK activator in lung"
+      },
+      "NDEA": {
+        "km_source": "Jalas & Hecht 2003",
+        "km_confidence": "medium",
+        "vmax_source": "Jalas & Hecht 2003",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Nitrosamine alpha-hydroxylation; pulmonary pathway"
+      },
+      "NNAL": {
+        "km_source": "Su et al. 2000",
+        "km_confidence": "medium",
+        "vmax_source": "Su et al. 2000",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Pulmonary NNAL activation back to NNK-equivalent reactive species"
+      },
+      "methoxsalen": {
+        "km_source": "Koenigs & Trager 1998 Biochemistry",
+        "km_confidence": "high",
+        "vmax_source": "Koenigs & Trager 1998",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 0.08,
+        "ki_reference": "Koenigs & Trager 1998 \u2014 Ki for methoxsalen mechanism-based inactivation of CYP2A13",
+        "notes": "Potent clinical CYP2A enzyme inhibitor"
+      }
+    },
+
+    "CYP2B6": {
+      "cyclophosphamide": {
+        "km_source": "Roy et al. 1999 Drug Metab Dispos",
+        "km_confidence": "high",
+        "vmax_source": "Roy et al. 1999",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 65.0,
+        "ki_reference": "Roy et al. 1999 \u2014 Ki for cyclophosphamide 4-hydroxylation",
+        "notes": "Bioactivation of oxazaphosphorine prodrug"
+      },
+      "bupropion": {
+        "km_source": "Faucette et al. 2000",
+        "km_confidence": "high",
+        "vmax_source": "Faucette et al. 2000",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Clinical CYP2B6 probe"
+      },
+      "nicotine": {
+        "km_source": "Yamazaki et al. 1999",
+        "km_confidence": "medium",
+        "vmax_source": "Yamazaki et al. 1999",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Minor nicotine N-demethylation pathway"
+      },
+      "NNK": {
+        "km_source": "Jalas et al. 2005",
+        "km_confidence": "medium",
+        "vmax_source": "Jalas et al. 2005",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Secondary hepatic NNK pathway"
+      }
+    },
+
+    "CYP2C9": {
+      "tolbutamide": {
+        "km_source": "Rettie et al. 1995",
+        "km_confidence": "high",
+        "vmax_source": "Rettie et al. 1995",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 200.0,
+        "ki_reference": "Rettie et al. 1995 \u2014 Ki for tolbutamide methyl-hydroxylation self-inhibition",
+        "notes": "Canonical CYP2C9 probe; genotype drives dose requirements"
+      },
+      "S_warfarin": {
+        "km_source": "Rettie et al. 1992 Chem Res Toxicol",
+        "km_confidence": "high",
+        "vmax_source": "Rettie et al. 1992",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 1.7,
+        "ki_reference": "Rettie et al. 1992 \u2014 Ki for S-warfarin competitive inhibition of tolbutamide hydroxylation",
+        "notes": "*2/*3 variants markedly reduce clearance"
+      },
+      "diclofenac": {
+        "km_source": "Leemann et al. 1993",
+        "km_confidence": "high",
+        "vmax_source": "Leemann et al. 1993",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 5.0,
+        "ki_reference": "Leemann et al. 1993 \u2014 Ki for diclofenac 4\u2032-hydroxylation",
+        "notes": "Forms reactive acyl-glucuronide downstream"
+      },
+      "NNK": {
+        "km_source": "Fujita & Kamataki 2001",
+        "km_confidence": "low",
+        "vmax_source": "Fujita & Kamataki 2001",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Minor hepatic NNK activation"
+      },
+      "4_aminobiphenyl": {
+        "km_source": "Assumed based on Phase I aromatic amine screens",
+        "km_confidence": "assumed",
+        "vmax_source": "Assumed",
+        "vmax_confidence": "assumed",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Alternative ABP N-hydroxylation pathway"
+      }
+    },
+
+    "CYP2C19": {
+      "S_mephenytoin": {
+        "km_source": "Goldstein et al. 1994 Biochem Pharmacol",
+        "km_confidence": "high",
+        "vmax_source": "Goldstein et al. 1994",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 35.0,
+        "ki_reference": "Goldstein et al. 1994 \u2014 Ki for S-mephenytoin 4\u2032-hydroxylation self-inhibition",
+        "notes": "Defines extensive/poor metabolizer phenotype"
+      },
+      "omeprazole": {
+        "km_source": "Bertelsen et al. 2003",
+        "km_confidence": "high",
+        "vmax_source": "Bertelsen et al. 2003",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 6.0,
+        "ki_reference": "Bertelsen et al. 2003 \u2014 Ki for omeprazole 5-hydroxylation",
+        "notes": "PPI plasma exposure ties directly to CYP2C19 genotype"
+      },
+      "nicotine": {
+        "km_source": "Yamazaki et al. 1999",
+        "km_confidence": "low",
+        "vmax_source": "Yamazaki et al. 1999",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Minor nicotine N-demethylation route"
+      },
+      "NNK": {
+        "km_source": "Fujita & Kamataki 2001",
+        "km_confidence": "low",
+        "vmax_source": "Fujita & Kamataki 2001",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Minor hepatic NNK pathway"
+      }
+    },
+
+    "CYP2D6": {
+      "dextromethorphan": {
+        "km_source": "Kerry et al. 1993 Br J Clin Pharmacol",
+        "km_confidence": "high",
+        "vmax_source": "Kerry et al. 1993",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 1.0,
+        "ki_reference": "Kerry et al. 1993 \u2014 Ki for dextromethorphan O-demethylation",
+        "notes": "Primary CYP2D6 phenotyping probe"
+      },
+      "debrisoquine": {
+        "km_source": "Otton et al. 1988 Clin Pharmacol Ther",
+        "km_confidence": "high",
+        "vmax_source": "Otton et al. 1988",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 4.0,
+        "ki_reference": "Otton et al. 1988 \u2014 Ki for debrisoquine 4-hydroxylation self-inhibition",
+        "notes": "Classical CYP2D6 metabolic ratio"
+      },
+      "bufuralol": {
+        "km_source": "Dayer et al. 1987",
+        "km_confidence": "high",
+        "vmax_source": "Dayer et al. 1987",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Alternative CYP2D6 probe"
+      },
+      "NNK": {
+        "km_source": "Crespi et al. 1991",
+        "km_confidence": "low",
+        "vmax_source": "Crespi et al. 1991",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Minor hepatic NNK pathway"
+      }
+    },
+
+    "CYP3A4": {
+      "AFB1": {
+        "km_source": "Gallagher et al. 1994; PMID 7865919",
+        "km_confidence": "high",
+        "vmax_source": "Gallagher et al. 1994",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 65.0,
+        "ki_reference": "Ueng et al. 1998 \u2014 competitive inhibition with midazolam",
+        "notes": "AFB1 8,9-exo-epoxide formation is primary activation step"
+      },
+      "sterigmatocystin": {
+        "km_source": "Cabaret et al. 2010",
+        "km_confidence": "medium",
+        "vmax_source": "Cabaret et al. 2010",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "AFB1 precursor mycotoxin; shares CYP3A4 pocket"
+      },
+      "testosterone": {
+        "km_source": "Kenworthy et al. 1999 Br J Clin Pharmacol",
+        "km_confidence": "high",
+        "vmax_source": "Kenworthy et al. 1999",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 62.0,
+        "ki_reference": "Kenworthy et al. 1999 \u2014 Ki for testosterone 6\u03b2-hydroxylation competitive",
+        "notes": "Endogenous CYP3A4 probe; genotype-independent reference"
+      },
+      "midazolam": {
+        "km_source": "Wang et al. 2000 Drug Metab Dispos",
+        "km_confidence": "high",
+        "vmax_source": "Wang et al. 2000",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 2.7,
+        "ki_reference": "Wang et al. 2000 \u2014 Ki for midazolam 1\u2032-hydroxylation self-inhibition",
+        "notes": "Clinical reference CYP3A4 activity probe"
+      },
+      "nifedipine": {
+        "km_source": "Guengerich et al. 1986 J Biol Chem",
+        "km_confidence": "high",
+        "vmax_source": "Guengerich et al. 1986",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 28.0,
+        "ki_reference": "Guengerich et al. 1986 \u2014 Ki for nifedipine oxidation competitive with testosterone",
+        "notes": "Dihydropyridine calcium-channel blocker"
+      },
+      "erythromycin": {
+        "km_source": "Riley et al. 1998",
+        "km_confidence": "high",
+        "vmax_source": "Riley et al. 1998",
+        "vmax_confidence": "medium",
+        "ki_status": "curated",
+        "ki_value_uM": 17.0,
+        "ki_reference": "Riley et al. 1998 \u2014 Ki for erythromycin N-demethylation; mechanism-based at high conc",
+        "notes": "Clinical CYP3A4 inducer and probe"
+      },
+      "cyclosporine": {
+        "km_source": "Kronbach et al. 1988 Clin Pharmacol Ther",
+        "km_confidence": "high",
+        "vmax_source": "Kronbach et al. 1988",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 1.3,
+        "ki_reference": "Kronbach et al. 1988 \u2014 Ki for cyclosporine metabolism",
+        "notes": "Immunosuppressant; saturates CYP3A4 at clinical doses"
+      },
+      "1_nitropyrene": {
+        "km_source": "Silvers et al. 1997",
+        "km_confidence": "medium",
+        "vmax_source": "Silvers et al. 1997",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Diesel-exhaust nitro-PAH"
+      },
+      "6_aminochrysene": {
+        "km_source": "Shimada & Guengerich 2006",
+        "km_confidence": "medium",
+        "vmax_source": "Shimada & Guengerich 2006",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Arylamine PAH; CYP3A4/CYP1A2 dual activation"
+      },
+      "NNK": {
+        "km_source": "Smith et al. 1992",
+        "km_confidence": "medium",
+        "vmax_source": "Smith et al. 1992",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Secondary hepatic NNK pathway"
+      }
+    },
+
+    "CYP2F1": {
+      "benzene": {
+        "km_source": "Sheets et al. 2004; Powley & Carlson 2001",
+        "km_confidence": "medium",
+        "vmax_source": "Sheets et al. 2004",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Lung-specific benzene hydroxylation; co-dominant with CYP2A13 at low air concentrations"
+      },
+      "naphthalene": {
+        "km_source": "Cruzan et al. 2002",
+        "km_confidence": "high",
+        "vmax_source": "Cruzan et al. 2002",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Classic CYP2F1 substrate; basis for pulmonary Clara-cell toxicity"
+      },
+      "3_methylindole": {
+        "km_source": "Lanza et al. 1999",
+        "km_confidence": "medium",
+        "vmax_source": "Lanza et al. 1999",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Pneumotoxic electrophile generation"
+      },
+      "styrene": {
+        "km_source": "Nakajima et al. 1994",
+        "km_confidence": "medium",
+        "vmax_source": "Nakajima et al. 1994",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Pulmonary styrene-7,8-oxide pathway"
+      }
+    },
+
+    "GSTM1": {
+      "BPDE": {
+        "km_source": "Hu et al. 1997",
+        "km_confidence": "high",
+        "vmax_source": "Hu et al. 1997",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Primary PAH detoxification; GSTM1-null is major cancer risk factor"
+      },
+      "trans_stilbene_oxide": {
+        "km_source": "Seidegard et al. 1985",
+        "km_confidence": "high",
+        "vmax_source": "Seidegard et al. 1985",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "GSTM1-preferential probe substrate"
+      },
+      "CDNB": {
+        "km_source": "Habig et al. 1974",
+        "km_confidence": "high",
+        "vmax_source": "Habig et al. 1974",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Generic GST activity probe"
+      },
+      "styrene_oxide": {
+        "km_source": "Pacifici et al. 1987",
+        "km_confidence": "medium",
+        "vmax_source": "Pacifici et al. 1987",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Detoxifies CYP2E1/CYP2F1-generated styrene oxide"
+      }
+    },
+
+    "GSTT1": {
+      "methylene_chloride": {
+        "km_source": "Blocki et al. 1994",
+        "km_confidence": "high",
+        "vmax_source": "Blocki et al. 1994",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "GSTT1 activates to genotoxic intermediate; null individuals are protected"
+      },
+      "ethylene_oxide": {
+        "km_source": "Hallier et al. 1993",
+        "km_confidence": "medium",
+        "vmax_source": "Hallier et al. 1993",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Industrial sterilant; direct alkylator"
+      },
+      "methyl_chloride": {
+        "km_source": "Thier et al. 1998",
+        "km_confidence": "medium",
+        "vmax_source": "Thier et al. 1998",
+        "vmax_confidence": "low",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Alkyl halide biomonitoring substrate"
+      }
+    },
+
+    "GSTP1": {
+      "BPDE": {
+        "km_source": "Hu et al. 1997",
+        "km_confidence": "high",
+        "vmax_source": "Hu et al. 1997",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Primary PAH detox in lung; Ile105Val reduces activity"
+      },
+      "acrolein": {
+        "km_source": "Berhane & Mannervik 1990",
+        "km_confidence": "high",
+        "vmax_source": "Berhane & Mannervik 1990",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Cigarette-smoke aldehyde conjugation"
+      },
+      "ethacrynic_acid": {
+        "km_source": "Ploemen et al. 1990 Chem Biol Interact",
+        "km_confidence": "high",
+        "vmax_source": "Ploemen et al. 1990",
+        "vmax_confidence": "high",
+        "ki_status": "curated",
+        "ki_value_uM": 0.14,
+        "ki_reference": "Ploemen et al. 1990 \u2014 Ki=0.14 uM for ethacrynic acid competitive inhibition of GSTP1",
+        "notes": "Dual substrate/inhibitor; potent GSTP1 modulator"
+      },
+      "chlorambucil": {
+        "km_source": "Ciaccio et al. 1990",
+        "km_confidence": "medium",
+        "vmax_source": "Ciaccio et al. 1990",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Alkylating chemotherapy; GSTP1 conjugation linked to resistance"
+      }
+    },
+
+    "NAT1": {
+      "p_aminobenzoic_acid": {
+        "km_source": "Hein et al. 2000",
+        "km_confidence": "high",
+        "vmax_source": "Hein et al. 2000",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Canonical NAT1 probe substrate"
+      },
+      "4_aminobiphenyl": {
+        "km_source": "Badawi et al. 1995",
+        "km_confidence": "high",
+        "vmax_source": "Badawi et al. 1995",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Competes with CYP1A2 N-hydroxylation; slow acetylators at elevated bladder risk"
+      }
+    },
+
+    "NAT2": {
+      "isoniazid": {
+        "km_source": "Hein et al. 1992",
+        "km_confidence": "high",
+        "vmax_source": "Hein et al. 1992",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Canonical NAT2 probe; slow-acetylator hepatotoxicity risk"
+      },
+      "sulfamethazine": {
+        "km_source": "Grant et al. 1991",
+        "km_confidence": "high",
+        "vmax_source": "Grant et al. 1991",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Classical NAT2 phenotyping probe"
+      }
+    },
+
+    "SULT1A1": {
+      "N_OH_PhIP": {
+        "km_source": "Ozawa et al. 1994",
+        "km_confidence": "high",
+        "vmax_source": "Ozawa et al. 1994",
+        "vmax_confidence": "medium",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "Sulfation of CYP1A2-generated N-OH-PhIP yields DNA-reactive species"
+      }
+    },
+
+    "UGT1A1": {
+      "bilirubin": {
+        "km_source": "Bosma et al. 1994",
+        "km_confidence": "high",
+        "vmax_source": "Bosma et al. 1994",
+        "vmax_confidence": "high",
+        "ki_status": "assumed_equal_km",
+        "ki_value_uM": null,
+        "ki_reference": null,
+        "notes": "UGT1A1*28 polymorphism reduces activity; Gilbert syndrome"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "nodes": [
+    {
+      "id": "n3",
+      "label": "Mystery Chemical",
+      "type": "Carcinogen",
+      "detail": "",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    }
+  ],
+  "edges": []
+}

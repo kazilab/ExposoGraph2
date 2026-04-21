@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with ExposoGraph
+        https://github.com/kazilab/ExposoGraph
+-->
+
+<!-- ExposoGraph Attribution — SEO Meta Tags -->
+<meta name="generator" content="ExposoGraph">
+<meta name="author" content="ExposoGraph">
+<meta property="og:see_also" content="https://github.com/kazilab/ExposoGraph">
+<link rel="author" href="https://github.com/kazilab/ExposoGraph">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExposoGraph Graph Viewer</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const GRAPH_DATA = {
+  "nodes": [
+    {
+      "id": "BaP",
+      "label": "Benzo[a]pyrene",
+      "type": "Carcinogen",
+      "detail": "Group 1 PAH carcinogen found in tobacco smoke, grilled food, and combustion exhaust",
+      "group": "PAH",
+      "iarc": "Group 1",
+      "source_db": "IARC",
+      "evidence": "IARC Monograph Vol. 92 (2010), Group 1 carcinogen",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "50-32-8",
+      "canonical_label": "Benzo[a]pyrene",
+      "canonical_namespace": "iarc",
+      "provenance": [
+        {
+          "source_db": "IARC",
+          "evidence": "IARC Monograph Vol. 92 (2010), Group 1 carcinogen"
+        }
+      ]
+    },
+    {
+      "id": "CYP1A1",
+      "label": "CYP1A1",
+      "type": "Enzyme",
+      "detail": "Phase I cytochrome P450 enzyme that epoxidizes BaP",
+      "phase": "I",
+      "role": "Activation",
+      "source_db": "NCBI Gene; KEGG",
+      "evidence": "Major BaP activation enzyme in lung and liver",
+      "tissue": "lung; liver",
+      "variant": "CYP1A1*2C (rs1048943)",
+      "phenotype": "increased activity",
+      "activity_score": 1.0,
+      "tier": 1,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "CYP1A1",
+      "canonical_label": "CYP1A1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene; KEGG",
+          "evidence": "Major BaP activation enzyme in lung and liver",
+          "tissue": "lung; liver"
+        }
+      ]
+    },
+    {
+      "id": "CYP1B1",
+      "label": "CYP1B1",
+      "type": "Enzyme",
+      "detail": "Phase I cytochrome P450 enzyme contributing to BaP activation",
+      "phase": "I",
+      "role": "Activation",
+      "source_db": "NCBI Gene",
+      "evidence": "Extrahepatic BaP activation; high expression in lung, breast",
+      "tissue": "lung; breast",
+      "variant": "CYP1B1*3 (rs1056836)",
+      "phenotype": "altered substrate specificity",
+      "activity_score": 0.5,
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "CYP1B1",
+      "canonical_label": "CYP1B1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "evidence": "Extrahepatic BaP activation; high expression in lung, breast",
+          "tissue": "lung; breast"
+        }
+      ]
+    },
+    {
+      "id": "EPHX1",
+      "label": "EPHX1",
+      "type": "Enzyme",
+      "detail": "Microsomal epoxide hydrolase converting BaP-7,8-epoxide to BaP-7,8-diol",
+      "phase": "I",
+      "role": "Activation",
+      "source_db": "NCBI Gene",
+      "evidence": "Hydrolysis step in BaP activation cascade",
+      "tier": 1,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "EPHX1",
+      "canonical_label": "EPHX1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "evidence": "Hydrolysis step in BaP activation cascade"
+        }
+      ]
+    },
+    {
+      "id": "BaP_epoxide",
+      "label": "BaP-7,8-epoxide",
+      "type": "Metabolite",
+      "detail": "First-pass epoxide metabolite of BaP",
+      "reactivity": "High",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "id": "BaP_diol",
+      "label": "BaP-7,8-diol",
+      "type": "Metabolite",
+      "detail": "Intermediate dihydrodiol metabolite of BaP",
+      "reactivity": "Intermediate",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "id": "BPDE",
+      "label": "BPDE",
+      "type": "Metabolite",
+      "detail": "Benzo[a]pyrene-7,8-diol-9,10-epoxide \u2014 the ultimate carcinogenic metabolite",
+      "reactivity": "High",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "id": "BPDE_dG",
+      "label": "BPDE-N2-dG",
+      "type": "DNA_Adduct",
+      "detail": "Major bulky DNA adduct formed by BPDE covalently binding guanine at N2",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "id": "8oxodG",
+      "label": "8-oxo-dG",
+      "type": "DNA_Adduct",
+      "detail": "Oxidative DNA lesion produced via BaP-mediated ROS generation",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "id": "GSTM1",
+      "label": "GSTM1",
+      "type": "Enzyme",
+      "detail": "Phase II glutathione S-transferase detoxifying BPDE via GSH conjugation",
+      "phase": "II",
+      "role": "Detoxification",
+      "source_db": "NCBI Gene; PharmVar",
+      "evidence": "GSTM1-null polymorphism associated with increased cancer risk",
+      "variant": "GSTM1-null",
+      "phenotype": "absent enzyme activity",
+      "activity_score": 0.0,
+      "tier": 1,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "GSTM1",
+      "canonical_label": "GSTM1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene; PharmVar",
+          "evidence": "GSTM1-null polymorphism associated with increased cancer risk"
+        }
+      ]
+    },
+    {
+      "id": "GSTP1",
+      "label": "GSTP1",
+      "type": "Enzyme",
+      "detail": "Phase II glutathione S-transferase conjugating BPDE",
+      "phase": "II",
+      "role": "Detoxification",
+      "source_db": "NCBI Gene",
+      "evidence": "Expressed in lung; role in BPDE detoxification",
+      "tissue": "lung",
+      "tier": 1,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "GSTP1",
+      "canonical_label": "GSTP1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "evidence": "Expressed in lung; role in BPDE detoxification",
+          "tissue": "lung"
+        }
+      ]
+    },
+    {
+      "id": "BPDE_GSH",
+      "label": "BPDE-GSH",
+      "type": "Metabolite",
+      "detail": "Glutathione conjugate of BPDE \u2014 detoxified product",
+      "reactivity": "Low",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "id": "ABCB1",
+      "label": "ABCB1",
+      "type": "Enzyme",
+      "detail": "Phase III efflux transporter (P-glycoprotein) exporting BPDE-GSH",
+      "phase": "III",
+      "role": "Transport",
+      "source_db": "NCBI Gene",
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "ABCB1",
+      "canonical_label": "ABCB1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene"
+        }
+      ]
+    },
+    {
+      "id": "ABCC2",
+      "label": "ABCC2",
+      "type": "Enzyme",
+      "detail": "Phase III MRP2 efflux transporter for glutathione conjugates",
+      "phase": "III",
+      "role": "Transport",
+      "source_db": "NCBI Gene",
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "ABCC2",
+      "canonical_label": "ABCC2",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene"
+        }
+      ]
+    },
+    {
+      "id": "XPC",
+      "label": "XPC",
+      "type": "Enzyme",
+      "detail": "NER damage recognition factor for bulky DNA adducts",
+      "group": "DNA Repair (NER)",
+      "role": "Repair",
+      "source_db": "NCBI Gene",
+      "evidence": "Initiates global genome NER of BPDE-DNA adducts",
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "XPC",
+      "canonical_label": "XPC",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "evidence": "Initiates global genome NER of BPDE-DNA adducts"
+        }
+      ]
+    },
+    {
+      "id": "ERCC2",
+      "label": "ERCC2/XPD",
+      "type": "Enzyme",
+      "detail": "NER helicase involved in DNA damage verification and opening",
+      "group": "DNA Repair (NER)",
+      "role": "Repair",
+      "source_db": "NCBI Gene",
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "ERCC2",
+      "canonical_label": "ERCC2/XPD",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene"
+        }
+      ]
+    },
+    {
+      "id": "OGG1",
+      "label": "OGG1",
+      "type": "Enzyme",
+      "detail": "Base excision repair glycosylase removing 8-oxo-dG lesions",
+      "group": "DNA Repair (BER)",
+      "role": "Repair",
+      "source_db": "NCBI Gene",
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "OGG1",
+      "canonical_label": "OGG1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene"
+        }
+      ]
+    },
+    {
+      "id": "hsa05204",
+      "label": "Chemical Carcinogenesis \u2014 DNA adducts",
+      "type": "Pathway",
+      "detail": "",
+      "source_db": "KEGG",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "KEGG"
+        }
+      ]
+    },
+    {
+      "id": "hsa00980",
+      "label": "Xenobiotic metabolism by CYP450",
+      "type": "Pathway",
+      "detail": "",
+      "source_db": "KEGG",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "KEGG"
+        }
+      ]
+    },
+    {
+      "id": "Lung",
+      "label": "Lung",
+      "type": "Tissue",
+      "detail": "",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    }
+  ],
+  "edges": [
+    {
+      "source": "BaP",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BaP_epoxide",
+      "type": "ACTIVATES",
+      "label": "epoxidation of BaP to BaP-7,8-epoxide",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BPDE",
+      "type": "ACTIVATES",
+      "label": "second epoxidation to BPDE (ultimate carcinogen)",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "hsa00980",
+      "type": "PATHWAY",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "Lung",
+      "type": "EXPRESSED_IN",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "BaP_epoxide",
+      "type": "ACTIVATES",
+      "label": "epoxidation of BaP to BaP-7,8-epoxide",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "hsa00980",
+      "type": "PATHWAY",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "Lung",
+      "type": "EXPRESSED_IN",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "EPHX1",
+      "target": "BaP_diol",
+      "type": "ACTIVATES",
+      "label": "hydrolysis of BaP-7,8-epoxide to BaP-7,8-diol",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BPDE",
+      "target": "BPDE_dG",
+      "type": "FORMS_ADDUCT",
+      "label": "covalent binding to guanine N2",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "GSTM1",
+      "target": "BPDE",
+      "type": "DETOXIFIES",
+      "label": "glutathione conjugation of BPDE",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "GSTM1",
+      "target": "BPDE_GSH",
+      "type": "DETOXIFIES",
+      "label": "produces glutathione conjugate",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "GSTP1",
+      "target": "BPDE",
+      "type": "DETOXIFIES",
+      "label": "glutathione conjugation of BPDE",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "GSTP1",
+      "target": "Lung",
+      "type": "EXPRESSED_IN",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "ABCB1",
+      "target": "BPDE_GSH",
+      "type": "TRANSPORTS",
+      "label": "efflux of BPDE-GSH conjugate",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "ABCC2",
+      "target": "BPDE_GSH",
+      "type": "TRANSPORTS",
+      "label": "MRP2 efflux of BPDE-GSH conjugate",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "XPC",
+      "target": "BPDE_dG",
+      "type": "REPAIRS",
+      "label": "NER damage recognition",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "ERCC2",
+      "target": "BPDE_dG",
+      "type": "REPAIRS",
+      "label": "NER helicase activity",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "OGG1",
+      "target": "8oxodG",
+      "type": "REPAIRS",
+      "label": "BER glycosylase removes 8-oxo-dG",
+      "carcinogen": "BaP",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    }
+  ]
+};
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0f2f5;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #ebedf0;
+  --border: #d0d4db;
+  --text: #1a1d23;
+  --text-muted: #5f6673;
+  --text-faint: #8c919e;
+  --teal: #01696f;
+  --teal-light: #3a8a90;
+  --teal-bright: #018a92;
+  --red: #c9374b;
+  --red-muted: #a13544;
+  --orange: #d07830;
+  --green: #508a2e;
+  --green-muted: #3a6a1a;
+  --blue: #3a75b0;
+  --purple: #7c4db8;
+  --gold: #c49020;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header-logo svg { flex-shrink: 0; }
+.header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.header-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.header-stats {
+  margin-left: auto;
+  display: flex;
+  gap: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.header-stat b {
+  color: var(--teal-bright);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────── */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  z-index: 10;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.panel {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-3);
+}
+.panel-body { padding: 10px 12px; }
+
+/* Legend */
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.legend-item:hover { opacity: 0.7; }
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-count {
+  margin-left: auto;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+}
+
+/* Edge legend */
+.edge-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.edge-line {
+  width: 28px;
+  height: 2px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Search */
+.search-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.search-box input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 12px;
+  width: 100%;
+  font-family: var(--font-body);
+}
+.search-box input::placeholder { color: var(--text-faint); }
+.search-icon { color: var(--text-faint); flex-shrink: 0; }
+
+/* Filter buttons */
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.filter-btn {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font-body);
+}
+.filter-btn:hover { border-color: var(--teal-light); color: var(--text); }
+.filter-btn.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: white;
+}
+
+/* ── Detail Panel ─────────────────────────────────────────────── */
+.detail-panel {
+  display: none;
+  padding: 0;
+}
+.detail-panel.visible { display: block; }
+.detail-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.detail-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.detail-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.detail-connections {
+  font-size: 11px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.detail-connections h4 {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+.conn-item {
+  padding: 3px 0;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.conn-item .conn-edge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* ── Graph Container ──────────────────────────────────────────── */
+.graph-container {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  z-index: 1;
+}
+
+#graph-svg {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+#graph-svg:active { cursor: grabbing; }
+
+/* ── Tooltip ──────────────────────────────────────────────────── */
+.tooltip {
+  position: absolute;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 1000;
+  max-width: 280px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.tooltip.visible { opacity: 1; }
+.tooltip-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.tooltip-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.tooltip-desc {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* ── Controls ─────────────────────────────────────────────────── */
+.graph-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ctrl-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.ctrl-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--teal-light); }
+
+/* Footer */
+.graph-footer {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+.graph-footer a { color: var(--text-faint); text-decoration: none; }
+.graph-footer a:hover { color: var(--teal-light); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" style="display:inline-block;vertical-align:middle;flex-shrink:0;width:28px;height:28px">
+        <circle cx="16" cy="16" r="14" stroke="#01696F" stroke-width="2"/>
+        <circle cx="10" cy="12" r="3" fill="#4f98a3" opacity="0.8"/>
+        <circle cx="22" cy="12" r="2.5" fill="#e05565" opacity="0.8"/>
+        <circle cx="16" cy="22" r="2.5" fill="#6daa45" opacity="0.8"/>
+        <line x1="12.5" y1="13" x2="20" y2="12.5" stroke="#4f98a3" stroke-width="1" opacity="0.5"/>
+        <line x1="10.5" y1="14.5" x2="15" y2="20" stroke="#6daa45" stroke-width="1" opacity="0.5"/>
+        <line x1="21" y1="14" x2="17" y2="20" stroke="#e05565" stroke-width="1" opacity="0.5"/>
+      </svg>
+      <div>
+        <div class="header-title">ExposoGraph Graph Viewer</div>
+        <div class="header-subtitle">CarcinoGenomic Platform — Layer 2 knowledge graph</div>
+      </div>
+    </div>
+    <div class="header-stats">
+      <span class="header-stat"><b id="node-count">0</b> nodes</span>
+      <span class="header-stat"><b id="edge-count">0</b> edges</span>
+      <span class="header-stat"><b>5</b> node types</span>
+      <span class="header-stat"><b>6</b> edge types</span>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <!-- Search -->
+    <div class="search-box">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="search-input" placeholder="Search nodes...">
+    </div>
+
+    <!-- Node Legend -->
+    <div class="panel">
+      <div class="panel-header">Node Types</div>
+      <div class="panel-body" id="node-legend"></div>
+    </div>
+
+    <!-- Edge Legend -->
+    <div class="panel">
+      <div class="panel-header">Edge Types</div>
+      <div class="panel-body" id="edge-legend"></div>
+    </div>
+
+    <!-- Carcinogen Filter -->
+    <div class="panel">
+      <div class="panel-header">Filter by Carcinogen Class</div>
+      <div class="panel-body">
+        <div class="filter-group" id="carcinogen-filters"></div>
+      </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="panel detail-panel" id="detail-panel">
+      <div class="panel-header">Node Details</div>
+      <div class="panel-body" id="detail-content"></div>
+    </div>
+  </aside>
+
+  <!-- Graph -->
+  <div class="graph-container" id="graph-container">
+    <svg id="graph-svg"></svg>
+    <div class="tooltip" id="tooltip"></div>
+    <div class="graph-controls">
+      <button class="ctrl-btn" id="zoom-in" title="Zoom In">+</button>
+      <button class="ctrl-btn" id="zoom-out" title="Zoom Out">−</button>
+      <button class="ctrl-btn" id="zoom-reset" title="Reset View">⟲</button>
+    </div>
+    <div class="graph-footer">
+      <a href="https://github.com/kazilab/ExposoGraph" target="_blank" rel="noopener noreferrer">Created with ExposoGraph</a>
+       · CarcinoGenomic Platform Report · March 2026
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// Knowledge Graph Visualization — D3.js Force-Directed Layout
+// ═══════════════════════════════════════════════════════════════════════
+
+const NODE_COLORS = {
+  Carcinogen: "#e05565",
+  Enzyme: "#4f98a3",
+  Gene: "#3d8b8b",
+  Metabolite: "#e8945a",
+  DNA_Adduct: "#a86fdf",
+  Pathway: "#5591c7",
+  Tissue: "#c2855a"
+};
+
+const NODE_LABELS = {
+  Carcinogen: "Carcinogens (IARC-classified)",
+  Enzyme: "Enzymes (Phase I/II/III + Repair)",
+  Gene: "Genes (Receptors & Variant Loci)",
+  Metabolite: "Metabolites (Intermediates & Conjugates)",
+  DNA_Adduct: "DNA Adducts (Lesion Types)",
+  Pathway: "Pathways (KEGG References)",
+  Tissue: "Tissues (Expression Context)"
+};
+
+const EDGE_COLORS = {
+  ACTIVATES: "#e05565",
+  DETOXIFIES: "#6daa45",
+  TRANSPORTS: "#5591c7",
+  FORMS_ADDUCT: "#a86fdf",
+  REPAIRS: "#e8af34",
+  PATHWAY: "#555b6a",
+  EXPRESSED_IN: "#c2855a",
+  ENCODES: "#3d8b8b",
+  CUSTOM: "#9ea9bd"
+};
+
+const EDGE_LABELS = {
+  ACTIVATES: "Activates (procarcinogen → reactive metabolite)",
+  DETOXIFIES: "Detoxifies (conjugation / inactivation)",
+  TRANSPORTS: "Transports (efflux of conjugates)",
+  FORMS_ADDUCT: "Forms Adduct (metabolite → DNA lesion)",
+  REPAIRS: "Repairs (DNA damage removal)",
+  PATHWAY: "Pathway membership",
+  EXPRESSED_IN: "Expressed in (gene → tissue)",
+  ENCODES: "Encodes (variant locus → gene or enzyme)",
+  CUSTOM: "Custom curated relation"
+};
+
+const NODE_SIZES = {
+  Carcinogen: 12,
+  Enzyme: 9,
+  Gene: 8,
+  Metabolite: 7,
+  DNA_Adduct: 8,
+  Pathway: 10,
+  Tissue: 9
+};
+
+// ── Setup ────────────────────────────────────────────────────────────
+const container = document.getElementById("graph-container");
+const svg = d3.select("#graph-svg");
+const width = container.clientWidth;
+const height = container.clientHeight;
+
+// Deep clone data
+const nodes = GRAPH_DATA.nodes.map(d => ({...d}));
+const edges = GRAPH_DATA.edges.map(d => ({...d}));
+
+document.getElementById("node-count").textContent = nodes.length;
+document.getElementById("edge-count").textContent = edges.length;
+
+// ── Build Legends ────────────────────────────────────────────────────
+const nodeLegend = document.getElementById("node-legend");
+Object.entries(NODE_COLORS).forEach(([type, color]) => {
+  const count = nodes.filter(n => n.type === type).length;
+  if (count === 0) return;
+  const item = document.createElement("div");
+  item.className = "legend-item";
+  item.dataset.type = type;
+  item.innerHTML = `<span class="legend-dot" style="background:${color}"></span>
+    <span>${NODE_LABELS[type]}</span>
+    <span class="legend-count">${count}</span>`;
+  item.addEventListener("click", () => highlightType(type));
+  nodeLegend.appendChild(item);
+});
+
+const edgeLegend = document.getElementById("edge-legend");
+Object.entries(EDGE_COLORS).forEach(([type, color]) => {
+  const count = edges.filter(e => e.type === type).length;
+  if (count === 0) return;
+  const item = document.createElement("div");
+  item.className = "edge-legend-item";
+  item.innerHTML = `<span class="edge-line" style="background:${color}"></span>
+    <span>${EDGE_LABELS[type]}</span>
+    <span class="legend-count" style="margin-left:auto">${count}</span>`;
+  edgeLegend.appendChild(item);
+});
+
+// ── Carcinogen Filters ───────────────────────────────────────────────
+const carcinogenGroups = [...new Set(nodes.filter(n => n.type === "Carcinogen").map(n => n.group))];
+const filterContainer = document.getElementById("carcinogen-filters");
+const allBtn = document.createElement("button");
+allBtn.className = "filter-btn active";
+allBtn.textContent = "All";
+allBtn.addEventListener("click", () => filterByCarcinogen(null));
+filterContainer.appendChild(allBtn);
+
+carcinogenGroups.forEach(g => {
+  const btn = document.createElement("button");
+  btn.className = "filter-btn";
+  btn.textContent = g.replace("_", " ");
+  btn.dataset.group = g;
+  btn.addEventListener("click", () => filterByCarcinogen(g));
+  filterContainer.appendChild(btn);
+});
+
+// ── D3 Force Simulation ─────────────────────────────────────────────
+const g = svg.append("g");
+
+// Zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.15, 5])
+  .on("zoom", (e) => g.attr("transform", e.transform));
+svg.call(zoom);
+
+// Arrow markers
+const defs = svg.append("defs");
+Object.entries(EDGE_COLORS).forEach(([type, color]) => {
+  defs.append("marker")
+    .attr("id", `arrow-${type}`)
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 20)
+    .attr("refY", 0)
+    .attr("markerWidth", 5)
+    .attr("markerHeight", 5)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M0,-4L10,0L0,4")
+    .attr("fill", color)
+    .attr("opacity", 0.7);
+});
+
+// Links
+const link = g.append("g")
+  .selectAll("line")
+  .data(edges)
+  .join("line")
+  .attr("stroke", d => EDGE_COLORS[d.type] || "#555")
+  .attr("stroke-width", d => d.type === "PATHWAY" ? 0.8 : 1.2)
+  .attr("stroke-opacity", d => d.type === "PATHWAY" ? 0.25 : 0.45)
+  .attr("marker-end", d => d.type !== "PATHWAY" ? `url(#arrow-${d.type})` : null);
+
+// Nodes
+const node = g.append("g")
+  .selectAll("g")
+  .data(nodes)
+  .join("g")
+  .call(d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended));
+
+// Node shapes
+node.each(function(d) {
+  const el = d3.select(this);
+  const r = NODE_SIZES[d.type] || 7;
+  const color = NODE_COLORS[d.type] || "#888";
+
+  if (d.type === "Carcinogen") {
+    // Diamond shape for carcinogens
+    el.append("polygon")
+      .attr("points", `0,${-r*1.3} ${r},0 0,${r*1.3} ${-r},0`)
+      .attr("fill", color)
+      .attr("fill-opacity", 0.85)
+      .attr("stroke", color)
+      .attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.5);
+  } else if (d.type === "DNA_Adduct") {
+    // Hexagon for DNA adducts
+    const hex = d3.range(6).map(i => {
+      const a = (Math.PI / 3) * i - Math.PI / 6;
+      return `${r * Math.cos(a)},${r * Math.sin(a)}`;
+    }).join(" ");
+    el.append("polygon")
+      .attr("points", hex)
+      .attr("fill", color)
+      .attr("fill-opacity", 0.85)
+      .attr("stroke", color)
+      .attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.5);
+  } else if (d.type === "Pathway") {
+    // Rounded rect for pathways
+    el.append("rect")
+      .attr("x", -r * 1.2)
+      .attr("y", -r * 0.7)
+      .attr("width", r * 2.4)
+      .attr("height", r * 1.4)
+      .attr("rx", 3)
+      .attr("fill", color)
+      .attr("fill-opacity", 0.5)
+      .attr("stroke", color)
+      .attr("stroke-width", 1)
+      .attr("stroke-opacity", 0.4);
+  } else if (d.type === "Tissue") {
+    // Rounded rect for tissues
+    el.append("rect")
+      .attr("x", -r * 1.1)
+      .attr("y", -r * 0.65)
+      .attr("width", r * 2.2)
+      .attr("height", r * 1.3)
+      .attr("rx", 6)
+      .attr("fill", color)
+      .attr("fill-opacity", 0.72)
+      .attr("stroke", color)
+      .attr("stroke-width", 1.3)
+      .attr("stroke-opacity", 0.45);
+  } else {
+    // Circle for enzymes, genes, and metabolites
+    el.append("circle")
+      .attr("r", r)
+      .attr("fill", color)
+      .attr("fill-opacity", d.type === "Enzyme" ? 0.85 : d.type === "Gene" ? 0.78 : 0.7)
+      .attr("stroke", color)
+      .attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.4);
+  }
+});
+
+// Node labels
+node.append("text")
+  .text(d => d.label)
+  .attr("font-size", d => d.type === "Carcinogen" ? "10px" : d.type === "Pathway" ? "7px" : "8px")
+  .attr("font-weight", d => d.type === "Carcinogen" ? "600" : "400")
+  .attr("font-family", "Inter, sans-serif")
+  .attr("fill", "#2a2d33")
+  .attr("text-anchor", "middle")
+  .attr("dy", d => (NODE_SIZES[d.type] || 7) + 12)
+  .attr("paint-order", "stroke")
+  .attr("stroke", "var(--bg)")
+  .attr("stroke-width", 3);
+
+// ── Simulation ───────────────────────────────────────────────────────
+const simulation = d3.forceSimulation(nodes)
+  .force("link", d3.forceLink(edges).id(d => d.id).distance(d => {
+    if (d.type === "PATHWAY") return 160;
+    if (d.type === "FORMS_ADDUCT") return 80;
+    return 100;
+  }).strength(d => d.type === "PATHWAY" ? 0.1 : 0.4))
+  .force("charge", d3.forceManyBody().strength(d => {
+    if (d.type === "Carcinogen") return -400;
+    if (d.type === "Pathway") return -200;
+    return -250;
+  }))
+  .force("center", d3.forceCenter(width / 2, height / 2))
+  .force("collision", d3.forceCollide().radius(d => (NODE_SIZES[d.type] || 7) + 15))
+  .force("x", d3.forceX(width / 2).strength(0.03))
+  .force("y", d3.forceY(height / 2).strength(0.03))
+  .alphaDecay(0.02)
+  .on("tick", ticked);
+
+function ticked() {
+  link
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
+
+  node.attr("transform", d => `translate(${d.x},${d.y})`);
+}
+
+// ── Drag ─────────────────────────────────────────────────────────────
+function dragstarted(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+function dragged(event, d) {
+  d.fx = event.x;
+  d.fy = event.y;
+}
+function dragended(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+// ── Tooltip ──────────────────────────────────────────────────────────
+const tooltip = document.getElementById("tooltip");
+
+node.on("mouseover", (event, d) => {
+  const color = NODE_COLORS[d.type];
+  let typeExtra = "";
+  if (d.type === "Enzyme") typeExtra = ` · Phase ${d.phase} · ${d.role}`;
+  if (d.type === "Carcinogen") {
+    const carcinogenBits = [
+      d.group ? d.group.replace("_", " ") : null,
+      d.iarc || null,
+    ].filter(Boolean);
+    if (carcinogenBits.length) typeExtra = ` · ${carcinogenBits.join(" · ")}`;
+  }
+  if (d.type === "Metabolite") typeExtra = ` · Reactivity: ${d.reactivity}`;
+  if (d.type === "Gene") {
+    const geneBits = [d.variant, d.phenotype, d.tissue].filter(Boolean);
+    if (geneBits.length) typeExtra = ` · ${geneBits.join(" · ")}`;
+  }
+  if (d.type === "Tissue" && d.tissue) typeExtra = ` · ${d.tissue}`;
+
+  tooltip.innerHTML = `
+    <div class="tooltip-title">${d.label}</div>
+    <div class="tooltip-type" style="color:${color}">${d.type.replace("_"," ")}${typeExtra}</div>
+    <div class="tooltip-desc">${d.detail}</div>
+  `;
+  tooltip.classList.add("visible");
+
+  // Highlight connected
+  const connectedIds = new Set();
+  connectedIds.add(d.id);
+  edges.forEach(e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    if (sid === d.id) connectedIds.add(tid);
+    if (tid === d.id) connectedIds.add(sid);
+  });
+
+  node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.1);
+  link.style("stroke-opacity", e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    return (sid === d.id || tid === d.id) ? 0.8 : 0.03;
+  }).style("stroke-width", e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    return (sid === d.id || tid === d.id) ? 2.5 : 0.5;
+  });
+})
+.on("mousemove", (event) => {
+  const rect = container.getBoundingClientRect();
+  tooltip.style.left = (event.clientX - rect.left + 15) + "px";
+  tooltip.style.top = (event.clientY - rect.top - 10) + "px";
+})
+.on("mouseout", () => {
+  tooltip.classList.remove("visible");
+  node.style("opacity", 1);
+  link.style("stroke-opacity", d => d.type === "PATHWAY" ? 0.25 : 0.45)
+    .style("stroke-width", d => d.type === "PATHWAY" ? 0.8 : 1.2);
+});
+
+// ── Click for Details ────────────────────────────────────────────────
+node.on("click", (event, d) => {
+  event.stopPropagation();
+  showDetail(d);
+});
+
+svg.on("click", () => {
+  document.getElementById("detail-panel").classList.remove("visible");
+});
+
+function showDetail(d) {
+  const panel = document.getElementById("detail-panel");
+  const content = document.getElementById("detail-content");
+  const color = NODE_COLORS[d.type];
+
+  let typeLabel = d.type.replace("_", " ");
+  if (d.type === "Enzyme") typeLabel += ` · Phase ${d.phase}`;
+  if (d.type === "Gene" && d.variant) typeLabel += ` · ${d.variant}`;
+
+  // Find connections
+  const outgoing = [];
+  const incoming = [];
+  edges.forEach(e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    if (sid === d.id) {
+      const tNode = nodes.find(n => n.id === tid);
+      outgoing.push({ edge: e, node: tNode });
+    }
+    if (tid === d.id) {
+      const sNode = nodes.find(n => n.id === sid);
+      incoming.push({ edge: e, node: sNode });
+    }
+  });
+
+  let connHtml = "";
+  if (outgoing.length) {
+    connHtml += `<h4>Outgoing (${outgoing.length})</h4>`;
+    outgoing.forEach(c => {
+      const ec = EDGE_COLORS[c.edge.type] || "#555";
+      connHtml += `<div class="conn-item">
+        <span class="conn-edge" style="background:${ec}22;color:${ec}">${c.edge.type}</span>
+        → ${c.node?.label || "?"}${c.edge.label ? ` (${c.edge.label})` : ""}
+      </div>`;
+    });
+  }
+  if (incoming.length) {
+    connHtml += `<h4 style="margin-top:8px">Incoming (${incoming.length})</h4>`;
+    incoming.forEach(c => {
+      const ec = EDGE_COLORS[c.edge.type] || "#555";
+      connHtml += `<div class="conn-item">
+        <span class="conn-edge" style="background:${ec}22;color:${ec}">${c.edge.type}</span>
+        ← ${c.node?.label || "?"}${c.edge.label ? ` (${c.edge.label})` : ""}
+      </div>`;
+    });
+  }
+
+  const metadata = [
+    d.group ? `<div><b>Group:</b> ${d.group.replaceAll("_", " ")}</div>` : "",
+    d.iarc ? `<div><b>IARC:</b> ${d.iarc}</div>` : "",
+    d.phase ? `<div><b>Phase:</b> ${d.phase}</div>` : "",
+    d.role ? `<div><b>Role:</b> ${d.role}</div>` : "",
+    d.reactivity ? `<div><b>Reactivity:</b> ${d.reactivity}</div>` : "",
+    d.tissue ? `<div><b>Tissue:</b> ${d.tissue}</div>` : "",
+    d.variant ? `<div><b>Variant:</b> ${d.variant}</div>` : "",
+    d.phenotype ? `<div><b>Phenotype:</b> ${d.phenotype}</div>` : "",
+    d.source_db ? `<div><b>Source DB:</b> ${d.source_db}</div>` : "",
+  ].filter(Boolean).join("");
+
+  content.innerHTML = `
+    <div class="detail-name">${d.label}</div>
+    <span class="detail-type" style="background:${color}22;color:${color}">${typeLabel}</span>
+    <div class="detail-desc">${d.detail}</div>
+    ${metadata ? `<div class="detail-desc">${metadata}</div>` : ""}
+    <div class="detail-connections">${connHtml}</div>
+  `;
+  panel.classList.add("visible");
+}
+
+// ── Search ───────────────────────────────────────────────────────────
+document.getElementById("search-input").addEventListener("input", function() {
+  const q = this.value.toLowerCase().trim();
+  if (!q) {
+    node.style("opacity", 1);
+    link.style("stroke-opacity", d => d.type === "PATHWAY" ? 0.25 : 0.45);
+    return;
+  }
+
+  const matchIds = new Set();
+  nodes.forEach(n => {
+    if (n.label.toLowerCase().includes(q) || n.id.toLowerCase().includes(q) ||
+        (n.detail && n.detail.toLowerCase().includes(q)) ||
+        (n.group && n.group.toLowerCase().includes(q)) ||
+        (n.tissue && n.tissue.toLowerCase().includes(q)) ||
+        (n.variant && n.variant.toLowerCase().includes(q)) ||
+        (n.phenotype && n.phenotype.toLowerCase().includes(q))) {
+      matchIds.add(n.id);
+    }
+  });
+
+  // Also highlight connected nodes
+  const expandedIds = new Set(matchIds);
+  edges.forEach(e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    if (matchIds.has(sid)) expandedIds.add(tid);
+    if (matchIds.has(tid)) expandedIds.add(sid);
+  });
+
+  node.style("opacity", n => expandedIds.has(n.id) ? 1 : 0.08);
+  link.style("stroke-opacity", e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    return (expandedIds.has(sid) && expandedIds.has(tid)) ? 0.6 : 0.02;
+  });
+});
+
+// ── Type Highlight ───────────────────────────────────────────────────
+let activeType = null;
+function highlightType(type) {
+  if (activeType === type) {
+    activeType = null;
+    node.style("opacity", 1);
+    link.style("stroke-opacity", d => d.type === "PATHWAY" ? 0.25 : 0.45);
+    return;
+  }
+  activeType = type;
+  const typeIds = new Set(nodes.filter(n => n.type === type).map(n => n.id));
+
+  node.style("opacity", n => typeIds.has(n.id) ? 1 : 0.08);
+  link.style("stroke-opacity", e => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    return (typeIds.has(sid) || typeIds.has(tid)) ? 0.5 : 0.02;
+  });
+}
+
+// ── Carcinogen Filter ────────────────────────────────────────────────
+function filterByCarcinogen(group) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  if (!group) {
+    document.querySelector(".filter-btn").classList.add("active");
+    node.style("opacity", 1);
+    link.style("stroke-opacity", d => d.type === "PATHWAY" ? 0.25 : 0.45)
+      .style("stroke-width", d => d.type === "PATHWAY" ? 0.8 : 1.2);
+    return;
+  }
+
+  document.querySelector(`[data-group="${group}"]`).classList.add("active");
+
+  // Find carcinogen IDs in this group
+  const carcinogens = new Set(nodes.filter(n => n.type === "Carcinogen" && n.group === group).map(n => n.id));
+
+  // Find all edges that involve these carcinogens
+  const relevantEdgeIds = new Set();
+  const connectedIds = new Set(carcinogens);
+
+  edges.forEach((e, i) => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    // Direct carcinogen connection or matching carcinogen field
+    if (carcinogens.has(sid) || carcinogens.has(tid) ||
+        (e.carcinogen && carcinogens.has(e.carcinogen))) {
+      relevantEdgeIds.add(i);
+      connectedIds.add(sid);
+      connectedIds.add(tid);
+    }
+  });
+
+  // Expand one more level for metabolite → adduct connections
+  edges.forEach((e, i) => {
+    const sid = typeof e.source === "object" ? e.source.id : e.source;
+    const tid = typeof e.target === "object" ? e.target.id : e.target;
+    if (connectedIds.has(sid) || connectedIds.has(tid)) {
+      if (e.type === "FORMS_ADDUCT" || e.type === "REPAIRS") {
+        relevantEdgeIds.add(i);
+        connectedIds.add(sid);
+        connectedIds.add(tid);
+      }
+    }
+  });
+
+  node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
+  link.style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? 0.7 : 0.02)
+    .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? 2 : 0.3);
+}
+
+// ── Zoom Controls ────────────────────────────────────────────────────
+document.getElementById("zoom-in").addEventListener("click", () => {
+  svg.transition().duration(300).call(zoom.scaleBy, 1.5);
+});
+document.getElementById("zoom-out").addEventListener("click", () => {
+  svg.transition().duration(300).call(zoom.scaleBy, 0.67);
+});
+document.getElementById("zoom-reset").addEventListener("click", () => {
+  svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+});
+
+// Initial fit
+setTimeout(() => {
+  svg.transition().duration(800).call(
+    zoom.transform,
+    d3.zoomIdentity.translate(width * 0.05, height * 0.05).scale(0.85)
+  );
+}, 2000);
+
+</script>
+</body>
+</html>

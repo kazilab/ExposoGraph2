@@ -1,0 +1,43 @@
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "label": "CYP1A1",
+      "type": "Enzyme",
+      "detail": "",
+      "tier": 1,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "CYP1A1",
+      "canonical_label": "CYP1A1",
+      "canonical_namespace": "reference_panel",
+      "provenance": []
+    },
+    {
+      "id": "n2",
+      "label": "BaP",
+      "type": "Carcinogen",
+      "detail": "",
+      "group": "PAH",
+      "iarc": "Group 1",
+      "origin": "imported",
+      "match_status": "alias",
+      "canonical_id": "50-32-8",
+      "canonical_label": "Benzo[a]pyrene",
+      "canonical_namespace": "iarc",
+      "provenance": []
+    }
+  ],
+  "edges": [
+    {
+      "source": "n1",
+      "target": "n2",
+      "type": "ACTIVATES",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "ACTIVATES",
+      "canonical_namespace": "schema",
+      "provenance": []
+    }
+  ]
+}
