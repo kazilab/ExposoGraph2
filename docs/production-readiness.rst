@@ -2,7 +2,7 @@ Production Readiness
 ====================
 
 As of **April 21, 2026**, ExposoGraph clears every configured quality gate and
-is suitable for internal research use, manuscript support, and reproducible
+is suitable for internal research use, and reproducible
 local analysis. All gates now run as blocking jobs in CI; there is no longer
 a split between required and advisory checks.
 
