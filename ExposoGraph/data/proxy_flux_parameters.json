@@ -1,6 +1,6 @@
 {
   "_metadata": {
-    "description": "Data-driven proxy and receptor-mediated parameter blocks for ExposoGraph flux modeling. These values are heuristic or semi-quantitative scaffolds for manuscript classes lacking full substrate-specific Michaelis-Menten calibration in kinetic_parameters.json.",
+    "description": "Data-driven proxy and receptor-mediated parameter blocks for ExposoGraph flux modeling. These values are heuristic or semi-quantitative scaffolds for classes lacking full substrate-specific Michaelis-Menten calibration in kinetic_parameters.json.",
     "version": "1.0.0",
     "created": "2026-04-20",
     "schema": {
