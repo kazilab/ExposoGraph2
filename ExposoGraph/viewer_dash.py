@@ -686,7 +686,7 @@ def create_dash_viewer_app(
                                                 style=_INPUT_STYLE,
                                             ),
                                             html.Div(
-                                                "Matches expand to immediate neighbors, similar to the manuscript viewer.",
+                                                "Matches expand to immediate neighbors.",
                                                 style={"marginTop": "8px", "color": "#8da3bc", "fontSize": "0.8rem", "lineHeight": 1.45},
                                             ),
                                         ],
@@ -825,7 +825,7 @@ def create_dash_viewer_app(
                                             "flexWrap": "wrap",
                                         },
                                         children=[
-                                            html.Div("Search and hover dim non-relevant neighborhoods, mirroring the old manuscript viewer."),
+                                            html.Div("Search and hover dim non-relevant neighborhoods."),
                                             html.Div("Dash Cytoscape viewer"),
                                         ],
                                     ),
