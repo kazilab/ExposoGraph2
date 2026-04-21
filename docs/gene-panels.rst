@@ -7,7 +7,7 @@ activity scores from the CarcinoGenomic Platform (Tables 3–6).
 Each seed gene now includes structured database provenance, and the package
 exposes a formal source manifest through
 :data:`~ExposoGraph.reference_data.CURATION_SOURCE_MANIFEST`.
-The manuscript-aligned primary curation sources are IARC, KEGG, PharmVar,
+The primary curation sources are IARC, KEGG, PharmVar,
 CPIC, CTD, GTEx, and PubMed. ExposoGraph also uses NCBI Gene and ClinPGx as
 supporting implementation sources for stable identifiers and pharmacogene
 coverage.
