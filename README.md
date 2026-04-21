@@ -1,4 +1,4 @@
-# ExposoGraph
+# ExposoGraph 2.0
 <!-- PyPI version badge -->
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ExposoGraph.streamlit.app)
 [![PyPI version](https://img.shields.io/pypi/v/ExposoGraph.svg)](https://pypi.org/project/ExposoGraph/)
