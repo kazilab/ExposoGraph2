@@ -2,7 +2,7 @@
   "_metadata": {
     "description": "COSMIC SBS mutational signature endpoints for ExposoGraph 2.0 carcinogen classes",
     "source": "COSMIC Mutational Signatures v3.4 (https://cancer.sanger.ac.uk/signatures/)",
-    "manuscript_context": "v6 Discussion: linking ExposoGraph 2.0 predictions to tumor mutational signatures represents an important future direction",
+    "context": "linking ExposoGraph 2.0 predictions to tumor mutational signatures represents an important future direction",
     "version": "1.0.0",
     "created": "2026-04-20",
     "confidence_notes": "High-confidence entries have direct experimental and epidemiological attribution to the listed aetiology; medium-confidence entries are associations reported in at least one pan-cancer analysis; exploratory entries are hypothesis-generating."
