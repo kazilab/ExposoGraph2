@@ -93,7 +93,7 @@ def test_full_legends_engine_loads_and_validates():
     assert engine.validate() == []
 
 
-def test_full_legends_graph_keeps_key_manuscript_entities():
+def test_full_legends_graph_keeps_key_entities():
     engine = build_full_legends_engine()
 
     for node_id in (
@@ -169,7 +169,7 @@ def test_full_legends_architecture_summary_matches_seeded_graph():
     }
 
 
-def test_full_legends_architecture_summary_keeps_manuscript_inventories():
+def test_full_legends_architecture_summary_keeps_inventories():
     summary = build_full_legends_architecture_summary()
     carcinogen_classes = {group.name: group.count for group in summary.carcinogen_classes}
     enzyme_categories = {group.name: group.count for group in summary.enzyme_categories}
