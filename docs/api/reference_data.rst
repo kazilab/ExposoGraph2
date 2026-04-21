@@ -16,10 +16,9 @@ Gene Panel Data
 
 .. data:: ExposoGraph.reference_data.CURATION_SOURCE_MANIFEST
 
-   Structured curation-source manifest describing the manuscript-aligned
-   primary sources and the implementation-level supporting sources used by
-   ExposoGraph.
-
+   Structured curation-source manifest describing primary sources and 
+   the implementation-level supporting sources used by ExposoGraph.
+   
 .. data:: ExposoGraph.reference_data.REFERENCE_KEGG_PATHWAYS
 
    Curated KEGG pathway catalog used to track the reference pathway context
