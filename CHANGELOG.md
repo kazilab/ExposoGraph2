@@ -66,7 +66,7 @@ All notable changes to ExposoGraph will be documented in this file.
   (previously 96 / 102), and `build_full_legends_graph(include_heavy_metals=True)`
   currently resolves to the same **212 / 313** bundled footprint as
   `build_reference_graph()`. `build_full_legends_architecture_summary()`
-  remains the manuscript-style 107 / 124 base-showcase summary.
+  remains 107 / 124 base-showcase summary.
 - Single source of truth for `IARCGroup` — the duplicate enum in
   `expanded_metals.py` now imports from `db_clients.iarc`, and `__all__` in
   `ExposoGraph/__init__.py` was deduplicated.
