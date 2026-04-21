@@ -1,8 +1,7 @@
 """Global sensitivity analysis for ExposoGraph 2.0.
 
 Provides a self-contained Sobol-index estimator (no scipy dependency) for use
-in place of the one-at-a-time ±20% perturbations described in Manuscript v6
-Supplementary Figure S2:
+in place of the one-at-a-time ±20% perturbations:
 
     "future versions will implement global sensitivity analysis (Sobol
     indices) to quantify parameter interactions and identify the subset of
