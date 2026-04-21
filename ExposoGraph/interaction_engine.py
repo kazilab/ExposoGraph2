@@ -104,8 +104,6 @@ class InteractionMatrixResult:
 @dataclass
 class SynergyDecomposition:
     """Additive decomposition of a carcinogen-pair synergy factor.
-
-    Follows the manuscript identity
     ``S_composite ≈ 1 + ΔS_comp + ΔS_gsh + ΔS_ind``.
     ``residual`` captures the departure from pure additivity (cross-mechanism
     coupling from multiplicative combination in the full model).
@@ -558,8 +556,8 @@ def _build_competitive_substrates(
     """Build the substrate concentration maps used by the interaction model.
 
     When ``tissue`` is pulmonary, CYP2A13 and CYP2F1 are added as additional
-    benzene / NNK activators to reflect the manuscript's note that ambient
-    (non-occupational) benzene metabolism may be dominated by pulmonary
+    benzene / NNK activators to ambient (non-occupational) benzene metabolism 
+    may be dominated by pulmonary
     CYP2A13 / CYP2F1 rather than hepatic CYP2E1.
     """
     substrates: dict[str, dict[str, float]] = {}
