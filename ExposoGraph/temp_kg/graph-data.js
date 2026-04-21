@@ -31,10 +31,10 @@ const GRAPH_DATA = {
       "id": "DMBA",
       "label": "DMBA",
       "type": "Carcinogen",
-      "detail": "Reference PAH-like polycyclic carcinogen included to mirror the manuscript class example.",
+      "detail": "Reference PAH-like polycyclic carcinogen.",
       "group": "PAH",
       "source_db": "Curated showcase",
-      "evidence": "Reference PAH-like polycyclic carcinogen included to mirror the manuscript class example.",
+      "evidence": "Reference PAH-like polycyclic carcinogen.",
       "origin": "imported",
       "match_status": "canonical",
       "canonical_id": "DMBA",
@@ -44,7 +44,7 @@ const GRAPH_DATA = {
         {
           "source_db": "Curated showcase",
           "record_id": "DMBA",
-          "evidence": "Reference PAH-like polycyclic carcinogen included to mirror the manuscript class example.",
+          "evidence": "Reference PAH-like polycyclic carcinogen.",
           "citation": "Curated carcinogen entry for DMBA"
         }
       ]
@@ -258,10 +258,10 @@ const GRAPH_DATA = {
       "id": "DHT",
       "label": "5a-DHT",
       "type": "Carcinogen",
-      "detail": "Dihydrotestosterone node included to mirror the manuscript example.",
+      "detail": "Dihydrotestosterone node.",
       "group": "Androgen",
       "source_db": "Curated showcase",
-      "evidence": "Dihydrotestosterone node included to mirror the manuscript example.",
+      "evidence": "Dihydrotestosterone node.",
       "origin": "imported",
       "match_status": "canonical",
       "canonical_id": "DHT",
@@ -271,7 +271,7 @@ const GRAPH_DATA = {
         {
           "source_db": "Curated showcase",
           "record_id": "DHT",
-          "evidence": "Dihydrotestosterone node included to mirror the manuscript example.",
+          "evidence": "Dihydrotestosterone node.",
           "citation": "Curated carcinogen entry for 5a-DHT"
         }
       ]
