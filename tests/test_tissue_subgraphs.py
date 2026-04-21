@@ -28,7 +28,7 @@ def test_tissue_expression_lookup_returns_mapping_for_liver():
     assert all(isinstance(v, (int, float)) for v in expr.values())
 
 
-def test_default_threshold_sweep_is_manuscript_set():
+def test_default_threshold_sweep_is_set():
     assert DEFAULT_THRESHOLD_SWEEP == (0.10, 0.25, 0.50)
 
 
