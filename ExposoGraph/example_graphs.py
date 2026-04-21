@@ -1992,7 +1992,7 @@ def build_reference_graph(
 
 
 def _apply_reference_graph_overlay(graph: KnowledgeGraph) -> KnowledgeGraph:
-    """Restore manuscript-relevant pathway context lost in the bundled overlay.
+    """Restore relevant pathway context lost in the bundled overlay.
 
     The packaged D3 reference graph keeps the curated node inventory but drops a
     substantial subset of the legacy pathway-context edges. For the canonical
