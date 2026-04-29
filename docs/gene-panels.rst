@@ -90,7 +90,7 @@ The core carcinogen-metabolizing enzyme panel:
      - Detoxification
      - Two-electron quinone reduction; prevents ROS from redox cycling
 
-Tier 2: Extended Panel (23 genes)
+Tier 2: Extended Panel (25 genes)
 ----------------------------------
 
 Additional Phase I, II, III, and DNA repair genes:
@@ -159,6 +159,14 @@ Additional Phase I, II, III, and DNA repair genes:
      - DNA Repair (Direct Reversal)
      - Repair
      - Direct reversal of O6-alkylguanine; suicidal repair enzyme
+   * - MLH1
+     - DNA Repair (MMR)
+     - Repair
+     - MutL homolog 1; mismatch repair past DNA adducts
+   * - MSH2
+     - DNA Repair (MMR)
+     - Repair
+     - MutS homolog 2; mismatch recognition during post-replicative repair
    * - CYP2C9
      - Phase I
      - Mixed
@@ -199,7 +207,7 @@ Additional Phase I, II, III, and DNA repair genes:
 Activity Scores
 ---------------
 
-ExposoGraph currently ships activity-score tables for 18 genes. These tables
+ExposoGraph currently ships activity-score tables for 22 genes. These tables
 mix two evidence classes:
 
 - guideline-backed pharmacogene resources, primarily surfaced through ClinPGx/PharmVar

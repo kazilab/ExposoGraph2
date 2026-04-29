@@ -12,7 +12,7 @@ Gene Panel Data
 
 .. data:: ExposoGraph.reference_data.TIER2_GENES
 
-   List of 23 Tier 2 extended gene panel dictionaries.
+   List of 25 Tier 2 extended gene panel dictionaries.
 
 .. data:: ExposoGraph.reference_data.CURATION_SOURCE_MANIFEST
 

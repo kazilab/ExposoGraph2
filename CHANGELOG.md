@@ -28,7 +28,11 @@ All notable changes to ExposoGraph will be documented in this file.
   bundled viewer as lightweight CYP450 pathway members, keeping the map aligned
   with expanded interaction-model coverage without introducing the full kinetic
   matrix as extra viewer edges. These nodes are present in the current bundled
-  reference viewer graph (**212 nodes / 313 edges**).
+  reference viewer graph.
+- **Restored v1 mismatch-repair context** — `MLH1` and `MSH2` are back in the
+  Tier 2 repair panel and bundled reference graph, with eight `MMR` repair edges
+  to BPDE-dG, PhIP-dG, ABP-dG, and Oxo-dG. The current reference viewer graph is
+  now **214 nodes / 321 edges**.
 - **Added an interaction-source catalog and explicit expansion backlog** —
   `interaction_parameters.json` and `parameter_provenance.json` now record
   BRENDA, Rendic & Guengerich 2012, PharmGKB/ClinPGx, IARC Vol. 100A-F,
@@ -62,11 +66,11 @@ All notable changes to ExposoGraph will be documented in this file.
 - `README.md` and `docs/deployment.rst` now reflect the staged release model:
   regression tests and docs are blocking CI jobs, while coverage, Ruff, and
   strict mypy run as advisory jobs until those backlogs are reduced.
-- `build_full_legends_graph()` now returns **107 nodes / 124 edges**
-  (previously 96 / 102), and `build_full_legends_graph(include_heavy_metals=True)`
-  currently resolves to the same **212 / 313** bundled footprint as
-  `build_reference_graph()`. `build_full_legends_architecture_summary()`
-  remains 107 / 124 base-showcase summary.
+- `build_full_legends_graph()` now reads the same **214 nodes / 321 edges**
+  full-legends payload as the bundled viewer graph, and
+  `build_full_legends_graph(include_heavy_metals=True)` is retained as a
+  compatibility option that resolves to the same **214 / 321** footprint as
+  `build_reference_graph()`.
 - Single source of truth for `IARCGroup` — the duplicate enum in
   `expanded_metals.py` now imports from `db_clients.iarc`, and `__all__` in
   `ExposoGraph/__init__.py` was deduplicated.

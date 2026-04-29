@@ -71,7 +71,7 @@ Standalone D3.js Viewer
 
 A zero-install HTML viewer ships alongside the package at
 ``ExposoGraph/map/index.html``, with its graph payload in
-``ExposoGraph/map/graph-data.js`` (**212 nodes / 313 edges** by default — the
+``ExposoGraph/map/graph-data.js`` (**214 nodes / 321 edges** by default — the
 current bundled reference graph). This shipped payload is a curated graph
 export, not the quantitative interaction engine. Open the HTML file in a
 browser, or serve it statically:
@@ -329,3 +329,39 @@ or the current visibility slice.
 See also ``examples/mode_visibility_demo.py`` for a runnable no-API-key
 example that demonstrates strict vs exploratory merge behavior and
 visibility-aware export.
+
+Biomarker Mapping Validation
+----------------------------
+
+Use the scaffold checker to keep ``ExposoGraph/data/biomarker_mapping.json``
+valid, traceable, and forward update-compatible.
+The preserved ``ExposoGraph/data/biomarker_mapping_old.json`` snapshot is kept
+for comparison while the new JSON is rebuilt from the YAML source registry.
+
+.. code-block:: bash
+
+   # Validate only (no write)
+   make check-biomarker-mapping
+
+   # Rebuild the JSON from the split YAML source manifest and compare against the old snapshot
+   make build-biomarker-mapping
+   make compare-biomarker-mapping
+
+   # Same check via installed console script
+   exposograph-check-biomarker-mapping --mapping ExposoGraph/data/biomarker_mapping.json
+
+   # Rebuild via installed console script
+   exposograph-build-biomarker-mapping \
+     --source ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml \
+     --out ExposoGraph/data/biomarker_mapping.json \
+     --old ExposoGraph/data/biomarker_mapping_old.json
+
+   # Normalize and write missing trace/update fields
+   python -m ExposoGraph._biomarker_scaffold.scripts.registries.check_mapping \
+     --mapping ExposoGraph/data/biomarker_mapping.json --fix --write
+
+   # Rebuild from the scaffold source manifest and compare with the old snapshot
+   python -m ExposoGraph._biomarker_scaffold.scripts.registries.build_mapping \
+     --source ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml \
+     --out ExposoGraph/data/biomarker_mapping.json \
+     --old ExposoGraph/data/biomarker_mapping_old.json

@@ -39,6 +39,7 @@ The current release separates two control layers:
    :caption: User Guide
 
    schema
+   biomarker-registry
    gene-panels
 
 .. toctree::

@@ -4,9 +4,9 @@
 Canonical reference-graph builders plus legacy helpers.
 
 The canonical reference builders expose the current fully bundled reference
-graph (**212 nodes / 313 edges**). The older ``build_full_legends_*`` showcase
-API remains available for **107-node / 124-edge**
-base example graph.
+graph (**214 nodes / 321 edges**). The ``build_full_legends_*`` showcase API
+now reads the same bundled full-legends payload, so its default footprint is
+also **214 nodes / 321 edges**.
 
 The shipped D3 viewer payload in ``ExposoGraph/map/graph-data.js`` currently
 matches the bundled reference graph footprint. It remains a curated graph
