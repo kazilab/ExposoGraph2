@@ -1,0 +1,187 @@
+schema_version: 1.1.0
+source_family: NHANES
+registry_phase: direct_measurement
+registry_tier: 1
+source_note: CDC NHANES biomarker measurements and biomonitoring tables used for direct
+  exposure rows.
+biomarkers:
+- lifestyle_factor: current_smoking
+  biomarker: urinary_1_hydroxypyrene
+  matrix: urine
+  reference_range:
+  - 0.05
+  - 0.3
+  reference_units: umol_per_mol_creatinine
+  partition_coefficient: 0.8
+  target_tissue: Lung
+  target_enzyme: CYP1A1
+  carcinogen_class: PAH
+  Km_uM: 0.054
+  S_over_Km_central: 3.0
+  S_over_Km_range:
+  - 1.5
+  - 8.0
+  tier2_multiplier: 3.0
+  references:
+  - 'CDC National Exposure Report PAH metabolites: urinary 1-hydroxypyrene, NHANES
+    2003-2010'
+  - CDC NHANES 2003-2004 OH-PAH urine lab method (1-hydroxypyrene)
+  - PMID 23885861 Bouchard & Viau 1999 urinary 1-hydroxypyrene PAH biomonitoring review
+  - PMID 12376124 Viau et al. 2002 dietary PAH/1-hydroxypyrene variability caveat
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary 1-hydroxypyrene supports PAH/pyrene exposure, not CYP1A1-specific
+    enzyme activity. CYP1A1 and Km_uM are retained as PAH activation normalization
+    parameters from the flux model.
+  entry_id: urinary_1_hydroxypyrene::current_smoking
+  trace:
+    created_index: 0
+    created_at: '2026-04-26T11:16:23.610750+00:00'
+- lifestyle_factor: current_smoking
+  biomarker: blood_benzene
+  matrix: whole_blood
+  reference_range:
+  - 0.17
+  - 0.79
+  reference_units: ug_per_L
+  partition_coefficient: 2.5
+  target_tissue: Liver
+  target_enzyme: CYP2E1
+  carcinogen_class: Benzene
+  Km_uM: 75.0
+  S_over_Km_central: 2.0
+  S_over_Km_range:
+  - 1.1
+  - 4.5
+  tier2_multiplier: 2.0
+  references:
+  - CDC NHANES 2003-2004 volatile organic compounds in whole blood lab method (blood
+    benzene)
+  - 'CDC National Exposure Report volatile organic compounds: blood benzene, NHANES
+    biomonitoring tables'
+  - PMID 21989501 Aylward et al. 2011 NHANES VOC biomonitoring equivalents for blood
+    benzene
+  - ATSDR Toxicological Profile for Benzene 2007
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Blood benzene supports benzene exposure. CYP2E1 and Km_uM are model-normalization
+    parameters, not claims made by the NHANES VOC source.
+  entry_id: blood_benzene::current_smoking
+  trace:
+    created_index: 1
+    created_at: '2026-04-26T11:16:23.610764+00:00'
+- lifestyle_factor: current_smoking
+  biomarker: serum_cotinine
+  matrix: serum
+  reference_range:
+  - 50
+  - 300
+  reference_units: ng_per_mL
+  partition_coefficient: 1.0
+  target_tissue: Liver
+  target_enzyme: CYP1A2
+  carcinogen_class: TobaccoNitrosamines
+  Km_uM: 20.0
+  S_over_Km_central: 1.5
+  S_over_Km_range:
+  - 0.8
+  - 3.0
+  tier2_multiplier: 1.5
+  references:
+  - CDC NHANES 2003-2004 cotinine in serum lab method
+  - PMID 19019851 Benowitz et al. 2009 serum cotinine cutpoints in NHANES 1999-2004
+  - PMID 10350520 Benowitz 1999 biomarkers of environmental tobacco smoke exposure
+  source_status: biomarker_supported; exposure_class_proxy; enzyme_and_Km_model_proxy
+  provenance_note: Serum cotinine supports tobacco-smoke exposure. The TobaccoNitrosamines
+    class assignment and CYP1A2 normalization are exposure-model proxies, not cotinine-specific
+    enzyme evidence.
+  entry_id: serum_cotinine::current_smoking
+  trace:
+    created_index: 2
+    created_at: '2026-04-26T11:16:23.610772+00:00'
+- lifestyle_factor: current_smoking
+  biomarker: urinary_NNAL
+  matrix: urine
+  reference_range:
+  - 0.05
+  - 0.5
+  reference_units: pmol_per_mg_creatinine
+  partition_coefficient: 1.2
+  target_tissue: Lung
+  target_enzyme: CYP2A13
+  carcinogen_class: NNK
+  Km_uM: 1.4
+  S_over_Km_central: 1.6
+  S_over_Km_range:
+  - 0.9
+  - 4.2
+  tier2_multiplier: 1.6
+  references:
+  - CDC NHANES 2007-2008 COTNAL_E tobacco-specific nitrosamines data file
+  - PMID 21114376 Xia et al. 2011 urinary NNAL in smokers, NHANES 2007-2008
+  - PMID 20833972 Bernert et al. 2010 urinary NNAL in the US population from secondhand
+    smoke exposure
+  - PMID 26678241 Hecht & Stepanov 2016 tobacco-specific nitrosamine exposure biomarkers
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary NNAL supports NNK/tobacco-specific nitrosamine exposure.
+    CYP2A13 and Km_uM are model-normalization parameters.
+  entry_id: urinary_NNAL::current_smoking
+  trace:
+    created_index: 3
+    created_at: '2026-04-26T11:16:23.610780+00:00'
+- lifestyle_factor: grilled_meat_frequent
+  biomarker: urinary_2_naphthol
+  matrix: urine
+  reference_range:
+  - 0.5
+  - 8.0
+  reference_units: ug_per_g_creatinine
+  partition_coefficient: 0.6
+  target_tissue: Liver
+  target_enzyme: CYP1A1
+  carcinogen_class: PAH
+  Km_uM: 0.054
+  S_over_Km_central: 1.5
+  S_over_Km_range:
+  - 0.8
+  - 3.0
+  tier2_multiplier: 1.5
+  references:
+  - 'CDC National Exposure Report PAH metabolites: urinary naphthalene metabolites,
+    NHANES biomonitoring tables'
+  - PMID 22436105 urinary 2-naphthol and PAH biomarker study
+  - PMID 10511262 urinary 1-hydroxypyrene and other PAH metabolites biomarker review
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary 2-naphthol supports naphthalene/PAH exposure, not CYP1A1-specific
+    enzyme activity. CYP1A1 and Km_uM are PAH-class normalization parameters.
+  entry_id: urinary_2_naphthol::grilled_meat_frequent
+  trace:
+    created_index: 9
+    created_at: '2026-04-26T11:16:23.610817+00:00'
+- lifestyle_factor: arsenic_endemic
+  biomarker: urinary_total_arsenic
+  matrix: urine
+  reference_range:
+  - 10
+  - 200
+  reference_units: ug_per_L
+  partition_coefficient: 1.0
+  target_tissue: Bladder
+  target_enzyme: AS3MT
+  carcinogen_class: HeavyMetal
+  Km_uM: 7.0
+  S_over_Km_central: 4.0
+  S_over_Km_range:
+  - 0.5
+  - 14.0
+  tier2_multiplier: 4.0
+  references:
+  - CDC NHANES 2003-2004 urinary total and speciated arsenic data file
+  - CDC NHANES 2003-2004 urine total arsenic lab method
+  - ATSDR Toxicological Profile for Arsenic 2007
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary total arsenic supports arsenic exposure but includes organic
+    seafood arsenicals unless speciated. AS3MT and Km_uM are inorganic-arsenic methylation
+    normalization parameters.
+  entry_id: urinary_total_arsenic::arsenic_endemic
+  trace:
+    created_index: 13
+    created_at: '2026-04-26T11:16:23.610841+00:00'

@@ -1,0 +1,6 @@
+schema_version: 1.1.0
+source_family: CompTox
+registry_phase: chemical_identity
+registry_tier: 0
+source_note: Reserved for chemical identity metadata; empty in the current split.
+biomarkers: []

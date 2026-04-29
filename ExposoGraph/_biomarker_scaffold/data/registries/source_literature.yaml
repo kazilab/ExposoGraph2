@@ -1,0 +1,262 @@
+schema_version: 1.1.0
+source_family: literature
+registry_phase: validated_proxy
+registry_tier: 2
+source_note: Literature-backed biomarker proxies, scenario proxies, and model-normalization
+  rows.
+biomarkers:
+- lifestyle_factor: moderate_alcohol
+  biomarker: blood_ethanol
+  matrix: whole_blood
+  reference_range:
+  - 0
+  - 20
+  reference_units: mmol_per_L
+  partition_coefficient: 1.0
+  target_tissue: Liver
+  target_enzyme: CYP2E1
+  carcinogen_class: Ethanol
+  Km_uM: 13000.0
+  S_over_Km_central: 1.0
+  S_over_Km_range:
+  - 0.2
+  - 1.5
+  tier2_multiplier: 1.0
+  references:
+  - PMID 23101976 Cederbaum 2012 alcohol metabolism
+  - NIAAA blood alcohol concentration and alcohol metabolism guidance
+  source_status: scenario_proxy; metabolism_supported; enzyme_and_Km_model_proxy
+  provenance_note: Blood ethanol is treated as a scenario exposure proxy for moderate
+    alcohol intake, not a NHANES biomarker range.
+  entry_id: blood_ethanol::moderate_alcohol
+  trace:
+    created_index: 4
+    created_at: '2026-04-26T11:16:23.610786+00:00'
+- lifestyle_factor: moderate_alcohol
+  biomarker: urinary_ethyl_glucuronide
+  matrix: urine
+  reference_range:
+  - 0.2
+  - 3.0
+  reference_units: mg_per_L
+  partition_coefficient: 0.5
+  target_tissue: Liver
+  target_enzyme: ALDH2
+  carcinogen_class: Aldehyde
+  Km_uM: 15.0
+  S_over_Km_central: 1.5
+  S_over_Km_range:
+  - 0.3
+  - 3.0
+  tier2_multiplier: 1.5
+  references:
+  - PMID 31504734 urinary ethyl glucuronide as a habitual alcohol-consumption biomarker
+  - PMID 15289206 ethyl glucuronide as an alcohol-use biomarker
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary ethyl glucuronide supports recent alcohol consumption.
+    ALDH2 and Km_uM are aldehyde-flux normalization parameters.
+  entry_id: urinary_ethyl_glucuronide::moderate_alcohol
+  trace:
+    created_index: 5
+    created_at: '2026-04-26T11:16:23.610792+00:00'
+- lifestyle_factor: heavy_alcohol
+  biomarker: blood_ethanol
+  matrix: whole_blood
+  reference_range:
+  - 5
+  - 40
+  reference_units: mmol_per_L
+  partition_coefficient: 1.0
+  target_tissue: Liver
+  target_enzyme: CYP2E1
+  carcinogen_class: Ethanol
+  Km_uM: 13000.0
+  S_over_Km_central: 2.0
+  S_over_Km_range:
+  - 0.8
+  - 3.2
+  tier2_multiplier: 2.0
+  references:
+  - PMID 23101976 Cederbaum 2012 alcohol metabolism
+  - NIAAA blood alcohol concentration and alcohol metabolism guidance
+  source_status: scenario_proxy; metabolism_supported; enzyme_and_Km_model_proxy
+  provenance_note: Blood ethanol is treated as a scenario exposure proxy for heavy
+    alcohol intake, not a population biomarker range.
+  entry_id: blood_ethanol::heavy_alcohol
+  trace:
+    created_index: 6
+    created_at: '2026-04-26T11:16:23.610799+00:00'
+- lifestyle_factor: heavy_alcohol
+  biomarker: saliva_acetaldehyde
+  matrix: saliva
+  reference_range:
+  - 20
+  - 200
+  reference_units: umol_per_L
+  partition_coefficient: 1.5
+  target_tissue: Esophagus
+  target_enzyme: ALDH2
+  carcinogen_class: Aldehyde
+  Km_uM: 15.0
+  S_over_Km_central: 3.0
+  S_over_Km_range:
+  - 1.4
+  - 20.0
+  tier2_multiplier: 3.0
+  references:
+  - PMID 18616675 salivary acetaldehyde after alcohol by ALDH2 genotype
+  - PMID 15239123 Salaspuro & Salaspuro 2004 alcohol/smoking salivary acetaldehyde
+  - PMID 32775346 Salaspuro 2020 local acetaldehyde review
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Salivary acetaldehyde supports local acetaldehyde exposure after
+    alcohol. ALDH2 and Km_uM are aldehyde clearance normalization parameters.
+  entry_id: saliva_acetaldehyde::heavy_alcohol
+  trace:
+    created_index: 7
+    created_at: '2026-04-26T11:16:23.610805+00:00'
+- lifestyle_factor: grilled_meat_frequent
+  biomarker: urinary_PhIP
+  matrix: urine
+  reference_range:
+  - 0.5
+  - 10.0
+  reference_units: ng_per_24h
+  partition_coefficient: 2.0
+  target_tissue: Colon
+  target_enzyme: CYP1A2
+  carcinogen_class: HCA
+  Km_uM: 79.0
+  S_over_Km_central: 2.0
+  S_over_Km_range:
+  - 0.3
+  - 4.5
+  tier2_multiplier: 2.0
+  references:
+  - PMID 12351156 urinary PhIP metabolites after charbroiled or fried beef
+  - PMID 12016157 urinary PhIP N2-glucuronide relationship to CYP1A2 and NAT2 activity
+  - PMID 20681011 NIH-AARP meat components and bladder cancer
+  source_status: biomarker_supported; enzyme_link_supported_for_CYP1A2; Km_model_proxy
+  provenance_note: Urinary PhIP supports heterocyclic amine exposure from cooked meat;
+    the CYP1A2 link is supported at pathway/activity level, while Km_uM remains the
+    model normalization value.
+  entry_id: urinary_PhIP::grilled_meat_frequent
+  trace:
+    created_index: 8
+    created_at: '2026-04-26T11:16:23.610811+00:00'
+- lifestyle_factor: processed_meat_frequent
+  biomarker: urinary_NDMA_equivalent
+  matrix: urine
+  reference_range:
+  - 0.01
+  - 0.2
+  reference_units: ug_per_g_creatinine
+  partition_coefficient: 1.0
+  target_tissue: Liver
+  target_enzyme: CYP2E1
+  carcinogen_class: DietaryNitroso
+  Km_uM: 15.0
+  S_over_Km_central: 2.0
+  S_over_Km_range:
+  - 0.7
+  - 6.0
+  tier2_multiplier: 2.0
+  references:
+  - 'IARC Monographs Volume 114: Red meat and processed meat; N-nitroso compounds
+    in processed meat'
+  - PMID 26514947 IARC Working Group 2015 carcinogenicity of red and processed meat
+  - ATSDR Toxicological Profile for N-Nitrosodimethylamine (NDMA) 2023
+  source_status: exposure_proxy; enzyme_and_Km_model_proxy
+  provenance_note: Urinary_NDMA_equivalent is a processed-meat nitrosamine exposure
+    proxy, not a directly validated single urinary biomarker row. CYP2E1 and Km_uM
+    are NDMA activation normalization parameters.
+  entry_id: urinary_NDMA_equivalent::processed_meat_frequent
+  trace:
+    created_index: 10
+    created_at: '2026-04-26T11:16:23.610823+00:00'
+- lifestyle_factor: occupational_benzene
+  biomarker: urinary_t_t_muconic_acid
+  matrix: urine
+  reference_range:
+  - 50
+  - 500
+  reference_units: ug_per_g_creatinine
+  partition_coefficient: 1.0
+  target_tissue: Bone_Marrow
+  target_enzyme: CYP2E1
+  carcinogen_class: Benzene
+  Km_uM: 75.0
+  S_over_Km_central: 8.0
+  S_over_Km_range:
+  - 3.0
+  - 25.0
+  tier2_multiplier: 8.0
+  references:
+  - OSHA benzene standard 29 CFR 1910.1028
+  - PMID 15935803 urinary benzene metabolites in relation to genotype and personal
+    exposure
+  - PMID 12931845 validation and evaluation of benzene biomarkers in exposed workers
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary trans,trans-muconic acid supports benzene exposure. CYP2E1
+    and Km_uM are benzene activation normalization parameters.
+  entry_id: urinary_t_t_muconic_acid::occupational_benzene
+  trace:
+    created_index: 11
+    created_at: '2026-04-26T11:16:23.610829+00:00'
+- lifestyle_factor: occupational_TCE
+  biomarker: urinary_trichloroacetic_acid
+  matrix: urine
+  reference_range:
+  - 2
+  - 100
+  reference_units: mg_per_g_creatinine
+  partition_coefficient: 1.2
+  target_tissue: Kidney
+  target_enzyme: GSTT1
+  carcinogen_class: ChlorinatedSolvent
+  Km_uM: 40.0
+  S_over_Km_central: 4.0
+  S_over_Km_range:
+  - 0.5
+  - 12.0
+  tier2_multiplier: 4.0
+  references:
+  - EPA IRIS Toxicological Review of Trichloroethylene 2011
+  - EPA IRIS Toxicological Review of Trichloroacetic Acid 2011
+  - PMID 20414643 urinary trichloroacetic acid as a biological exposure equivalent
+    for trichloroethene
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary trichloroacetic acid supports TCE exposure/metabolism.
+    GSTT1 and Km_uM are chlorinated-solvent bioactivation normalization parameters.
+  entry_id: urinary_trichloroacetic_acid::occupational_TCE
+  trace:
+    created_index: 12
+    created_at: '2026-04-26T11:16:23.610835+00:00'
+- lifestyle_factor: aflatoxin_exposure
+  biomarker: urinary_AFB1_N7_guanine
+  matrix: urine
+  reference_range:
+  - 0.1
+  - 100
+  reference_units: pg_per_mg_creatinine
+  partition_coefficient: 1.0
+  target_tissue: Liver
+  target_enzyme: CYP3A4
+  carcinogen_class: Aflatoxin
+  Km_uM: 49.6
+  S_over_Km_central: 4.0
+  S_over_Km_range:
+  - 0.1
+  - 40.0
+  tier2_multiplier: 4.0
+  references:
+  - PMID 16978023 quantification of AFB1-N7-guanine in human urine
+  - PMID 17127712 urinary aflatoxin B1 exposure biomarker and hepatocellular carcinoma
+    in Taiwan
+  - PMID 19875698 Wild & Gong 2010 mycotoxins and human disease
+  source_status: biomarker_supported; enzyme_and_Km_model_proxy
+  provenance_note: Urinary AFB1-N7-guanine supports biologically effective aflatoxin
+    exposure. CYP3A4 and Km_uM are aflatoxin activation normalization parameters.
+  entry_id: urinary_AFB1_N7_guanine::aflatoxin_exposure
+  trace:
+    created_index: 14
+    created_at: '2026-04-26T11:16:23.610847+00:00'
