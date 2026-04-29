@@ -352,7 +352,7 @@ const GRAPH_DATA = {
       "detail": "PAH diol-epoxide formation; AhR-inducible; extrahepatic expression",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "lung, placenta, lymphocytes",
       "activity_score": 1.3,
@@ -371,12 +371,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1543"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP1A1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "lung, placenta, lymphocytes",
-          "citation": "GTEx Portal expression profile for CYP1A1",
-          "url": "https://gtexportal.org/home/gene/CYP1A1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP1A1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -394,7 +394,7 @@ const GRAPH_DATA = {
       "detail": "PAH and estrogen activation; 4-OH-estradiol formation",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "breast, prostate, uterus, lung",
       "activity_score": 1.3,
@@ -413,12 +413,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1545"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP1B1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "breast, prostate, uterus, lung",
-          "citation": "GTEx Portal expression profile for CYP1B1",
-          "url": "https://gtexportal.org/home/gene/CYP1B1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP1B1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -436,7 +436,7 @@ const GRAPH_DATA = {
       "detail": "HCA and aromatic amine activation; AhR-inducible; hepatic",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver",
       "activity_score": 1.5,
@@ -455,12 +455,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1544"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP1A2",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver",
-          "citation": "GTEx Portal expression profile for CYP1A2",
-          "url": "https://gtexportal.org/home/gene/CYP1A2"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP1A2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -478,7 +478,7 @@ const GRAPH_DATA = {
       "detail": "NNK and nitrosamine activation; nicotine metabolism",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, nasal mucosa",
       "activity_score": 2.0,
@@ -497,12 +497,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1548"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP2A6",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, nasal mucosa",
-          "citation": "GTEx Portal expression profile for CYP2A6",
-          "url": "https://gtexportal.org/home/gene/CYP2A6"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP2A6",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -520,7 +520,7 @@ const GRAPH_DATA = {
       "detail": "Primary lung NNK-metabolizing CYP; tobacco-smoke carcinogen activation",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "lung, nasal mucosa",
       "tier": 2,
@@ -538,12 +538,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1553"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP2A13",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "lung, nasal mucosa",
-          "citation": "GTEx Portal expression profile for CYP2A13",
-          "url": "https://gtexportal.org/home/gene/CYP2A13"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP2A13",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -561,6 +561,16 @@ const GRAPH_DATA = {
       "detail": "Auxiliary xenobiotic CYP represented for expanded Phase I competition coverage, including NNK-linked activation context",
       "phase": "I",
       "role": "Activation",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.0,
+        "Prostate": 0.0,
+        "Bladder": 0.0,
+        "Colon": 0.0,
+        "Breast": 0.0,
+        "Kidney": 0.0268,
+        "Esophagus": 0.0
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -572,7 +582,7 @@ const GRAPH_DATA = {
       "detail": "Oxidation of some PAH metabolites; major drug-metabolizing CYP",
       "phase": "I",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
@@ -591,12 +601,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1559"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP2C9",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, intestine",
-          "citation": "GTEx Portal expression profile for CYP2C9",
-          "url": "https://gtexportal.org/home/gene/CYP2C9"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP2C9",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -614,7 +624,7 @@ const GRAPH_DATA = {
       "detail": "Minor procarcinogen activation; possible nitrosamine metabolism",
       "phase": "I",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.5,
@@ -633,12 +643,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1557"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP2C19",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, intestine",
-          "citation": "GTEx Portal expression profile for CYP2C19",
-          "url": "https://gtexportal.org/home/gene/CYP2C19"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP2C19",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -656,7 +666,7 @@ const GRAPH_DATA = {
       "detail": "Minor NNK activation; important for dual PGx/carcinogen-risk reporting",
       "phase": "I",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, brain, lung, GI tract",
       "activity_score": 2.0,
@@ -675,12 +685,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1565"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP2D6",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, brain, lung, GI tract",
-          "citation": "GTEx Portal expression profile for CYP2D6",
-          "url": "https://gtexportal.org/home/gene/CYP2D6"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP2D6",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -698,7 +708,7 @@ const GRAPH_DATA = {
       "detail": "Small-molecule carcinogen activation; ethanol, benzene, NDMA",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung",
       "activity_score": 1.3,
@@ -717,12 +727,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1571"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP2E1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, lung",
-          "citation": "GTEx Portal expression profile for CYP2E1",
-          "url": "https://gtexportal.org/home/gene/CYP2E1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP2E1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -740,6 +750,16 @@ const GRAPH_DATA = {
       "detail": "Pulmonary xenobiotic CYP represented for lung-specific benzene bioactivation and inhalation-focused competition context",
       "phase": "I",
       "role": "Activation",
+      "tissue_weights": {
+        "Liver": 0.0,
+        "Lung": 1.0,
+        "Prostate": 0.0,
+        "Bladder": 0.0,
+        "Colon": 0.0,
+        "Breast": 0.0,
+        "Kidney": 0.0,
+        "Esophagus": 0.6364
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -751,7 +771,7 @@ const GRAPH_DATA = {
       "detail": "Aflatoxin B1 8,9-epoxidation; broad substrate range",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
@@ -770,12 +790,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1576"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP3A4",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, intestine",
-          "citation": "GTEx Portal expression profile for CYP3A4",
-          "url": "https://gtexportal.org/home/gene/CYP3A4"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP3A4",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -793,7 +813,7 @@ const GRAPH_DATA = {
       "detail": "Microsomal epoxide hydrolysis; both activation and detoxification roles",
       "phase": "II",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung",
       "activity_score": 1.25,
@@ -812,12 +832,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/2052"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "EPHX1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, lung",
-          "citation": "GTEx Portal expression profile for EPHX1",
-          "url": "https://gtexportal.org/home/gene/EPHX1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for EPHX1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -835,7 +855,7 @@ const GRAPH_DATA = {
       "detail": "Steroid 17alpha-hydroxylase/17,20-lyase; androgen precursor synthesis in hormone-linked carcinogen context",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "adrenal, gonad, prostate",
       "tier": 2,
@@ -853,12 +873,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1586"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP17A1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "adrenal, gonad, prostate",
-          "citation": "GTEx Portal expression profile for CYP17A1",
-          "url": "https://gtexportal.org/home/gene/CYP17A1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP17A1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -876,7 +896,7 @@ const GRAPH_DATA = {
       "detail": "5alpha-reductase type 2; major DHT-forming enzyme in prostate and urogenital tissues",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "prostate, seminal vesicle, genital skin, liver",
       "tier": 2,
@@ -894,12 +914,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/6716"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "SRD5A2",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "prostate, seminal vesicle, genital skin, liver",
-          "citation": "GTEx Portal expression profile for SRD5A2",
-          "url": "https://gtexportal.org/home/gene/SRD5A2"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for SRD5A2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -917,7 +937,7 @@ const GRAPH_DATA = {
       "detail": "5alpha-reductase type 1; converts testosterone to DHT in peripheral hormone-metabolism tissues",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "skin, liver, prostate, breast",
       "tier": 2,
@@ -935,12 +955,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/6715"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "SRD5A1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "skin, liver, prostate, breast",
-          "citation": "GTEx Portal expression profile for SRD5A1",
-          "url": "https://gtexportal.org/home/gene/SRD5A1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for SRD5A1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -958,7 +978,7 @@ const GRAPH_DATA = {
       "detail": "Aromatase; converts androgen precursors to estrogens in breast and other hormone-responsive tissues",
       "phase": "I",
       "role": "Activation",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "adipose, ovary, breast, placenta, brain",
       "tier": 2,
@@ -976,12 +996,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1588"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "CYP19A1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "adipose, ovary, breast, placenta, brain",
-          "citation": "GTEx Portal expression profile for CYP19A1",
-          "url": "https://gtexportal.org/home/gene/CYP19A1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for CYP19A1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -999,6 +1019,16 @@ const GRAPH_DATA = {
       "detail": "6\u03b2-hydroxylation of testosterone; AR nuclear translocation in prostate",
       "phase": "I",
       "role": "Mixed",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.0297,
+        "Prostate": 0.0729,
+        "Bladder": 0.0276,
+        "Colon": 0.0468,
+        "Breast": 0.0241,
+        "Kidney": 0.0379,
+        "Esophagus": 0.0717
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1010,7 +1040,7 @@ const GRAPH_DATA = {
       "detail": "17-ketosteroid reductase and quinone reductase; local androgen/estrogen activation with redox-metabolism overlap",
       "phase": "I",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "prostate, breast, liver, endometrium",
       "tier": 2,
@@ -1028,12 +1058,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/8644"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "AKR1C3",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "prostate, breast, liver, endometrium",
-          "citation": "GTEx Portal expression profile for AKR1C3",
-          "url": "https://gtexportal.org/home/gene/AKR1C3"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for AKR1C3",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1051,7 +1081,7 @@ const GRAPH_DATA = {
       "detail": "GSH conjugation of PAH diol-epoxides and AFB1-epoxide; null polymorphism common",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung",
       "activity_score": 1.0,
@@ -1070,12 +1100,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/2944"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "GSTM1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, lung",
-          "citation": "GTEx Portal expression profile for GSTM1",
-          "url": "https://gtexportal.org/home/gene/GSTM1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for GSTM1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1093,7 +1123,7 @@ const GRAPH_DATA = {
       "detail": "GSH conjugation of small electrophiles; null polymorphism common",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, kidney, blood cells",
       "activity_score": 1.0,
@@ -1112,12 +1142,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/2952"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "GSTT1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, kidney, blood cells",
-          "citation": "GTEx Portal expression profile for GSTT1",
-          "url": "https://gtexportal.org/home/gene/GSTT1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for GSTT1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1135,7 +1165,7 @@ const GRAPH_DATA = {
       "detail": "GSH conjugation of BPDE and other PAH diol-epoxides",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "lung, brain, placenta",
       "tier": 1,
@@ -1153,12 +1183,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/2950"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "GSTP1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "lung, brain, placenta",
-          "citation": "GTEx Portal expression profile for GSTP1",
-          "url": "https://gtexportal.org/home/gene/GSTP1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for GSTP1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1176,7 +1206,7 @@ const GRAPH_DATA = {
       "detail": "N-acetylation of aromatic amines; rapid vs slow acetylator phenotypes",
       "phase": "II",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
@@ -1195,12 +1225,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/10"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "NAT2",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, intestine",
-          "citation": "GTEx Portal expression profile for NAT2",
-          "url": "https://gtexportal.org/home/gene/NAT2"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for NAT2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1218,7 +1248,7 @@ const GRAPH_DATA = {
       "detail": "O-acetylation and N-acetylation of aromatic/heterocyclic amines in peripheral tissues",
       "phase": "II",
       "role": "Mixed",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "bladder, colon, breast, lung",
       "tier": 2,
@@ -1236,12 +1266,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/6530"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "NAT1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "bladder, colon, breast, lung",
-          "citation": "GTEx Portal expression profile for NAT1",
-          "url": "https://gtexportal.org/home/gene/NAT1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for NAT1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1259,7 +1289,7 @@ const GRAPH_DATA = {
       "detail": "Sulfation of phenolic compounds, HCA intermediates, PAH metabolites",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, GI tract, platelets, brain",
       "tier": 2,
@@ -1277,12 +1307,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/6817"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "SULT1A1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, GI tract, platelets, brain",
-          "citation": "GTEx Portal expression profile for SULT1A1",
-          "url": "https://gtexportal.org/home/gene/SULT1A1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for SULT1A1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1300,7 +1330,7 @@ const GRAPH_DATA = {
       "detail": "Glucuronidation of PAH metabolites and bilirubin",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
@@ -1319,12 +1349,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/54658"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "UGT1A1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, intestine",
-          "citation": "GTEx Portal expression profile for UGT1A1",
-          "url": "https://gtexportal.org/home/gene/UGT1A1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for UGT1A1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1342,7 +1372,7 @@ const GRAPH_DATA = {
       "detail": "Glucuronidation of steroid hormones, carcinogen metabolites",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, kidney, GI tract, mammary",
       "tier": 2,
@@ -1360,12 +1390,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/7364"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "UGT2B7",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, kidney, GI tract, mammary",
-          "citation": "GTEx Portal expression profile for UGT2B7",
-          "url": "https://gtexportal.org/home/gene/UGT2B7"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for UGT2B7",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1383,7 +1413,7 @@ const GRAPH_DATA = {
       "detail": "Two-electron quinone reduction; prevents ROS from redox cycling",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung, colon",
       "activity_score": 1.0,
@@ -1402,12 +1432,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1728"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "NQO1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, lung, colon",
-          "citation": "GTEx Portal expression profile for NQO1",
-          "url": "https://gtexportal.org/home/gene/NQO1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for NQO1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1425,7 +1455,7 @@ const GRAPH_DATA = {
       "detail": "O-methylation of catechol estrogens and other catechols; limits redox-cycling estrogen metabolites",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, breast, brain, endometrium",
       "tier": 2,
@@ -1443,12 +1473,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1312"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "COMT",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, breast, brain, endometrium",
-          "citation": "GTEx Portal expression profile for COMT",
-          "url": "https://gtexportal.org/home/gene/COMT"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for COMT",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1466,7 +1496,7 @@ const GRAPH_DATA = {
       "detail": "Glucuronidation of testosterone, DHT, and related androgen metabolites",
       "phase": "II",
       "role": "Detoxification",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, prostate, intestine",
       "tier": 2,
@@ -1484,12 +1514,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/7367"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "UGT2B17",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, prostate, intestine",
-          "citation": "GTEx Portal expression profile for UGT2B17",
-          "url": "https://gtexportal.org/home/gene/UGT2B17"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for UGT2B17",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1507,6 +1537,16 @@ const GRAPH_DATA = {
       "detail": "Glucuronidation of DHT/androsterone; compensates for UGT2B17 deletion",
       "phase": "II",
       "role": "Detoxification",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.0,
+        "Prostate": 0.0,
+        "Bladder": 0.0,
+        "Colon": 0.0869,
+        "Breast": 0.0,
+        "Kidney": 0.0,
+        "Esophagus": 0.0
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1518,6 +1558,16 @@ const GRAPH_DATA = {
       "detail": "3\u03b2-Hydroxysteroid dehydrogenase type 2; DHEA\u2192androstenedione conversion",
       "phase": "I",
       "role": "Activation",
+      "tissue_weights": {
+        "Liver": 0.2532,
+        "Lung": 0.0253,
+        "Prostate": 0.0506,
+        "Bladder": 0.0253,
+        "Colon": 1.0,
+        "Breast": 0.0253,
+        "Kidney": 0.2278,
+        "Esophagus": 0.0506
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1529,6 +1579,16 @@ const GRAPH_DATA = {
       "detail": "3\u03b1-Hydroxysteroid dehydrogenase; DHT\u21923\u03b1-androstanediol inactivation",
       "phase": "II",
       "role": "Detoxification",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.0522,
+        "Prostate": 0.0243,
+        "Bladder": 0.349,
+        "Colon": 0.0517,
+        "Breast": 0.4373,
+        "Kidney": 0.0292,
+        "Esophagus": 0.4268
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1540,7 +1600,7 @@ const GRAPH_DATA = {
       "detail": "P-gp; ATP-driven efflux of hydrophobic xenobiotics and carcinogens",
       "phase": "III",
       "role": "Transport",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine, kidney, BBB, placenta",
       "tier": 2,
@@ -1558,12 +1618,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/5243"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "ABCB1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, intestine, kidney, BBB, placenta",
-          "citation": "GTEx Portal expression profile for ABCB1",
-          "url": "https://gtexportal.org/home/gene/ABCB1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for ABCB1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1581,7 +1641,7 @@ const GRAPH_DATA = {
       "detail": "MRP2; export of GSH/glucuronide/sulfate conjugates of carcinogen metabolites",
       "phase": "III",
       "role": "Transport",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, kidney, intestine",
       "tier": 2,
@@ -1599,12 +1659,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/1244"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "ABCC2",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, kidney, intestine",
-          "citation": "GTEx Portal expression profile for ABCC2",
-          "url": "https://gtexportal.org/home/gene/ABCC2"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for ABCC2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1622,7 +1682,7 @@ const GRAPH_DATA = {
       "detail": "BCRP; efflux of PAHs, PhIP, porphyrins",
       "phase": "III",
       "role": "Transport",
-      "source_db": "NCBI Gene; GTEx; ClinPGx",
+      "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "intestine, liver, placenta, mammary, BBB",
       "tier": 2,
@@ -1640,12 +1700,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/9429"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "ABCG2",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "intestine, liver, placenta, mammary, BBB",
-          "citation": "GTEx Portal expression profile for ABCG2",
-          "url": "https://gtexportal.org/home/gene/ABCG2"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for ABCG2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "ClinPGx",
@@ -1663,7 +1723,7 @@ const GRAPH_DATA = {
       "detail": "BER scaffold protein; coordinates repair of oxidative/alkylation DNA damage",
       "group": "DNA Repair (BER)",
       "role": "Repair",
-      "source_db": "NCBI Gene; GTEx; CTD",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
       "tier": 2,
@@ -1681,12 +1741,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/7515"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "XRCC1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "ubiquitous",
-          "citation": "GTEx Portal expression profile for XRCC1",
-          "url": "https://gtexportal.org/home/gene/XRCC1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for XRCC1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "CTD",
@@ -1704,7 +1764,7 @@ const GRAPH_DATA = {
       "detail": "GG-NER damage sensor; recognizes bulky DNA adducts from PAHs",
       "group": "DNA Repair (NER)",
       "role": "Repair",
-      "source_db": "NCBI Gene; GTEx; CTD",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
       "activity_score": 1.0,
@@ -1723,12 +1783,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/7508"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "XPC",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "ubiquitous",
-          "citation": "GTEx Portal expression profile for XPC",
-          "url": "https://gtexportal.org/home/gene/XPC"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for XPC",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "CTD",
@@ -1746,7 +1806,7 @@ const GRAPH_DATA = {
       "detail": "NER helicase; unwinds DNA at damage sites for bulky adduct excision",
       "group": "DNA Repair (NER)",
       "role": "Repair",
-      "source_db": "NCBI Gene; GTEx; CTD",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
       "tier": 2,
@@ -1764,12 +1824,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/2068"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "ERCC2",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "ubiquitous",
-          "citation": "GTEx Portal expression profile for ERCC2",
-          "url": "https://gtexportal.org/home/gene/ERCC2"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for ERCC2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "CTD",
@@ -1787,7 +1847,7 @@ const GRAPH_DATA = {
       "detail": "8-oxoguanine DNA glycosylase; excises oxidative DNA damage (8-oxodG)",
       "group": "DNA Repair (BER)",
       "role": "Repair",
-      "source_db": "NCBI Gene; GTEx; CTD",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous (nuclear + mitochondrial)",
       "activity_score": 1.0,
@@ -1806,12 +1866,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/4968"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "OGG1",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "ubiquitous (nuclear + mitochondrial)",
-          "citation": "GTEx Portal expression profile for OGG1",
-          "url": "https://gtexportal.org/home/gene/OGG1"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for OGG1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "CTD",
@@ -1829,7 +1889,7 @@ const GRAPH_DATA = {
       "detail": "Direct reversal of O6-alkylguanine; single-use suicidal repair enzyme",
       "group": "DNA Repair (Direct Reversal)",
       "role": "Repair",
-      "source_db": "NCBI Gene; GTEx; CTD",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, colon, lung, brain",
       "activity_score": 1.0,
@@ -1848,12 +1908,12 @@ const GRAPH_DATA = {
           "url": "https://www.ncbi.nlm.nih.gov/gene/4255"
         },
         {
-          "source_db": "GTEx",
+          "source_db": "GTEx via HPA",
           "record_id": "MGMT",
-          "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
           "tissue": "liver, colon, lung, brain",
-          "citation": "GTEx Portal expression profile for MGMT",
-          "url": "https://gtexportal.org/home/gene/MGMT"
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for MGMT",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
         },
         {
           "source_db": "CTD",
@@ -2866,13 +2926,13 @@ const GRAPH_DATA = {
       "activity_score": 1.0,
       "tissue_weights": {
         "Liver": 1.0,
-        "Lung": 0.05,
-        "Prostate": 0.03,
-        "Bladder": 0.05,
-        "Colon": 0.05,
-        "Breast": 0.03,
-        "Kidney": 0.1,
-        "Esophagus": 0.052
+        "Lung": 0.0843,
+        "Prostate": 0.2006,
+        "Bladder": 0.0988,
+        "Colon": 0.1265,
+        "Breast": 0.1017,
+        "Kidney": 0.2733,
+        "Esophagus": 0.064
       },
       "tier": 2,
       "origin": "imported",
@@ -2891,26 +2951,26 @@ const GRAPH_DATA = {
       "detail": "Glutathione S-transferase Omega 1; catalyzes rate-limiting reduction of MMA(V) \u2192 MMA(III) in arsenic methylation pathway",
       "phase": "II",
       "role": "Reduction",
-      "source_db": "PMID:21801416",
+      "source_db": "PMID:34959192; PMID:21798077",
       "tissue": "Liver, Kidney",
       "variant": "Ala140Asp (rs4925) \u2014 homozygous variant + high As: OR 4.79 for urothelial carcinoma",
       "activity_score": 1.0,
       "tissue_weights": {
         "Liver": 1.0,
-        "Lung": 0.375,
-        "Prostate": 0.25,
-        "Bladder": 0.375,
-        "Colon": 0.375,
-        "Breast": 0.3125,
-        "Kidney": 0.5,
-        "Esophagus": 0.365
+        "Lung": 0.378,
+        "Prostate": 0.1945,
+        "Bladder": 0.2229,
+        "Colon": 0.2189,
+        "Breast": 0.2129,
+        "Kidney": 0.3339,
+        "Esophagus": 0.1957
       },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "PMID:21801416",
+          "source_db": "PMID:34959192; PMID:21798077",
           "tissue": "Liver, Kidney"
         }
       ]
@@ -2922,26 +2982,26 @@ const GRAPH_DATA = {
       "detail": "Glutathione S-transferase Omega 2; assists arsenic reduction; Asn142Asp variant associated with altered methylation capacity",
       "phase": "II",
       "role": "Reduction",
-      "source_db": "PMID:21801416",
+      "source_db": "PMID:19680750; PMID:32650499",
       "tissue": "Liver",
       "variant": "Asn142Asp (rs156697) \u2014 associated with increased urinary iAs%",
       "activity_score": 1.0,
       "tissue_weights": {
-        "Liver": 1.0,
-        "Lung": 0.3333,
-        "Prostate": 0.25,
-        "Bladder": 0.3333,
-        "Colon": 0.3333,
-        "Breast": 0.25,
-        "Kidney": 0.5,
-        "Esophagus": 0.3333
+        "Liver": 0.3043,
+        "Lung": 0.2391,
+        "Prostate": 0.8913,
+        "Bladder": 0.3696,
+        "Colon": 0.2391,
+        "Breast": 0.413,
+        "Kidney": 0.913,
+        "Esophagus": 1.0
       },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "PMID:21801416",
+          "source_db": "PMID:19680750; PMID:32650499",
           "tissue": "Liver"
         }
       ]
@@ -2953,26 +3013,26 @@ const GRAPH_DATA = {
       "detail": "Metallothionein 1A; binds and sequesters cadmium and other heavy metals; polymorphisms affect metal-binding capacity and cancer susceptibility",
       "phase": "II",
       "role": "Sequestration",
-      "source_db": "PMID:33271543",
+      "source_db": "PMID:33340085; PMID:16827180",
       "tissue": "Liver, Kidney, Ubiquitous",
-      "variant": "rs11076161 AA genotype: OR 4.7 for OSCC; associated with higher Cd blood concentration and renal dysfunction",
+      "variant": "rs11076161 AA genotype: associated with oral squamous cell carcinoma susceptibility",
       "activity_score": 1.0,
       "tissue_weights": {
         "Liver": 1.0,
-        "Lung": 0.4,
-        "Prostate": 0.2,
-        "Bladder": 0.3,
-        "Colon": 0.3,
-        "Breast": 0.3,
-        "Kidney": 0.6,
-        "Esophagus": 0.35
+        "Lung": 0.3021,
+        "Prostate": 0.0682,
+        "Bladder": 0.1301,
+        "Colon": 0.0607,
+        "Breast": 0.5011,
+        "Kidney": 0.0672,
+        "Esophagus": 0.0454
       },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "PMID:33271543",
+          "source_db": "PMID:33340085; PMID:16827180",
           "tissue": "Liver, Kidney, Ubiquitous"
         }
       ]
@@ -2984,26 +3044,26 @@ const GRAPH_DATA = {
       "detail": "Metallothionein 2A; primary cadmium-binding metallothionein; zinc displacement by cadmium triggers oxidative stress and p53 disruption",
       "phase": "II",
       "role": "Sequestration",
-      "source_db": "PMID:33271543; PMC8197913",
+      "source_db": "PMID:33340085; PMID:21328412; PMID:26529669",
       "tissue": "Liver, Kidney, Ubiquitous",
       "variant": "rs1610216, rs10636 \u2014 haplotype G/A/C/T: OR 6.2 for OSCC",
       "activity_score": 1.0,
       "tissue_weights": {
         "Liver": 1.0,
-        "Lung": 0.375,
-        "Prostate": 0.25,
-        "Bladder": 0.3125,
-        "Colon": 0.3125,
-        "Breast": 0.25,
-        "Kidney": 0.625,
-        "Esophagus": 0.3538
+        "Lung": 0.2028,
+        "Prostate": 0.1045,
+        "Bladder": 0.0583,
+        "Colon": 0.0574,
+        "Breast": 0.1621,
+        "Kidney": 0.1346,
+        "Esophagus": 0.0678
       },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "PMID:33271543; PMC8197913",
+          "source_db": "PMID:33340085; PMID:21328412; PMID:26529669",
           "tissue": "Liver, Kidney, Ubiquitous"
         }
       ]
@@ -3018,6 +3078,16 @@ const GRAPH_DATA = {
       "source_db": "Science 1993; PMID:8105536; PMC4685955",
       "tissue": "Antigen-presenting cells",
       "variant": "\u03b2Glu69 (multiple alleles, *0201 primary) \u2014 present in 97% of CBD cases vs 30% controls; OR >30",
+      "tissue_weights": {
+        "Liver": 0.1395,
+        "Lung": 1.0,
+        "Prostate": 0.256,
+        "Bladder": 0.2128,
+        "Colon": 0.2207,
+        "Breast": 0.4031,
+        "Kidney": 0.3107,
+        "Esophagus": 0.1601
+      },
       "tier": 1,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3040,14 +3110,14 @@ const GRAPH_DATA = {
       "variant": "Functional inhibition by arsenic rather than genetic polymorphism",
       "activity_score": 1.0,
       "tissue_weights": {
-        "Liver": 1.0,
-        "Lung": 0.8333,
-        "Prostate": 0.8333,
+        "Liver": 0.7807,
+        "Lung": 0.5877,
+        "Prostate": 0.6287,
         "Bladder": 1.0,
-        "Colon": 1.0,
-        "Breast": 0.8333,
-        "Kidney": 0.8333,
-        "Esophagus": 0.89
+        "Colon": 0.9664,
+        "Breast": 0.617,
+        "Kidney": 0.4971,
+        "Esophagus": 0.7895
       },
       "tier": 3,
       "origin": "imported",
@@ -3071,14 +3141,14 @@ const GRAPH_DATA = {
       "variant": "Multiple SNPs associated with metal accumulation levels in GWAS (PMC2898853)",
       "activity_score": 1.0,
       "tissue_weights": {
-        "Liver": 0.25,
+        "Liver": 0.0635,
         "Lung": 1.0,
-        "Prostate": 0.25,
-        "Bladder": 0.25,
-        "Colon": 0.5,
-        "Breast": 0.25,
-        "Kidney": 0.25,
-        "Esophagus": 0.415
+        "Prostate": 0.0395,
+        "Bladder": 0.0503,
+        "Colon": 0.0401,
+        "Breast": 0.0623,
+        "Kidney": 0.0431,
+        "Esophagus": 0.0251
       },
       "tier": 3,
       "origin": "imported",
@@ -3111,12 +3181,12 @@ const GRAPH_DATA = {
       "type": "Metabolite",
       "detail": "Monomethylarsonic acid; oxidized pentavalent form; GSTO1 reduces back to MMA(III) in rate-limiting step",
       "reactivity": "Low",
-      "source_db": "PMID:21801416",
+      "source_db": "PMID:34959192",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "PMID:21801416"
+          "source_db": "PMID:34959192"
         }
       ]
     },
@@ -3394,6 +3464,16 @@ const GRAPH_DATA = {
       "role": "Detoxification",
       "tissue": "liver, esophagus, stomach",
       "variant": "rs671 (Glu504Lys)",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.1354,
+        "Prostate": 0.0589,
+        "Bladder": 0.1137,
+        "Colon": 0.1284,
+        "Breast": 0.1684,
+        "Kidney": 0.1623,
+        "Esophagus": 0.102
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3411,6 +3491,16 @@ const GRAPH_DATA = {
       "role": "Activation",
       "tissue": "liver, stomach",
       "variant": "rs1229984 (His47Arg)",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.2176,
+        "Prostate": 0.0149,
+        "Bladder": 0.1846,
+        "Colon": 0.1127,
+        "Breast": 0.5562,
+        "Kidney": 0.037,
+        "Esophagus": 0.0606
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3428,6 +3518,16 @@ const GRAPH_DATA = {
       "role": "Activation",
       "tissue": "liver, stomach",
       "variant": "rs698 (Ile349Val)",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.0,
+        "Prostate": 0.0145,
+        "Bladder": 0.0,
+        "Colon": 0.1455,
+        "Breast": 0.0282,
+        "Kidney": 0.0104,
+        "Esophagus": 0.0
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3444,6 +3544,16 @@ const GRAPH_DATA = {
       "phase": "I",
       "role": "Detoxification",
       "tissue": "liver, ubiquitous",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.4219,
+        "Prostate": 0.5191,
+        "Bladder": 0.8942,
+        "Colon": 0.804,
+        "Breast": 0.6444,
+        "Kidney": 0.5283,
+        "Esophagus": 0.445
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3460,6 +3570,16 @@ const GRAPH_DATA = {
       "group": "DNA Repair (FA)",
       "role": "Repair",
       "tissue": "bone marrow, ubiquitous",
+      "tissue_weights": {
+        "Liver": 0.1364,
+        "Lung": 0.4545,
+        "Prostate": 0.4091,
+        "Bladder": 0.4091,
+        "Colon": 0.4091,
+        "Breast": 0.4545,
+        "Kidney": 0.2273,
+        "Esophagus": 1.0
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3476,6 +3596,16 @@ const GRAPH_DATA = {
       "role": "Transcription Factor",
       "tissue": "liver, lung, skin, immune cells",
       "variant": "rs2066853 (Arg554Lys)",
+      "tissue_weights": {
+        "Liver": 0.6777,
+        "Lung": 1.0,
+        "Prostate": 0.4502,
+        "Bladder": 0.9668,
+        "Colon": 0.4408,
+        "Breast": 0.872,
+        "Kidney": 0.2038,
+        "Esophagus": 0.4929
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3492,6 +3622,16 @@ const GRAPH_DATA = {
       "role": "Transcription Factor",
       "tissue": "ubiquitous",
       "variant": "rs2228099 (Ile471Val)",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.9461,
+        "Prostate": 0.6432,
+        "Bladder": 0.8797,
+        "Colon": 0.7427,
+        "Breast": 0.9212,
+        "Kidney": 0.5436,
+        "Esophagus": 0.6556
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3507,6 +3647,16 @@ const GRAPH_DATA = {
       "detail": "AhR repressor; negative feedback regulator. cg05575921 CpG hypomethylation is a validated blood-based biomarker for tobacco/TCDD exposure.",
       "role": "Transcription Factor",
       "tissue": "ubiquitous",
+      "tissue_weights": {
+        "Liver": 0.4167,
+        "Lung": 0.6667,
+        "Prostate": 0.4167,
+        "Bladder": 1.0,
+        "Colon": 0.7917,
+        "Breast": 0.3333,
+        "Kidney": 0.4167,
+        "Esophagus": 0.9167
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3523,6 +3673,16 @@ const GRAPH_DATA = {
       "phase": "II",
       "role": "Bioactivation",
       "tissue": "kidney (proximal tubule)",
+      "tissue_weights": {
+        "Liver": 1.0,
+        "Lung": 0.2712,
+        "Prostate": 0.5932,
+        "Bladder": 0.6017,
+        "Colon": 0.3093,
+        "Breast": 0.2627,
+        "Kidney": 0.6441,
+        "Esophagus": 0.4153
+      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3575,11 +3735,23 @@ const GRAPH_DATA = {
       "id": "Methyldiazonium",
       "label": "Methyldiazonium ion",
       "type": "Metabolite",
-      "detail": "Ultimate reactive alkylating species produced by nitrosamine alpha-hydroxylation. Methylates guanine O6 to form the primary mutagenic lesion for the NDMA branch.",
-      "reactivity": "Very High",
+      "detail": "Reactive methylating species used to represent NDMA alkylation.",
+      "reactivity": "High",
+      "source_db": "Curated showcase",
+      "evidence": "Reactive methylating species used to represent NDMA alkylation.",
       "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
+      "match_status": "canonical",
+      "canonical_id": "Methyldiazonium",
+      "canonical_label": "Methyldiazonium ion",
+      "canonical_namespace": "curated_showcase",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "Methyldiazonium",
+          "evidence": "Reactive methylating species used to represent NDMA alkylation.",
+          "citation": "Curated metabolite entry for Methyldiazonium ion"
+        }
+      ]
     },
     {
       "id": "DCVG",
@@ -3724,7 +3896,7 @@ const GRAPH_DATA = {
       "id": "Acrylamide",
       "label": "Acrylamide",
       "type": "Carcinogen",
-      "detail": "Water-soluble vinyl monomer generated by Maillard chemistry in high-temperature cooking of starchy foods (fried/baked potatoes, coffee roasting) and by polyacrylamide manufacture. Bioactivated by CYP2E1 epoxidation to glycidamide, the ultimate mutagen. References: IARC Monograph Vol 60 (1994); Besaratinia & Pfeifer, Carcinogenesis 2007 (PMID:17872912).",
+      "detail": "Water-soluble vinyl monomer generated by Maillard chemistry in high-temperature cooking of starchy foods (fried/baked potatoes, coffee roasting) and by polyacrylamide manufacture. Bioactivated by CYP2E1 epoxidation to glycidamide, the ultimate mutagen. References: IARC Monograph Vol 60 (1994); Toxicol Sci 2005 (PMID:16141435).",
       "group": "Alkylating",
       "iarc": "Group 2A",
       "exposure": "high-temperature cooked starchy foods, tobacco smoke, polyacrylamide industry",
@@ -3739,7 +3911,7 @@ const GRAPH_DATA = {
       "id": "Glycidamide",
       "label": "Glycidamide",
       "type": "Carcinogen",
-      "detail": "2,3-Epoxypropanamide; direct-acting epoxide and ultimate mutagenic metabolite of acrylamide. Forms N7-(2-carbamoyl-2-hydroxyethyl)-dG and N3-GA-dA DNA adducts. Detoxified by GSTP1/GSTM1 glutathione conjugation. References: Segerbaeck et al., Carcinogenesis 1995 (PMID:7614537); Besaratinia, Mutat Res 2010.",
+      "detail": "2,3-Epoxypropanamide; direct-acting epoxide and ultimate mutagenic metabolite of acrylamide. Forms N7-(2-carbamoyl-2-hydroxyethyl)-dG and N3-GA-dA DNA adducts. Detoxified by GSTP1/GSTM1 glutathione conjugation. References: PMID:7767980; PMID:15668107.",
       "group": "Alkylating",
       "iarc": "Group 2A (as ultimate acrylamide metabolite)",
       "exposure": "endogenous formation from acrylamide via CYP2E1",
@@ -3751,7 +3923,7 @@ const GRAPH_DATA = {
       "id": "Cyclophosphamide",
       "label": "Cyclophosphamide",
       "type": "Carcinogen",
-      "detail": "Oxazaphosphorine prodrug chemotherapeutic. Bioactivated primarily by CYP2B6 (major) and CYP3A4/2C9 (minor) to 4-hydroxycyclophosphamide, which ring-opens to aldophosphamide and fragments to phosphoramide mustard (ultimate DNA-crosslinking agent) plus acrolein. Associated with secondary bladder cancer and therapy-related AML. References: Roy et al., Drug Metab Dispos 1999 (PMID:10220571); IARC Monograph Vol 100A (2012).",
+      "detail": "Oxazaphosphorine prodrug chemotherapeutic. Bioactivated primarily by CYP2B6 (major) and CYP3A4/2C9 (minor) to 4-hydroxycyclophosphamide, which ring-opens to aldophosphamide and fragments to phosphoramide mustard (ultimate DNA-crosslinking agent) plus acrolein. Associated with secondary bladder cancer and therapy-related AML. References: PMID:10348794; PMID:8242617; IARC Monograph Vol 100A (2012).",
       "group": "Alkylating",
       "iarc": "Group 1",
       "exposure": "therapeutic chemotherapy (lymphomas, breast cancer, autoimmune disease)",
@@ -3766,7 +3938,7 @@ const GRAPH_DATA = {
       "id": "Chlorambucil",
       "label": "Chlorambucil",
       "type": "Carcinogen",
-      "detail": "Aromatic nitrogen mustard. Forms aziridinium ion via intramolecular cyclization, yielding N7-guanine monoadducts and G-G interstrand crosslinks. Detoxified by GSTP1 glutathione conjugation; GSTP1 Ile105Val (rs1695) modulates treatment response and therapy-related leukemia risk. References: Povirk & Shuker, Mutat Res 1994 (PMID:7523912); IARC Monograph Vol 100A (2012).",
+      "detail": "Aromatic nitrogen mustard. Forms aziridinium ion via intramolecular cyclization, yielding N7-guanine monoadducts and G-G interstrand crosslinks. Detoxified by GSTP1 glutathione conjugation. References: PMID:7862715; IARC Monograph Vol 100A (2012).",
       "group": "Alkylating",
       "iarc": "Group 1",
       "exposure": "therapeutic chemotherapy (CLL, Waldenstroem macroglobulinemia, ovarian cancer)",
@@ -3778,7 +3950,7 @@ const GRAPH_DATA = {
       "id": "Sulfur_mustard",
       "label": "Sulfur mustard",
       "type": "Carcinogen",
-      "detail": "Bis(2-chloroethyl) sulfide. Chemical-warfare vesicant that cyclizes to a reactive episulfonium ion, generating N7-mustard-Gua monoadducts and 5'-d(GNC) interstrand crosslinks. Linked to lung cancer in exposed workers and veterans. References: Matijasevic et al., Carcinogenesis 1996 (PMID:8635461); IARC Monograph Vol 100F (2012).",
+      "detail": "Bis(2-chloroethyl) sulfide. Chemical-warfare vesicant that cyclizes to a reactive episulfonium ion, generating N7-mustard-Gua monoadducts and DNA crosslinks. Linked to lung cancer in exposed workers and veterans. References: PMID:24858262; IARC Monograph Vol 100F (2012).",
       "group": "Alkylating",
       "iarc": "Group 1",
       "exposure": "chemical-weapon exposure, legacy ordnance, historic occupational mustard-gas factories",
@@ -3790,7 +3962,7 @@ const GRAPH_DATA = {
       "id": "Busulfan",
       "label": "Busulfan",
       "type": "Carcinogen",
-      "detail": "1,4-Butanediol dimethanesulfonate; bifunctional alkyl sulfonate used in HSCT conditioning. Hydrolyzes non-enzymatically to a reactive methanesulfonate intermediate, forming N7-(2,3,4-trihydroxybutyl)-dG adducts and DNA-DNA interstrand crosslinks. Detoxified by GSTA1/GSTP1 glutathione conjugation (GSH-Bu). References: Hassan & Ljungman, Mutat Res 1997 (PMID:12960109); IARC Monograph Vol 100A (2012).",
+      "detail": "1,4-Butanediol dimethanesulfonate; bifunctional alkyl sulfonate used in HSCT conditioning. Hydrolyzes non-enzymatically to a reactive methanesulfonate intermediate, forming N7-(2,3,4-trihydroxybutyl)-dG adducts and DNA-DNA interstrand crosslinks. Detoxified by GSTA1/GSTP1 glutathione conjugation (GSH-Bu). References: PMID:6892995; IARC Monograph Vol 100A (2012).",
       "group": "Alkylating",
       "iarc": "Group 1",
       "exposure": "therapeutic chemotherapy (CML, bone-marrow-transplant conditioning)",
@@ -3802,7 +3974,7 @@ const GRAPH_DATA = {
       "id": "MNU",
       "label": "MNU (N-methyl-N-nitrosourea)",
       "type": "Carcinogen",
-      "detail": "N-methyl-N-nitrosourea; direct-acting methylating agent requiring no enzymatic activation. Spontaneously decomposes at physiological pH to methyldiazohydroxide/methyldiazonium, alkylating DNA at O6-guanine (G:C to A:T transitions) and N7-guanine. Canonical model carcinogen for MGMT biology. References: Kyrtopoulos, Mutat Res 1990 (PMID:2185966); IARC Monograph Vol 17 (1978).",
+      "detail": "N-methyl-N-nitrosourea; direct-acting methylating agent requiring no enzymatic activation. Spontaneously decomposes at physiological pH to methyldiazohydroxide/methyldiazonium, alkylating DNA at O6-guanine (G:C to A:T transitions) and N7-guanine. Canonical model carcinogen for MGMT biology. References: Chem Res Toxicol 1991 (PMID:1912317); IARC Monograph Vol 17 (1978).",
       "group": "Alkylating",
       "iarc": "Group 2A",
       "exposure": "experimental/research reagent; trace formation in cured meats",
@@ -3814,7 +3986,7 @@ const GRAPH_DATA = {
       "id": "Temozolomide",
       "label": "Temozolomide",
       "type": "Carcinogen",
-      "detail": "Imidazotetrazine prodrug. Spontaneous pH-dependent hydrolysis yields MTIC (5-(3-methyltriazen-1-yl)imidazole-4-carboxamide), which decomposes to methyldiazonium ion. Alkylates O6-guanine; therapeutic efficacy in glioblastoma tracks MGMT promoter-methylation status. References: Newlands et al., Cancer Treat Rev 1997 (PMID:9327140); Hegi et al., NEJM 2005 (PMID:15758009).",
+      "detail": "Imidazotetrazine prodrug. Spontaneous pH-dependent hydrolysis yields MTIC (5-(3-methyltriazen-1-yl)imidazole-4-carboxamide), which decomposes to methyldiazonium ion. Alkylates O6-guanine; therapeutic efficacy in glioblastoma tracks MGMT promoter-methylation status. References: Cancer Chemother Pharmacol 1991 (PMID:1998993); Hegi et al., NEJM 2005 (PMID:15758010).",
       "group": "Alkylating",
       "iarc": "Group 2A",
       "exposure": "therapeutic chemotherapy (glioblastoma, metastatic melanoma)",
@@ -3826,7 +3998,7 @@ const GRAPH_DATA = {
       "id": "4OH_cyclophosphamide",
       "label": "4-Hydroxycyclophosphamide",
       "type": "Metabolite",
-      "detail": "Primary CYP2B6/CYP3A4 activation product of cyclophosphamide; equilibrates with aldophosphamide and fragments to phosphoramide mustard plus acrolein (PMID:10220571).",
+      "detail": "Primary CYP2B6/CYP3A4 activation product of cyclophosphamide; equilibrates with aldophosphamide and fragments to phosphoramide mustard plus acrolein (PMID:10348794; PMID:8242617).",
       "reactivity": "Intermediate",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3836,7 +4008,7 @@ const GRAPH_DATA = {
       "id": "Phosphoramide_mustard",
       "label": "Phosphoramide mustard",
       "type": "Metabolite",
-      "detail": "Ultimate DNA-crosslinking species from cyclophosphamide activation; bifunctional nitrogen mustard that forms G-G interstrand crosslinks via aziridinium intermediates (PMID:10220571).",
+      "detail": "Ultimate DNA-crosslinking species from cyclophosphamide activation; bifunctional nitrogen mustard that forms G-G interstrand crosslinks via aziridinium intermediates (PMID:9092631).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3846,7 +4018,7 @@ const GRAPH_DATA = {
       "id": "Chlorambucil_aziridinium",
       "label": "Chlorambucil aziridinium",
       "type": "Metabolite",
-      "detail": "Cyclic aziridinium cation formed by intramolecular cyclization of chlorambucil; alkylates N7-guanine and generates interstrand crosslinks (PMID:7523912).",
+      "detail": "Cyclic aziridinium cation formed by intramolecular cyclization of chlorambucil; alkylates N7-guanine and generates interstrand crosslinks (PMID:7862715).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3856,7 +4028,7 @@ const GRAPH_DATA = {
       "id": "Mustard_episulfonium",
       "label": "Sulfur-mustard episulfonium ion",
       "type": "Metabolite",
-      "detail": "Cyclic sulfonium intermediate formed by intramolecular cyclization of sulfur mustard; ultimate electrophile for N7-Gua monoadducts and 5'-d(GNC) interstrand crosslinks (PMID:8635461).",
+      "detail": "Cyclic sulfonium intermediate formed by intramolecular cyclization of sulfur mustard; ultimate electrophile for N7-Gua monoadducts and DNA crosslinks (PMID:24858262).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3866,7 +4038,7 @@ const GRAPH_DATA = {
       "id": "Busulfan_methanesulfonate",
       "label": "Busulfan methanesulfonate intermediate",
       "type": "Metabolite",
-      "detail": "Reactive bifunctional alkylator generated by hydrolytic displacement of methanesulfonate groups from busulfan; yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:12960109).",
+      "detail": "Reactive bifunctional alkylator generated by hydrolytic displacement of methanesulfonate groups from busulfan; yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:6892995).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3876,7 +4048,7 @@ const GRAPH_DATA = {
       "id": "MTIC",
       "label": "MTIC",
       "type": "Metabolite",
-      "detail": "5-(3-methyltriazen-1-yl)imidazole-4-carboxamide; monomethyltriazene formed by spontaneous hydrolysis of temozolomide, which in turn decomposes to methyldiazonium (PMID:9327140).",
+      "detail": "5-(3-methyltriazen-1-yl)imidazole-4-carboxamide; monomethyltriazene formed by spontaneous hydrolysis of temozolomide, which in turn decomposes to methyldiazonium (PMID:1998993).",
       "reactivity": "High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3886,7 +4058,7 @@ const GRAPH_DATA = {
       "id": "N7_GA_dG",
       "label": "N7-GA-dG",
       "type": "DNA_Adduct",
-      "detail": "N7-(2-carbamoyl-2-hydroxyethyl)-2'-deoxyguanosine; dominant glycidamide-DNA adduct from acrylamide exposure. Depurinates to abasic site repaired by BER (PMID:17872912).",
+      "detail": "N7-(2-carbamoyl-2-hydroxyethyl)-2'-deoxyguanosine; dominant glycidamide-DNA adduct from acrylamide exposure. Depurinates to abasic sites handled through BER (PMID:7767980; PMID:17234719).",
       "reactivity": "High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3906,7 +4078,7 @@ const GRAPH_DATA = {
       "id": "DNA_ICL_mustard",
       "label": "G-G interstrand crosslink (mustard-type)",
       "type": "DNA_Adduct",
-      "detail": "Bifunctional N7-alkyl-dG interstrand crosslink generated by phosphoramide mustard (cyclophosphamide), chlorambucil aziridinium, sulfur-mustard episulfonium, and the busulfan methanesulfonate intermediate. Requires Fanconi-anemia/HR repair; mechanistic basis for therapeutic cytotoxicity (PMID:10220571, PMID:7523912, PMID:8635461, PMID:12960109).",
+      "detail": "Bifunctional N7-alkyl-dG interstrand crosslink generated by phosphoramide mustard (cyclophosphamide), chlorambucil aziridinium, sulfur-mustard episulfonium, and the busulfan methanesulfonate intermediate. Requires Fanconi-anemia/HR repair; mechanistic basis for therapeutic cytotoxicity (PMID:9092631, PMID:7862715, PMID:24858262, PMID:6892995).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -3925,7 +4097,7 @@ const GRAPH_DATA = {
       "id": "Urethane",
       "label": "Urethane (ethyl carbamate)",
       "type": "Carcinogen",
-      "detail": "Ethyl carbamate; natural contaminant of fermented foods and alcoholic beverages, especially stone-fruit brandies, sake, sherry, and bread crust. CYP2E1 dehydrogenates urethane to vinyl carbamate, which is then re-epoxidized to vinyl carbamate epoxide \u2014 the ultimate mutagen that forms etheno-A/etheno-C DNA adducts (same adduct family as vinyl chloride). References: Hoffler et al., Toxicology 2003 (PMID:12860588); IARC Monograph Vol 96 (2010).",
+      "detail": "Ethyl carbamate; natural contaminant of fermented foods and alcoholic beverages, especially stone-fruit brandies, sake, sherry, and bread crust. CYP2E1 dehydrogenates urethane to vinyl carbamate, which is then re-epoxidized to vinyl carbamate epoxide \u2014 the ultimate mutagen that forms etheno-A/etheno-C DNA adducts (same adduct family as vinyl chloride). References: J Pharmacol Exp Ther 2003 (PMID:12704224); Chem Res Toxicol 2010 (PMID:20205516); IARC Monograph Vol 96 (2010).",
       "group": "Alcohol",
       "iarc": "Group 2A",
       "exposure": "alcoholic beverages (stone-fruit brandies, sake, sherry), fermented foods, bread crust",
@@ -3937,7 +4109,7 @@ const GRAPH_DATA = {
       "id": "Acrolein",
       "label": "Acrolein",
       "type": "Carcinogen",
-      "detail": "2-Propenal; smallest alpha,beta-unsaturated aldehyde and potent Michael acceptor. Major constituents of cigarette smoke, heated cooking oils, and automobile exhaust; also generated in vivo as the obligate byproduct of cyclophosphamide activation (4-hydroxycyclophosphamide fragmentation). Forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) exocyclic adducts, which are mispairing, bulky lesions repaired by NER/BER. Detoxified by GSTP1 (GS-HPMA) and ALDH2 oxidation to acrylic acid. References: IARC Monograph Vol 128 (2021); Minko et al., Chem Res Toxicol 2009 (PMID:19705912).",
+      "detail": "2-Propenal; smallest alpha,beta-unsaturated aldehyde and potent Michael acceptor. Major constituents of cigarette smoke, heated cooking oils, and automobile exhaust; also generated in vivo as the obligate byproduct of cyclophosphamide activation (4-hydroxycyclophosphamide fragmentation). Forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) exocyclic adducts, which are mispairing, bulky lesions repaired by NER/BER. Detoxified by GSTP1 (GS-HPMA) and ALDH2 oxidation to acrylic acid. References: IARC Monograph Vol 128 (2021); Chem Res Toxicol 2009 (PMID:19397281).",
       "group": "Aldehyde",
       "iarc": "Group 2A",
       "exposure": "tobacco smoke, heated cooking oils, wildfire/vehicle exhaust, cyclophosphamide metabolism",
@@ -3949,7 +4121,7 @@ const GRAPH_DATA = {
       "id": "Crotonaldehyde",
       "label": "Crotonaldehyde",
       "type": "Carcinogen",
-      "detail": "(E)-2-Butenal; alpha,beta-unsaturated aldehyde abundant in tobacco smoke, alcoholic beverages (congener), and heated cooking oils. Forms cyclic 1,N2-propano-dG (Cr-dG) exocyclic adducts via Michael addition/cyclization; adducts are miscoding and persist in liver, oral mucosa, and lung tissue. References: Chung et al., Carcinogenesis 1989; IARC Monograph Vol 63 (1995).",
+      "detail": "(E)-2-Butenal; alpha,beta-unsaturated aldehyde abundant in tobacco smoke, alcoholic beverages (congener), and heated cooking oils. Forms cyclic 1,N2-propano-dG (Cr-dG) exocyclic adducts via Michael addition/cyclization; adducts are miscoding and persist in liver, oral mucosa, and lung tissue. References: PMID:2736720; IARC Monograph Vol 63 (1995).",
       "group": "Aldehyde",
       "iarc": "Group 2B",
       "exposure": "tobacco smoke, alcoholic beverages, heated cooking oils, air pollutant",
@@ -3961,7 +4133,7 @@ const GRAPH_DATA = {
       "id": "Furfural",
       "label": "Furfural",
       "type": "Carcinogen",
-      "detail": "Furan-2-carbaldehyde; Maillard-reaction aldehyde abundant in roasted coffee, beer, bread, and heated fruit products. Bioactivated via sequential reduction/hydroxylation to 5-hydroxymethylfurfural (HMF) then sulfated by SULT1A1 to 5-sulfoxymethylfurfural (SMF), a DNA-reactive electrophile that alkylates dA/dG. Classified IARC Group 3 but included for mechanistic completeness of dietary aldehyde exposures. References: Monien et al., Mol Nutr Food Res 2011 (PMID:21538843); EFSA CONTAM Panel Opinion 2011.",
+      "detail": "Furan-2-carbaldehyde; Maillard-reaction aldehyde abundant in roasted coffee, beer, bread, and heated fruit products. Modeled via an HMF/SMF activation branch: SULT1A1 converts 5-hydroxymethylfurfural (HMF) to 5-sulfoxymethylfurfural (SMF), a DNA-reactive electrophile that alkylates dA/dG. Classified IARC Group 3 but included for mechanistic completeness of dietary aldehyde exposures. References: Chem Res Toxicol 2012 (PMID:22563731); Food Chem Toxicol 2015 (PMID:26454887); EFSA CONTAM Panel Opinion 2011.",
       "group": "Aldehyde",
       "iarc": "Group 3",
       "exposure": "roasted coffee, beer, bread, heated fruit/sugar products",
@@ -3973,7 +4145,7 @@ const GRAPH_DATA = {
       "id": "MDA",
       "label": "Malondialdehyde (MDA)",
       "type": "Carcinogen",
-      "detail": "Propanedial; ubiquitous lipid-peroxidation end-product and a direct-acting mutagen. Universal biomarker of oxidative stress. Reacts with dG to form pyrimido[1,2-a]purin-10(3H)-one (M1-dG), a miscoding adduct that causes base substitutions and frameshifts. Elevated in chronic inflammation, alcoholic liver disease, and hepatocarcinogenesis. References: Marnett, Mutat Res 1999 (PMID:10064842); Niedernhofer et al., J Biol Chem 2003.",
+      "detail": "Propanedial; ubiquitous lipid-peroxidation end-product and a direct-acting mutagen. Universal biomarker of oxidative stress. Reacts with dG to form pyrimido[1,2-a]purin-10(3H)-one (M1-dG), a miscoding adduct that causes base substitutions and frameshifts. Elevated in chronic inflammation, alcoholic liver disease, and hepatocarcinogenesis. References: Marnett 1999 (PMID:10064852); Niedernhofer et al., J Biol Chem 2003 (PMID:12775726).",
       "group": "Aldehyde",
       "iarc": "Not classified (endogenous genotoxin)",
       "exposure": "endogenous lipid peroxidation, oxidative stress, chronic inflammation",
@@ -3985,7 +4157,7 @@ const GRAPH_DATA = {
       "id": "4_HNE",
       "label": "4-Hydroxynonenal (4-HNE)",
       "type": "Carcinogen",
-      "detail": "(E)-4-Hydroxy-2-nonenal; the most reactive major product of omega-6 polyunsaturated fatty-acid peroxidation. Bifunctional Michael acceptor that forms exocyclic 1,N2-propano-dG (HNE-dG) adducts, preferentially at methylated CpG sites (a molecular link between oxidative stress and TP53 hotspot mutations). Detoxified by GSTP1 glutathione conjugation and ALDH2 oxidation. References: Esterbauer, Schaur & Zollner, Free Radic Biol Med 1991 (PMID:1937131); Hu et al., PNAS 2002.",
+      "detail": "(E)-4-Hydroxy-2-nonenal; the most reactive major product of omega-6 polyunsaturated fatty-acid peroxidation. Bifunctional Michael acceptor that forms exocyclic 1,N2-propano-dG (HNE-dG) adducts, preferentially at methylated CpG sites (a molecular link between oxidative stress and TP53 hotspot mutations). Detoxified by GSTP1 glutathione conjugation and ALDH2 oxidation. References: Esterbauer, Schaur & Zollner, Free Radic Biol Med 1991 (PMID:1937131); Hu et al., Carcinogenesis 2002 (PMID:12419825).",
       "group": "Aldehyde",
       "iarc": "Not classified (endogenous genotoxin)",
       "exposure": "endogenous omega-6 lipid peroxidation, oxidative stress, alcoholic steatohepatitis",
@@ -3997,7 +4169,7 @@ const GRAPH_DATA = {
       "id": "Vinyl_carbamate",
       "label": "Vinyl carbamate",
       "type": "Metabolite",
-      "detail": "CYP2E1-derived dehydrogenation product of urethane; proximal intermediate re-epoxidized to vinyl carbamate epoxide (PMID:12860588).",
+      "detail": "CYP2E1-derived dehydrogenation product of urethane; proximal intermediate re-epoxidized to vinyl carbamate epoxide (PMID:12704224).",
       "reactivity": "Intermediate",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4007,7 +4179,7 @@ const GRAPH_DATA = {
       "id": "Vinyl_carbamate_epoxide",
       "label": "Vinyl carbamate epoxide",
       "type": "Metabolite",
-      "detail": "Ultimate mutagenic metabolite of urethane; alkylates dA and dC to yield etheno-DNA adducts equivalent to those formed by vinyl chloride (PMID:12860588).",
+      "detail": "Ultimate mutagenic metabolite of urethane; alkylates dA and dC to yield etheno-DNA adducts equivalent to those formed by vinyl chloride (PMID:20205516).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4017,7 +4189,7 @@ const GRAPH_DATA = {
       "id": "SMF",
       "label": "5-sulfoxymethylfurfural (SMF)",
       "type": "Metabolite",
-      "detail": "SULT1A1-derived sulfate ester of 5-hydroxymethylfurfural (HMF); DNA-reactive electrophile that alkylates dA/dG. HMF itself arises from hydroxylation of furfural in heated foods (PMID:21538843).",
+      "detail": "Reactive sulfate ester generated from HMF by SULT1A1; DNA-reactive electrophile that alkylates dA/dG (PMID:22563731; PMID:26454887).",
       "reactivity": "Very High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4027,7 +4199,7 @@ const GRAPH_DATA = {
       "id": "Acr_dG",
       "label": "alpha/gamma-OH-PdG (Acr-dG)",
       "type": "DNA_Adduct",
-      "detail": "alpha- and gamma-hydroxy-1,N2-propano-2'-deoxyguanosine; major Michael-addition adduct from acrolein reacting at N1/N2 of guanine. Miscoding in ring-opened form; repaired by NER with XRCC1/BER backup (PMID:19705912).",
+      "detail": "alpha- and gamma-hydroxy-1,N2-propano-2'-deoxyguanosine; major Michael-addition adduct from acrolein reacting at N1/N2 of guanine. Miscoding in ring-opened form; repaired by NER with XRCC1/BER backup (PMID:19397281).",
       "reactivity": "High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4037,7 +4209,7 @@ const GRAPH_DATA = {
       "id": "Cr_dG",
       "label": "Cr-1,N2-PdG (Cr-dG)",
       "type": "DNA_Adduct",
-      "detail": "Cyclic 1,N2-propano-dG adduct from crotonaldehyde Michael addition; miscoding adduct detected in liver, oral mucosa, and lung of smokers (IARC Monograph Vol 63; Chung et al. 1989).",
+      "detail": "Cyclic 1,N2-propano-dG adduct from crotonaldehyde Michael addition; miscoding adduct detected in liver, oral mucosa, and lung of smokers (IARC Monograph Vol 63; PMID:2736720).",
       "reactivity": "High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4047,7 +4219,7 @@ const GRAPH_DATA = {
       "id": "M1_dG",
       "label": "M1-dG (pyrimido-purinone)",
       "type": "DNA_Adduct",
-      "detail": "3-(2'-deoxy-beta-D-erythro-pentofuranosyl)pyrimido[1,2-a]purin-10(3H)-one; principal MDA-DNA adduct. Miscoding lesion causing base substitutions and frameshifts; basal levels in healthy tissues provide a baseline for oxidative-stress-driven mutagenesis (PMID:10064842).",
+      "detail": "3-(2'-deoxy-beta-D-erythro-pentofuranosyl)pyrimido[1,2-a]purin-10(3H)-one; principal MDA-DNA adduct. Miscoding lesion causing base substitutions and frameshifts; basal levels in healthy tissues provide a baseline for oxidative-stress-driven mutagenesis (PMID:10064852).",
       "reactivity": "High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4057,7 +4229,7 @@ const GRAPH_DATA = {
       "id": "HNE_dG",
       "label": "HNE-1,N2-PdG (HNE-dG)",
       "type": "DNA_Adduct",
-      "detail": "Exocyclic 1,N2-propano-dG adduct from 4-HNE Michael addition/cyclization; formation is strongly enhanced at methylated CpG sites, mechanistically linking lipid peroxidation to TP53 hotspot mutations (Hu et al., PNAS 2002; PMID:1937131).",
+      "detail": "Exocyclic 1,N2-propano-dG adduct from 4-HNE Michael addition/cyclization; formation is strongly enhanced at methylated CpG sites, mechanistically linking lipid peroxidation to TP53 hotspot mutations (PMID:1937131; PMID:12419825).",
       "reactivity": "High",
       "origin": "imported",
       "match_status": "unmatched",
@@ -4230,6 +4402,90 @@ const GRAPH_DATA = {
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "id": "MLH1",
+      "label": "MLH1",
+      "type": "Enzyme",
+      "detail": "MutL homolog 1; mismatch repair of replication errors past DNA adducts",
+      "group": "DNA Repair (MMR)",
+      "role": "Repair",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
+      "evidence": "Canonical human gene identifier and nomenclature.",
+      "tissue": "ubiquitous",
+      "activity_score": 1.0,
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "MLH1",
+      "canonical_label": "MLH1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "4292",
+          "evidence": "Canonical human gene identifier and nomenclature.",
+          "citation": "NCBI Gene record for MLH1 (Homo sapiens)",
+          "url": "https://www.ncbi.nlm.nih.gov/gene/4292"
+        },
+        {
+          "source_db": "GTEx via HPA",
+          "record_id": "MLH1",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
+          "tissue": "ubiquitous",
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for MLH1",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
+        },
+        {
+          "source_db": "CTD",
+          "record_id": "MLH1",
+          "evidence": "Toxicogenomic context supporting the DNA Repair (MMR) assignment.",
+          "citation": "Comparative Toxicogenomics Database record for MLH1",
+          "url": "https://ctdbase.org/detail.go?type=gene&acc=MLH1"
+        }
+      ]
+    },
+    {
+      "id": "MSH2",
+      "label": "MSH2",
+      "type": "Enzyme",
+      "detail": "MutS homolog 2; mismatch recognition during post-replicative repair at adduct sites",
+      "group": "DNA Repair (MMR)",
+      "role": "Repair",
+      "source_db": "NCBI Gene; GTEx via HPA; CTD",
+      "evidence": "Canonical human gene identifier and nomenclature.",
+      "tissue": "ubiquitous",
+      "activity_score": 1.0,
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "MSH2",
+      "canonical_label": "MSH2",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "4436",
+          "evidence": "Canonical human gene identifier and nomenclature.",
+          "citation": "NCBI Gene record for MSH2 (Homo sapiens)",
+          "url": "https://www.ncbi.nlm.nih.gov/gene/4436"
+        },
+        {
+          "source_db": "GTEx via HPA",
+          "record_id": "MSH2",
+          "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
+          "tissue": "ubiquitous",
+          "citation": "GTEx v8 nTPM expression via Human Protein Atlas v25 for MSH2",
+          "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip"
+        },
+        {
+          "source_db": "CTD",
+          "record_id": "MSH2",
+          "evidence": "Toxicogenomic context supporting the DNA Repair (MMR) assignment.",
+          "citation": "Comparative Toxicogenomics Database record for MSH2",
+          "url": "https://ctdbase.org/detail.go?type=gene&acc=MSH2"
+        }
+      ]
     }
   ],
   "edges": [
@@ -5067,12 +5323,12 @@ const GRAPH_DATA = {
       "target": "4OH_cyclophosphamide",
       "type": "ACTIVATES",
       "carcinogen": "Cyclophosphamide",
-      "evidence": "Major 4-hydroxylation activity; CYP2B6*6 (rs3745274) reduces clearance (PMID:10220571)",
+      "evidence": "Major 4-hydroxylation activity in human liver microsomes (PMID:8242617; PMID:10348794)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Major 4-hydroxylation activity; CYP2B6*6 (rs3745274) reduces clearance (PMID:10220571)"
+          "evidence": "Major 4-hydroxylation activity in human liver microsomes (PMID:8242617; PMID:10348794)"
         }
       ]
     },
@@ -5210,12 +5466,12 @@ const GRAPH_DATA = {
       "target": "Glycidamide",
       "type": "ACTIVATES",
       "carcinogen": "Acrylamide",
-      "evidence": "Primary P450 for acrylamide epoxidation (PMID:17872912)",
+      "evidence": "Primary P450 for acrylamide epoxidation (PMID:16141435)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Primary P450 for acrylamide epoxidation (PMID:17872912)"
+          "evidence": "Primary P450 for acrylamide epoxidation (PMID:16141435)"
         }
       ]
     },
@@ -5224,12 +5480,12 @@ const GRAPH_DATA = {
       "target": "Vinyl_carbamate",
       "type": "ACTIVATES",
       "carcinogen": "Urethane",
-      "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12860588)",
+      "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12704224)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12860588)"
+          "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12704224)"
         }
       ]
     },
@@ -5287,12 +5543,12 @@ const GRAPH_DATA = {
       "target": "4OH_cyclophosphamide",
       "type": "ACTIVATES",
       "carcinogen": "Cyclophosphamide",
-      "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:10220571)",
+      "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:8242617)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:10220571)"
+          "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:8242617)"
         }
       ]
     },
@@ -5527,12 +5783,12 @@ const GRAPH_DATA = {
       "target": "As",
       "type": "DETOXIFIES",
       "carcinogen": "As",
-      "evidence": "PMID:21801416",
+      "evidence": "PMID:21798077; PMID:32650499",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMID:21801416"
+          "evidence": "PMID:21798077; PMID:32650499"
         }
       ]
     },
@@ -5541,12 +5797,12 @@ const GRAPH_DATA = {
       "target": "Cd",
       "type": "DETOXIFIES",
       "carcinogen": "Cd",
-      "evidence": "PMC3199751",
+      "evidence": "PMID:22291700",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMC3199751"
+          "evidence": "PMID:22291700"
         }
       ]
     },
@@ -5576,12 +5832,12 @@ const GRAPH_DATA = {
       "target": "Glycidamide",
       "type": "DETOXIFIES",
       "carcinogen": "Glycidamide",
-      "evidence": "Secondary GSH conjugation pathway (Besaratinia, Mutat Res 2010)",
+      "evidence": "Secondary GSH conjugation pathway within the broader glutathione transferase detoxification system (PMID:15668107)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Secondary GSH conjugation pathway (Besaratinia, Mutat Res 2010)"
+          "evidence": "Secondary GSH conjugation pathway within the broader glutathione transferase detoxification system (PMID:15668107)"
         }
       ]
     },
@@ -5647,12 +5903,12 @@ const GRAPH_DATA = {
       "target": "As",
       "type": "DETOXIFIES",
       "carcinogen": "As",
-      "evidence": "PMID:21801416",
+      "evidence": "PMID:21798077; PMID:32650499",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMID:21801416"
+          "evidence": "PMID:21798077; PMID:32650499"
         }
       ]
     },
@@ -5724,12 +5980,12 @@ const GRAPH_DATA = {
       "target": "Glycidamide",
       "type": "DETOXIFIES",
       "carcinogen": "Glycidamide",
-      "evidence": "GSH conjugation of the epoxide; GSTP1/M1-null genotype elevates adduct burden (Besaratinia, Mutat Res 2010)",
+      "evidence": "GSH conjugation of the epoxide is supported by in vitro blood detoxification studies involving glutathione transferases (PMID:15668107)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "GSH conjugation of the epoxide; GSTP1/M1-null genotype elevates adduct burden (Besaratinia, Mutat Res 2010)"
+          "evidence": "GSH conjugation of the epoxide is supported by in vitro blood detoxification studies involving glutathione transferases (PMID:15668107)"
         }
       ]
     },
@@ -5738,12 +5994,12 @@ const GRAPH_DATA = {
       "target": "Phosphoramide_mustard",
       "type": "DETOXIFIES",
       "carcinogen": "Cyclophosphamide",
-      "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) modulates cyclophosphamide sensitivity (Yang et al., Pharmacogenet Genomics 2005)",
+      "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) influences cyclophosphamide and 4-hydroxycyclophosphamide pharmacokinetics (PMID:18496131)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) modulates cyclophosphamide sensitivity (Yang et al., Pharmacogenet Genomics 2005)"
+          "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) influences cyclophosphamide and 4-hydroxycyclophosphamide pharmacokinetics (PMID:18496131)"
         }
       ]
     },
@@ -5752,12 +6008,12 @@ const GRAPH_DATA = {
       "target": "Chlorambucil_aziridinium",
       "type": "DETOXIFIES",
       "carcinogen": "Chlorambucil",
-      "evidence": "GSH conjugation; GSTP1 Ile105Val modulates chlorambucil response in CLL (Meier et al., Clin Cancer Res 2014)",
+      "evidence": "GSH conjugation; GSTP1-1 catalyzes chlorambucil conjugation, with allelic variants showing substrate-dependent activity differences (PMID:18511072)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "GSH conjugation; GSTP1 Ile105Val modulates chlorambucil response in CLL (Meier et al., Clin Cancer Res 2014)"
+          "evidence": "GSH conjugation; GSTP1-1 catalyzes chlorambucil conjugation, with allelic variants showing substrate-dependent activity differences (PMID:18511072)"
         }
       ]
     },
@@ -5766,12 +6022,12 @@ const GRAPH_DATA = {
       "target": "Busulfan",
       "type": "DETOXIFIES",
       "carcinogen": "Busulfan",
-      "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (Ansari et al., Blood 2010)",
+      "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (PMID:20672371)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (Ansari et al., Blood 2010)"
+          "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (PMID:20672371)"
         }
       ]
     },
@@ -5913,12 +6169,12 @@ const GRAPH_DATA = {
       "target": "SMF",
       "type": "ACTIVATES",
       "carcinogen": "Furfural",
-      "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human liver and colon (PMID:21538843; EFSA CONTAM Panel 2011)",
+      "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human systems (PMID:22563731; PMID:26454887; PMID:21462333)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human liver and colon (PMID:21538843; EFSA CONTAM Panel 2011)"
+          "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human systems (PMID:22563731; PMID:26454887; PMID:21462333)"
         }
       ]
     },
@@ -6234,12 +6490,12 @@ const GRAPH_DATA = {
       "target": "N7_GA_dG",
       "type": "REPAIRS",
       "carcinogen": "Glycidamide",
-      "evidence": "BER scaffold response to depurinated N7-glycidamide adducts (PMID:17872912)",
+      "evidence": "Depurination of N7-glycidamide adducts yields abasic sites handled through BER (PMID:17234719)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "BER scaffold response to depurinated N7-glycidamide adducts (PMID:17872912)"
+          "evidence": "Depurination of N7-glycidamide adducts yields abasic sites handled through BER (PMID:17234719)"
         }
       ]
     },
@@ -6262,12 +6518,12 @@ const GRAPH_DATA = {
       "target": "Acr_dG",
       "type": "REPAIRS",
       "carcinogen": "Acrolein",
-      "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19705912)",
+      "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19397281)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19705912)"
+          "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19397281)"
         }
       ]
     },
@@ -6290,12 +6546,12 @@ const GRAPH_DATA = {
       "target": "M1_dG",
       "type": "REPAIRS",
       "carcinogen": "MDA",
-      "evidence": "NER plus BER handle M1-dG; repair deficiency elevates spontaneous mutation frequency (Niedernhofer et al., JBC 2003)",
+      "evidence": "M1-dG mutagenesis in human cells implicates nucleotide excision repair involvement, with BER cross-talk commonly invoked for lesion handling (PMID:12775726)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "NER plus BER handle M1-dG; repair deficiency elevates spontaneous mutation frequency (Niedernhofer et al., JBC 2003)"
+          "evidence": "M1-dG mutagenesis in human cells implicates nucleotide excision repair involvement, with BER cross-talk commonly invoked for lesion handling (PMID:12775726)"
         }
       ]
     },
@@ -7203,12 +7459,12 @@ const GRAPH_DATA = {
       "target": "MMA_III",
       "type": "ACTIVATES",
       "carcinogen": "As",
-      "evidence": "PMID:21801416",
+      "evidence": "PMID:34959192",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMID:21801416"
+          "evidence": "PMID:34959192"
         }
       ]
     },
@@ -7217,12 +7473,12 @@ const GRAPH_DATA = {
       "target": "MMA_III",
       "type": "ACTIVATES",
       "carcinogen": "As",
-      "evidence": "PMID:21801416",
+      "evidence": "PMID:32650499",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMID:21801416"
+          "evidence": "PMID:32650499"
         }
       ]
     },
@@ -7231,12 +7487,12 @@ const GRAPH_DATA = {
       "target": "Cd",
       "type": "DETOXIFIES",
       "carcinogen": "Cd",
-      "evidence": "PMC8141308",
+      "evidence": "PMID:16827180",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMC8141308"
+          "evidence": "PMID:16827180"
         }
       ]
     },
@@ -7245,12 +7501,12 @@ const GRAPH_DATA = {
       "target": "Cd",
       "type": "DETOXIFIES",
       "carcinogen": "Cd",
-      "evidence": "PMC8141308; PMC8197913",
+      "evidence": "PMID:21328412; PMID:26529669",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "PMC8141308; PMC8197913"
+          "evidence": "PMID:21328412; PMID:26529669"
         }
       ]
     },
@@ -7714,12 +7970,12 @@ const GRAPH_DATA = {
       "target": "CYP1A1",
       "type": "INDUCES",
       "carcinogen": "TCDD",
-      "evidence": "XRE binding induces CYP1A1; CpG demethylation persists 40+ days (Sci Rep 2016, srep34989)",
+      "evidence": "XRE binding induces CYP1A1; CpG demethylation persists 40+ days (PMID:27713569; DOI:10.1038/srep34989)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "XRE binding induces CYP1A1; CpG demethylation persists 40+ days (Sci Rep 2016, srep34989)"
+          "evidence": "XRE binding induces CYP1A1; CpG demethylation persists 40+ days (PMID:27713569; DOI:10.1038/srep34989)"
         }
       ]
     },
@@ -7811,13 +8067,20 @@ const GRAPH_DATA = {
       "source": "Methyldiazonium",
       "target": "O6_methyl_dG",
       "type": "FORMS_ADDUCT",
+      "label": "Methyl adduct formation",
       "carcinogen": "NDMA",
-      "evidence": "Methylates O6-G; causes G:C to A:T transitions (PMID:40390554)",
+      "source_db": "Curated showcase",
+      "evidence": "Methyl adduct formation",
       "origin": "imported",
-      "match_status": "unmatched",
+      "match_status": "canonical",
+      "canonical_predicate": "FORMS_ADDUCT",
+      "canonical_namespace": "schema",
       "provenance": [
         {
-          "evidence": "Methylates O6-G; causes G:C to A:T transitions (PMID:40390554)"
+          "source_db": "Curated showcase",
+          "record_id": "Methyldiazonium->O6_methyl_dG",
+          "evidence": "Methyl adduct formation",
+          "citation": "Methyl adduct formation"
         }
       ]
     },
@@ -7826,12 +8089,12 @@ const GRAPH_DATA = {
       "target": "N7_methyl_dG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "MNU",
-      "evidence": "Dominant guanine methylation product from MNU; repaired by BER after spontaneous depurination (PMID:2185966)",
+      "evidence": "Dominant guanine methylation product from MNU; repaired by BER after spontaneous depurination (PMID:1912317)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Dominant guanine methylation product from MNU; repaired by BER after spontaneous depurination (PMID:2185966)"
+          "evidence": "Dominant guanine methylation product from MNU; repaired by BER after spontaneous depurination (PMID:1912317)"
         }
       ]
     },
@@ -7917,12 +8180,12 @@ const GRAPH_DATA = {
       "target": "Glycidamide",
       "type": "ACTIVATES",
       "carcinogen": "Acrylamide",
-      "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in rodent and human hepatic microsomes (Segerbaeck et al. 1995, PMID:7614537)",
+      "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in knockout and microsomal systems (PMID:16141435)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in rodent and human hepatic microsomes (Segerbaeck et al. 1995, PMID:7614537)"
+          "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in knockout and microsomal systems (PMID:16141435)"
         }
       ]
     },
@@ -7940,12 +8203,12 @@ const GRAPH_DATA = {
       "target": "N7_GA_dG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Glycidamide",
-      "evidence": "Direct alkylation at N7-guanine; principal acrylamide-related adduct in rodent and human tissues (PMID:17872912)",
+      "evidence": "Direct alkylation at N7-guanine; principal acrylamide-related adduct in exposed rodent tissues (PMID:7767980)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Direct alkylation at N7-guanine; principal acrylamide-related adduct in rodent and human tissues (PMID:17872912)"
+          "evidence": "Direct alkylation at N7-guanine; principal acrylamide-related adduct in exposed rodent tissues (PMID:7767980)"
         }
       ]
     },
@@ -7986,12 +8249,12 @@ const GRAPH_DATA = {
       "target": "Acrolein",
       "type": "ACTIVATES",
       "carcinogen": "Cyclophosphamide",
-      "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10220571)",
+      "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10348794)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10220571)"
+          "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10348794)"
         }
       ]
     },
@@ -8000,12 +8263,12 @@ const GRAPH_DATA = {
       "target": "Chlorambucil_aziridinium",
       "type": "ACTIVATES",
       "carcinogen": "Chlorambucil",
-      "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7523912)",
+      "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7862715)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7523912)"
+          "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7862715)"
         }
       ]
     },
@@ -8023,12 +8286,12 @@ const GRAPH_DATA = {
       "target": "Mustard_episulfonium",
       "type": "ACTIVATES",
       "carcinogen": "Sulfur_mustard",
-      "evidence": "Intramolecular cyclization to cyclic episulfonium is the rate-limiting step of alkylation (PMID:8635461)",
+      "evidence": "Intramolecular cyclization to cyclic episulfonium is the canonical alkylation step (IARC 100F)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Intramolecular cyclization to cyclic episulfonium is the rate-limiting step of alkylation (PMID:8635461)"
+          "evidence": "Intramolecular cyclization to cyclic episulfonium is the canonical alkylation step (IARC 100F)"
         }
       ]
     },
@@ -8046,12 +8309,12 @@ const GRAPH_DATA = {
       "target": "Busulfan_methanesulfonate",
       "type": "ACTIVATES",
       "carcinogen": "Busulfan",
-      "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:12960109)",
+      "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:6892995)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:12960109)"
+          "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:6892995)"
         }
       ]
     },
@@ -8069,12 +8332,12 @@ const GRAPH_DATA = {
       "target": "Methyldiazonium",
       "type": "ACTIVATES",
       "carcinogen": "MNU",
-      "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:2185966)",
+      "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:1912317)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:2185966)"
+          "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:1912317)"
         }
       ]
     },
@@ -8092,12 +8355,12 @@ const GRAPH_DATA = {
       "target": "MTIC",
       "type": "ACTIVATES",
       "carcinogen": "Temozolomide",
-      "evidence": "Spontaneous pH-dependent hydrolysis of the imidazotetrazine ring to MTIC; no enzymatic requirement (PMID:9327140)",
+      "evidence": "Spontaneous pH-dependent hydrolysis of the imidazotetrazine ring to MTIC; no enzymatic requirement (PMID:1998993)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Spontaneous pH-dependent hydrolysis of the imidazotetrazine ring to MTIC; no enzymatic requirement (PMID:9327140)"
+          "evidence": "Spontaneous pH-dependent hydrolysis of the imidazotetrazine ring to MTIC; no enzymatic requirement (PMID:1998993)"
         }
       ]
     },
@@ -8115,12 +8378,12 @@ const GRAPH_DATA = {
       "target": "Phosphoramide_mustard",
       "type": "ACTIVATES",
       "carcinogen": "Cyclophosphamide",
-      "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10220571)",
+      "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10348794)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10220571)"
+          "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10348794)"
         }
       ]
     },
@@ -8129,12 +8392,12 @@ const GRAPH_DATA = {
       "target": "DNA_ICL_mustard",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Cyclophosphamide",
-      "evidence": "Bifunctional aziridinium forms G-G interstrand crosslinks (PMID:10220571)",
+      "evidence": "Bifunctional aziridinium forms G-G interstrand crosslinks (PMID:9092631)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Bifunctional aziridinium forms G-G interstrand crosslinks (PMID:10220571)"
+          "evidence": "Bifunctional aziridinium forms G-G interstrand crosslinks (PMID:9092631)"
         }
       ]
     },
@@ -8143,12 +8406,12 @@ const GRAPH_DATA = {
       "target": "DNA_ICL_mustard",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Chlorambucil",
-      "evidence": "Bifunctional N7-dG interstrand crosslinks drive therapeutic cytotoxicity and therapy-related AML risk (PMID:7523912; IARC 100A)",
+      "evidence": "Bifunctional N7-dG interstrand crosslinks drive therapeutic cytotoxicity and therapy-related AML risk (PMID:7862715; IARC 100A)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Bifunctional N7-dG interstrand crosslinks drive therapeutic cytotoxicity and therapy-related AML risk (PMID:7523912; IARC 100A)"
+          "evidence": "Bifunctional N7-dG interstrand crosslinks drive therapeutic cytotoxicity and therapy-related AML risk (PMID:7862715; IARC 100A)"
         }
       ]
     },
@@ -8157,12 +8420,12 @@ const GRAPH_DATA = {
       "target": "DNA_ICL_mustard",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Sulfur_mustard",
-      "evidence": "Bifunctional alkylation produces N7-Gua monoadducts and 5'-d(GNC) interstrand crosslinks (PMID:8635461; IARC 100F)",
+      "evidence": "Bifunctional alkylation produces N7-Gua monoadducts and bis-guanine crosslinks (PMID:24858262; IARC 100F)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Bifunctional alkylation produces N7-Gua monoadducts and 5'-d(GNC) interstrand crosslinks (PMID:8635461; IARC 100F)"
+          "evidence": "Bifunctional alkylation produces N7-Gua monoadducts and bis-guanine crosslinks (PMID:24858262; IARC 100F)"
         }
       ]
     },
@@ -8171,12 +8434,12 @@ const GRAPH_DATA = {
       "target": "DNA_ICL_mustard",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Busulfan",
-      "evidence": "Bifunctional alkylation yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:12960109; IARC 100A)",
+      "evidence": "Bifunctional alkylation yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:6892995; IARC 100A)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Bifunctional alkylation yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:12960109; IARC 100A)"
+          "evidence": "Bifunctional alkylation yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:6892995; IARC 100A)"
         }
       ]
     },
@@ -8185,12 +8448,12 @@ const GRAPH_DATA = {
       "target": "Methyldiazonium",
       "type": "ACTIVATES",
       "carcinogen": "Temozolomide",
-      "evidence": "MTIC decomposes to methyldiazonium plus 5-aminoimidazole-4-carboxamide at physiological pH (PMID:9327140)",
+      "evidence": "MTIC decomposes to methyldiazonium plus 5-aminoimidazole-4-carboxamide at physiological pH (PMID:1998993)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "MTIC decomposes to methyldiazonium plus 5-aminoimidazole-4-carboxamide at physiological pH (PMID:9327140)"
+          "evidence": "MTIC decomposes to methyldiazonium plus 5-aminoimidazole-4-carboxamide at physiological pH (PMID:1998993)"
         }
       ]
     },
@@ -8199,12 +8462,12 @@ const GRAPH_DATA = {
       "target": "Vinyl_carbamate",
       "type": "ACTIVATES",
       "carcinogen": "Urethane",
-      "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12860588; IARC Monograph 96)",
+      "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12704224; IARC Monograph 96)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12860588; IARC Monograph 96)"
+          "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12704224; IARC Monograph 96)"
         }
       ]
     },
@@ -8222,12 +8485,12 @@ const GRAPH_DATA = {
       "target": "Acr_dG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Acrolein",
-      "evidence": "Direct Michael addition yields alpha/gamma-hydroxy-1,N2-propano-dG adducts; dominant adduct class in smokers' lung DNA (PMID:19705912; IARC Monograph 128)",
+      "evidence": "Direct Michael addition yields alpha/gamma-hydroxy-1,N2-propano-dG adducts; dominant adduct class in smokers' lung DNA (PMID:19397281; IARC Monograph 128)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Direct Michael addition yields alpha/gamma-hydroxy-1,N2-propano-dG adducts; dominant adduct class in smokers' lung DNA (PMID:19705912; IARC Monograph 128)"
+          "evidence": "Direct Michael addition yields alpha/gamma-hydroxy-1,N2-propano-dG adducts; dominant adduct class in smokers' lung DNA (PMID:19397281; IARC Monograph 128)"
         }
       ]
     },
@@ -8245,12 +8508,12 @@ const GRAPH_DATA = {
       "target": "Cr_dG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Crotonaldehyde",
-      "evidence": "Michael addition/cyclization yields 1,N2-propano-dG exocyclic adduct detected in smokers' oral and lung tissue (Chung et al., Carcinogenesis 1989; IARC Monograph 63)",
+      "evidence": "Michael addition/cyclization yields 1,N2-propano-dG exocyclic adduct detected in smokers' oral and lung tissue (PMID:2736720; IARC Monograph 63)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Michael addition/cyclization yields 1,N2-propano-dG exocyclic adduct detected in smokers' oral and lung tissue (Chung et al., Carcinogenesis 1989; IARC Monograph 63)"
+          "evidence": "Michael addition/cyclization yields 1,N2-propano-dG exocyclic adduct detected in smokers' oral and lung tissue (PMID:2736720; IARC Monograph 63)"
         }
       ]
     },
@@ -8268,12 +8531,12 @@ const GRAPH_DATA = {
       "target": "SMF",
       "type": "ACTIVATES",
       "carcinogen": "Furfural",
-      "evidence": "Furfural is reduced/hydroxylated to 5-hydroxymethylfurfural (HMF), then SULT1A1 sulfates HMF to the DNA-reactive 5-sulfoxymethylfurfural (SMF) (PMID:21538843)",
+      "evidence": "The dietary furfural branch is represented through HMF-centered SULT1A1 bioactivation to the DNA-reactive metabolite SMF (PMID:22563731; PMID:26454887)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Furfural is reduced/hydroxylated to 5-hydroxymethylfurfural (HMF), then SULT1A1 sulfates HMF to the DNA-reactive 5-sulfoxymethylfurfural (SMF) (PMID:21538843)"
+          "evidence": "The dietary furfural branch is represented through HMF-centered SULT1A1 bioactivation to the DNA-reactive metabolite SMF (PMID:22563731; PMID:26454887)"
         }
       ]
     },
@@ -8291,12 +8554,12 @@ const GRAPH_DATA = {
       "target": "M1_dG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "MDA",
-      "evidence": "Direct reaction of MDA with dG yields pyrimido[1,2-a]purin-10(3H)-one (M1-dG); quantitative biomarker of oxidative-stress mutagenesis (PMID:10064842)",
+      "evidence": "Direct reaction of MDA with dG yields pyrimido[1,2-a]purin-10(3H)-one (M1-dG); quantitative biomarker of oxidative-stress mutagenesis (PMID:10064852)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Direct reaction of MDA with dG yields pyrimido[1,2-a]purin-10(3H)-one (M1-dG); quantitative biomarker of oxidative-stress mutagenesis (PMID:10064842)"
+          "evidence": "Direct reaction of MDA with dG yields pyrimido[1,2-a]purin-10(3H)-one (M1-dG); quantitative biomarker of oxidative-stress mutagenesis (PMID:10064852)"
         }
       ]
     },
@@ -8314,12 +8577,12 @@ const GRAPH_DATA = {
       "target": "HNE_dG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "4_HNE",
-      "evidence": "Michael addition/cyclization yields 1,N2-propano-dG (HNE-dG); selectively enhanced at methylated CpG sites, linking lipid peroxidation to TP53 hotspot spectrum (PMID:1937131; Hu et al., PNAS 2002)",
+      "evidence": "Michael addition/cyclization yields 1,N2-propano-dG (HNE-dG); selectively enhanced at methylated CpG sites, linking lipid peroxidation to TP53 hotspot spectrum (PMID:1937131; PMID:12419825)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Michael addition/cyclization yields 1,N2-propano-dG (HNE-dG); selectively enhanced at methylated CpG sites, linking lipid peroxidation to TP53 hotspot spectrum (PMID:1937131; Hu et al., PNAS 2002)"
+          "evidence": "Michael addition/cyclization yields 1,N2-propano-dG (HNE-dG); selectively enhanced at methylated CpG sites, linking lipid peroxidation to TP53 hotspot spectrum (PMID:1937131; PMID:12419825)"
         }
       ]
     },
@@ -8337,12 +8600,12 @@ const GRAPH_DATA = {
       "target": "Vinyl_carbamate_epoxide",
       "type": "ACTIVATES",
       "carcinogen": "Urethane",
-      "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:12860588)",
+      "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:12860588)"
+          "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)"
         }
       ]
     },
@@ -8351,12 +8614,12 @@ const GRAPH_DATA = {
       "target": "etheno_dA",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Urethane",
-      "evidence": "Forms 1,N6-etheno-dA adducts mechanistically identical to vinyl-chloride chemistry (PMID:12860588; IARC Monograph 96)",
+      "evidence": "Forms 1,N6-etheno-dA adducts mechanistically identical to vinyl-chloride chemistry (PMID:20205516; IARC Monograph 96)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Forms 1,N6-etheno-dA adducts mechanistically identical to vinyl-chloride chemistry (PMID:12860588; IARC Monograph 96)"
+          "evidence": "Forms 1,N6-etheno-dA adducts mechanistically identical to vinyl-chloride chemistry (PMID:20205516; IARC Monograph 96)"
         }
       ]
     },
@@ -8365,12 +8628,12 @@ const GRAPH_DATA = {
       "target": "etheno_dC",
       "type": "FORMS_ADDUCT",
       "carcinogen": "Urethane",
-      "evidence": "Forms 3,N4-etheno-dC adducts detected in liver and lung of urethane-exposed rodents (PMID:12860588)",
+      "evidence": "Forms 3,N4-etheno-dC adducts detected in liver and lung of urethane-exposed rodents (PMID:20205516)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Forms 3,N4-etheno-dC adducts detected in liver and lung of urethane-exposed rodents (PMID:12860588)"
+          "evidence": "Forms 3,N4-etheno-dC adducts detected in liver and lung of urethane-exposed rodents (PMID:20205516)"
         }
       ]
     },
@@ -8379,12 +8642,12 @@ const GRAPH_DATA = {
       "target": "AHR",
       "type": "ACTIVATES",
       "carcinogen": "PCB_169",
-      "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (van den Berg 2006; IARC Monograph 107, 2016)",
+      "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (PMID:16829543; IARC Monograph 107, 2016)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
         {
-          "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (van den Berg 2006; IARC Monograph 107, 2016)"
+          "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (PMID:16829543; IARC Monograph 107, 2016)"
         }
       ]
     },
@@ -8621,6 +8884,166 @@ const GRAPH_DATA = {
       "provenance": [
         {
           "evidence": "Mixed CAR/PXR and weak AhR activity; GABA-A antagonism (IARC Monograph 79, 2001)"
+        }
+      ]
+    },
+    {
+      "source": "MLH1",
+      "target": "BPDE_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MLH1->BPDE_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MLH1",
+      "target": "PhIP_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MLH1->PhIP_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MLH1",
+      "target": "ABP_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MLH1->ABP_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MLH1",
+      "target": "Oxo_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MLH1->Oxo_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MSH2",
+      "target": "BPDE_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MSH2->BPDE_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MSH2",
+      "target": "PhIP_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MSH2->PhIP_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MSH2",
+      "target": "ABP_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MSH2->ABP_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
+        }
+      ]
+    },
+    {
+      "source": "MSH2",
+      "target": "Oxo_dG",
+      "type": "REPAIRS",
+      "label": "MMR",
+      "source_db": "Curated showcase",
+      "evidence": "MMR",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "REPAIRS",
+      "canonical_namespace": "schema",
+      "provenance": [
+        {
+          "source_db": "Curated showcase",
+          "record_id": "MSH2->Oxo_dG",
+          "evidence": "MMR",
+          "citation": "MMR"
         }
       ]
     }

@@ -135,6 +135,12 @@ def _extract_flux_summary_from_evidence(evidence: object) -> dict[str, JsonDict]
             continue
         flux_summary[class_name] = {
             "net_ratio": _get_attr_or_key(item, "net_ratio"),
+            "susceptibility_score_log2": _get_attr_or_key(item, "susceptibility_score_log2"),
+            "reactive_intermediate_uM": _get_attr_or_key(item, "reactive_intermediate_uM"),
+            "time_to_steady_state_days": _get_attr_or_key(
+                item,
+                "time_to_steady_state_days",
+            ),
             "risk": _get_attr_or_key(item, "risk_classification"),
             "model_kind": _get_attr_or_key(item, "model_kind"),
             "parameter_source": _get_attr_or_key(item, "parameter_source"),
@@ -199,8 +205,19 @@ def _extract_summary_metrics(result: object, participant: ParticipantRecord) -> 
         if isinstance(per_class, dict):
             for cls_name, cls_result in per_class.items():
                 if isinstance(cls_result, dict) and "net_ratio" in cls_result:
+                    ss = cls_result.get("steady_state_concentrations_uM", {})
+                    ss_model = cls_result.get("steady_state_model", {})
                     flux_summary[cls_name] = {
                         "net_ratio": cls_result.get("net_ratio"),
+                        "susceptibility_score_log2": cls_result.get("susceptibility_score_log2"),
+                        "reactive_intermediate_uM": (
+                            ss.get("reactive_intermediate_uM") if isinstance(ss, dict) else None
+                        ),
+                        "time_to_steady_state_days": (
+                            ss_model.get("time_to_steady_state_days")
+                            if isinstance(ss_model, dict)
+                            else None
+                        ),
                         "risk": cls_result.get("risk_classification"),
                         "model_kind": cls_result.get("model_kind"),
                         "parameter_source": cls_result.get("parameter_source"),
@@ -211,8 +228,19 @@ def _extract_summary_metrics(result: object, participant: ParticipantRecord) -> 
         )
         for cls_name, cls_result in per_class.items():
             risk = getattr(cls_result, "risk_classification", None)
+            ss = getattr(cls_result, "steady_state_concentrations_uM", {})
+            ss_model = getattr(cls_result, "steady_state_model", {})
             flux_summary[cls_name] = {
                 "net_ratio": getattr(cls_result, "net_ratio", None),
+                "susceptibility_score_log2": getattr(cls_result, "susceptibility_score_log2", None),
+                "reactive_intermediate_uM": (
+                    ss.get("reactive_intermediate_uM") if isinstance(ss, dict) else None
+                ),
+                "time_to_steady_state_days": (
+                    ss_model.get("time_to_steady_state_days")
+                    if isinstance(ss_model, dict)
+                    else None
+                ),
                 "risk": getattr(risk, "value", risk),
                 "model_kind": getattr(cls_result, "model_kind", None),
                 "parameter_source": getattr(cls_result, "parameter_source", None),

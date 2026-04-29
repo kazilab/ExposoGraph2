@@ -245,8 +245,9 @@ _TISSUE_TO_GTEX: dict[TissueType, str] = {
 }
 
 _PHASE1_GENES = [
-    "CYP1A1", "CYP1A2", "CYP1B1", "CYP2A6", "CYP2A13", "CYP2E1",
-    "CYP3A4", "CYP3A5", "CYP17A1", "CYP19A1", "EPHX1", "AHR", "ARNT", "AHRR",
+    "CYP1A1", "CYP1A2", "CYP1B1", "CYP2A6", "CYP2A13", "CYP2B6",
+    "CYP2C9", "CYP2C19", "CYP2D6", "CYP2E1", "CYP2F1", "CYP3A4",
+    "CYP3A5", "CYP17A1", "CYP19A1", "EPHX1", "AHR", "ARNT", "AHRR",
 ]
 _PHASE2_CONJUGATION_GENES = [
     "GSTM1", "GSTP1", "GSTT1", "GSTO1", "GSTO2",
@@ -260,8 +261,18 @@ _PHASE2_OTHER_GENES = [
     "CCBL1", "MT1A", "MT2A",
 ]
 _TRANSPORT_GENES = ["ABCB1", "ABCC2", "ABCG2", "SLC11A1"]
-_DNA_REPAIR_GENES = ["XRCC1", "MGMT", "OGG1", "ERCC2", "XPC", "FANCD2", "PARP1"]
-_IMMUNE_GENES = ["HLA-DPB1"]
+_DNA_REPAIR_GENES = [
+    "XRCC1",
+    "MGMT",
+    "MLH1",
+    "MSH2",
+    "OGG1",
+    "ERCC2",
+    "XPC",
+    "FANCD2",
+    "PARP1",
+]
+_IMMUNE_GENES = ["HLA_DPB1"]
 _TISSUE_REPORT_CATEGORIES: dict[str, list[str]] = {
     "Phase I (Bioactivation/Oxidation)": _PHASE1_GENES,
     "Phase II (Conjugation)": _PHASE2_CONJUGATION_GENES,
@@ -612,7 +623,7 @@ def generate_tissue_report(
         "=" * 70,
         f"  ExposoGraph Tissue Report: {gtex_name.upper()}",
         f"  Threshold: weight >= {threshold} (>={threshold*100:.0f}% of maximum-expressing tissue)",
-        "  Data: GTEx v8 via Human Protein Atlas | Units: nTPM weights",
+        "  Data: GTEx v8 via Human Protein Atlas v25 detail table | Units: nTPM weights",
         "=" * 70,
         "",
         f"INCLUDED ENZYMES ({len(included)} of {len(weights)} total):",
@@ -748,7 +759,7 @@ def filter_graph_by_tissue(
             "threshold": threshold,
             "included_enzymes": sorted(node_id for node_id in included_ids if node_id in weights),
             "excluded_enzymes": sorted(excluded_ids),
-            "data_source": "GTEx v8 via Human Protein Atlas (proteinatlas.org)",
+            "data_source": "GTEx v8 via Human Protein Atlas v25 detail table (proteinatlas.org)",
             "units": "nTPM weights normalized to tissue maximum",
         }
     )

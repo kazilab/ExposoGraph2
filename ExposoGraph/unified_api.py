@@ -45,6 +45,29 @@ _FLUX_TO_EXPOSURE_CLASS = {
     "HeavyMetal": "HeavyMetals",
 }
 
+_BIOMARKER_TO_FLUX_CLASS = {
+    "PAH": "PAH",
+    "HCA": "HCA",
+    "AromaticAmines": "AromaticAmines",
+    "AromaticAmine": "AromaticAmines",
+    "TobaccoNitrosamines": "Nitrosamine",
+    "NNK": "Nitrosamine",
+    "NNN": "Nitrosamine",
+    "Aflatoxin": "Aflatoxin",
+    "AflatoxinB1": "Aflatoxin",
+    "Ethanol": "Aldehyde",
+    "Aldehyde": "Aldehyde",
+    "Benzene": "Benzene",
+    "VinylChloride": "VinylChloride",
+    "DietaryNitroso": "NDMA",
+    "NDMA": "NDMA",
+    "NDEA": "NDEA",
+    "ChlorinatedSolvent": "ChlorinatedSolvent",
+    "ChlorinatedSolvents": "ChlorinatedSolvent",
+    "HeavyMetal": "HeavyMetal",
+    "HeavyMetals": "HeavyMetal",
+}
+
 
 @dataclass
 class FluxClassEvidence:
@@ -53,6 +76,9 @@ class FluxClassEvidence:
     carcinogen_class: str
     risk_classification: str
     net_ratio: float
+    susceptibility_score_log2: float
+    reactive_intermediate_uM: float | None
+    time_to_steady_state_days: float | None
     model_kind: str
     parameter_source: str
 
@@ -72,6 +98,8 @@ class PatientRiskProfile:
     flux_profile: FullProfileResult | None
     exposure_profile: ExposureProfileResult | None
     interactions: InteractionMatrixResult | None
+    biomarker_measurements: dict[str, float] = field(default_factory=dict)
+    biomarker_dose_estimates: list[dict[str, Any]] = field(default_factory=list)
     flux_class_evidence: list[FluxClassEvidence] = field(default_factory=list)
     critical_warnings: list[CriticalInteraction] = field(default_factory=list)
     pipeline_warnings: list[str] = field(default_factory=list)
@@ -326,11 +354,60 @@ def _rebuild_exposure_profile(
     )
 
 
+def _build_flux_exposure_profile_from_biomarkers(
+    biomarker_measurements: dict[str, float] | None,
+) -> tuple[dict[str, float], list[dict[str, Any]], list[str]]:
+    """Convert biomarker measurements into flux-engine substrate overrides."""
+    if not biomarker_measurements:
+        return {}, [], []
+
+    from .biomarker_mapping import (
+        biomarker_dose_estimate_to_dict,
+        estimate_tissue_dose_from_biomarker,
+        get_entry_by_biomarker,
+    )
+
+    exposure_profile: dict[str, float] = {}
+    estimates: list[dict[str, Any]] = []
+    warnings: list[str] = []
+
+    for biomarker, value in biomarker_measurements.items():
+        entry = get_entry_by_biomarker(biomarker)
+        if entry is None:
+            warnings.append(f"Unknown biomarker measurement ignored: {biomarker}")
+            continue
+
+        estimate = estimate_tissue_dose_from_biomarker(
+            entry.biomarker,
+            float(value),
+            entry=entry,
+        )
+        estimate_payload = biomarker_dose_estimate_to_dict(estimate)
+        estimates.append(estimate_payload)
+
+        flux_class = _BIOMARKER_TO_FLUX_CLASS.get(entry.carcinogen_class)
+        if flux_class is None:
+            warnings.append(
+                f"No flux class mapping for biomarker {entry.biomarker} "
+                f"({entry.carcinogen_class})"
+            )
+            continue
+
+        existing = exposure_profile.get(flux_class)
+        concentration = float(estimate.tissue_conc_uM)
+        exposure_profile[flux_class] = (
+            concentration if existing is None else max(existing, concentration)
+        )
+
+    return exposure_profile, estimates, warnings
+
+
 def _build_exposure_profile(
     genotypes: dict[str, str],
     tissue: str,
     exposure_answers: dict[str, Any],
     flux_profile: FullProfileResult | None,
+    biomarker_measurements: dict[str, float] | None = None,
 ) -> tuple[ExposureProfileResult, list[str]]:
     """Compute the exposure profile and override overlapping classes with flux results."""
     from .exposure_engine import apply_exposure_profile, compute_exposure_weighted_risk
@@ -340,6 +417,7 @@ def _build_exposure_profile(
         patient_genotypes=genotypes,
         exposure_answers=exposure_answers,
         tissue=tissue,
+        biomarker_measurements=biomarker_measurements,
     )
     if flux_profile is None:
         return base_profile, warnings
@@ -372,6 +450,7 @@ def _build_exposure_profile(
                     tissue=tissue,
                     exposure_scenario=risk_score.exposure_scenario,
                     flux_ratio_override=override,
+                    biomarker_measurements=biomarker_measurements,
                 )
             )
         except Exception as exc:  # pragma: no cover - defensive path
@@ -394,6 +473,13 @@ def _build_flux_class_evidence(flux_profile: FullProfileResult | None) -> list[F
             carcinogen_class=class_name,
             risk_classification=result.risk_classification.value,
             net_ratio=result.net_ratio,
+            susceptibility_score_log2=result.susceptibility_score_log2,
+            reactive_intermediate_uM=result.steady_state_concentrations_uM.get(
+                "reactive_intermediate_uM"
+            ),
+            time_to_steady_state_days=result.steady_state_model.get(
+                "time_to_steady_state_days"
+            ),
             model_kind=result.model_kind,
             parameter_source=result.parameter_source,
         )
@@ -753,6 +839,7 @@ def patient_risk_query(
     lifestyle: dict[str, Any] | None = None,
     exposure_scenario: str = "general_population",
     exposure_answers: dict[str, Any] | None = None,
+    biomarker_measurements: dict[str, float] | None = None,
     *,
     include_interactions: bool = True,
     include_tissue_report: bool = True,
@@ -798,6 +885,8 @@ def patient_risk_query(
     tissue_report: str | None = None
     tissue_weight_count: int | None = None
     top_tissue_genes: list[tuple[str, float]] = []
+    biomarker_exposure_profile: dict[str, float] = {}
+    biomarker_dose_estimates: list[dict[str, Any]] = []
 
     normalized_lifestyle = _normalize_lifestyle(lifestyle)
     if exposure_answers:
@@ -823,7 +912,22 @@ def patient_risk_query(
             pipeline_errors["tissue"] = f"{type(exc).__name__}: {exc}"
 
     try:
-        flux_profile = compute_full_profile(genotypes, tissue)
+        (
+            biomarker_exposure_profile,
+            biomarker_dose_estimates,
+            biomarker_warnings,
+        ) = _build_flux_exposure_profile_from_biomarkers(biomarker_measurements)
+        pipeline_warnings.extend(biomarker_warnings)
+    except Exception as exc:
+        pipeline_errors["biomarkers"] = f"{type(exc).__name__}: {exc}"
+
+    try:
+        flux_profile = compute_full_profile(
+            genotypes,
+            tissue,
+            exposure_profile=biomarker_exposure_profile or None,
+            lifestyle=normalized_lifestyle,
+        )
     except Exception as exc:
         pipeline_errors["flux"] = f"{type(exc).__name__}: {exc}"
 
@@ -833,6 +937,7 @@ def patient_risk_query(
             tissue,
             exposure_answers,
             flux_profile,
+            biomarker_measurements,
         )
         pipeline_warnings.extend(exposure_warnings)
     except Exception as exc:
@@ -929,6 +1034,8 @@ def patient_risk_query(
         lifestyle=normalized_lifestyle,
         exposure_scenario=exposure_scenario,
         exposure_answers=dict(exposure_answers),
+        biomarker_measurements=dict(biomarker_measurements or {}),
+        biomarker_dose_estimates=biomarker_dose_estimates,
         tissue_report=tissue_report,
         tissue_weight_count=tissue_weight_count,
         top_tissue_genes=top_tissue_genes,
@@ -990,6 +1097,13 @@ def summarize_risk_profile(profile: PatientRiskProfile) -> str:
                 lines.append(f"Measured-kinetics flux support: {', '.join(measured)}")
             if proxy:
                 lines.append(f"Proxy-backed flux support: {', '.join(proxy)}")
+
+    if profile.biomarker_dose_estimates:
+        biomarkers = ", ".join(
+            f"{item['biomarker']} -> {item['tissue_conc_uM']:.3g} uM"
+            for item in profile.biomarker_dose_estimates[:3]
+        )
+        lines.append(f"Biomarker-derived substrate inputs: {biomarkers}")
 
     if profile.exposure_profile is not None:
         exposure_hits = profile.exposure_profile.high_risk_classes or profile.exposure_profile.elevated_risk_classes

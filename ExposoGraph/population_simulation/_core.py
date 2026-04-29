@@ -891,6 +891,13 @@ def _extract_flux_classes(profile_result: Any) -> dict[str, dict[str, Any]]:
     for class_name, result in profile_result.per_class_results.items():
         flux_classes[class_name] = {
             "net_ratio": result.net_ratio,
+            "susceptibility_score_log2": result.susceptibility_score_log2,
+            "reactive_intermediate_uM": result.steady_state_concentrations_uM.get(
+                "reactive_intermediate_uM"
+            ),
+            "time_to_steady_state_days": result.steady_state_model.get(
+                "time_to_steady_state_days"
+            ),
             "risk_classification": result.risk_classification.value,
             "model_kind": getattr(result, "model_kind", None),
             "parameter_source": getattr(result, "parameter_source", None),

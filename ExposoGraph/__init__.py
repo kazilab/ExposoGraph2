@@ -14,9 +14,12 @@ from ChatGPT Codex and Claude Code.
 from ._version import __version__
 from .androgen_publication_figure import render_androgen_publication_figure
 from .biomarker_mapping import (
+    BiomarkerDoseEstimate,
     BiomarkerEntry,
+    biomarker_dose_estimate_to_dict,
     biomarker_entry_to_dict,
     compute_s_over_km,
+    estimate_tissue_dose_from_biomarker,
     get_biomarker_catalog,
     get_biomarker_entries,
     get_entries_for_lifestyle_factor,
@@ -200,6 +203,7 @@ from .figure_architecture import (
 from .flux_engine import (
     CarcinogenClass,
     EnzymeFlux,
+    FluxSteadyStateResult,
     FluxTissueWeightSource,
     FullProfileResult,
     PathwayFluxResult,
@@ -212,8 +216,10 @@ from .flux_engine import (
     get_flux_tissue_weight,
     hill_equation,
     michaelis_menten,
+    qivive_intrinsic_clearance,
     run_validation_cases,
     sensitivity_analysis,
+    solve_flux_steady_state,
     tissue_weight,
 )
 from .graph_analysis import (
@@ -874,6 +880,7 @@ __all__ = [
     # Metabolic flux engine
     "CarcinogenClass",
     "EnzymeFlux",
+    "FluxSteadyStateResult",
     "FluxTissueWeightSource",
     "FullProfileResult",
     "PathwayFluxResult",
@@ -886,8 +893,10 @@ __all__ = [
     "get_flux_tissue_weight",
     "hill_equation",
     "michaelis_menten",
+    "qivive_intrinsic_clearance",
     "run_validation_cases",
     "sensitivity_analysis",
+    "solve_flux_steady_state",
     "tissue_weight",
     # Exposure integration
     "ExposureCarcinogenClass",

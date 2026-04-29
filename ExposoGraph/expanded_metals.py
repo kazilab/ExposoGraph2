@@ -501,9 +501,9 @@ def _merge_knowledge_graphs(*graphs: KnowledgeGraph) -> KnowledgeGraph:
 
 
 def load_core_metallo_reference_graph() -> KnowledgeGraph:
-    """Load the bundled D3 reference map (133 nodes, 166 edges).
+    """Load the bundled D3 reference map (214 nodes, 321 edges).
 
-    Expanded-metal pathway edges reference nodes from this core graph
+    Expanded-metal pathway edges reference nodes from this full reference graph
     (e.g. ``As``, ``GSTO1``, ``ROS_metal``); merge via
     :func:`merge_expanded_metals_into` or :func:`build_expanded_metal_graph`.
     """
@@ -683,7 +683,7 @@ def get_metals_by_iarc_group(group: IARCGroup) -> list[MetalProfile]:
 def build_expanded_metal_graph(*, include_core: bool = True) -> KnowledgeGraph:
     """Build expanded-metal pathways merged into the core reference graph by default.
 
-    The bundled reference map (133 nodes, 166 edges) includes the five IARC
+    The bundled reference map (214 nodes, 321 edges) includes the five IARC
     Group 1 heavy metals and shared entities such as ``ROS`` and ``GSTO1``.
     Merging ensures all :data:`EXPANDED_METAL_EDGES` resolve.
 

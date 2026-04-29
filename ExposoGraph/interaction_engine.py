@@ -1689,7 +1689,7 @@ def run_validation_case_3() -> tuple[CompetitiveInhibitionResult, CompetitiveInh
     print("\n" + "=" * 70)
     print("VALIDATION CASE 3: CYP2E1 Competitive Inhibition (Ethanol Paradox)")
     print("=" * 70)
-    print("  Reference: Haddad et al. Tox Sci 2001 — benzene cancer risk -62% in DBTEX mixture")
+    print("  Reference: PMID:11509752 — benzene cancer risk -62% in DBTEX mixture")
 
     result_no_ethanol = competitive_inhibition_flux(
         "CYP2E1",

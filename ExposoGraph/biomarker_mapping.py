@@ -2,9 +2,9 @@
 
 Provides a thin helper around ``data/biomarker_mapping.json`` so downstream
 modules (interaction_engine, exposure_engine, validation notebooks) can
-derive tissue-level [S]/Km ratios from reported urinary / blood / serum
-biomarker concentrations without duplicating the curated reference ranges
-and partition coefficients.
+derive tissue-level substrate estimates and [S]/Km ratios from reported
+urinary / blood / serum biomarker concentrations without duplicating the
+curated reference ranges and partition coefficients.
 
 Public entry points:
 
@@ -15,6 +15,8 @@ Public entry points:
 * :func:`compute_s_over_km` - convert a measured biomarker value (in the
   biomarker's reference units) into a tissue-level [S]/Km ratio using the
   partition coefficient and Km stored for that biomarker.
+* :func:`estimate_tissue_dose_from_biomarker` - return the full substrate
+  estimate used by exposure and flux integrations.
 """
 
 from __future__ import annotations
@@ -45,6 +47,26 @@ class BiomarkerEntry:
     S_over_Km_central: float
     S_over_Km_range: tuple[float, float]
     tier2_multiplier: float
+    source_status: str = ""
+    provenance_note: str = ""
+    references: tuple[str, ...] = field(default_factory=tuple)
+
+
+@dataclass(frozen=True)
+class BiomarkerDoseEstimate:
+    """Tissue-level substrate estimate derived from one biomarker measurement."""
+
+    biomarker: str
+    measured_value: float
+    reference_units: str
+    carcinogen_class: str
+    target_tissue: str
+    target_enzyme: str
+    partition_coefficient: float
+    Km_uM: float
+    s_over_km: float
+    tissue_conc_uM: float
+    tier2_multiplier: float
     references: tuple[str, ...] = field(default_factory=tuple)
 
 
@@ -73,6 +95,8 @@ def _to_entry(row: dict[str, Any]) -> BiomarkerEntry:
         S_over_Km_central=float(row["S_over_Km_central"]),
         S_over_Km_range=(float(sok_range[0]), float(sok_range[1])),
         tier2_multiplier=float(row["tier2_multiplier"]),
+        source_status=str(row.get("source_status", "")),
+        provenance_note=str(row.get("provenance_note", "")),
         references=tuple(row.get("references", []) or []),
     )
 
@@ -123,10 +147,13 @@ def compute_s_over_km(
 ) -> float:
     """Convert a measured biomarker concentration into a tissue [S]/Km ratio.
 
-    The conversion scales the curated central [S]/Km value by the ratio of
-    the measured concentration to the midpoint of the biomarker's reference
-    range, then clamps the result to the published [S]/Km_range so a single
-    outlier measurement cannot produce a physiologically implausible ratio::
+    The catalogue stores curated tissue-level central [S]/Km values that were
+    derived from the matrix-to-tissue partition coefficients and target-enzyme
+    Km values in ``biomarker_mapping.json``. Runtime conversion scales that
+    central [S]/Km value by the ratio of the measured concentration to the
+    midpoint of the biomarker's reference range, then clamps the result to the
+    published [S]/Km_range so a single outlier measurement cannot produce a
+    physiologically implausible ratio::
 
         midpoint = mean(reference_range)
         scale    = measured_value / midpoint
@@ -174,6 +201,42 @@ def compute_s_over_km(
     return max(sok_low, min(sok_high, raw))
 
 
+def estimate_tissue_dose_from_biomarker(
+    biomarker: str,
+    measured_value: float,
+    *,
+    entry: BiomarkerEntry | None = None,
+) -> BiomarkerDoseEstimate:
+    """Estimate tissue substrate concentration and [S]/Km from a biomarker.
+
+    ``compute_s_over_km`` performs the reference-range scaling and clipping.
+    This helper then converts the normalized ratio back to an absolute
+    substrate concentration with ``[S] = ([S]/Km) x Km`` so flux engines can
+    receive a concentration in micromolar.
+    """
+    row = entry or get_entry_by_biomarker(biomarker)
+    if row is None:
+        raise KeyError(f"Unknown biomarker: {biomarker!r}")
+
+    s_over_km = compute_s_over_km(row.biomarker, measured_value, entry=row)
+    tissue_conc = s_over_km * row.Km_uM
+
+    return BiomarkerDoseEstimate(
+        biomarker=row.biomarker,
+        measured_value=float(measured_value),
+        reference_units=row.reference_units,
+        carcinogen_class=row.carcinogen_class,
+        target_tissue=row.target_tissue,
+        target_enzyme=row.target_enzyme,
+        partition_coefficient=row.partition_coefficient,
+        Km_uM=row.Km_uM,
+        s_over_km=s_over_km,
+        tissue_conc_uM=tissue_conc,
+        tier2_multiplier=row.tier2_multiplier,
+        references=row.references,
+    )
+
+
 def biomarker_entry_to_dict(entry: BiomarkerEntry) -> dict[str, Any]:
     """Convert a :class:`BiomarkerEntry` to a JSON-friendly dict."""
     payload = asdict(entry)
@@ -183,10 +246,22 @@ def biomarker_entry_to_dict(entry: BiomarkerEntry) -> dict[str, Any]:
     return payload
 
 
+def biomarker_dose_estimate_to_dict(
+    estimate: BiomarkerDoseEstimate,
+) -> dict[str, Any]:
+    """Convert a :class:`BiomarkerDoseEstimate` to a JSON-friendly dict."""
+    payload = asdict(estimate)
+    payload["references"] = list(estimate.references)
+    return payload
+
+
 __all__ = [
+    "BiomarkerDoseEstimate",
     "BiomarkerEntry",
+    "biomarker_dose_estimate_to_dict",
     "biomarker_entry_to_dict",
     "compute_s_over_km",
+    "estimate_tissue_dose_from_biomarker",
     "get_biomarker_catalog",
     "get_biomarker_entries",
     "get_entries_for_lifestyle_factor",

@@ -73,6 +73,8 @@ class ExposureScenarioInfo:
     multiplier: float
     tissue_conc_uM: float
     source: str
+    tier: int = 1
+    tier_label: str = "Tier 1 population baseline"
 
 
 @dataclass
@@ -86,10 +88,13 @@ class ExposureWeightedRisk:
     tissue: str
     flux_ratio: float
     exposure_multiplier: float
+    exposure_tier: int
+    exposure_tier_label: str
     tissue_factor: float
     combined_risk_score: float
     risk_category: ExposureRiskCategory
     tissue_conc_uM: float
+    biomarker_dose_estimate: dict[str, Any] | None
     interpretation: str
     sources: list[str] = field(default_factory=list)
 
@@ -319,6 +324,168 @@ def _resolve_scenario_key(query: str, scenarios: Mapping[str, Any]) -> str | Non
             if fb in scenarios:
                 return fb
     return None
+
+
+_EXPOSURE_TIER_LABELS = {
+    1: "Tier 1 population baseline",
+    2: "Tier 2 lifestyle adjustment",
+    3: "Tier 3 occupational/environmental or measured biomarker",
+}
+
+
+def _scenario_tier(scenario_id: str, scenario_data: Mapping[str, Any]) -> tuple[int, str]:
+    """Classify a scenario into the manuscript three-tier exposure framework."""
+    explicit = scenario_data.get("exposure_tier")
+    if explicit is not None:
+        try:
+            tier = int(explicit)
+        except (TypeError, ValueError):
+            tier = 1
+        tier = min(3, max(1, tier))
+        return tier, _EXPOSURE_TIER_LABELS[tier]
+
+    text = f"{scenario_id} {scenario_data.get('label', '')}".lower()
+    tier1_ids = {
+        "general_population",
+        "us_low_exposure",
+        "premenopausal_no_exogenous",
+        "minimal",
+        "unexposed",
+        "never_smoker",
+        "nonsmoker_no_occupational",
+        "nondrinker",
+        "vegetarian_low_meat",
+        "general_population_low_processed_meat",
+    }
+    if scenario_id in tier1_ids:
+        return 1, _EXPOSURE_TIER_LABELS[1]
+
+    tier3_tokens = (
+        "occupational",
+        "worker",
+        "workplace",
+        "industrial",
+        "superfund",
+        "contaminated",
+        "well_water",
+        "urban_high_traffic",
+        "arsenic",
+        "chromium",
+        "cadmium",
+        "petroleum",
+        "foundry",
+        "coke",
+        "dry cleaning",
+        "rubber",
+        "tanning",
+        "formaldehyde",
+    )
+    tier2_tokens = (
+        "smoker",
+        "smoke",
+        "grilled",
+        "meat",
+        "drinker",
+        "alcohol",
+        "diet",
+        "fish",
+        "seafood",
+        "tanning_bed",
+        "outdoor",
+        "processed",
+    )
+    tier1_tokens = (
+        "general_population",
+        "typical",
+        "minimal",
+        "unexposed",
+        "never",
+        "nonsmoker",
+        "low",
+        "vegetarian",
+        "nondrinker",
+    )
+
+    if any(token in text for token in tier3_tokens):
+        tier = 3
+    elif any(token in text for token in tier2_tokens):
+        tier = 2
+    elif any(token in text for token in tier1_tokens):
+        tier = 1
+    else:
+        tier = 1
+    return tier, _EXPOSURE_TIER_LABELS[tier]
+
+
+_BIOMARKER_CLASS_ALIASES: dict[str, set[str]] = {
+    "PAH": {"PAH"},
+    "HCA": {"HCA"},
+    "AromaticAmines": {"AromaticAmines", "AromaticAmine"},
+    "TobaccoNitrosamines": {"TobaccoNitrosamines", "Nitrosamine", "NNK", "NNN"},
+    "AflatoxinB1": {"AflatoxinB1", "Aflatoxin"},
+    "EstrogenMetabolites": {"EstrogenMetabolites", "Estrogen"},
+    "Benzene": {"Benzene"},
+    "VinylChloride": {"VinylChloride"},
+    "HeavyMetals": {"HeavyMetals", "HeavyMetal"},
+    "Aldehyde": {"Aldehyde", "Ethanol"},
+    "Dioxins_AhR": {"Dioxins_AhR", "Dioxin"},
+    "DietaryNitroso": {"DietaryNitroso", "Nitrosamine", "NDMA", "NDEA"},
+    "ChlorinatedSolvents": {"ChlorinatedSolvents", "ChlorinatedSolvent"},
+    "UV_Radiation": {"UV_Radiation"},
+}
+
+
+def _resolve_biomarker_dose_for_class(
+    carcinogen_class: str,
+    biomarker_measurements: Mapping[str, float] | None,
+    *,
+    tissue: str | None = None,
+) -> dict[str, Any] | None:
+    """Return the strongest matching biomarker-derived dose estimate."""
+    if not biomarker_measurements:
+        return None
+
+    from .biomarker_mapping import (
+        biomarker_dose_estimate_to_dict,
+        estimate_tissue_dose_from_biomarker,
+        get_biomarker_entries,
+    )
+
+    aliases = {carcinogen_class, *(_BIOMARKER_CLASS_ALIASES.get(carcinogen_class, set()))}
+    normalized_measurements = {
+        str(name).strip().lower(): float(value)
+        for name, value in biomarker_measurements.items()
+    }
+
+    estimates: list[dict[str, Any]] = []
+    for entry in get_biomarker_entries():
+        if entry.carcinogen_class not in aliases:
+            continue
+        measured = normalized_measurements.get(entry.biomarker.lower())
+        if measured is None:
+            continue
+        estimate = estimate_tissue_dose_from_biomarker(
+            entry.biomarker,
+            measured,
+            entry=entry,
+        )
+        estimates.append(biomarker_dose_estimate_to_dict(estimate))
+
+    if not estimates:
+        return None
+
+    if tissue:
+        tissue_key = tissue.replace(" ", "").replace("-", "_").lower()
+        tissue_matches = [
+            est
+            for est in estimates
+            if str(est["target_tissue"]).replace(" ", "").replace("-", "_").lower()
+            == tissue_key
+        ]
+        if tissue_matches:
+            estimates = tissue_matches
+
+    return max(estimates, key=lambda est: float(est["s_over_km"]))
 
 
 _TISSUE_FACTORS: dict[tuple[str, str], float] = {
@@ -702,10 +869,13 @@ def _source_risk_result(result: ExposureWeightedRisk | dict[str, Any]) -> dict[s
         "tissue": result.tissue,
         "flux_ratio": result.flux_ratio,
         "exposure_multiplier": result.exposure_multiplier,
+        "exposure_tier": result.exposure_tier,
+        "exposure_tier_label": result.exposure_tier_label,
         "tissue_factor": result.tissue_factor,
         "combined_risk_score": result.combined_risk_score,
         "risk_category": result.risk_category.value,
         "tissue_conc_uM": result.tissue_conc_uM,
+        "biomarker_dose_estimate": deepcopy(result.biomarker_dose_estimate),
         "interpretation": result.interpretation,
         "sources": list(result.sources),
     }
@@ -772,6 +942,7 @@ def get_exposure_scenarios(
         # Handle dict-typed concentrations (e.g. HeavyMetals multi-metal)
         if isinstance(conc, dict):
             conc = float(max(conc.values())) if conc else 0.0
+        tier, tier_label = _scenario_tier(sc_id, sc_data)
         scenarios.append(
             ExposureScenarioInfo(
                 scenario_id=sc_id,
@@ -779,6 +950,8 @@ def get_exposure_scenarios(
                 multiplier=float(mult),
                 tissue_conc_uM=float(conc),
                 source=sc_data.get("source", "See exposure_database.json"),
+                tier=tier,
+                tier_label=tier_label,
             )
         )
     return scenarios
@@ -859,6 +1032,7 @@ def compute_exposure_weighted_risk(
     *,
     exposure_scenario: str = "general_population",
     flux_ratio_override: float | None = None,
+    biomarker_measurements: Mapping[str, float] | None = None,
 ) -> ExposureWeightedRisk:
     """Core GxE risk scoring: flux_ratio x exposure_multiplier x tissue_factor.
 
@@ -868,6 +1042,11 @@ def compute_exposure_weighted_risk(
         If provided, use this value instead of the internal simplified
         flux ratio.  Allows passing a flux_engine-derived ratio for the
         7 overlapping carcinogen classes.
+    biomarker_measurements : Mapping[str, float] | None
+        Optional measured biomarker values keyed by biomarker identifier.
+        When a matching biomarker exists for the carcinogen class, the
+        biomarker-derived [S]/Km value replaces the scenario multiplier and
+        its derived tissue concentration replaces the scenario concentration.
     """
     db = _get_exposure_db()
     classes = db["carcinogen_classes"]
@@ -904,17 +1083,30 @@ def compute_exposure_weighted_risk(
     else:
         tissue_conc = float(raw_conc)
 
-    if flux_ratio_override is not None:
-        flux_ratio = flux_ratio_override
-    else:
-        flux_ratio = compute_flux_ratio(genotypes, class_key, tissue)
+    tier, tier_label = _scenario_tier(sc_key, sc_data)
+    biomarker_dose = _resolve_biomarker_dose_for_class(
+        class_key,
+        biomarker_measurements,
+        tissue=tissue,
+    )
+    if biomarker_dose is not None:
+        exposure_mult = float(biomarker_dose["s_over_km"])
+        tissue_conc = float(biomarker_dose["tissue_conc_uM"])
+        tier = 3
+        tier_label = _EXPOSURE_TIER_LABELS[tier]
 
     tissue_factor = _get_tissue_factor(class_key, tissue)
+    if flux_ratio_override is not None:
+        flux_ratio = float(flux_ratio_override)
+    else:
+        tissue_adjusted_flux = compute_flux_ratio(genotypes, class_key, tissue)
+        flux_ratio = (
+            round(tissue_adjusted_flux / tissue_factor, 4)
+            if tissue_factor != 0
+            else tissue_adjusted_flux
+        )
 
-    # combined_risk_score = flux_ratio × exposure_multiplier
-    # (tissue_factor is already folded into flux_ratio; extract base flux)
-    base_flux = flux_ratio / tissue_factor if tissue_factor != 0 else flux_ratio
-    combined_risk_score = round(base_flux * exposure_mult * tissue_factor, 4)
+    combined_risk_score = round(flux_ratio * exposure_mult * tissue_factor, 4)
 
     category = _classify_risk(combined_risk_score, thresholds)
 
@@ -937,14 +1129,22 @@ def compute_exposure_weighted_risk(
         tissue=tissue,
         flux_ratio=flux_ratio,
         exposure_multiplier=exposure_mult,
+        exposure_tier=tier,
+        exposure_tier_label=tier_label,
         tissue_factor=tissue_factor,
         combined_risk_score=combined_risk_score,
         risk_category=category,
         tissue_conc_uM=tissue_conc,
+        biomarker_dose_estimate=biomarker_dose,
         interpretation=interp,
         sources=[
             sc_data.get("source", ""),
             cls_data.get("epa_cancer_slope_factor", {}).get("source", ""),
+            *(
+                biomarker_dose.get("references", [])
+                if biomarker_dose is not None
+                else []
+            ),
         ],
     )
 
@@ -957,6 +1157,21 @@ _SLOPE_FACTOR_FALLBACKS: dict[str, float] = {
     "DietaryNitroso": 51.0,
     "HeavyMetals": 1.5,
 }
+
+
+def _slope_factor_per_mg_kg_day(sf_data: Mapping[str, Any], fallback: float) -> float:
+    """Return a slope factor normalized to the LECR dose unit: mg/kg-day."""
+    raw_value = sf_data.get("value")
+    if raw_value is None:
+        return float(fallback)
+
+    value = float(raw_value)
+    unit = str(sf_data.get("unit", "")).lower().replace("µ", "μ")
+    if "per μg/kg" in unit or "per ug/kg" in unit:
+        return value * 1000.0
+    if "per ng/kg" in unit:
+        return value * 1_000_000.0
+    return value
 
 
 def compute_lifetime_cancer_risk(
@@ -980,9 +1195,10 @@ def compute_lifetime_cancer_risk(
 
     cls_data = classes[class_key]
     sf_data = cls_data.get("epa_cancer_slope_factor", {})
-    slope_factor = sf_data.get("value")
-    if slope_factor is None:
-        slope_factor = _SLOPE_FACTOR_FALLBACKS.get(class_key, 0.1)
+    slope_factor = _slope_factor_per_mg_kg_day(
+        sf_data,
+        _SLOPE_FACTOR_FALLBACKS.get(class_key, 0.1),
+    )
 
     if flux_ratio_override is not None:
         genotype_mod = flux_ratio_override
@@ -997,7 +1213,7 @@ def compute_lifetime_cancer_risk(
         tissue=tissue,
         daily_dose_mg_kg=daily_dose_mg_kg,
         duration_years=duration_years,
-        slope_factor=float(slope_factor),
+        slope_factor=slope_factor,
         genotype_modifier=genotype_mod,
         lecr=lecr,
         exceeds_action_threshold=lecr >= 1e-4,
@@ -1016,8 +1232,13 @@ def apply_exposure_profile(
     exposure_answers: dict[str, Any],
     *,
     tissue: str = "Liver",
+    biomarker_measurements: Mapping[str, float] | None = None,
 ) -> ExposureProfileResult:
-    """Map questionnaire answers to scenarios for all 14 classes, return risk scores."""
+    """Map questionnaire answers to scenarios for all 14 classes, return risk scores.
+
+    Optional biomarker measurements override scenario multipliers for matching
+    classes using the curated biomarker -> tissue [S]/Km mapping.
+    """
     scenario_mapping = _answers_to_scenario_keys(exposure_answers)
 
     risk_scores: list[ExposureWeightedRisk] = []
@@ -1030,6 +1251,7 @@ def apply_exposure_profile(
                 genotypes=patient_genotypes,
                 tissue=tissue,
                 exposure_scenario=sc,
+                biomarker_measurements=biomarker_measurements,
             )
             risk_scores.append(result)
         except Exception as exc:

@@ -74,11 +74,17 @@ WAVE2_CLASS_PROFILES: dict[str, CarcinogenClassProfile] = {
             "PMC4376259",
             "PMC7758861",
             "PMC5324749",
-            "12860588",   # Hoffler et al. 2003 (urethane CYP2E1 activation)
-            "19705912",   # Minko et al. 2009 (acrolein-dG adducts)
-            "10064842",   # Marnett 1999 (malondialdehyde / M1-dG)
+            "12704224",   # urethane CYP2E1 activation
+            "20205516",   # urethane / vinyl carbamate tumorigenesis and adducts
+            "19397281",   # acrolein-dG adduct chemistry and biology
+            "2736720",    # crotonaldehyde Cr-dG adduct detection
+            "10064852",   # malondialdehyde / M1-dG
+            "12775726",   # MDA mutagenesis / NER implication
             "1937131",    # Esterbauer et al. 1991 (4-HNE biochemistry)
-            "21538843",   # Monien et al. 2011 (HMF/SMF sulfate-ester activation)
+            "12419825",   # 4-HNE adduct hotspot formation at methylated CpG
+            "22563731",   # HMF / SMF mutagenicity and DNA adducts
+            "26454887",   # HMF conversion by sulfotransferases / ALDHs
+            "21462333",   # 5-HMF toxicology / food risk assessment
             "IARC_96",    # IARC Monograph 96 (urethane)
             "IARC_128",   # IARC Monograph 128 (acrolein)
             "IARC_63",    # IARC Monograph 63 (crotonaldehyde)
@@ -111,14 +117,14 @@ WAVE2_CLASS_PROFILES: dict[str, CarcinogenClassProfile] = {
         target_organs=["liver", "lung", "soft tissue", "breast", "thyroid", "lymphatic"],
         pmid_references=[
             "PMC3748760",
-            "srep34989",
+            "27713569",   # TCDD-driven CYP1A1 promoter demethylation
             "IARC_Monograph_107",
             "IARC_Monograph_100F",
             "IARC_Monograph_79",
             "IARC_Monograph_113",
             "IARC_Monograph_117",
             "IARC_Monograph_53",
-            "vandenBerg_2006_WHO_TEF",
+            "16829543",   # WHO TEF reevaluation
         ],
     ),
     "Dietary_NNitroso": CarcinogenClassProfile(
@@ -167,15 +173,20 @@ WAVE2_CLASS_PROFILES: dict[str, CarcinogenClassProfile] = {
         ],
         target_organs=["bone marrow", "bladder", "lung", "brain", "liver"],
         pmid_references=[
-            "17872912",   # Besaratinia & Pfeifer, Carcinogenesis 2007 (acrylamide/glycidamide)
-            "7614537",    # Segerbaeck et al., Carcinogenesis 1995 (glycidamide adducts)
-            "10220571",   # Roy et al., Drug Metab Dispos 1999 (cyclophosphamide CYP2B6)
-            "7523912",    # Povirk & Shuker, Mutat Res 1994 (nitrogen mustards)
-            "8635461",    # Matijasevic et al., Carcinogenesis 1996 (sulfur mustard)
-            "12960109",   # Hassan & Ljungman, Mutat Res 1997 (busulfan crosslinks)
-            "2185966",    # Kyrtopoulos, Mutat Res 1990 (MNU O6-methylguanine)
-            "9327140",    # Newlands et al., Cancer Treat Rev 1997 (temozolomide MTIC)
-            "15758009",   # Hegi et al., NEJM 2005 (MGMT/temozolomide)
+            "16141435",   # acrylamide CYP2E1-dependent glycidamide formation
+            "7767980",    # glycidamide-DNA adduct formation
+            "10348794",   # cyclophosphamide activation catalysts
+            "8242617",    # cyclophosphamide 4-hydroxylation in human microsomes
+            "18496131",   # cyclophosphamide pharmacogenetics / GSTP1 PK effects
+            "9092631",    # phosphoramide mustard / nitrogen mustard crosslinks
+            "7862715",    # chlorambucil aziridinium chemistry
+            "18511072",   # GSTP1-1 chlorambucil conjugation kinetics
+            "24858262",   # sulfur mustard DNA adducts
+            "6892995",    # busulfan DNA crosslinks
+            "20672371",   # busulfan GST polymorphisms and clearance
+            "1912317",    # MNU alkylation via diazonium intermediates
+            "1998993",    # temozolomide to MTIC
+            "15758010",   # Hegi et al., NEJM 2005 (MGMT/temozolomide)
             "IARC_100A",  # IARC Monograph 100A (cyclophosphamide, chlorambucil, busulfan)
             "IARC_100F",  # IARC Monograph 100F (sulfur mustard)
         ],
@@ -246,8 +257,9 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "vinyl carbamate, which is then re-epoxidized to vinyl "
             "carbamate epoxide — the ultimate mutagen that forms etheno-A/"
             "etheno-C DNA adducts (same adduct family as vinyl chloride). "
-            "References: Hoffler et al., Toxicology 2003 (PMID:12860588); "
-            "IARC Monograph Vol 96 (2010)."
+            "References: J Pharmacol Exp Ther 2003 (PMID:12704224); "
+            "Chem Res Toxicol 2010 (PMID:20205516); IARC Monograph Vol 96 "
+            "(2010)."
         ),
         "exposure": "alcoholic beverages (stone-fruit brandies, sake, sherry), fermented foods, bread crust",
         "class_name": "Aldehydes",
@@ -267,8 +279,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "alpha/gamma-OH-1,N2-propano-dG (Acr-dG) exocyclic adducts, "
             "which are mispairing, bulky lesions repaired by NER/BER. "
             "Detoxified by GSTP1 (GS-HPMA) and ALDH2 oxidation to acrylic "
-            "acid. References: IARC Monograph Vol 128 (2021); Minko et al., "
-            "Chem Res Toxicol 2009 (PMID:19705912)."
+            "acid. References: IARC Monograph Vol 128 (2021); Chem Res "
+            "Toxicol 2009 (PMID:19397281)."
         ),
         "exposure": "tobacco smoke, heated cooking oils, wildfire/vehicle exhaust, cyclophosphamide metabolism",
         "class_name": "Aldehydes",
@@ -285,8 +297,7 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "cooking oils. Forms cyclic 1,N2-propano-dG (Cr-dG) exocyclic "
             "adducts via Michael addition/cyclization; adducts are "
             "miscoding and persist in liver, oral mucosa, and lung tissue. "
-            "References: Chung et al., Carcinogenesis 1989; IARC Monograph "
-            "Vol 63 (1995)."
+            "References: PMID:2736720; IARC Monograph Vol 63 (1995)."
         ),
         "exposure": "tobacco smoke, alcoholic beverages, heated cooking oils, air pollutant",
         "class_name": "Aldehydes",
@@ -300,13 +311,13 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
         "detail": (
             "Furan-2-carbaldehyde; Maillard-reaction aldehyde abundant in "
             "roasted coffee, beer, bread, and heated fruit products. "
-            "Bioactivated via sequential reduction/hydroxylation to "
-            "5-hydroxymethylfurfural (HMF) then sulfated by SULT1A1 to "
-            "5-sulfoxymethylfurfural (SMF), a DNA-reactive electrophile "
-            "that alkylates dA/dG. Classified IARC Group 3 but included "
-            "for mechanistic completeness of dietary aldehyde exposures. "
-            "References: Monien et al., Mol Nutr Food Res 2011 "
-            "(PMID:21538843); EFSA CONTAM Panel Opinion 2011."
+            "Modeled via an HMF/SMF activation branch: SULT1A1 converts "
+            "5-hydroxymethylfurfural (HMF) to 5-sulfoxymethylfurfural (SMF), "
+            "a DNA-reactive electrophile that alkylates dA/dG. Classified "
+            "IARC Group 3 but included for mechanistic completeness of "
+            "dietary aldehyde exposures. References: Chem Res Toxicol 2012 "
+            "(PMID:22563731); Food Chem Toxicol 2015 (PMID:26454887); Mol "
+            "Nutr Food Res 2011 (PMID:21462333)."
         ),
         "exposure": "roasted coffee, beer, bread, heated fruit/sugar products",
         "class_name": "Aldehydes",
@@ -324,8 +335,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "one (M1-dG), a miscoding adduct that causes base "
             "substitutions and frameshifts. Elevated in chronic "
             "inflammation, alcoholic liver disease, and hepatocarcinogenesis. "
-            "References: Marnett, Mutat Res 1999 (PMID:10064842); "
-            "Niedernhofer et al., J Biol Chem 2003."
+            "References: Marnett 1999 (PMID:10064852); Niedernhofer et al., "
+            "J Biol Chem 2003 (PMID:12775726)."
         ),
         "exposure": "endogenous lipid peroxidation, oxidative stress, chronic inflammation",
         "class_name": "Aldehydes",
@@ -344,7 +355,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "molecular link between oxidative stress and TP53 hotspot "
             "mutations). Detoxified by GSTP1 glutathione conjugation and "
             "ALDH2 oxidation. References: Esterbauer, Schaur & Zollner, "
-            "Free Radic Biol Med 1991 (PMID:1937131); Hu et al., PNAS 2002."
+            "Free Radic Biol Med 1991 (PMID:1937131); Hu et al., "
+            "Carcinogenesis 2002 (PMID:12419825)."
         ),
         "exposure": "endogenous omega-6 lipid peroxidation, oxidative stress, alcoholic steatohepatitis",
         "class_name": "Aldehydes",
@@ -564,8 +576,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "high-temperature cooking of starchy foods (fried/baked potatoes, "
             "coffee roasting) and by polyacrylamide manufacture. Bioactivated "
             "by CYP2E1 epoxidation to glycidamide, the ultimate mutagen. "
-            "References: IARC Monograph Vol 60 (1994); Besaratinia & Pfeifer, "
-            "Carcinogenesis 2007 (PMID:17872912)."
+            "References: IARC Monograph Vol 60 (1994); Toxicol Sci 2005 "
+            "(PMID:16141435)."
         ),
         "exposure": "high-temperature cooked starchy foods, tobacco smoke, polyacrylamide industry",
         "class_name": "Alkylating_Agents",
@@ -580,8 +592,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "2,3-Epoxypropanamide; direct-acting epoxide and ultimate "
             "mutagenic metabolite of acrylamide. Forms N7-(2-carbamoyl-2-"
             "hydroxyethyl)-dG and N3-GA-dA DNA adducts. Detoxified by GSTP1/"
-            "GSTM1 glutathione conjugation. References: Segerbaeck et al., "
-            "Carcinogenesis 1995 (PMID:7614537); Besaratinia, Mutat Res 2010."
+            "GSTM1 glutathione conjugation. References: PMID:7767980; "
+            "PMID:15668107."
         ),
         "exposure": "endogenous formation from acrylamide via CYP2E1",
         "class_name": "Alkylating_Agents",
@@ -598,8 +610,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "4-hydroxycyclophosphamide, which ring-opens to aldophosphamide "
             "and fragments to phosphoramide mustard (ultimate DNA-crosslinking "
             "agent) plus acrolein. Associated with secondary bladder cancer "
-            "and therapy-related AML. References: Roy et al., Drug Metab "
-            "Dispos 1999 (PMID:10220571); IARC Monograph Vol 100A (2012)."
+            "and therapy-related AML. References: PMID:10348794; "
+            "PMID:8242617; IARC Monograph Vol 100A (2012)."
         ),
         "exposure": "therapeutic chemotherapy (lymphomas, breast cancer, autoimmune disease)",
         "class_name": "Alkylating_Agents",
@@ -614,10 +626,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "Aromatic nitrogen mustard. Forms aziridinium ion via "
             "intramolecular cyclization, yielding N7-guanine monoadducts and "
             "G-G interstrand crosslinks. Detoxified by GSTP1 glutathione "
-            "conjugation; GSTP1 Ile105Val (rs1695) modulates treatment "
-            "response and therapy-related leukemia risk. References: Povirk "
-            "& Shuker, Mutat Res 1994 (PMID:7523912); IARC Monograph Vol "
-            "100A (2012)."
+            "conjugation. References: PMID:7862715; IARC Monograph Vol 100A "
+            "(2012)."
         ),
         "exposure": "therapeutic chemotherapy (CLL, Waldenstroem macroglobulinemia, ovarian cancer)",
         "class_name": "Alkylating_Agents",
@@ -631,9 +641,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
         "detail": (
             "Bis(2-chloroethyl) sulfide. Chemical-warfare vesicant that "
             "cyclizes to a reactive episulfonium ion, generating N7-mustard-"
-            "Gua monoadducts and 5'-d(GNC) interstrand crosslinks. Linked "
-            "to lung cancer in exposed workers and veterans. References: "
-            "Matijasevic et al., Carcinogenesis 1996 (PMID:8635461); IARC "
+            "Gua monoadducts and DNA crosslinks. Linked to lung cancer in "
+            "exposed workers and veterans. References: PMID:24858262; IARC "
             "Monograph Vol 100F (2012)."
         ),
         "exposure": "chemical-weapon exposure, legacy ordnance, historic occupational mustard-gas factories",
@@ -651,8 +660,7 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "reactive methanesulfonate intermediate, forming N7-(2,3,4-"
             "trihydroxybutyl)-dG adducts and DNA-DNA interstrand crosslinks. "
             "Detoxified by GSTA1/GSTP1 glutathione conjugation (GSH-Bu). "
-            "References: Hassan & Ljungman, Mutat Res 1997 (PMID:12960109); "
-            "IARC Monograph Vol 100A (2012)."
+            "References: PMID:6892995; IARC Monograph Vol 100A (2012)."
         ),
         "exposure": "therapeutic chemotherapy (CML, bone-marrow-transplant conditioning)",
         "class_name": "Alkylating_Agents",
@@ -669,7 +677,7 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "physiological pH to methyldiazohydroxide/methyldiazonium, "
             "alkylating DNA at O6-guanine (G:C to A:T transitions) and "
             "N7-guanine. Canonical model carcinogen for MGMT biology. "
-            "References: Kyrtopoulos, Mutat Res 1990 (PMID:2185966); IARC "
+            "References: Chem Res Toxicol 1991 (PMID:1912317); IARC "
             "Monograph Vol 17 (1978)."
         ),
         "exposure": "experimental/research reagent; trace formation in cured meats",
@@ -686,8 +694,8 @@ WAVE2_CARCINOGEN_NODES: list[dict[str, Any]] = [
             "yields MTIC (5-(3-methyltriazen-1-yl)imidazole-4-carboxamide), "
             "which decomposes to methyldiazonium ion. Alkylates O6-guanine; "
             "therapeutic efficacy in glioblastoma tracks MGMT promoter-"
-            "methylation status. References: Newlands et al., Cancer Treat "
-            "Rev 1997 (PMID:9327140); Hegi et al., NEJM 2005 (PMID:15758009)."
+            "methylation status. References: Cancer Chemother Pharmacol 1991 "
+            "(PMID:1998993); Hegi et al., NEJM 2005 (PMID:15758010)."
         ),
         "exposure": "therapeutic chemotherapy (glioblastoma, metastatic melanoma)",
         "class_name": "Alkylating_Agents",
@@ -834,7 +842,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "Vinyl carbamate",
         "type": "Metabolite",
         "reactivity": "Intermediate",
-        "detail": "CYP2E1-derived dehydrogenation product of urethane; proximal intermediate re-epoxidized to vinyl carbamate epoxide (PMID:12860588).",
+        "detail": "CYP2E1-derived dehydrogenation product of urethane; proximal intermediate re-epoxidized to vinyl carbamate epoxide (PMID:12704224).",
         "class_name": "Aldehydes",
     },
     {
@@ -842,7 +850,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "Vinyl carbamate epoxide",
         "type": "Metabolite",
         "reactivity": "Very High",
-        "detail": "Ultimate mutagenic metabolite of urethane; alkylates dA and dC to yield etheno-DNA adducts equivalent to those formed by vinyl chloride (PMID:12860588).",
+        "detail": "Ultimate mutagenic metabolite of urethane; alkylates dA and dC to yield etheno-DNA adducts equivalent to those formed by vinyl chloride (PMID:20205516).",
         "class_name": "Aldehydes",
     },
     {
@@ -850,7 +858,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "5-sulfoxymethylfurfural (SMF)",
         "type": "Metabolite",
         "reactivity": "Very High",
-        "detail": "SULT1A1-derived sulfate ester of 5-hydroxymethylfurfural (HMF); DNA-reactive electrophile that alkylates dA/dG. HMF itself arises from hydroxylation of furfural in heated foods (PMID:21538843).",
+        "detail": "Reactive sulfate ester generated from HMF by SULT1A1; DNA-reactive electrophile that alkylates dA/dG (PMID:22563731; PMID:26454887).",
         "class_name": "Aldehydes",
     },
     # Class 12: Dioxins/AhR
@@ -918,7 +926,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "4-Hydroxycyclophosphamide",
         "type": "Metabolite",
         "reactivity": "Intermediate",
-        "detail": "Primary CYP2B6/CYP3A4 activation product of cyclophosphamide; equilibrates with aldophosphamide and fragments to phosphoramide mustard plus acrolein (PMID:10220571).",
+        "detail": "Primary CYP2B6/CYP3A4 activation product of cyclophosphamide; equilibrates with aldophosphamide and fragments to phosphoramide mustard plus acrolein (PMID:10348794; PMID:8242617).",
         "class_name": "Alkylating_Agents",
     },
     {
@@ -926,7 +934,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "Phosphoramide mustard",
         "type": "Metabolite",
         "reactivity": "Very High",
-        "detail": "Ultimate DNA-crosslinking species from cyclophosphamide activation; bifunctional nitrogen mustard that forms G-G interstrand crosslinks via aziridinium intermediates (PMID:10220571).",
+        "detail": "Ultimate DNA-crosslinking species from cyclophosphamide activation; bifunctional nitrogen mustard that forms G-G interstrand crosslinks via aziridinium intermediates (PMID:9092631).",
         "class_name": "Alkylating_Agents",
     },
     {
@@ -934,7 +942,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "Chlorambucil aziridinium",
         "type": "Metabolite",
         "reactivity": "Very High",
-        "detail": "Cyclic aziridinium cation formed by intramolecular cyclization of chlorambucil; alkylates N7-guanine and generates interstrand crosslinks (PMID:7523912).",
+        "detail": "Cyclic aziridinium cation formed by intramolecular cyclization of chlorambucil; alkylates N7-guanine and generates interstrand crosslinks (PMID:7862715).",
         "class_name": "Alkylating_Agents",
     },
     {
@@ -942,7 +950,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "Sulfur-mustard episulfonium ion",
         "type": "Metabolite",
         "reactivity": "Very High",
-        "detail": "Cyclic sulfonium intermediate formed by intramolecular cyclization of sulfur mustard; ultimate electrophile for N7-Gua monoadducts and 5'-d(GNC) interstrand crosslinks (PMID:8635461).",
+        "detail": "Cyclic sulfonium intermediate formed by intramolecular cyclization of sulfur mustard; ultimate electrophile for N7-Gua monoadducts and DNA crosslinks (PMID:24858262).",
         "class_name": "Alkylating_Agents",
     },
     {
@@ -950,7 +958,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "Busulfan methanesulfonate intermediate",
         "type": "Metabolite",
         "reactivity": "Very High",
-        "detail": "Reactive bifunctional alkylator generated by hydrolytic displacement of methanesulfonate groups from busulfan; yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:12960109).",
+        "detail": "Reactive bifunctional alkylator generated by hydrolytic displacement of methanesulfonate groups from busulfan; yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:6892995).",
         "class_name": "Alkylating_Agents",
     },
     {
@@ -958,7 +966,7 @@ WAVE2_METABOLITE_NODES: list[dict[str, Any]] = [
         "label": "MTIC",
         "type": "Metabolite",
         "reactivity": "High",
-        "detail": "5-(3-methyltriazen-1-yl)imidazole-4-carboxamide; monomethyltriazene formed by spontaneous hydrolysis of temozolomide, which in turn decomposes to methyldiazonium (PMID:9327140).",
+        "detail": "5-(3-methyltriazen-1-yl)imidazole-4-carboxamide; monomethyltriazene formed by spontaneous hydrolysis of temozolomide, which in turn decomposes to methyldiazonium (PMID:1998993).",
         "class_name": "Alkylating_Agents",
     },
 ]
@@ -987,7 +995,7 @@ WAVE2_DNA_ADDUCT_NODES: list[dict[str, Any]] = [
         "label": "alpha/gamma-OH-PdG (Acr-dG)",
         "type": "DNA_Adduct",
         "reactivity": "High",
-        "detail": "alpha- and gamma-hydroxy-1,N2-propano-2'-deoxyguanosine; major Michael-addition adduct from acrolein reacting at N1/N2 of guanine. Miscoding in ring-opened form; repaired by NER with XRCC1/BER backup (PMID:19705912).",
+        "detail": "alpha- and gamma-hydroxy-1,N2-propano-2'-deoxyguanosine; major Michael-addition adduct from acrolein reacting at N1/N2 of guanine. Miscoding in ring-opened form; repaired by NER with XRCC1/BER backup (PMID:19397281).",
         "class_name": "Aldehydes",
     },
     {
@@ -995,7 +1003,7 @@ WAVE2_DNA_ADDUCT_NODES: list[dict[str, Any]] = [
         "label": "Cr-1,N2-PdG (Cr-dG)",
         "type": "DNA_Adduct",
         "reactivity": "High",
-        "detail": "Cyclic 1,N2-propano-dG adduct from crotonaldehyde Michael addition; miscoding adduct detected in liver, oral mucosa, and lung of smokers (IARC Monograph Vol 63; Chung et al. 1989).",
+        "detail": "Cyclic 1,N2-propano-dG adduct from crotonaldehyde Michael addition; miscoding adduct detected in liver, oral mucosa, and lung of smokers (IARC Monograph Vol 63; PMID:2736720).",
         "class_name": "Aldehydes",
     },
     {
@@ -1003,7 +1011,7 @@ WAVE2_DNA_ADDUCT_NODES: list[dict[str, Any]] = [
         "label": "M1-dG (pyrimido-purinone)",
         "type": "DNA_Adduct",
         "reactivity": "High",
-        "detail": "3-(2'-deoxy-beta-D-erythro-pentofuranosyl)pyrimido[1,2-a]purin-10(3H)-one; principal MDA-DNA adduct. Miscoding lesion causing base substitutions and frameshifts; basal levels in healthy tissues provide a baseline for oxidative-stress-driven mutagenesis (PMID:10064842).",
+        "detail": "3-(2'-deoxy-beta-D-erythro-pentofuranosyl)pyrimido[1,2-a]purin-10(3H)-one; principal MDA-DNA adduct. Miscoding lesion causing base substitutions and frameshifts; basal levels in healthy tissues provide a baseline for oxidative-stress-driven mutagenesis (PMID:10064852).",
         "class_name": "Aldehydes",
     },
     {
@@ -1011,7 +1019,7 @@ WAVE2_DNA_ADDUCT_NODES: list[dict[str, Any]] = [
         "label": "HNE-1,N2-PdG (HNE-dG)",
         "type": "DNA_Adduct",
         "reactivity": "High",
-        "detail": "Exocyclic 1,N2-propano-dG adduct from 4-HNE Michael addition/cyclization; formation is strongly enhanced at methylated CpG sites, mechanistically linking lipid peroxidation to TP53 hotspot mutations (Hu et al., PNAS 2002; PMID:1937131).",
+        "detail": "Exocyclic 1,N2-propano-dG adduct from 4-HNE Michael addition/cyclization; formation is strongly enhanced at methylated CpG sites, mechanistically linking lipid peroxidation to TP53 hotspot mutations (PMID:1937131; PMID:12419825).",
         "class_name": "Aldehydes",
     },
     # Class 13: Dietary N-Nitroso
@@ -1038,7 +1046,7 @@ WAVE2_DNA_ADDUCT_NODES: list[dict[str, Any]] = [
         "label": "N7-GA-dG",
         "type": "DNA_Adduct",
         "reactivity": "High",
-        "detail": "N7-(2-carbamoyl-2-hydroxyethyl)-2'-deoxyguanosine; dominant glycidamide-DNA adduct from acrylamide exposure. Depurinates to abasic site repaired by BER (PMID:17872912).",
+        "detail": "N7-(2-carbamoyl-2-hydroxyethyl)-2'-deoxyguanosine; dominant glycidamide-DNA adduct from acrylamide exposure. Depurinates to abasic sites handled through BER (PMID:7767980; PMID:17234719).",
         "class_name": "Alkylating_Agents",
     },
     {
@@ -1054,7 +1062,7 @@ WAVE2_DNA_ADDUCT_NODES: list[dict[str, Any]] = [
         "label": "G-G interstrand crosslink (mustard-type)",
         "type": "DNA_Adduct",
         "reactivity": "Very High",
-        "detail": "Bifunctional N7-alkyl-dG interstrand crosslink generated by phosphoramide mustard (cyclophosphamide), chlorambucil aziridinium, sulfur-mustard episulfonium, and the busulfan methanesulfonate intermediate. Requires Fanconi-anemia/HR repair; mechanistic basis for therapeutic cytotoxicity (PMID:10220571, PMID:7523912, PMID:8635461, PMID:12960109).",
+        "detail": "Bifunctional N7-alkyl-dG interstrand crosslink generated by phosphoramide mustard (cyclophosphamide), chlorambucil aziridinium, sulfur-mustard episulfonium, and the busulfan methanesulfonate intermediate. Requires Fanconi-anemia/HR repair; mechanistic basis for therapeutic cytotoxicity (PMID:9092631, PMID:7862715, PMID:24858262, PMID:6892995).",
         "class_name": "Alkylating_Agents",
     },
 ]
@@ -1132,15 +1140,15 @@ WAVE2_EDGES: list[dict[str, Any]] = [
 
     # ── Class 11 expansion: Urethane ──────────────────────────────────────
     {"source": "Urethane", "target": "Vinyl_carbamate", "type": "ACTIVATES",
-     "carcinogen": "Urethane", "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12860588; IARC Monograph 96)", "class_name": "Aldehydes"},
+     "carcinogen": "Urethane", "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12704224; IARC Monograph 96)", "class_name": "Aldehydes"},
     {"source": "CYP2E1", "target": "Vinyl_carbamate", "type": "ACTIVATES",
-     "carcinogen": "Urethane", "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12860588)", "class_name": "Aldehydes"},
+     "carcinogen": "Urethane", "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12704224)", "class_name": "Aldehydes"},
     {"source": "Vinyl_carbamate", "target": "Vinyl_carbamate_epoxide", "type": "ACTIVATES",
-     "carcinogen": "Urethane", "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:12860588)", "class_name": "Aldehydes"},
+     "carcinogen": "Urethane", "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)", "class_name": "Aldehydes"},
     {"source": "Vinyl_carbamate_epoxide", "target": "etheno_dA", "type": "FORMS_ADDUCT",
-     "carcinogen": "Urethane", "evidence": "Forms 1,N6-etheno-dA adducts mechanistically identical to vinyl-chloride chemistry (PMID:12860588; IARC Monograph 96)", "class_name": "Aldehydes"},
+     "carcinogen": "Urethane", "evidence": "Forms 1,N6-etheno-dA adducts mechanistically identical to vinyl-chloride chemistry (PMID:20205516; IARC Monograph 96)", "class_name": "Aldehydes"},
     {"source": "Vinyl_carbamate_epoxide", "target": "etheno_dC", "type": "FORMS_ADDUCT",
-     "carcinogen": "Urethane", "evidence": "Forms 3,N4-etheno-dC adducts detected in liver and lung of urethane-exposed rodents (PMID:12860588)", "class_name": "Aldehydes"},
+     "carcinogen": "Urethane", "evidence": "Forms 3,N4-etheno-dC adducts detected in liver and lung of urethane-exposed rodents (PMID:20205516)", "class_name": "Aldehydes"},
     {"source": "GSTT1", "target": "Vinyl_carbamate_epoxide", "type": "DETOXIFIES",
      "carcinogen": "Urethane", "evidence": "GSH conjugation of vinyl-carbamate epoxide; GSTT1-null allele elevates etheno-adduct burden (IARC Monograph 96)", "class_name": "Aldehydes"},
     {"source": "Urethane", "target": "aldehyde_pathway", "type": "PATHWAY",
@@ -1148,21 +1156,21 @@ WAVE2_EDGES: list[dict[str, Any]] = [
 
     # ── Class 11 expansion: Acrolein ──────────────────────────────────────
     {"source": "Acrolein", "target": "Acr_dG", "type": "FORMS_ADDUCT",
-     "carcinogen": "Acrolein", "evidence": "Direct Michael addition yields alpha/gamma-hydroxy-1,N2-propano-dG adducts; dominant adduct class in smokers' lung DNA (PMID:19705912; IARC Monograph 128)", "class_name": "Aldehydes"},
+     "carcinogen": "Acrolein", "evidence": "Direct Michael addition yields alpha/gamma-hydroxy-1,N2-propano-dG adducts; dominant adduct class in smokers' lung DNA (PMID:19397281; IARC Monograph 128)", "class_name": "Aldehydes"},
     {"source": "ALDH2", "target": "Acrolein", "type": "DETOXIFIES",
      "carcinogen": "Acrolein", "evidence": "ALDH2 oxidation of acrolein to acrylic acid; ALDH2*2 carriers show elevated acrolein-protein adducts (IARC Monograph 128)", "class_name": "Aldehydes"},
     {"source": "GSTP1", "target": "Acrolein", "type": "DETOXIFIES",
      "carcinogen": "Acrolein", "evidence": "GSH conjugation yields 3-hydroxypropylmercapturic acid (HPMA), the principal urinary biomarker (IARC Monograph 128)", "class_name": "Aldehydes"},
     {"source": "XRCC1", "target": "Acr_dG", "type": "REPAIRS",
-     "carcinogen": "Acrolein", "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19705912)", "class_name": "Aldehydes"},
+     "carcinogen": "Acrolein", "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19397281)", "class_name": "Aldehydes"},
     {"source": "Cyclophosphamide", "target": "Acrolein", "type": "ACTIVATES",
-     "carcinogen": "Cyclophosphamide", "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10220571)", "class_name": "Aldehydes"},
+     "carcinogen": "Cyclophosphamide", "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10348794)", "class_name": "Aldehydes"},
     {"source": "Acrolein", "target": "aldehyde_pathway", "type": "PATHWAY",
      "carcinogen": "Acrolein", "class_name": "Aldehydes"},
 
     # ── Class 11 expansion: Crotonaldehyde ────────────────────────────────
     {"source": "Crotonaldehyde", "target": "Cr_dG", "type": "FORMS_ADDUCT",
-     "carcinogen": "Crotonaldehyde", "evidence": "Michael addition/cyclization yields 1,N2-propano-dG exocyclic adduct detected in smokers' oral and lung tissue (Chung et al., Carcinogenesis 1989; IARC Monograph 63)", "class_name": "Aldehydes"},
+     "carcinogen": "Crotonaldehyde", "evidence": "Michael addition/cyclization yields 1,N2-propano-dG exocyclic adduct detected in smokers' oral and lung tissue (PMID:2736720; IARC Monograph 63)", "class_name": "Aldehydes"},
     {"source": "ALDH2", "target": "Crotonaldehyde", "type": "DETOXIFIES",
      "carcinogen": "Crotonaldehyde", "evidence": "ALDH2 oxidation to crotonic acid; ALDH2*2 polymorphism amplifies Cr-dG burden (IARC Monograph 63)", "class_name": "Aldehydes"},
     {"source": "GSTP1", "target": "Crotonaldehyde", "type": "DETOXIFIES",
@@ -1174,23 +1182,23 @@ WAVE2_EDGES: list[dict[str, Any]] = [
 
     # ── Class 11 expansion: Furfural ──────────────────────────────────────
     {"source": "Furfural", "target": "SMF", "type": "ACTIVATES",
-     "carcinogen": "Furfural", "evidence": "Furfural is reduced/hydroxylated to 5-hydroxymethylfurfural (HMF), then SULT1A1 sulfates HMF to the DNA-reactive 5-sulfoxymethylfurfural (SMF) (PMID:21538843)", "class_name": "Aldehydes"},
+     "carcinogen": "Furfural", "evidence": "The dietary furfural branch is represented through HMF-centered SULT1A1 bioactivation to the DNA-reactive metabolite SMF (PMID:22563731; PMID:26454887)", "class_name": "Aldehydes"},
     {"source": "SULT1A1", "target": "SMF", "type": "ACTIVATES",
-     "carcinogen": "Furfural", "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human liver and colon (PMID:21538843; EFSA CONTAM Panel 2011)", "class_name": "Aldehydes"},
+     "carcinogen": "Furfural", "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human systems (PMID:22563731; PMID:26454887; PMID:21462333)", "class_name": "Aldehydes"},
     {"source": "Furfural", "target": "aldehyde_pathway", "type": "PATHWAY",
      "carcinogen": "Furfural", "class_name": "Aldehydes"},
 
     # ── Class 11 expansion: Malondialdehyde (MDA) ─────────────────────────
     {"source": "MDA", "target": "M1_dG", "type": "FORMS_ADDUCT",
-     "carcinogen": "MDA", "evidence": "Direct reaction of MDA with dG yields pyrimido[1,2-a]purin-10(3H)-one (M1-dG); quantitative biomarker of oxidative-stress mutagenesis (PMID:10064842)", "class_name": "Aldehydes"},
+     "carcinogen": "MDA", "evidence": "Direct reaction of MDA with dG yields pyrimido[1,2-a]purin-10(3H)-one (M1-dG); quantitative biomarker of oxidative-stress mutagenesis (PMID:10064852)", "class_name": "Aldehydes"},
     {"source": "XRCC1", "target": "M1_dG", "type": "REPAIRS",
-     "carcinogen": "MDA", "evidence": "NER plus BER handle M1-dG; repair deficiency elevates spontaneous mutation frequency (Niedernhofer et al., JBC 2003)", "class_name": "Aldehydes"},
+     "carcinogen": "MDA", "evidence": "M1-dG mutagenesis in human cells implicates nucleotide excision repair involvement, with BER cross-talk commonly invoked for lesion handling (PMID:12775726)", "class_name": "Aldehydes"},
     {"source": "MDA", "target": "aldehyde_pathway", "type": "PATHWAY",
      "carcinogen": "MDA", "class_name": "Aldehydes"},
 
     # ── Class 11 expansion: 4-Hydroxynonenal (4-HNE) ──────────────────────
     {"source": "4_HNE", "target": "HNE_dG", "type": "FORMS_ADDUCT",
-     "carcinogen": "4_HNE", "evidence": "Michael addition/cyclization yields 1,N2-propano-dG (HNE-dG); selectively enhanced at methylated CpG sites, linking lipid peroxidation to TP53 hotspot spectrum (PMID:1937131; Hu et al., PNAS 2002)", "class_name": "Aldehydes"},
+     "carcinogen": "4_HNE", "evidence": "Michael addition/cyclization yields 1,N2-propano-dG (HNE-dG); selectively enhanced at methylated CpG sites, linking lipid peroxidation to TP53 hotspot spectrum (PMID:1937131; PMID:12419825)", "class_name": "Aldehydes"},
     {"source": "GSTP1", "target": "4_HNE", "type": "DETOXIFIES",
      "carcinogen": "4_HNE", "evidence": "GSH conjugation is the dominant detoxification route; GSTA4 is a preferred isoform but GSTP1 provides substantial activity in human tissue (PMID:1937131)", "class_name": "Aldehydes"},
     {"source": "ALDH2", "target": "4_HNE", "type": "DETOXIFIES",
@@ -1210,7 +1218,7 @@ WAVE2_EDGES: list[dict[str, Any]] = [
     {"source": "ARNT", "target": "AhR_ARNT_complex", "type": "ACTIVATES",
      "carcinogen": "TCDD", "evidence": "Obligate co-factor for AhR transcriptional complex", "class_name": "Dioxins_AhR"},
     {"source": "AHR", "target": "CYP1A1", "type": "INDUCES",
-     "carcinogen": "TCDD", "evidence": "XRE binding induces CYP1A1; CpG demethylation persists 40+ days (Sci Rep 2016, srep34989)", "class_name": "Dioxins_AhR"},
+     "carcinogen": "TCDD", "evidence": "XRE binding induces CYP1A1; CpG demethylation persists 40+ days (PMID:27713569; DOI:10.1038/srep34989)", "class_name": "Dioxins_AhR"},
     {"source": "AHR", "target": "CYP1B1", "type": "INDUCES",
      "carcinogen": "TCDD", "evidence": "Amplifies estrogen/PAH bioactivation via CYP1B1 induction (PMC3748760)", "class_name": "Dioxins_AhR"},
     {"source": "AHRR", "target": "AHR", "type": "INHIBITS",
@@ -1220,7 +1228,7 @@ WAVE2_EDGES: list[dict[str, Any]] = [
     {"source": "PCB_126", "target": "dioxin_pathway", "type": "PATHWAY",
      "carcinogen": "PCB_126", "class_name": "Dioxins_AhR"},
     {"source": "PCB_169", "target": "AHR", "type": "ACTIVATES",
-     "carcinogen": "PCB_169", "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (van den Berg 2006; IARC Monograph 107, 2016)", "class_name": "Dioxins_AhR"},
+     "carcinogen": "PCB_169", "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (PMID:16829543; IARC Monograph 107, 2016)", "class_name": "Dioxins_AhR"},
     {"source": "PCB_77", "target": "AHR", "type": "ACTIVATES",
      "carcinogen": "PCB_77", "evidence": "Coplanar dioxin-like PCB; WHO-TEF 0.0001; CYP1A1 inducer in hepatocytes (IARC Monograph 107, 2016)", "class_name": "Dioxins_AhR"},
     {"source": "PCB_118", "target": "AHR", "type": "ACTIVATES",
@@ -1307,17 +1315,17 @@ WAVE2_EDGES: list[dict[str, Any]] = [
     # ── Class 15: Alkylating Carcinogens ──────────────────────────────────
     # Acrylamide / Glycidamide branch
     {"source": "Acrylamide", "target": "Glycidamide", "type": "ACTIVATES",
-     "carcinogen": "Acrylamide", "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in rodent and human hepatic microsomes (Segerbaeck et al. 1995, PMID:7614537)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Acrylamide", "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in knockout and microsomal systems (PMID:16141435)", "class_name": "Alkylating_Agents"},
     {"source": "CYP2E1", "target": "Glycidamide", "type": "ACTIVATES",
-     "carcinogen": "Acrylamide", "evidence": "Primary P450 for acrylamide epoxidation (PMID:17872912)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Acrylamide", "evidence": "Primary P450 for acrylamide epoxidation (PMID:16141435)", "class_name": "Alkylating_Agents"},
     {"source": "Glycidamide", "target": "N7_GA_dG", "type": "FORMS_ADDUCT",
-     "carcinogen": "Glycidamide", "evidence": "Direct alkylation at N7-guanine; principal acrylamide-related adduct in rodent and human tissues (PMID:17872912)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Glycidamide", "evidence": "Direct alkylation at N7-guanine; principal acrylamide-related adduct in exposed rodent tissues (PMID:7767980)", "class_name": "Alkylating_Agents"},
     {"source": "GSTP1", "target": "Glycidamide", "type": "DETOXIFIES",
-     "carcinogen": "Glycidamide", "evidence": "GSH conjugation of the epoxide; GSTP1/M1-null genotype elevates adduct burden (Besaratinia, Mutat Res 2010)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Glycidamide", "evidence": "GSH conjugation of the epoxide is supported by in vitro blood detoxification studies involving glutathione transferases (PMID:15668107)", "class_name": "Alkylating_Agents"},
     {"source": "GSTM1", "target": "Glycidamide", "type": "DETOXIFIES",
-     "carcinogen": "Glycidamide", "evidence": "Secondary GSH conjugation pathway (Besaratinia, Mutat Res 2010)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Glycidamide", "evidence": "Secondary GSH conjugation pathway within the broader glutathione transferase detoxification system (PMID:15668107)", "class_name": "Alkylating_Agents"},
     {"source": "XRCC1", "target": "N7_GA_dG", "type": "REPAIRS",
-     "carcinogen": "Glycidamide", "evidence": "BER scaffold response to depurinated N7-glycidamide adducts (PMID:17872912)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Glycidamide", "evidence": "Depurination of N7-glycidamide adducts yields abasic sites handled through BER (PMID:17234719)", "class_name": "Alkylating_Agents"},
     {"source": "Acrylamide", "target": "alkylating_pathway", "type": "PATHWAY",
      "carcinogen": "Acrylamide", "class_name": "Alkylating_Agents"},
     {"source": "Glycidamide", "target": "alkylating_pathway", "type": "PATHWAY",
@@ -1327,33 +1335,33 @@ WAVE2_EDGES: list[dict[str, Any]] = [
     {"source": "Cyclophosphamide", "target": "4OH_cyclophosphamide", "type": "ACTIVATES",
      "carcinogen": "Cyclophosphamide", "evidence": "CYP-catalyzed 4-hydroxylation is the obligatory prodrug activation step (IARC Monograph 100A)", "class_name": "Alkylating_Agents"},
     {"source": "CYP2B6", "target": "4OH_cyclophosphamide", "type": "ACTIVATES",
-     "carcinogen": "Cyclophosphamide", "evidence": "Major 4-hydroxylation activity; CYP2B6*6 (rs3745274) reduces clearance (PMID:10220571)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Cyclophosphamide", "evidence": "Major 4-hydroxylation activity in human liver microsomes (PMID:8242617; PMID:10348794)", "class_name": "Alkylating_Agents"},
     {"source": "CYP3A4", "target": "4OH_cyclophosphamide", "type": "ACTIVATES",
-     "carcinogen": "Cyclophosphamide", "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:10220571)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Cyclophosphamide", "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:8242617)", "class_name": "Alkylating_Agents"},
     {"source": "4OH_cyclophosphamide", "target": "Phosphoramide_mustard", "type": "ACTIVATES",
-     "carcinogen": "Cyclophosphamide", "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10220571)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Cyclophosphamide", "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10348794)", "class_name": "Alkylating_Agents"},
     {"source": "Phosphoramide_mustard", "target": "DNA_ICL_mustard", "type": "FORMS_ADDUCT",
-     "carcinogen": "Cyclophosphamide", "evidence": "Bifunctional aziridinium forms G-G interstrand crosslinks (PMID:10220571)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Cyclophosphamide", "evidence": "Bifunctional aziridinium forms G-G interstrand crosslinks (PMID:9092631)", "class_name": "Alkylating_Agents"},
     {"source": "GSTP1", "target": "Phosphoramide_mustard", "type": "DETOXIFIES",
-     "carcinogen": "Cyclophosphamide", "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) modulates cyclophosphamide sensitivity (Yang et al., Pharmacogenet Genomics 2005)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Cyclophosphamide", "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) influences cyclophosphamide and 4-hydroxycyclophosphamide pharmacokinetics (PMID:18496131)", "class_name": "Alkylating_Agents"},
     {"source": "Cyclophosphamide", "target": "alkylating_pathway", "type": "PATHWAY",
      "carcinogen": "Cyclophosphamide", "class_name": "Alkylating_Agents"},
 
     # Chlorambucil branch
     {"source": "Chlorambucil", "target": "Chlorambucil_aziridinium", "type": "ACTIVATES",
-     "carcinogen": "Chlorambucil", "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7523912)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Chlorambucil", "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7862715)", "class_name": "Alkylating_Agents"},
     {"source": "Chlorambucil_aziridinium", "target": "DNA_ICL_mustard", "type": "FORMS_ADDUCT",
-     "carcinogen": "Chlorambucil", "evidence": "Bifunctional N7-dG interstrand crosslinks drive therapeutic cytotoxicity and therapy-related AML risk (PMID:7523912; IARC 100A)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Chlorambucil", "evidence": "Bifunctional N7-dG interstrand crosslinks drive therapeutic cytotoxicity and therapy-related AML risk (PMID:7862715; IARC 100A)", "class_name": "Alkylating_Agents"},
     {"source": "GSTP1", "target": "Chlorambucil_aziridinium", "type": "DETOXIFIES",
-     "carcinogen": "Chlorambucil", "evidence": "GSH conjugation; GSTP1 Ile105Val modulates chlorambucil response in CLL (Meier et al., Clin Cancer Res 2014)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Chlorambucil", "evidence": "GSH conjugation; GSTP1-1 catalyzes chlorambucil conjugation, with allelic variants showing substrate-dependent activity differences (PMID:18511072)", "class_name": "Alkylating_Agents"},
     {"source": "Chlorambucil", "target": "alkylating_pathway", "type": "PATHWAY",
      "carcinogen": "Chlorambucil", "class_name": "Alkylating_Agents"},
 
     # Sulfur mustard branch
     {"source": "Sulfur_mustard", "target": "Mustard_episulfonium", "type": "ACTIVATES",
-     "carcinogen": "Sulfur_mustard", "evidence": "Intramolecular cyclization to cyclic episulfonium is the rate-limiting step of alkylation (PMID:8635461)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Sulfur_mustard", "evidence": "Intramolecular cyclization to cyclic episulfonium is the canonical alkylation step (IARC 100F)", "class_name": "Alkylating_Agents"},
     {"source": "Mustard_episulfonium", "target": "DNA_ICL_mustard", "type": "FORMS_ADDUCT",
-     "carcinogen": "Sulfur_mustard", "evidence": "Bifunctional alkylation produces N7-Gua monoadducts and 5'-d(GNC) interstrand crosslinks (PMID:8635461; IARC 100F)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Sulfur_mustard", "evidence": "Bifunctional alkylation produces N7-Gua monoadducts and bis-guanine crosslinks (PMID:24858262; IARC 100F)", "class_name": "Alkylating_Agents"},
     {"source": "GSTM1", "target": "Mustard_episulfonium", "type": "DETOXIFIES",
      "carcinogen": "Sulfur_mustard", "evidence": "GSH conjugation; GSTM1-null correlates with elevated mustard-adduct burden in exposed veterans (IARC Monograph 100F)", "class_name": "Alkylating_Agents"},
     {"source": "Sulfur_mustard", "target": "alkylating_pathway", "type": "PATHWAY",
@@ -1361,19 +1369,19 @@ WAVE2_EDGES: list[dict[str, Any]] = [
 
     # Busulfan branch
     {"source": "Busulfan", "target": "Busulfan_methanesulfonate", "type": "ACTIVATES",
-     "carcinogen": "Busulfan", "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:12960109)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Busulfan", "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:6892995)", "class_name": "Alkylating_Agents"},
     {"source": "Busulfan_methanesulfonate", "target": "DNA_ICL_mustard", "type": "FORMS_ADDUCT",
-     "carcinogen": "Busulfan", "evidence": "Bifunctional alkylation yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:12960109; IARC 100A)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Busulfan", "evidence": "Bifunctional alkylation yields N7-THPG adducts and DNA-DNA interstrand crosslinks (PMID:6892995; IARC 100A)", "class_name": "Alkylating_Agents"},
     {"source": "GSTP1", "target": "Busulfan", "type": "DETOXIFIES",
-     "carcinogen": "Busulfan", "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (Ansari et al., Blood 2010)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Busulfan", "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (PMID:20672371)", "class_name": "Alkylating_Agents"},
     {"source": "Busulfan", "target": "alkylating_pathway", "type": "PATHWAY",
      "carcinogen": "Busulfan", "class_name": "Alkylating_Agents"},
 
     # MNU branch (direct methylator)
     {"source": "MNU", "target": "Methyldiazonium", "type": "ACTIVATES",
-     "carcinogen": "MNU", "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:2185966)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "MNU", "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:1912317)", "class_name": "Alkylating_Agents"},
     {"source": "Methyldiazonium", "target": "N7_methyl_dG", "type": "FORMS_ADDUCT",
-     "carcinogen": "MNU", "evidence": "Dominant guanine methylation product from MNU; repaired by BER after spontaneous depurination (PMID:2185966)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "MNU", "evidence": "Dominant guanine methylation product from MNU; repaired by BER after spontaneous depurination (PMID:1912317)", "class_name": "Alkylating_Agents"},
     {"source": "XRCC1", "target": "N7_methyl_dG", "type": "REPAIRS",
      "carcinogen": "MNU", "evidence": "BER scaffold response to abasic sites generated by depurination of N7-methyl-dG", "class_name": "Alkylating_Agents"},
     {"source": "MNU", "target": "alkylating_pathway", "type": "PATHWAY",
@@ -1381,9 +1389,9 @@ WAVE2_EDGES: list[dict[str, Any]] = [
 
     # Temozolomide branch
     {"source": "Temozolomide", "target": "MTIC", "type": "ACTIVATES",
-     "carcinogen": "Temozolomide", "evidence": "Spontaneous pH-dependent hydrolysis of the imidazotetrazine ring to MTIC; no enzymatic requirement (PMID:9327140)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Temozolomide", "evidence": "Spontaneous pH-dependent hydrolysis of the imidazotetrazine ring to MTIC; no enzymatic requirement (PMID:1998993)", "class_name": "Alkylating_Agents"},
     {"source": "MTIC", "target": "Methyldiazonium", "type": "ACTIVATES",
-     "carcinogen": "Temozolomide", "evidence": "MTIC decomposes to methyldiazonium plus 5-aminoimidazole-4-carboxamide at physiological pH (PMID:9327140)", "class_name": "Alkylating_Agents"},
+     "carcinogen": "Temozolomide", "evidence": "MTIC decomposes to methyldiazonium plus 5-aminoimidazole-4-carboxamide at physiological pH (PMID:1998993)", "class_name": "Alkylating_Agents"},
     {"source": "Temozolomide", "target": "alkylating_pathway", "type": "PATHWAY",
      "carcinogen": "Temozolomide", "class_name": "Alkylating_Agents"},
 ]

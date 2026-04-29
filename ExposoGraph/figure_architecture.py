@@ -289,7 +289,7 @@ def _summary_lines(
 
 
 def paper_architecture_overrides() -> dict[str, Any]:
-    """Return override values aligned with the bundled ExposoGraph reference (133/166).
+    """Return override values for the legacy 133/166 paper architecture snapshot.
 
     Updated after wiring the procarcinogen-to-intermediate chains for DMBA,
     MeIQx, Benzidine, NDMA, Vinyl Chloride, and 17beta-Estradiol, plus the

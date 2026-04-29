@@ -67,11 +67,11 @@ POPULATION_ALLELE_FREQUENCIES: dict[str, list[AlleleFrequency]] = {
     # AS3MT - Arsenic metabolism (critical for arsenic methylation efficiency)
     "AS3MT": [
         # M287T (rs11191439) - affects MMA/DMA ratios
-        AlleleFrequency("T (287Thr)", Population.EUR, 0.095, 503, pmid_references=["24961666"]),
-        AlleleFrequency("T (287Thr)", Population.EAS, 0.299, 504, pmid_references=["24961666"]),
-        AlleleFrequency("T (287Thr)", Population.SAS, 0.182, 489, pmid_references=["24961666"]),
-        AlleleFrequency("T (287Thr)", Population.AFR, 0.045, 661, pmid_references=["24961666"]),
-        AlleleFrequency("T (287Thr)", Population.AMR, 0.112, 347, pmid_references=["24961666"]),
+        AlleleFrequency("T (287Thr)", Population.EUR, 0.095, 503, pmid_references=["28537708", "19371612"]),
+        AlleleFrequency("T (287Thr)", Population.EAS, 0.299, 504, pmid_references=["28537708", "19371612"]),
+        AlleleFrequency("T (287Thr)", Population.SAS, 0.182, 489, pmid_references=["28537708", "19371612"]),
+        AlleleFrequency("T (287Thr)", Population.AFR, 0.045, 661, pmid_references=["28537708", "19371612"]),
+        AlleleFrequency("T (287Thr)", Population.AMR, 0.112, 347, pmid_references=["28537708", "19371612"]),
         # Q144R (rs11191442)
         AlleleFrequency("R (144Arg)", Population.EUR, 0.001, 503),
         AlleleFrequency("R (144Arg)", Population.EAS, 0.156, 504),
@@ -81,11 +81,11 @@ POPULATION_ALLELE_FREQUENCIES: dict[str, list[AlleleFrequency]] = {
     # GSTO1 - Arsenic metabolism (reduces MMA(V) to MMA(III))
     "GSTO1": [
         # A140D (rs4925) - alters arsenic metabolism
-        AlleleFrequency("D (140Asp)", Population.EUR, 0.317, 503, pmid_references=["15024688"]),
-        AlleleFrequency("D (140Asp)", Population.EAS, 0.091, 504, pmid_references=["15024688"]),
-        AlleleFrequency("D (140Asp)", Population.SAS, 0.174, 489, pmid_references=["15024688"]),
-        AlleleFrequency("D (140Asp)", Population.AFR, 0.243, 661, pmid_references=["15024688"]),
-        AlleleFrequency("D (140Asp)", Population.AMR, 0.294, 347, pmid_references=["15024688"]),
+        AlleleFrequency("D (140Asp)", Population.EUR, 0.317, 503, pmid_references=["21798077"]),
+        AlleleFrequency("D (140Asp)", Population.EAS, 0.091, 504, pmid_references=["21798077"]),
+        AlleleFrequency("D (140Asp)", Population.SAS, 0.174, 489, pmid_references=["21798077"]),
+        AlleleFrequency("D (140Asp)", Population.AFR, 0.243, 661, pmid_references=["21798077"]),
+        AlleleFrequency("D (140Asp)", Population.AMR, 0.294, 347, pmid_references=["21798077"]),
     ],
 
     # GSTO2 - Arsenic metabolism
@@ -108,10 +108,10 @@ POPULATION_ALLELE_FREQUENCIES: dict[str, list[AlleleFrequency]] = {
 
     # MT2A - Cadmium detoxification
     "MT2A": [
-        # rs1610216 - associated with cadmium levels
-        AlleleFrequency("T (rs1610216)", Population.EUR, 0.387, 503, pmid_references=["21347310"]),
-        AlleleFrequency("T (rs1610216)", Population.EAS, 0.291, 504, pmid_references=["21347310"]),
-        AlleleFrequency("T (rs1610216)", Population.SAS, 0.356, 489, pmid_references=["21347310"]),
+        # rs1610216 - represented in MT haplotypes linked to OSCC susceptibility
+        AlleleFrequency("T (rs1610216)", Population.EUR, 0.387, 503, pmid_references=["33340085"]),
+        AlleleFrequency("T (rs1610216)", Population.EAS, 0.291, 504, pmid_references=["33340085"]),
+        AlleleFrequency("T (rs1610216)", Population.SAS, 0.356, 489, pmid_references=["33340085"]),
     ],
 
     # HLA-DPB1 - Beryllium sensitivity
@@ -126,20 +126,20 @@ POPULATION_ALLELE_FREQUENCIES: dict[str, list[AlleleFrequency]] = {
 
     # GSTM1 - Deletion polymorphism (null genotype)
     "GSTM1": [
-        AlleleFrequency("Null (del)", Population.EUR, 0.500, 503, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.EAS, 0.512, 504, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.SAS, 0.334, 489, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.AFR, 0.367, 661, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.AMR, 0.406, 347, pmid_references=["17654225"]),
+        AlleleFrequency("Null (del)", Population.EUR, 0.500, 503, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.EAS, 0.512, 504, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.SAS, 0.334, 489, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.AFR, 0.367, 661, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.AMR, 0.406, 347, pmid_references=["21798077", "32650499"]),
     ],
 
     # GSTT1 - Deletion polymorphism
     "GSTT1": [
-        AlleleFrequency("Null (del)", Population.EUR, 0.176, 503, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.EAS, 0.571, 504, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.SAS, 0.216, 489, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.AFR, 0.224, 661, pmid_references=["17654225"]),
-        AlleleFrequency("Null (del)", Population.AMR, 0.207, 347, pmid_references=["17654225"]),
+        AlleleFrequency("Null (del)", Population.EUR, 0.176, 503, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.EAS, 0.571, 504, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.SAS, 0.216, 489, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.AFR, 0.224, 661, pmid_references=["21798077", "32650499"]),
+        AlleleFrequency("Null (del)", Population.AMR, 0.207, 347, pmid_references=["21798077", "32650499"]),
     ],
 
     # CYP1A1 - PAH and estrogen metabolism
@@ -206,7 +206,7 @@ POPULATION_RISK_PROFILES: list[PopulationRiskProfile] = [
         odds_ratio=1.52,
         cancer_sites=["bladder", "lung", "skin"],
         metal_exposure="Arsenic",
-        pmid_references=["24961666", "21451514"],
+        pmid_references=["28537708", "19680750"],
     ),
     PopulationRiskProfile(
         gene="GSTO1",
@@ -216,7 +216,7 @@ POPULATION_RISK_PROFILES: list[PopulationRiskProfile] = [
         odds_ratio=1.38,
         cancer_sites=["lung", "bladder"],
         metal_exposure="Arsenic",
-        pmid_references=["15024688"],
+        pmid_references=["21798077"],
     ),
     PopulationRiskProfile(
         gene="GSTM1",
@@ -226,7 +226,7 @@ POPULATION_RISK_PROFILES: list[PopulationRiskProfile] = [
         odds_ratio=1.42,
         cancer_sites=["lung", "bladder"],
         metal_exposure="Arsenic",
-        pmid_references=["17654225"],
+        pmid_references=["21798077", "32650499"],
     ),
     PopulationRiskProfile(
         gene="GSTT1",
@@ -236,7 +236,7 @@ POPULATION_RISK_PROFILES: list[PopulationRiskProfile] = [
         odds_ratio=1.68,
         cancer_sites=["bladder"],
         metal_exposure="Arsenic",
-        pmid_references=["17654225"],
+        pmid_references=["21798077", "32650499"],
     ),
     # Cadmium-related
     PopulationRiskProfile(
@@ -247,7 +247,7 @@ POPULATION_RISK_PROFILES: list[PopulationRiskProfile] = [
         odds_ratio=1.25,
         cancer_sites=["kidney", "prostate"],
         metal_exposure="Cadmium",
-        pmid_references=["21347310"],
+        pmid_references=["33340085"],
     ),
     # Beryllium-related
     PopulationRiskProfile(

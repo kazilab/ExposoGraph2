@@ -19,6 +19,7 @@ from ExposoGraph import (
     ui_d3_viewer,
     ui_data,
     ui_extract,
+    ui_flux,
     ui_manual,
     ui_map_viewer,
     ui_preview,
@@ -74,12 +75,23 @@ st.markdown(f"## {APP_NAME}")
 st.caption(f"{APP_TAGLINE} · Version {APP_VERSION}")
 st.caption(f"{DEVELOPED_BY} · {CONTACT_EMAIL} · Copyright {COPYRIGHT_HOLDER}")
 
-tab_map, tab_extract, tab_manual, tab_preview, tab_d3_viewer, tab_data = st.tabs(
-    ["Reference Map", "LLM Extract", "Manual Entry", "Graph Preview", "D3 HTML Viewer", "Raw Data"]
+tab_map, tab_flux, tab_extract, tab_manual, tab_preview, tab_d3_viewer, tab_data = st.tabs(
+    [
+        "Reference Map",
+        "Flux Engine",
+        "LLM Extract",
+        "Manual Entry",
+        "Graph Preview",
+        "D3 HTML Viewer",
+        "Raw Data",
+    ]
 )
 
 with tab_map:
     ui_map_viewer.render()
+
+with tab_flux:
+    ui_flux.render()
 
 with tab_extract:
     ui_extract.render(engine)

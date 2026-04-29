@@ -506,12 +506,12 @@ body.is-resizing * { user-select: none !important; }
     <div class="panel">
       <div class="panel-header">Filter by Tissue</div>
       <div class="panel-body">
-        <label class="control-label" for="tissue-select">GTEx Tissue</label>
+        <label class="control-label" for="tissue-select">GTEx/HPA Tissue</label>
         <select class="select-control" id="tissue-select"></select>
-        <label class="control-label" for="tissue-threshold">Minimum Expression Weight</label>
+        <label class="control-label" for="tissue-threshold">Minimum nTPM Weight</label>
         <input class="range-control" id="tissue-threshold" type="range" min="0" max="1" step="0.05" value="0.05">
         <div class="helper-text" id="tissue-summary">
-          Show GTEx-supported enzyme and gene nodes together with their immediate pathway context.
+          GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.
         </div>
       </div>
     </div>
@@ -737,6 +737,8 @@ const tissueSelect = document.getElementById("tissue-select");
 const tissueThreshold = document.getElementById("tissue-threshold");
 const tissueSummary = document.getElementById("tissue-summary");
 const headerSubtitle = document.getElementById("header-subtitle");
+const tissueSourceNote = "GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.";
+const tissueCaveatNote = "Colon averages sigmoid/transverse; Breast uses mammary tissue; Kidney uses cortex; Esophagus uses mucosa. GSTT1 has no bundled HPA/GTEx nTPM value.";
 const tissueNames = [...new Set(
   nodes.flatMap(n => n.tissue_weights ? Object.keys(n.tissue_weights) : [])
 )].sort((a, b) => a.localeCompare(b));
@@ -767,10 +769,10 @@ tissueSelect.addEventListener("change", () => {
 });
 
 if (tissueNames.length === 0) {
-  tissueSummary.textContent = "No GTEx-weighted nodes are embedded in this bundled payload.";
+  tissueSummary.textContent = "No GTEx/HPA-weighted nodes are embedded in this bundled payload.";
 } else if (!nodes.some(n => n.type === "Tissue")) {
   tissueSummary.textContent =
-    "Show GTEx-weighted nodes together with their immediate pathway context. This bundled payload does not include standalone Tissue nodes.";
+    `${tissueSourceNote} ${tissueCaveatNote}`;
 }
 
 // ── D3 Force Simulation ─────────────────────────────────────────────
@@ -1015,7 +1017,7 @@ node.on("mouseover", (event, d) => {
   }
   if (d.type === "Tissue" && d.tissue) typeExtra = ` · ${d.tissue}`;
   const tissueWeightsHtml = d.tissue_weights
-    ? `<div class="tooltip-desc"><b>GTEx:</b> ${formatTissueWeights(d.tissue_weights, tissueSelect.value || null, 3)}</div>`
+    ? `<div class="tooltip-desc"><b>GTEx/HPA nTPM weights:</b> ${formatTissueWeights(d.tissue_weights, tissueSelect.value || null, 3)}</div>`
     : "";
 
   tooltip.innerHTML = `
@@ -1121,7 +1123,8 @@ function showDetail(d) {
     d.role ? `<div><b>Role:</b> ${d.role}</div>` : "",
     d.reactivity ? `<div><b>Reactivity:</b> ${d.reactivity}</div>` : "",
     d.tissue ? `<div><b>Tissue:</b> ${d.tissue}</div>` : "",
-    d.tissue_weights ? `<div><b>GTEx Weights:</b> ${formatTissueWeights(d.tissue_weights, tissueSelect.value || null, 8)}</div>` : "",
+    d.tissue_weights ? `<div><b>GTEx/HPA nTPM Weights:</b> ${formatTissueWeights(d.tissue_weights, tissueSelect.value || null, 8)}</div>` : "",
+    d.tissue_weights ? `<div><b>Tissue Data:</b> ${tissueSourceNote} ${tissueCaveatNote}</div>` : "",
     d.variant ? `<div><b>Variant:</b> ${d.variant}</div>` : "",
     d.phenotype ? `<div><b>Phenotype:</b> ${d.phenotype}</div>` : "",
     d.source_db ? `<div><b>Source DB:</b> ${d.source_db}</div>` : "",
@@ -1274,7 +1277,7 @@ function filterByCarcinogen(group) {
 
 function applyTissueFilter(tissue, threshold) {
   if (!tissue) {
-    tissueSummary.textContent = "Show GTEx-supported enzyme and gene nodes together with their immediate pathway context.";
+    tissueSummary.textContent = `${tissueSourceNote} ${tissueCaveatNote}`;
     resetGraphVisibility();
     return;
   }
@@ -1319,7 +1322,7 @@ function applyTissueFilter(tissue, threshold) {
     }
   });
 
-  tissueSummary.textContent = `${tissue}: ${activeIds.size} GTEx-supported enzyme/gene nodes with weight >= ${threshold.toFixed(2)}.`;
+  tissueSummary.textContent = `${tissue}: ${activeIds.size} GTEx/HPA-supported enzyme/gene nodes with nTPM weight >= ${threshold.toFixed(2)}. ${tissueSourceNote}`;
   node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
   link
     .style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 0.35 : 0.7) : 0.02)

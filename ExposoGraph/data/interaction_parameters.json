@@ -8,10 +8,10 @@
       "PMC3933162 \u2014 CYP2E1 substrate inhibition pNP (Kss=260 uM)",
       "PMC9412641 \u2014 Hepatocyte GSH levels 5-10 mM",
       "ATSDR TOXICOLOGICAL PROFILE \u2014 CYP2E1 saturation at ~5 mg/kg NDMA",
-      "Haddad et al. Tox Sci 2001 \u2014 DBTEX benzene cancer risk in mixtures",
+      "PMID:11509752; DOI:10.1093/toxsci/63.1.125 \u2014 PBPK mixture interaction model for DBTEX benzene risk",
       "PMC7856178 \u2014 Alcohol CYP2E1/CYP3A4 P450-P450 interactions",
       "BRENDA enzyme database (braunschweig.de) \u2014 Ki values for curated pairs",
-      "Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383."
+      "PMID:22531028; DOI:10.1021/tx300132k \u2014 Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383."
     ],
     "primary_data_sources": [
       {
@@ -22,7 +22,7 @@
       },
       {
         "priority": 2,
-        "source": "Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383.",
+        "source": "PMID:22531028; DOI:10.1021/tx300132k \u2014 Rendic S, Guengerich FP. Contributions of human enzymes in carcinogen metabolism. Chem Res Toxicol. 2012;25:1316-1383.",
         "scope": "Canonical human CYP carcinogen Km/Vmax review used to anchor Phase I expansion curation",
         "status": "active_reference"
       },
@@ -1970,9 +1970,9 @@
     "known_antagonisms": [
       {
         "name": "Ethanol competitive inhibition of benzene CYP2E1 activation",
-        "mechanism": "High ethanol competes with benzene for CYP2E1 active site. Benzene activation REDUCED by ~62% in DBTEX mixture (Haddad et al. Tox Sci 2001)",
+        "mechanism": "High ethanol competes with benzene for CYP2E1 active site. Benzene activation reduced by ~62% in the DBTEX mixture model (PMID:11509752)",
         "antagonism_score": 0.38,
-        "reference": "Haddad et al. Tox Sci 2001"
+        "reference": "PMID:11509752; DOI:10.1093/toxsci/63.1.125"
       },
       {
         "name": "Caffeine + PhIP CYP1A2 competition",

@@ -31,7 +31,9 @@ NCBI_GENE_IDS: dict[str, str] = {
     "GSTM1": "2944",
     "GSTP1": "2950",
     "GSTT1": "2952",
+    "MLH1": "4292",
     "MGMT": "4255",
+    "MSH2": "4436",
     "NAT1": "6530",
     "NAT2": "10",
     "NQO1": "1728",
@@ -82,7 +84,9 @@ CLINPGX_ACCESSIONS: dict[str, str] = {
     "GSTM1": "PA182",
     "GSTP1": "PA29028",
     "GSTT1": "PA183",
+    "MLH1": "PA222",
     "MGMT": "PA239",
+    "MSH2": "PA283",
     "NAT1": "PA17",
     "NAT2": "PA18",
     "NQO1": "PA31744",
@@ -114,6 +118,8 @@ DNA_REPAIR_CLASSES: dict[str, str] = {
     "XPC": "DNA Repair (NER)",
     "ERCC2": "DNA Repair (NER)",
     "MGMT": "DNA Repair (Direct Reversal)",
+    "MLH1": "DNA Repair (MMR)",
+    "MSH2": "DNA Repair (MMR)",
     "FANCD2": "DNA Repair (FA)",
 }
 
@@ -131,12 +137,12 @@ def _ncbi_gene_ref(symbol: str) -> dict[str, str]:
 
 def _gtex_ref(symbol: str, tissue: str) -> dict[str, str]:
     return {
-        "source_db": "GTEx",
+        "source_db": "GTEx via HPA",
         "record_id": symbol,
-        "citation": f"GTEx Portal expression profile for {symbol}",
-        "url": f"https://gtexportal.org/home/gene/{symbol}",
+        "citation": f"GTEx v8 nTPM expression via Human Protein Atlas v25 for {symbol}",
+        "url": "https://www.proteinatlas.org/download/tsv/rna_tissue_detail_gtex.tsv.zip",
         "tissue": tissue,
-        "evidence": "Human tissue-expression context used to seed the panel tissue field.",
+        "evidence": "Human tissue-expression context from GTEx v8 nTPM values distributed by Human Protein Atlas v25.",
     }
 
 
@@ -409,7 +415,7 @@ TIER1_GENES: list[dict[str, Any]] = [
     ),
 ]
 
-# ── Tier 2: Extended Gene Panel (23 genes) ───────────────────────────────
+# ── Tier 2: Extended Gene Panel (25 genes) ───────────────────────────────
 
 TIER2_GENES: list[dict[str, Any]] = [
     # Phase II
@@ -513,6 +519,20 @@ TIER2_GENES: list[dict[str, Any]] = [
         role="Repair",
         detail="Direct reversal of O6-alkylguanine; single-use suicidal repair enzyme",
         tissue="liver, colon, lung, brain",
+    ),
+    _gene_entry(
+        "MLH1",
+        group=DNA_REPAIR_CLASSES["MLH1"],
+        role="Repair",
+        detail="MutL homolog 1; mismatch repair of replication errors past DNA adducts",
+        tissue="ubiquitous",
+    ),
+    _gene_entry(
+        "MSH2",
+        group=DNA_REPAIR_CLASSES["MSH2"],
+        role="Repair",
+        detail="MutS homolog 2; mismatch recognition during post-replicative repair at adduct sites",
+        tissue="ubiquitous",
     ),
     # Additional CYPs and hormone-metabolism enzymes
     _gene_entry(
@@ -748,6 +768,16 @@ ACTIVITY_SCORES: dict[str, list[dict[str, Any]]] = {
         {"allele": "Partially methylated", "value": 0.5, "phenotype": "Reduced expression", "confidence": "Moderate"},
         {"allele": "Hypermethylated", "value": 0.0, "phenotype": "Silenced (no repair)", "confidence": "High"},
     ],
+    "MLH1": [
+        {"allele": "Wild-type", "value": 1.0, "phenotype": "Normal MMR capacity", "confidence": "Moderate"},
+        {"allele": "Promoter hypermethylation", "value": 0.0, "phenotype": "Silenced (Lynch-like)", "confidence": "Moderate"},
+        {"allele": "Pathogenic variant (heterozygous)", "value": 0.5, "phenotype": "Reduced MMR (Lynch syndrome carrier)", "confidence": "Moderate"},
+    ],
+    "MSH2": [
+        {"allele": "Wild-type", "value": 1.0, "phenotype": "Normal MMR capacity", "confidence": "Moderate"},
+        {"allele": "Pathogenic variant (heterozygous)", "value": 0.5, "phenotype": "Reduced MMR (Lynch syndrome carrier)", "confidence": "Moderate"},
+        {"allele": "Biallelic loss", "value": 0.0, "phenotype": "Absent MMR (constitutional MMR deficiency)", "confidence": "Moderate"},
+    ],
     # Wave 2 class-specific activity scores
     "ALDH2": [
         {"allele": "*1/*1 (Glu504, reference)", "value": 1.0, "phenotype": "Normal Metabolizer", "confidence": "High"},
@@ -967,6 +997,26 @@ ACTIVITY_SCORE_METADATA: dict[str, dict[str, object]] = {
             "Supports the reduced-expression and silencing interpretation of MGMT promoter methylation states.",
         ),
     ),
+    "MLH1": _activity_score_meta(
+        "Research-use mismatch repair marker",
+        "MLH1 activity categories reflect promoter methylation and pathogenic variant status relevant to Lynch syndrome and post-replicative repair at adduct sites.",
+        _ncbi_gene_ref("MLH1"),
+        _pubmed_ref(
+            "25559809",
+            "Revised guidelines for the clinical management of Lynch syndrome.",
+            "Supports MLH1 germline variant and promoter methylation interpretation for mismatch repair deficiency.",
+        ),
+    ),
+    "MSH2": _activity_score_meta(
+        "Research-use mismatch repair marker",
+        "MSH2 activity categories reflect pathogenic variant status relevant to Lynch syndrome and mismatch recognition at replication errors past DNA adducts.",
+        _ncbi_gene_ref("MSH2"),
+        _pubmed_ref(
+            "25559809",
+            "Revised guidelines for the clinical management of Lynch syndrome.",
+            "Supports MSH2 germline variant interpretation for mismatch repair deficiency.",
+        ),
+    ),
     # Wave 2 class-specific activity score metadata
     "ALDH2": _activity_score_meta(
         "Guideline-backed pharmacogene",
@@ -1005,7 +1055,7 @@ def build_tier1_panel() -> KnowledgeGraph:
 
 
 def build_tier2_panel() -> KnowledgeGraph:
-    """Return a KnowledgeGraph containing all 23 Tier 2 genes as Enzyme nodes."""
+    """Return a KnowledgeGraph containing all 25 Tier 2 genes as Enzyme nodes."""
     nodes = [
         Node(id=g["id"], label=g["label"], type=NodeType.ENZYME, tier=2, **{
             k: v for k, v in g.items() if k not in ("id", "label")
@@ -1027,7 +1077,7 @@ def build_wave2_panel() -> KnowledgeGraph:
 
 
 def build_full_panel(*, include_wave2: bool = False) -> KnowledgeGraph:
-    """Return a KnowledgeGraph with all Tier 1 + Tier 2 genes (36 total).
+    """Return a KnowledgeGraph with all Tier 1 + Tier 2 genes (38 total).
 
     Args:
         include_wave2: If ``True``, also include the 9 Wave 2 class-specific

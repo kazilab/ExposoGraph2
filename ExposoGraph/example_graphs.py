@@ -834,6 +834,8 @@ _EDGE_SPECS: tuple[Spec, ...] = (
         "BaP",
         "NER helicase repair",
     ),
+    _relation_spec("MLH1", "BPDE_dG", "REPAIRS", None, "MMR"),
+    _relation_spec("MSH2", "BPDE_dG", "REPAIRS", None, "MMR"),
     _relation_spec(
         "CYP1A1",
         "DMBA_epoxide",
@@ -926,6 +928,8 @@ _EDGE_SPECS: tuple[Spec, ...] = (
         "Damage recognition",
     ),
     _relation_spec("ERCC2", "PhIP_dG", "REPAIRS", "PhIP", "NER excision"),
+    _relation_spec("MLH1", "PhIP_dG", "REPAIRS", None, "MMR"),
+    _relation_spec("MSH2", "PhIP_dG", "REPAIRS", None, "MMR"),
     _relation_spec(
         "CYP1A2",
         "NOH_MeIQx",
@@ -976,6 +980,8 @@ _EDGE_SPECS: tuple[Spec, ...] = (
         "Damage recognition",
     ),
     _relation_spec("ERCC2", "ABP_dG", "REPAIRS", "4ABP", "NER excision"),
+    _relation_spec("MLH1", "ABP_dG", "REPAIRS", None, "MMR"),
+    _relation_spec("MSH2", "ABP_dG", "REPAIRS", None, "MMR"),
     _relation_spec(
         "CYP1A2",
         "NOH_Benzidine",
@@ -1173,6 +1179,8 @@ _EDGE_SPECS: tuple[Spec, ...] = (
         "Benzene",
         "BER scaffold response",
     ),
+    _relation_spec("MLH1", "Oxo_dG", "REPAIRS", None, "MMR"),
+    _relation_spec("MSH2", "Oxo_dG", "REPAIRS", None, "MMR"),
     _relation_spec(
         "CYP2E1",
         "Chloroethylene_oxide",
@@ -1870,6 +1878,65 @@ def _overlay_legacy_showcase_metadata(
     )
 
 
+_LEGACY_MMR_NODE_IDS = frozenset({"MLH1", "MSH2"})
+_LEGACY_MMR_TARGET_IDS = frozenset({"BPDE_dG", "PhIP_dG", "ABP_dG", "Oxo_dG"})
+
+
+def _restore_legacy_mismatch_repair_context(
+    graph: KnowledgeGraph,
+    legacy_graph: KnowledgeGraph,
+) -> KnowledgeGraph:
+    """Restore v1 mismatch-repair nodes and edges omitted from the bundle."""
+    current_node_ids = {node.id for node in graph.nodes}
+    current_edge_ids = {_edge_identity(edge) for edge in graph.edges}
+    legacy_node_by_id = {node.id: node for node in legacy_graph.nodes}
+
+    overlay_nodes = [
+        legacy_node_by_id[node_id]
+        for node_id in sorted(_LEGACY_MMR_NODE_IDS)
+        if node_id not in current_node_ids and node_id in legacy_node_by_id
+    ]
+    current_node_ids.update(node.id for node in overlay_nodes)
+
+    overlay_edges: list[Edge] = []
+    for edge in legacy_graph.edges:
+        if edge.type != EdgeType.REPAIRS:
+            continue
+        if edge.source not in _LEGACY_MMR_NODE_IDS:
+            continue
+        if edge.target not in _LEGACY_MMR_TARGET_IDS:
+            continue
+        if edge.source not in current_node_ids or edge.target not in current_node_ids:
+            continue
+        identity = _edge_identity(edge)
+        if identity in current_edge_ids:
+            continue
+        overlay_edges.append(edge)
+        current_edge_ids.add(identity)
+
+    if not overlay_nodes and not overlay_edges:
+        return graph
+
+    if overlay_edges:
+        graph_node_by_id = {node.id: node for node in [*graph.nodes, *overlay_nodes]}
+        overlay_node_ids = {node.id for node in overlay_nodes}
+        referenced_ids = {
+            node_id
+            for edge in overlay_edges
+            for node_id in (edge.source, edge.target, edge.carcinogen)
+            if node_id is not None
+        }
+        for node_id in sorted(referenced_ids):
+            if node_id in overlay_node_ids:
+                continue
+            node = graph_node_by_id.get(node_id)
+            if node is not None:
+                overlay_nodes.append(node)
+                overlay_node_ids.add(node_id)
+
+    return _merge_graphs(graph, KnowledgeGraph(nodes=overlay_nodes, edges=overlay_edges))
+
+
 def _build_base_full_legends_graph() -> KnowledgeGraph:
     legacy_graph = _build_legacy_full_legends_graph()
     if not _FULL_LEGENDS_REFERENCE_GRAPH.exists():
@@ -1877,7 +1944,8 @@ def _build_base_full_legends_graph() -> KnowledgeGraph:
 
     reference_graph = parse_graph_data_js(_FULL_LEGENDS_REFERENCE_GRAPH)
     normalized_graph = _normalize_reference_graph_ids(reference_graph)
-    return _overlay_legacy_showcase_metadata(normalized_graph, legacy_graph)
+    graph = _overlay_legacy_showcase_metadata(normalized_graph, legacy_graph)
+    return _restore_legacy_mismatch_repair_context(graph, legacy_graph)
 
 
 def _merge_graphs(*graphs: KnowledgeGraph) -> KnowledgeGraph:
@@ -1957,9 +2025,9 @@ def build_full_legends_graph(
 ) -> KnowledgeGraph:
     """Return a curated graph.
 
-    By default this returns 107-node / 124-edge.
-    Set ``include_heavy_metals=True`` to upgrade the showcase with the bundled
-    module-01 heavy-metal reference layer (133 nodes / 166 edges).
+    By default this returns the current bundled full-legends reference graph
+    (214 nodes / 321 edges). ``include_heavy_metals=True`` is retained for
+    compatibility and currently resolves to the same bundled footprint.
     """
     graph = _build_base_full_legends_graph()
     graph = _merge_optional_heavy_metal_reference(

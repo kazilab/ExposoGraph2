@@ -15,12 +15,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 import warnings
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, TypeAlias, cast
+from typing import Any, Callable, Mapping, TypeAlias, cast
 
 # ── Enums ──────────────────────────────────────────────────────────────────
 
@@ -70,6 +71,7 @@ FluxCalculator: TypeAlias = Callable[
     [GenotypeMap, str, float, FluxTissueWeightSource],
     FluxResultDict,
 ]
+LifestyleMap: TypeAlias = Mapping[str, bool | int | float]
 
 
 # ── Dataclasses ────────────────────────────────────────────────────────────
@@ -90,6 +92,8 @@ class EnzymeFlux:
     genotype_modifier: float
     tissue_weight: float
     confidence: str
+    induction_modifier: float = 1.0
+    qivive_scale: float = 1.0
     fraction: float = 0.0
     kinetics: str = "michaelis_menten"
     note: str = ""
@@ -113,12 +117,27 @@ class PathwayFluxResult:
     total_activation: float
     total_detox: float
     net_ratio: float
+    susceptibility_score_log2: float
     risk_classification: RiskClassification
     tissue_weight_source: FluxTissueWeightSource
     model_kind: str = "measured_kinetics"
     parameter_source: str = "kinetic_parameters.json"
     unit_note: str = ""
     warnings: list[str] = field(default_factory=list)
+    induction_factors_used: dict[str, float] = field(default_factory=dict)
+    qivive_applied: bool = False
+    qivive_context: dict[str, float] = field(default_factory=dict)
+    steady_state_concentrations_uM: dict[str, float] = field(default_factory=dict)
+    steady_state_model: dict[str, Any] = field(default_factory=dict)
+    steady_state_concentration_proxy_uM: dict[str, float] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class FluxSteadyStateResult:
+    """Steady-state concentrations from the flux-coupled PBPK compartment model."""
+
+    concentrations_uM: dict[str, float]
+    model: dict[str, Any]
 
 
 @dataclass
@@ -262,6 +281,9 @@ def hill_equation(S: float, Vmax: float, K50: float, n: float) -> float:
 # ── Modifier functions ─────────────────────────────────────────────────────
 
 
+_GST_NULL_RESIDUAL_ACTIVITY = 0.05
+
+
 def genotype_modifier(diplotype: str, gene: str) -> float:
     """Return Vmax scaling factor (0.0-2.0) based on metaboliser phenotype.
 
@@ -284,6 +306,36 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
     diplotype_lower = diplotype.lower().strip()
     gene_upper = gene.upper().strip()
 
+    # Gene-specific manuscript/reference aliases that are more precise than
+    # the generic PM/IM/NM/RM/UM scale.
+    if gene_upper == "CYP1A2":
+        if diplotype_lower in ("*1f/*1f", "1f/1f", "cyp1a2*1f/*1f", "um_1f_1f"):
+            return 1.5
+        if diplotype_lower in ("*1a/*1a", "1a/1a"):
+            return 1.0
+        if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
+            return 0.5
+        if diplotype_lower in ("pm", "poor", "poor metabolizer", "poor_metabolizer"):
+            return 0.3
+
+    if gene_upper == "NAT2":
+        if diplotype_lower in ("slow", "slow acetylator", "slow_acetylator", "sa"):
+            return 0.2
+        if diplotype_lower in ("intermediate", "intermediate acetylator", "intermediate_acetylator"):
+            return 0.5
+        if diplotype_lower in ("rapid", "rapid acetylator", "rapid_acetylator", "ra"):
+            return 1.0
+
+    if gene_upper == "CYP2D6":
+        if diplotype_lower in ("*1/*1", "*1/*2", "*2/*2"):
+            return 1.0
+        if diplotype_lower in ("*1/*4", "*1/*5", "*2/*4", "*10/*10", "im"):
+            return 0.5
+        if diplotype_lower in ("*4/*4", "*5/*5", "*4/*5", "pm", "poor"):
+            return 0.0
+        if "x2" in diplotype_lower or diplotype_lower in ("um", "ultrarapid"):
+            return 2.0
+
     # Special cases
     if gene_upper == "ALDH2" and diplotype in ("*1/*2", "heterozygote"):
         return float(special["ALDH2_star1_star2"]["activity_fraction"])
@@ -299,8 +351,9 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
         "deletion",
         "deleted",
         "0",
+        "0/0",
     ):
-        return 0.0
+        return _GST_NULL_RESIDUAL_ACTIVITY
 
     if gene_upper == "GSTT1" and diplotype_lower in (
         "null",
@@ -308,8 +361,9 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
         "deletion",
         "deleted",
         "0",
+        "0/0",
     ):
-        return 0.0
+        return _GST_NULL_RESIDUAL_ACTIVITY
 
     if gene_upper in {"GSTM1", "GSTT1"} and diplotype_lower in (
         "present",
@@ -383,6 +437,34 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
     special = params["genotype_modifiers"]["special_cases"]
     std = params["genotype_modifiers"]["standard_scale"]
 
+    if gene_upper == "CYP1A2":
+        if diplotype_lower in ("*1f/*1f", "1f/1f", "cyp1a2*1f/*1f", "um_1f_1f"):
+            return 1.5
+        if diplotype_lower in ("*1a/*1a", "1a/1a"):
+            return 1.0
+        if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
+            return 0.5
+        if diplotype_lower in ("pm", "poor", "poor metabolizer", "poor_metabolizer"):
+            return 0.3
+
+    if gene_upper == "NAT2":
+        if diplotype_lower in ("slow", "slow acetylator", "slow_acetylator", "sa"):
+            return 0.2
+        if diplotype_lower in ("intermediate", "intermediate acetylator", "intermediate_acetylator"):
+            return 0.5
+        if diplotype_lower in ("rapid", "rapid acetylator", "rapid_acetylator", "ra"):
+            return 1.0
+
+    if gene_upper == "CYP2D6":
+        if diplotype_lower in ("*1/*1", "*1/*2", "*2/*2"):
+            return 1.0
+        if diplotype_lower in ("*1/*4", "*1/*5", "*2/*4", "*10/*10", "im"):
+            return 0.5
+        if diplotype_lower in ("*4/*4", "*5/*5", "*4/*5", "pm", "poor"):
+            return 0.0
+        if "x2" in diplotype_lower or diplotype_lower in ("um", "ultrarapid"):
+            return 2.0
+
     if gene_upper == "ALDH2" and diplotype in ("*1/*2", "heterozygote"):
         return float(special["ALDH2_star1_star2"]["activity_fraction"])
     if gene_upper == "ALDH2" and diplotype in ("*2/*2", "PM_ALDH2"):
@@ -397,7 +479,7 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
         "0",
         "0/0",
     ):
-        return 0.0
+        return _GST_NULL_RESIDUAL_ACTIVITY
     if gene_upper in {"GSTM1", "GSTT1"} and diplotype_lower in (
         "present",
         "active",
@@ -642,6 +724,511 @@ def _get_default_concentration(carcinogen_class: str) -> float:
                 return float(value)
 
     return 0.1
+
+
+_KNOWN_FLUX_GENE_PREFIXES = tuple(
+    sorted(
+        {
+            "ABCB1", "ABCC2", "ABCG2", "ADH1B", "ADH5", "AHRR", "ALDH1A1", "ALDH2",
+            "AS3MT", "COMT", "CYP1A1", "CYP1A2", "CYP1B1", "CYP2A6", "CYP2A13",
+            "CYP2D6", "CYP2E1", "CYP3A4", "EPHX1", "ERCC2", "GSTA1", "GSTM1",
+            "GSTP1", "GSTT1", "MGMT", "NAT1", "NAT2", "NQO1", "OGG1", "POLH",
+            "SULT1E1", "UGT2B7", "XPC", "XRCC1",
+        },
+        key=len,
+        reverse=True,
+    )
+)
+
+
+def _term_gene_name(term_name: str) -> str | None:
+    """Resolve a result term name such as ``CYP3A4_AFQ1`` to a gene symbol."""
+    for gene in _KNOWN_FLUX_GENE_PREFIXES:
+        if term_name == gene or term_name.startswith(f"{gene}_"):
+            return gene
+    return None
+
+
+def _resolve_induction_factors(
+    lifestyle: LifestyleMap | None = None,
+    induction_factors: Mapping[str, float] | None = None,
+) -> dict[str, float]:
+    """Resolve optional co-exposure induction inputs into per-enzyme Vmax folds."""
+    resolved: dict[str, float] = {}
+
+    if lifestyle:
+        try:
+            from .interaction_engine import enzyme_induction_modifier
+
+            resolved.update(enzyme_induction_modifier(lifestyle).enzyme_folds)
+        except Exception as exc:
+            warnings.warn(
+                f"Could not resolve lifestyle induction factors; using explicit/default factors only: {exc}",
+                stacklevel=2,
+            )
+
+    if induction_factors:
+        for gene, factor in induction_factors.items():
+            try:
+                numeric = float(factor)
+            except (TypeError, ValueError):
+                continue
+            if numeric > 0:
+                resolved[str(gene).upper()] = numeric
+
+    return {
+        gene: round(factor, 6)
+        for gene, factor in sorted(resolved.items())
+        if math.isfinite(factor) and factor > 0 and not math.isclose(factor, 1.0)
+    }
+
+
+def _rescale_flux_section_for_induction(
+    enzymes: dict[str, Any],
+    induction_factors: Mapping[str, float],
+) -> tuple[float, float]:
+    """Apply induction folds to enzyme-term fluxes and return old/new sums."""
+    old_sum = 0.0
+    new_sum = 0.0
+    for term_name, edata in enzymes.items():
+        if not isinstance(edata, dict):
+            continue
+        try:
+            old_flux = float(edata.get("flux", 0.0))
+        except (TypeError, ValueError):
+            old_flux = 0.0
+        gene = _term_gene_name(term_name)
+        factor = float(induction_factors.get(gene or "", 1.0))
+        new_flux = old_flux * factor
+        edata["induction_modifier"] = round(factor, 6)
+        if not math.isclose(factor, 1.0):
+            edata["flux"] = round(new_flux, 6)
+        old_sum += old_flux
+        new_sum += new_flux
+    return old_sum, new_sum
+
+
+def _apply_induction_modifiers(
+    result: FluxResultDict,
+    induction_factors: Mapping[str, float],
+) -> FluxResultDict:
+    """Apply resolved Vmax induction folds to an internal flux-result payload."""
+    if not induction_factors:
+        return result
+
+    for section_name, total_name in (
+        ("activation_enzymes", "total_activation"),
+        ("detox_enzymes", "total_detox"),
+    ):
+        enzymes = result.get(section_name, {})
+        if not isinstance(enzymes, dict):
+            continue
+        old_sum, new_sum = _rescale_flux_section_for_induction(enzymes, induction_factors)
+        if old_sum > 0 and total_name in result:
+            result[total_name] = round(float(result[total_name]) * new_sum / old_sum, 6)
+
+    return result
+
+
+_FALLBACK_QIVIVE_TISSUES: dict[str, dict[str, float]] = {
+    "liver": {"mppgl_mg_per_g": 40.0, "organ_weight_g": 1500.0},
+    "lung": {"mppgl_mg_per_g": 20.0, "organ_weight_g": 1000.0},
+    "kidney": {"mppgl_mg_per_g": 12.0, "organ_weight_g": 300.0},
+    "intestine": {"mppgl_mg_per_g": 35.0, "organ_weight_g": 900.0},
+}
+
+_STEADY_STATE_DEFAULTS: dict[str, float] = {
+    "body_weight_kg": 70.0,
+    "volume_l_per_kg": 0.7,
+    "absorption_fraction": 1.0,
+    "exposure_frequency_per_day": 1.0,
+    "cardiac_output_l_per_day": 7200.0,
+    "background_clearance_rate_per_day": 0.05,
+    "reactive_intermediate_loss_rate_per_day": 1.0,
+    "detoxified_metabolite_loss_rate_per_day": 1.0,
+    "flux_rate_scale_per_day": 1.0,
+    "rate_reference_concentration_uM": 1.0,
+}
+
+_FALLBACK_STEADY_STATE_TISSUES: dict[str, dict[str, float]] = {
+    "liver": {
+        "organ_weight_g": 1500.0,
+        "tissue_partition_coefficient": 1.0,
+        "tissue_blood_flow_fraction": 0.25,
+    },
+    "lung": {
+        "organ_weight_g": 1000.0,
+        "tissue_partition_coefficient": 0.8,
+        "tissue_blood_flow_fraction": 1.0,
+    },
+    "kidney": {
+        "organ_weight_g": 300.0,
+        "tissue_partition_coefficient": 1.1,
+        "tissue_blood_flow_fraction": 0.2,
+    },
+    "intestine": {
+        "organ_weight_g": 900.0,
+        "tissue_partition_coefficient": 0.9,
+        "tissue_blood_flow_fraction": 0.12,
+    },
+    "bladder": {
+        "organ_weight_g": 150.0,
+        "tissue_partition_coefficient": 0.7,
+        "tissue_blood_flow_fraction": 0.02,
+    },
+    "breast": {
+        "organ_weight_g": 500.0,
+        "tissue_partition_coefficient": 1.4,
+        "tissue_blood_flow_fraction": 0.03,
+    },
+    "colon": {
+        "organ_weight_g": 600.0,
+        "tissue_partition_coefficient": 0.9,
+        "tissue_blood_flow_fraction": 0.08,
+    },
+    "prostate": {
+        "organ_weight_g": 30.0,
+        "tissue_partition_coefficient": 0.8,
+        "tissue_blood_flow_fraction": 0.01,
+    },
+    "esophagus": {
+        "organ_weight_g": 40.0,
+        "tissue_partition_coefficient": 0.8,
+        "tissue_blood_flow_fraction": 0.01,
+    },
+    "skin": {
+        "organ_weight_g": 3300.0,
+        "tissue_partition_coefficient": 1.2,
+        "tissue_blood_flow_fraction": 0.05,
+    },
+}
+
+
+def qivive_intrinsic_clearance(
+    vmax: float,
+    km: float,
+    *,
+    microsomal_protein_mg_per_g_tissue: float,
+    organ_weight_g: float,
+) -> float:
+    """Upscale in vitro intrinsic clearance using MPPGL and organ weight.
+
+    The returned value preserves the caller's Vmax/Km unit family, multiplied by
+    mg microsomal protein per gram tissue and organ mass.
+    """
+    if km <= 0:
+        raise ValueError(f"Km must be positive, got {km}")
+    if microsomal_protein_mg_per_g_tissue <= 0:
+        raise ValueError("microsomal_protein_mg_per_g_tissue must be positive")
+    if organ_weight_g <= 0:
+        raise ValueError("organ_weight_g must be positive")
+    return (vmax / km) * microsomal_protein_mg_per_g_tissue * organ_weight_g
+
+
+def _qivive_context_for_tissue(
+    tissue: str,
+    overrides: Mapping[str, float] | None = None,
+) -> dict[str, float]:
+    """Return MPPGL/organ-weight context for optional QIVIVE flux scaling."""
+    params = _load_kinetic_params()
+    metadata = cast(JsonDict, params.get("metadata", {}))
+    qivive_defaults = cast(JsonDict, metadata.get("qivive_defaults", {}))
+    tissue_defaults = cast(JsonDict, qivive_defaults.get("tissues", {}))
+    tissue_key = _normalize_tissue(tissue)
+    source = cast(dict[str, float], tissue_defaults.get(tissue_key, _FALLBACK_QIVIVE_TISSUES.get(tissue_key, _FALLBACK_QIVIVE_TISSUES["liver"])))
+    context = {
+        "mppgl_mg_per_g": float(source["mppgl_mg_per_g"]),
+        "organ_weight_g": float(source["organ_weight_g"]),
+    }
+    if overrides:
+        if "mppgl_mg_per_g" in overrides:
+            context["mppgl_mg_per_g"] = float(overrides["mppgl_mg_per_g"])
+        if "organ_weight_g" in overrides:
+            context["organ_weight_g"] = float(overrides["organ_weight_g"])
+    context["scale"] = round(context["mppgl_mg_per_g"] * context["organ_weight_g"], 6)
+    return context
+
+
+def _apply_qivive_scale(result: FluxResultDict, qivive_context: Mapping[str, float]) -> FluxResultDict:
+    """Apply a common tissue-level QIVIVE scale to reported flux magnitudes."""
+    scale = float(qivive_context.get("scale", 1.0))
+    if math.isclose(scale, 1.0):
+        return result
+
+    for section_name in ("activation_enzymes", "detox_enzymes"):
+        enzymes = result.get(section_name, {})
+        if not isinstance(enzymes, dict):
+            continue
+        for edata in enzymes.values():
+            if not isinstance(edata, dict):
+                continue
+            edata["qivive_scale"] = round(scale, 6)
+            if "flux" in edata:
+                edata["flux"] = round(float(edata["flux"]) * scale, 6)
+
+    for key in ("total_activation", "total_detox"):
+        if key in result:
+            result[key] = round(float(result[key]) * scale, 6)
+
+    note = str(result.get("unit_note", "")).strip()
+    qivive_note = (
+        "QIVIVE common tissue scale applied using MPPGL "
+        f"{qivive_context['mppgl_mg_per_g']} mg/g and organ weight "
+        f"{qivive_context['organ_weight_g']} g."
+    )
+    result["unit_note"] = f"{note}; {qivive_note}" if note else qivive_note
+    return result
+
+
+def _susceptibility_score_log2(net_ratio: float) -> float:
+    """Return log2 activation/detoxification susceptibility score."""
+    if net_ratio <= 0 or not math.isfinite(net_ratio):
+        return 0.0
+    return round(math.log2(net_ratio), 4)
+
+
+def _positive_context_float(context: Mapping[str, Any], key: str, fallback: float) -> float:
+    """Read a positive numeric context value with a conservative fallback."""
+    try:
+        value = float(context.get(key, fallback))
+    except (TypeError, ValueError):
+        return fallback
+    if value <= 0 or not math.isfinite(value):
+        return fallback
+    return value
+
+
+def _bounded_fraction_context(context: Mapping[str, Any], key: str, fallback: float) -> float:
+    """Read a fraction constrained to the open interval used by PBPK rates."""
+    try:
+        value = float(context.get(key, fallback))
+    except (TypeError, ValueError):
+        return fallback
+    if not math.isfinite(value):
+        return fallback
+    return min(max(value, 1e-6), 1.0)
+
+
+def _round_steady_state_value(value: float) -> float:
+    """Round steady-state outputs without hiding very small non-zero values."""
+    if not math.isfinite(value) or value < 0:
+        return 0.0
+    if value == 0:
+        return 0.0
+    return round(value, 8 if abs(value) < 1e-4 else 6)
+
+
+def _steady_state_context_for_tissue(
+    tissue: str,
+    overrides: Mapping[str, float] | None = None,
+) -> dict[str, float]:
+    """Return validated defaults for the flux-coupled steady-state solver."""
+    params = _load_kinetic_params()
+    metadata = cast(JsonDict, params.get("metadata", {}))
+    configured = cast(JsonDict, metadata.get("steady_state_defaults", {}))
+    tissue_key = _normalize_tissue(tissue)
+
+    qivive_context = _qivive_context_for_tissue(tissue)
+    fallback_tissue = _FALLBACK_STEADY_STATE_TISSUES.get(
+        tissue_key,
+        _FALLBACK_STEADY_STATE_TISSUES["liver"],
+    )
+    configured_tissues = cast(JsonDict, configured.get("tissues", {}))
+    configured_tissue = cast(JsonDict, configured_tissues.get(tissue_key, {}))
+    tissue_source: dict[str, Any] = {
+        **fallback_tissue,
+        **configured_tissue,
+        "organ_weight_g": configured_tissue.get(
+            "organ_weight_g",
+            qivive_context.get("organ_weight_g", fallback_tissue["organ_weight_g"]),
+        ),
+    }
+
+    context: dict[str, float] = {}
+    for key, fallback in _STEADY_STATE_DEFAULTS.items():
+        context[key] = _positive_context_float(configured, key, fallback)
+    context["absorption_fraction"] = _bounded_fraction_context(
+        configured,
+        "absorption_fraction",
+        _STEADY_STATE_DEFAULTS["absorption_fraction"],
+    )
+    context["organ_weight_g"] = _positive_context_float(
+        tissue_source,
+        "organ_weight_g",
+        fallback_tissue["organ_weight_g"],
+    )
+    context["tissue_partition_coefficient"] = _positive_context_float(
+        tissue_source,
+        "tissue_partition_coefficient",
+        fallback_tissue["tissue_partition_coefficient"],
+    )
+    context["tissue_blood_flow_fraction"] = _bounded_fraction_context(
+        tissue_source,
+        "tissue_blood_flow_fraction",
+        fallback_tissue["tissue_blood_flow_fraction"],
+    )
+
+    if overrides:
+        for key, value in overrides.items():
+            if key in {"absorption_fraction", "tissue_blood_flow_fraction"}:
+                context[key] = _bounded_fraction_context(overrides, key, context[key])
+            else:
+                context[key] = _positive_context_float(overrides, key, context.get(key, 1.0))
+
+    context["central_volume_l"] = round(
+        context["body_weight_kg"] * context["volume_l_per_kg"],
+        6,
+    )
+    context["tissue_volume_l"] = round(context["organ_weight_g"] / 1000.0, 6)
+    context["tissue_blood_flow_l_per_day"] = round(
+        context["cardiac_output_l_per_day"] * context["tissue_blood_flow_fraction"],
+        6,
+    )
+    return context
+
+
+def solve_flux_steady_state(
+    substrate_conc_uM: float,
+    activation_flux: float,
+    detox_flux: float,
+    tissue: str,
+    *,
+    context: Mapping[str, float] | None = None,
+) -> FluxSteadyStateResult:
+    """Solve a one-tissue PBPK steady-state model coupled to pathway flux.
+
+    The solver treats activation and detoxification fluxes as concentration-
+    normalized first-order metabolic rate constants, then solves central and
+    tissue steady state with perfusion-limited tissue extraction. This is more
+    explicit than the former proportional proxy: every reported concentration
+    is derived from volume, organ mass, blood flow, partitioning, and clearance
+    rates carried in the returned model payload.
+    """
+    if substrate_conc_uM < 0:
+        raise ValueError("substrate_conc_uM cannot be negative")
+    if activation_flux < 0:
+        raise ValueError("activation_flux cannot be negative")
+    if detox_flux < 0:
+        raise ValueError("detox_flux cannot be negative")
+
+    solver_context = _steady_state_context_for_tissue(tissue, context)
+    central_volume_l = solver_context["central_volume_l"]
+    tissue_volume_l = solver_context["tissue_volume_l"]
+    tissue_flow_l_per_day = solver_context["tissue_blood_flow_l_per_day"]
+    partition = solver_context["tissue_partition_coefficient"]
+    background_clearance_rate = solver_context["background_clearance_rate_per_day"]
+    flux_rate_scale = solver_context["flux_rate_scale_per_day"]
+    reference_conc = max(
+        substrate_conc_uM,
+        solver_context["rate_reference_concentration_uM"],
+        1e-12,
+    )
+
+    activation_rate = max(activation_flux, 0.0) / reference_conc * flux_rate_scale
+    detox_rate = max(detox_flux, 0.0) / reference_conc * flux_rate_scale
+    metabolic_rate = activation_rate + detox_rate
+    intrinsic_clearance_l_per_day = metabolic_rate * tissue_volume_l
+    extraction_ratio = (
+        intrinsic_clearance_l_per_day / (tissue_flow_l_per_day + intrinsic_clearance_l_per_day)
+        if tissue_flow_l_per_day + intrinsic_clearance_l_per_day > 0
+        else 0.0
+    )
+    tissue_clearance_l_per_day = tissue_flow_l_per_day * extraction_ratio
+    background_clearance_l_per_day = background_clearance_rate * central_volume_l
+    total_clearance_l_per_day = background_clearance_l_per_day + tissue_clearance_l_per_day
+
+    input_rate_umol_per_day = (
+        substrate_conc_uM
+        * central_volume_l
+        * solver_context["absorption_fraction"]
+        * solver_context["exposure_frequency_per_day"]
+    )
+    central_conc = (
+        input_rate_umol_per_day / total_clearance_l_per_day
+        if total_clearance_l_per_day > 0
+        else 0.0
+    )
+    tissue_conc = (
+        partition * central_conc * tissue_flow_l_per_day
+        / (tissue_flow_l_per_day + intrinsic_clearance_l_per_day)
+        if tissue_flow_l_per_day + intrinsic_clearance_l_per_day > 0
+        else partition * central_conc
+    )
+    reactive_loss_rate = solver_context["reactive_intermediate_loss_rate_per_day"] + detox_rate
+    detoxified_loss_rate = solver_context["detoxified_metabolite_loss_rate_per_day"]
+    reactive_conc = (
+        tissue_conc * activation_rate / reactive_loss_rate
+        if reactive_loss_rate > 0
+        else 0.0
+    )
+    detoxified_conc = (
+        tissue_conc * detox_rate / detoxified_loss_rate
+        if detoxified_loss_rate > 0
+        else 0.0
+    )
+
+    central_rate = total_clearance_l_per_day / central_volume_l if central_volume_l > 0 else 0.0
+    tissue_exchange_rate = (
+        tissue_flow_l_per_day / (tissue_volume_l * partition) + metabolic_rate
+        if tissue_volume_l > 0 and partition > 0
+        else metabolic_rate
+    )
+    steady_rates = [
+        rate
+        for rate in (
+            central_rate,
+            tissue_exchange_rate,
+            reactive_loss_rate,
+            detoxified_loss_rate,
+        )
+        if rate > 0 and math.isfinite(rate)
+    ]
+    time_to_steady_state_days = 4.0 / min(steady_rates) if steady_rates else 0.0
+
+    concentrations = {
+        "central_substrate_uM": _round_steady_state_value(central_conc),
+        "tissue_substrate_uM": _round_steady_state_value(tissue_conc),
+        "reactive_intermediate_uM": _round_steady_state_value(reactive_conc),
+        "detoxified_metabolite_uM": _round_steady_state_value(detoxified_conc),
+    }
+    model = {
+        "model": "one_tissue_perfusion_limited_pbpk_steady_state",
+        "input_rate_umol_per_day": _round_steady_state_value(input_rate_umol_per_day),
+        "activation_rate_per_day": _round_steady_state_value(activation_rate),
+        "detox_rate_per_day": _round_steady_state_value(detox_rate),
+        "metabolic_rate_per_day": _round_steady_state_value(metabolic_rate),
+        "background_clearance_l_per_day": _round_steady_state_value(
+            background_clearance_l_per_day
+        ),
+        "tissue_clearance_l_per_day": _round_steady_state_value(tissue_clearance_l_per_day),
+        "total_clearance_l_per_day": _round_steady_state_value(total_clearance_l_per_day),
+        "extraction_ratio": _round_steady_state_value(extraction_ratio),
+        "time_to_steady_state_days": _round_steady_state_value(time_to_steady_state_days),
+        **{
+            key: _round_steady_state_value(value)
+            for key, value in solver_context.items()
+        },
+    }
+    return FluxSteadyStateResult(concentrations_uM=concentrations, model=model)
+
+
+def _steady_state_concentration_proxy(
+    substrate_conc_uM: float,
+    act: float,
+    det: float,
+    tissue: str = "Liver",
+    context: Mapping[str, float] | None = None,
+) -> dict[str, float]:
+    """Deprecated compatibility alias for historical proxy-shaped payloads."""
+    steady_state = solve_flux_steady_state(substrate_conc_uM, act, det, tissue, context=context)
+    return {
+        "reactive_intermediate_proxy_uM": steady_state.concentrations_uM[
+            "reactive_intermediate_uM"
+        ],
+        "detoxified_metabolite_proxy_uM": steady_state.concentrations_uM[
+            "detoxified_metabolite_uM"
+        ],
+    }
 
 
 def _relative_capacity_scale(label: str | None) -> float:
@@ -2223,6 +2810,8 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
         genotype_modifier=float(d.get("genotype_modifier", 1.0)),
         tissue_weight=float(d.get("tissue_weight", 1.0)),
         confidence=str(d.get("confidence", "unknown")),
+        induction_modifier=float(d.get("induction_modifier", 1.0)),
+        qivive_scale=float(d.get("qivive_scale", 1.0)),
         fraction=float(d.get("fraction", 0.0)),
         kinetics=str(d.get("kinetics", "michaelis_menten")),
         note=str(d.get("note", "")),
@@ -2261,6 +2850,12 @@ def compute_pathway_flux(
     tissue: str,
     substrate_conc_uM: float | None = None,
     tissue_weight_source: FluxTissueWeightSource | str = FluxTissueWeightSource.CURATED,
+    *,
+    lifestyle: LifestyleMap | None = None,
+    induction_factors: Mapping[str, float] | None = None,
+    qivive: bool = False,
+    qivive_context: Mapping[str, float] | None = None,
+    steady_state_context: Mapping[str, float] | None = None,
 ) -> PathwayFluxResult:
     """Compute activation/detoxification flux for a carcinogen class.
 
@@ -2272,6 +2867,18 @@ def compute_pathway_flux(
             environmental exposure default.
         tissue_weight_source: ``"curated"`` (source-parity default) or
             ``"gtex"`` for quantitative GTEx weighting.
+        lifestyle: Optional co-exposure state. When provided, lifestyle-driven
+            induction folds from :mod:`ExposoGraph.interaction_engine` are
+            applied as Vmax multipliers.
+        induction_factors: Optional explicit per-gene Vmax folds. These
+            override lifestyle-derived values for matching genes.
+        qivive: If ``True``, apply a common tissue-level QIVIVE scale based on
+            MPPGL and organ weight to reported flux magnitudes.
+        qivive_context: Optional ``{"mppgl_mg_per_g": x, "organ_weight_g": y}``
+            override for QIVIVE scaling.
+        steady_state_context: Optional PBPK steady-state context override
+            (body weight, central volume, tissue partition, blood-flow
+            fraction, background clearance, and related first-order rates).
 
     Returns:
         :class:`PathwayFluxResult` with activation, detoxification,
@@ -2293,6 +2900,7 @@ def compute_pathway_flux(
             total_activation=0.0,
             total_detox=0.0,
             net_ratio=0.0,
+            susceptibility_score_log2=0.0,
             risk_classification=RiskClassification.INSUFFICIENT_DATA,
             tissue_weight_source=weight_source,
             model_kind="unavailable",
@@ -2303,11 +2911,18 @@ def compute_pathway_flux(
     if substrate_conc_uM is None:
         substrate_conc_uM = _get_default_concentration(cls_str)
 
+    resolved_induction = _resolve_induction_factors(lifestyle, induction_factors)
     result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
     result = _annotate_flux_result_metadata(cls_str, result)
+    result = _apply_induction_modifiers(result, resolved_induction)
 
-    act = result["total_activation"]
-    det = result["total_detox"]
+    qivive_used_context: dict[str, float] = {}
+    if qivive:
+        qivive_used_context = _qivive_context_for_tissue(tissue, qivive_context)
+        result = _apply_qivive_scale(result, qivive_used_context)
+
+    act = float(result["total_activation"])
+    det = float(result["total_detox"])
 
     if det > 0:
         net_ratio = act / det
@@ -2325,6 +2940,25 @@ def compute_pathway_flux(
             edata["fraction"] = round(edata["flux"] / det, 4)
 
     risk = classify_risk(net_ratio)
+    susceptibility_score = _susceptibility_score_log2(net_ratio)
+    steady_state_input = dict(steady_state_context or {})
+    if qivive_used_context and "organ_weight_g" not in steady_state_input:
+        steady_state_input["organ_weight_g"] = qivive_used_context["organ_weight_g"]
+    steady_state = solve_flux_steady_state(
+        substrate_conc_uM,
+        act,
+        det,
+        tissue,
+        context=steady_state_input or None,
+    )
+    steady_state_proxy = {
+        "reactive_intermediate_proxy_uM": steady_state.concentrations_uM[
+            "reactive_intermediate_uM"
+        ],
+        "detoxified_metabolite_proxy_uM": steady_state.concentrations_uM[
+            "detoxified_metabolite_uM"
+        ],
+    }
 
     # Convert to dataclasses
     act_enzymes = [
@@ -2349,6 +2983,10 @@ def compute_pathway_flux(
         for v in all_enzymes.values()
     ):
         warn_list.append("ESTIMATED_PARAMS")
+    if resolved_induction:
+        warn_list.append("INDUCTION_FACTORS_APPLIED")
+    if qivive:
+        warn_list.append("QIVIVE_SCALE_APPLIED")
 
     return PathwayFluxResult(
         carcinogen_class=cls_str,
@@ -2360,12 +2998,19 @@ def compute_pathway_flux(
         total_activation=round(act, 6),
         total_detox=round(det, 6),
         net_ratio=round(net_ratio, 4),
+        susceptibility_score_log2=susceptibility_score,
         risk_classification=risk,
         tissue_weight_source=weight_source,
         model_kind=result.get("model_kind", "measured_kinetics"),
         parameter_source=result.get("parameter_source", _KINETIC_PARAMS_FILE.name),
         unit_note=result.get("unit_note", ""),
         warnings=warn_list,
+        induction_factors_used=resolved_induction,
+        qivive_applied=qivive,
+        qivive_context=qivive_used_context,
+        steady_state_concentrations_uM=steady_state.concentrations_uM,
+        steady_state_model=steady_state.model,
+        steady_state_concentration_proxy_uM=steady_state_proxy,
     )
 
 
@@ -2374,6 +3019,12 @@ def compute_full_profile(
     tissue: str,
     exposure_profile: dict[str, float] | None = None,
     tissue_weight_source: FluxTissueWeightSource | str = FluxTissueWeightSource.CURATED,
+    *,
+    lifestyle: LifestyleMap | None = None,
+    induction_factors: Mapping[str, float] | None = None,
+    qivive: bool = False,
+    qivive_context: Mapping[str, float] | None = None,
+    steady_state_context: Mapping[str, float] | None = None,
 ) -> FullProfileResult:
     """Compute flux across all supported carcinogen classes.
 
@@ -2382,6 +3033,11 @@ def compute_full_profile(
         tissue: Tissue name.
         exposure_profile: Optional overrides ``{class: concentration_uM}``.
         tissue_weight_source: ``"curated"`` (default) or ``"gtex"``.
+        lifestyle: Optional co-exposure state used to resolve enzyme induction.
+        induction_factors: Optional explicit per-gene Vmax induction folds.
+        qivive: Apply optional MPPGL/organ-weight QIVIVE scaling.
+        qivive_context: Optional QIVIVE context override.
+        steady_state_context: Optional PBPK steady-state context override.
 
     Returns:
         :class:`FullProfileResult` with per-class results and summary.
@@ -2399,6 +3055,11 @@ def compute_full_profile(
             tissue,
             conc,
             tissue_weight_source=weight_source,
+            lifestyle=lifestyle,
+            induction_factors=induction_factors,
+            qivive=qivive,
+            qivive_context=qivive_context,
+            steady_state_context=steady_state_context,
         )
 
     elevated = [
@@ -2606,6 +3267,11 @@ Examples:
     parser.add_argument("--sensitivity", action="store_true", help="Run sensitivity analysis for one gene")
     parser.add_argument("--gene", type=str, default=None, help="Gene to vary for sensitivity analysis")
     parser.add_argument("--output-json", action="store_true", help="Output JSON")
+    parser.add_argument("--lifestyle", type=str, default="{}", help="JSON lifestyle/co-exposure flags for induction modeling")
+    parser.add_argument("--induction-factors", type=str, default="{}", help="JSON per-gene explicit Vmax induction factors")
+    parser.add_argument("--qivive", action="store_true", help="Apply MPPGL/organ-weight QIVIVE scaling to flux magnitudes")
+    parser.add_argument("--mppgl", type=float, default=None, help="QIVIVE override: microsomal protein mg/g tissue")
+    parser.add_argument("--organ-weight-g", type=float, default=None, help="QIVIVE override: organ weight in grams")
     parser.add_argument(
         "--tissue-weight-source",
         choices=[FluxTissueWeightSource.CURATED.value, FluxTissueWeightSource.GTEX.value],
@@ -2625,6 +3291,22 @@ Examples:
     except json.JSONDecodeError as exc:
         print(f"ERROR: Could not parse --genotypes JSON: {exc}", file=sys.stderr)
         return 1
+    try:
+        lifestyle = json.loads(args.lifestyle)
+    except json.JSONDecodeError as exc:
+        print(f"ERROR: Could not parse --lifestyle JSON: {exc}", file=sys.stderr)
+        return 1
+    try:
+        induction_factors = json.loads(args.induction_factors)
+    except json.JSONDecodeError as exc:
+        print(f"ERROR: Could not parse --induction-factors JSON: {exc}", file=sys.stderr)
+        return 1
+
+    qivive_context = {}
+    if args.mppgl is not None:
+        qivive_context["mppgl_mg_per_g"] = args.mppgl
+    if args.organ_weight_g is not None:
+        qivive_context["organ_weight_g"] = args.organ_weight_g
 
     if args.sensitivity:
         if not args.gene:
@@ -2642,6 +3324,10 @@ Examples:
             genotypes,
             args.tissue,
             tissue_weight_source=weight_source,
+            lifestyle=lifestyle,
+            induction_factors=induction_factors,
+            qivive=args.qivive,
+            qivive_context=qivive_context or None,
         )
     else:
         result_obj = compute_pathway_flux(
@@ -2650,6 +3336,10 @@ Examples:
             args.tissue,
             args.concentration,
             tissue_weight_source=weight_source,
+            lifestyle=lifestyle,
+            induction_factors=induction_factors,
+            qivive=args.qivive,
+            qivive_context=qivive_context or None,
         )
 
     print(json.dumps(asdict(result_obj), indent=2, default=str))

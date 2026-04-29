@@ -2,7 +2,7 @@
   "metadata": {
     "version": "1.0.0",
     "created": "2026-03-30",
-    "description": "Quantitative kinetic parameter database for ExposoGraph metabolic flux modeling. All parameters derived from published literature. Confidence flags: high (multiple concordant studies), moderate (single study or derived), low (estimated from related substrates), estimated (extrapolated or inferred).",
+    "description": "Quantitative kinetic parameter database for ExposoGraph metabolic flux modeling. Parameters include directly measured human kinetic constants where available, literature-derived estimates, and explicitly flagged proxy/relative terms where exact human enzyme-substrate Km/Vmax pairs are not available. Confidence flags: high (direct measured literature support or multiple concordant studies), moderate (single study, derived value, or direct pathway support with partial numeric extraction), low (estimated from related substrates or pathway-level support), estimated (extrapolated or inferred).",
     "units": {
       "Km": "μM",
       "Vmax_P450": "pmol/min/pmol P450",
@@ -23,6 +23,92 @@
       "cadmium": 0.5,
       "TCDD": 0.001,
       "TCE": 10
+    },
+    "qivive_defaults": {
+      "description": "Default tissue-level QIVIVE context used when optional flux upscaling is requested. MPPGL values are mg microsomal protein per gram tissue; organ weights are adult reference masses in grams.",
+      "tissues": {
+        "liver": {
+          "mppgl_mg_per_g": 40.0,
+          "organ_weight_g": 1500.0
+        },
+        "lung": {
+          "mppgl_mg_per_g": 20.0,
+          "organ_weight_g": 1000.0
+        },
+        "kidney": {
+          "mppgl_mg_per_g": 12.0,
+          "organ_weight_g": 300.0
+        },
+        "intestine": {
+          "mppgl_mg_per_g": 35.0,
+          "organ_weight_g": 900.0
+        }
+      }
+    },
+    "steady_state_defaults": {
+      "description": "Default inputs for the flux-coupled one-tissue PBPK steady-state solver. Fluxes are converted to concentration-normalized first-order rates with flux_rate_scale_per_day.",
+      "body_weight_kg": 70.0,
+      "volume_l_per_kg": 0.7,
+      "absorption_fraction": 1.0,
+      "exposure_frequency_per_day": 1.0,
+      "cardiac_output_l_per_day": 7200.0,
+      "background_clearance_rate_per_day": 0.05,
+      "reactive_intermediate_loss_rate_per_day": 1.0,
+      "detoxified_metabolite_loss_rate_per_day": 1.0,
+      "flux_rate_scale_per_day": 1.0,
+      "rate_reference_concentration_uM": 1.0,
+      "tissues": {
+        "liver": {
+          "organ_weight_g": 1500.0,
+          "tissue_partition_coefficient": 1.0,
+          "tissue_blood_flow_fraction": 0.25
+        },
+        "lung": {
+          "organ_weight_g": 1000.0,
+          "tissue_partition_coefficient": 0.8,
+          "tissue_blood_flow_fraction": 1.0
+        },
+        "kidney": {
+          "organ_weight_g": 300.0,
+          "tissue_partition_coefficient": 1.1,
+          "tissue_blood_flow_fraction": 0.2
+        },
+        "intestine": {
+          "organ_weight_g": 900.0,
+          "tissue_partition_coefficient": 0.9,
+          "tissue_blood_flow_fraction": 0.12
+        },
+        "bladder": {
+          "organ_weight_g": 150.0,
+          "tissue_partition_coefficient": 0.7,
+          "tissue_blood_flow_fraction": 0.02
+        },
+        "breast": {
+          "organ_weight_g": 500.0,
+          "tissue_partition_coefficient": 1.4,
+          "tissue_blood_flow_fraction": 0.03
+        },
+        "colon": {
+          "organ_weight_g": 600.0,
+          "tissue_partition_coefficient": 0.9,
+          "tissue_blood_flow_fraction": 0.08
+        },
+        "prostate": {
+          "organ_weight_g": 30.0,
+          "tissue_partition_coefficient": 0.8,
+          "tissue_blood_flow_fraction": 0.01
+        },
+        "esophagus": {
+          "organ_weight_g": 40.0,
+          "tissue_partition_coefficient": 0.8,
+          "tissue_blood_flow_fraction": 0.01
+        },
+        "skin": {
+          "organ_weight_g": 3300.0,
+          "tissue_partition_coefficient": 1.2,
+          "tissue_blood_flow_fraction": 0.05
+        }
+      }
     }
   },
   "carcinogen_classes": {
@@ -37,9 +123,9 @@
             "Km_uM": 0.054,
             "Vmax_pmol_min_pmolP450": 59.4,
             "CLint": 1100,
-            "confidence": "high",
-            "notes": "Primary activation enzyme; extremely high affinity (very low Km)",
-            "sources": ["Chaudhary & Willett", "Shimada et al."],
+            "confidence": "moderate",
+            "notes": "Primary activation enzyme; numeric constants are used as CYP1A1 scaling proxies anchored to recombinant human CYP1A1 BaP oxidation literature. Product-specific BaP-7,8-oxide Km/Vmax values are not uniformly available in the current curation.",
+            "sources": ["PMID:7703357; DOI:10.1021/TX00043A018", "Chaudhary & Willett 2006 CYP1 probe kinetics"],
             "tissue_expression": ["lung", "liver", "lymphocyte", "placenta"]
           },
           "CYP1B1": {
@@ -48,8 +134,8 @@
             "Vmax_pmol_min_pmolP450": 5.0,
             "CLint": 14.3,
             "confidence": "moderate",
-            "notes": "Vmax approximate (~5.0); lower efficiency than CYP1A1",
-            "sources": ["Chaudhary & Willett"],
+            "notes": "Vmax approximate (~5.0); lower efficiency than CYP1A1 in this scaling table. Numeric constants are CYP1B1 scaling proxies anchored to recombinant human CYP1B1 BaP metabolism literature.",
+            "sources": ["PMID:9806168; DOI:10.1093/CARCIN/19.10.1847", "Chaudhary & Willett 2006 CYP1 probe kinetics"],
             "tissue_expression": ["lung", "prostate", "breast", "colon"]
           },
           "EPHX1": {
@@ -57,8 +143,8 @@
             "Km_uM": 5.0,
             "Vmax_nmol_min_mg": 200.0,
             "CLint": 40.0,
-            "confidence": "moderate",
-            "notes": "Required intermediate step toward ultimate carcinogen BPDE; Vmax in nmol/min/mg microsomal protein",
+            "confidence": "low",
+            "notes": "Required intermediate step toward ultimate carcinogen BPDE; Vmax in nmol/min/mg microsomal protein. Current values are literature-derived estimates pending direct pair-specific source validation.",
             "sources": ["Literature estimates"],
             "tissue_expression": ["liver", "lung", "intestine"]
           }
@@ -72,7 +158,7 @@
             "null_allele_effect": "complete_loss_of_function",
             "confidence": "moderate",
             "notes": "GSTM1-null (gene deletion) = zero activity. ~25-fold increase for (-)-anti-DBPDE substrate. GST P1-1 data applied.",
-            "sources": ["GST P1-1 kinetics literature", "GSTM1 null polymorphism studies"],
+            "sources": ["PMID:9403173; DOI:10.1021/TX970099W", "GSTM1 null polymorphism studies"],
             "tissue_expression": ["liver", "lung", "colon", "kidney"]
           },
           "GSTP1": {
@@ -82,7 +168,7 @@
             "CLint_s_per_uM": 0.048,
             "confidence": "moderate",
             "notes": "Higher CLint than GSTM1 due to lower Km; expressed in lung",
-            "sources": ["GST kinetics literature"],
+            "sources": ["PMID:9403173; DOI:10.1021/TX970099W"],
             "tissue_expression": ["lung", "placenta", "lymphocyte", "liver"]
           }
         }
