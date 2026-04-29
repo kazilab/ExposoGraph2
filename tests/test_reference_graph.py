@@ -14,11 +14,11 @@ def test_reference_graph_matches_current_bundled_counts():
     node_types = Counter(node.type.value for node in kg.nodes)
     edge_types = Counter(edge.type.value for edge in kg.edges)
 
-    assert len(kg.nodes) == 212
-    assert len(kg.edges) == 313
+    assert len(kg.nodes) == 214
+    assert len(kg.edges) == 321
     assert node_types == {
         "Carcinogen": 56,
-        "Enzyme": 58,
+        "Enzyme": 60,
         "Metabolite": 59,
         "DNA_Adduct": 27,
         "Pathway": 12,
@@ -27,7 +27,7 @@ def test_reference_graph_matches_current_bundled_counts():
         "ACTIVATES": 104,
         "DETOXIFIES": 47,
         "FORMS_ADDUCT": 37,
-        "REPAIRS": 25,
+        "REPAIRS": 33,
         "TRANSPORTS": 9,
         "PATHWAY": 88,
         "INDUCES": 2,
@@ -38,19 +38,19 @@ def test_reference_graph_matches_current_bundled_counts():
 def test_reference_engine_loads_and_validates():
     engine = build_reference_engine()
 
-    assert engine.node_count == 212
-    assert engine.edge_count == 313
+    assert engine.node_count == 214
+    assert engine.edge_count == 321
     assert engine.validate() == []
 
 
 def test_reference_architecture_summary_matches_reference_graph():
     summary = build_reference_architecture_summary()
 
-    assert summary.node_count == 212
-    assert summary.edge_count == 313
+    assert summary.node_count == 214
+    assert summary.edge_count == 321
     assert summary.node_type_counts == {
         "Carcinogen": 56,
-        "Enzyme": 58,
+        "Enzyme": 60,
         "Metabolite": 59,
         "DNA_Adduct": 27,
         "Pathway": 12,
@@ -59,7 +59,7 @@ def test_reference_architecture_summary_matches_reference_graph():
         "ACTIVATES": 104,
         "DETOXIFIES": 47,
         "FORMS_ADDUCT": 37,
-        "REPAIRS": 25,
+        "REPAIRS": 33,
         "TRANSPORTS": 9,
         "PATHWAY": 88,
         "INDUCES": 2,

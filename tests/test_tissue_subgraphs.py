@@ -6,7 +6,10 @@ from ExposoGraph import (
     TissueThresholdRetention,
     TissueType,
     build_reference_graph,
+    get_available_gtex_genes,
+    get_available_gtex_tissues,
     get_tissue_expression,
+    get_tissue_weights,
     get_top_carcinogen_classes_for_tissue,
     tissue_threshold_sweep,
 )
@@ -26,6 +29,58 @@ def test_tissue_expression_lookup_returns_mapping_for_liver():
 
     assert isinstance(expr, dict)
     assert all(isinstance(v, (int, float)) for v in expr.values())
+
+
+def test_hpa_backed_tissue_expression_covers_claimed_tissues_and_graph_genes():
+    tissues = get_available_gtex_tissues()
+    genes = set(get_available_gtex_genes())
+    graph = build_reference_graph()
+    graph_enzymes = {
+        node.id
+        for node in graph.nodes
+        if getattr(node.type, "value", str(node.type)) in {"Enzyme", "Gene"}
+    }
+
+    assert tissues == [
+        "Liver",
+        "Lung",
+        "Prostate",
+        "Bladder",
+        "Colon",
+        "Breast",
+        "Kidney",
+        "Esophagus",
+    ]
+    assert graph_enzymes - genes == {"GSTT1"}
+
+    for tissue in tissues:
+        expr = get_tissue_expression(tissue)
+        assert set(expr) == genes
+        assert all(isinstance(value, (int, float)) for value in expr.values())
+
+
+def test_hpa_tissue_expression_uses_expected_ntpm_sentinel_values():
+    assert get_tissue_expression(TissueType.LIVER)["CYP2C9"] == 675.4
+    assert get_tissue_expression(TissueType.KIDNEY)["CCBL1"] == 7.6
+    assert get_tissue_expression(TissueType.LUNG)["HLA_DPB1"] == 261.7
+    # Colon is the mean of HPA GTEx detail rows: Colon - Sigmoid and Colon - Transverse.
+    assert get_tissue_expression(TissueType.COLON)["CYP1A1"] == 1.9
+
+
+def test_tissue_weights_are_max_normalized_from_ntpm_values():
+    tissues = get_available_gtex_tissues()
+    genes = get_available_gtex_genes()
+
+    expression_by_tissue = {tissue: get_tissue_expression(tissue) for tissue in tissues}
+    weights_by_tissue = {tissue: get_tissue_weights(tissue) for tissue in tissues}
+
+    for gene in genes:
+        gene_values = [expression_by_tissue[tissue][gene] for tissue in tissues]
+        max_value = max(gene_values)
+        for tissue in tissues:
+            value = expression_by_tissue[tissue][gene]
+            expected = 0.0 if max_value == 0 or value / max_value < 0.01 else round(value / max_value, 4)
+            assert weights_by_tissue[tissue][gene] == expected
 
 
 def test_default_threshold_sweep_is_set():

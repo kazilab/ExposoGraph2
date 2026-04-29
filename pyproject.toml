@@ -82,6 +82,10 @@ Homepage = "https://github.com/kazilab/ExposoGraph"
 Repository = "https://github.com/kazilab/ExposoGraph"
 Issues = "https://github.com/kazilab/ExposoGraph/issues"
 
+[project.scripts]
+exposograph-check-biomarker-mapping = "ExposoGraph._biomarker_scaffold.scripts.registries.check_mapping:main"
+exposograph-build-biomarker-mapping = "ExposoGraph._biomarker_scaffold.scripts.registries.build_mapping:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["ExposoGraph"]
 

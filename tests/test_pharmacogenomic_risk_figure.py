@@ -28,7 +28,8 @@ def test_risk_class_profiles_capture_activation_and_detox_support():
     assert profile_by_group["PAH"].activation_score > 0
     assert profile_by_group["PAH"].repair_score > 0
     assert profile_by_group["Solvent"].detoxification_score > 0
-    assert profile_by_group["Alkylating"].scored_gene_count == 0
+    assert profile_by_group["Alkylating"].scored_gene_count == 4
+    assert "MGMT" in profile_by_group["Alkylating"].genes
 
 
 def test_risk_figure_export_writes_png(tmp_path):

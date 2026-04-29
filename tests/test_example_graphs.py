@@ -21,23 +21,23 @@ from ExposoGraph import (
 def test_reference_graph_matches_bundled_counts():
     kg = build_reference_graph()
 
-    assert len(kg.nodes) == 212
-    assert len(kg.edges) == 313
+    assert len(kg.nodes) == 214
+    assert len(kg.edges) == 321
 
 
 def test_reference_engine_loads_and_validates():
     engine = build_reference_engine()
 
-    assert engine.node_count == 212
-    assert engine.edge_count == 313
+    assert engine.node_count == 214
+    assert engine.edge_count == 321
     assert engine.validate() == []
 
 
 def test_reference_architecture_summary_matches_bundled_graph():
     summary = build_reference_architecture_summary()
 
-    assert summary.node_count == 212
-    assert summary.edge_count == 313
+    assert summary.node_count == 214
+    assert summary.edge_count == 321
     assert summary.node_type_count == len(summary.node_type_counts)
     assert summary.edge_type_count == len(summary.edge_type_counts)
     assert sum(summary.node_type_counts.values()) == summary.node_count
@@ -57,8 +57,8 @@ def test_reference_exports_write_consistent_artifacts(tmp_path):
 
     for key in ("html", "json", "graph_data_js"):
         graph = parse_graph_artifact(artifacts[key])
-        assert len(graph.nodes) == 212
-        assert len(graph.edges) == 313
+        assert len(graph.nodes) == 214
+        assert len(graph.edges) == 321
 
 
 def test_full_legends_graph_matches_phase2_target_counts():
@@ -66,30 +66,32 @@ def test_full_legends_graph_matches_phase2_target_counts():
     node_types = Counter(node.type.value for node in kg.nodes)
     edge_types = Counter(edge.type.value for edge in kg.edges)
 
-    assert len(kg.nodes) == 107
-    assert len(kg.edges) == 124
+    assert len(kg.nodes) == 214
+    assert len(kg.edges) == 321
     assert node_types == {
-        "Carcinogen": 15,
-        "Enzyme": 41,
-        "Metabolite": 33,
-        "DNA_Adduct": 12,
-        "Pathway": 6,
+        "Carcinogen": 56,
+        "Enzyme": 60,
+        "Metabolite": 59,
+        "DNA_Adduct": 27,
+        "Pathway": 12,
     }
     assert edge_types == {
-        "ACTIVATES": 42,
-        "DETOXIFIES": 24,
-        "FORMS_ADDUCT": 16,
-        "PATHWAY": 24,
-        "REPAIRS": 11,
-        "TRANSPORTS": 7,
+        "ACTIVATES": 104,
+        "DETOXIFIES": 47,
+        "FORMS_ADDUCT": 37,
+        "PATHWAY": 88,
+        "REPAIRS": 33,
+        "TRANSPORTS": 9,
+        "INDUCES": 2,
+        "INHIBITS": 1,
     }
 
 
 def test_full_legends_engine_loads_and_validates():
     engine = build_full_legends_engine()
 
-    assert engine.node_count == 107
-    assert engine.edge_count == 124
+    assert engine.node_count == 214
+    assert engine.edge_count == 321
     assert engine.validate() == []
 
 
@@ -148,24 +150,26 @@ def test_full_legends_graph_exposes_curated_kegg_pathways():
 def test_full_legends_architecture_summary_matches_seeded_graph():
     summary = build_full_legends_architecture_summary()
 
-    assert summary.node_count == 107
-    assert summary.edge_count == 124
+    assert summary.node_count == 214
+    assert summary.edge_count == 321
     assert summary.node_type_count == 5
-    assert summary.edge_type_count == 6
+    assert summary.edge_type_count == 8
     assert summary.node_type_counts == {
-        "Carcinogen": 15,
-        "Enzyme": 41,
-        "Metabolite": 33,
-        "DNA_Adduct": 12,
-        "Pathway": 6,
+        "Carcinogen": 56,
+        "Enzyme": 60,
+        "Metabolite": 59,
+        "DNA_Adduct": 27,
+        "Pathway": 12,
     }
     assert summary.edge_type_counts == {
-        "ACTIVATES": 42,
-        "DETOXIFIES": 24,
-        "TRANSPORTS": 7,
-        "FORMS_ADDUCT": 16,
-        "REPAIRS": 11,
-        "PATHWAY": 24,
+        "ACTIVATES": 104,
+        "DETOXIFIES": 47,
+        "TRANSPORTS": 9,
+        "FORMS_ADDUCT": 37,
+        "REPAIRS": 33,
+        "PATHWAY": 88,
+        "INDUCES": 2,
+        "INHIBITS": 1,
     }
 
 
@@ -178,18 +182,18 @@ def test_full_legends_architecture_summary_keeps_inventories():
         "PAH": 2,
         "HCA": 2,
         "Aromatic Amines": 2,
-        "Nitrosamines": 2,
+        "Nitrosamines": 3,
         "Mycotoxins": 1,
         "Estrogens": 1,
         "Androgens": 2,
         "Solvents": 2,
-        "Alkylating Agents": 1,
+        "Alkylating Agents": 9,
     }
     assert enzyme_categories == {
-        "Phase I": 19,
-        "Phase II": 14,
-        "Phase III": 3,
-        "DNA Repair": 5,
+        "Phase I": 22,
+        "Phase II": 21,
+        "Phase III": 4,
+        "DNA Repair": 8,
     }
     assert "DMBA" in summary.carcinogens
     assert "5a-DHT" in summary.carcinogens
@@ -255,27 +259,29 @@ def test_full_legends_graph_can_merge_optional_androgen_module():
     node_types = Counter(node.type.value for node in kg.nodes)
     edge_types = Counter(edge.type.value for edge in kg.edges)
 
-    assert len(kg.nodes) == 118
-    assert len(kg.edges) == 157
+    assert len(kg.nodes) == 225
+    assert len(kg.edges) == 353
     assert node_types == {
-        "Carcinogen": 15,
-        "Enzyme": 41,
+        "Carcinogen": 56,
+        "Enzyme": 60,
         "Gene": 5,
-        "Metabolite": 33,
-        "DNA_Adduct": 14,
-        "Pathway": 7,
+        "Metabolite": 59,
+        "DNA_Adduct": 29,
+        "Pathway": 13,
         "Tissue": 3,
     }
     assert edge_types == {
-        "ACTIVATES": 44,
+        "ACTIVATES": 106,
         "CUSTOM": 7,
-        "DETOXIFIES": 25,
-        "TRANSPORTS": 7,
-        "FORMS_ADDUCT": 18,
-        "REPAIRS": 11,
-        "PATHWAY": 34,
+        "DETOXIFIES": 48,
+        "TRANSPORTS": 9,
+        "FORMS_ADDUCT": 39,
+        "REPAIRS": 33,
+        "PATHWAY": 97,
         "EXPRESSED_IN": 7,
         "ENCODES": 4,
+        "INDUCES": 2,
+        "INHIBITS": 1,
     }
 
 
@@ -283,35 +289,37 @@ def test_full_legends_architecture_summary_can_include_androgen_module():
     summary = build_full_legends_architecture_summary(include_androgen_module=True)
     enzyme_categories = {group.name: group.count for group in summary.enzyme_categories}
 
-    assert summary.node_count == 118
-    assert summary.edge_count == 157
+    assert summary.node_count == 225
+    assert summary.edge_count == 353
     assert summary.node_type_count == 7
-    assert summary.edge_type_count == 9
+    assert summary.edge_type_count == 11
     assert summary.node_type_counts == {
-        "Carcinogen": 15,
-        "Enzyme": 41,
+        "Carcinogen": 56,
+        "Enzyme": 60,
         "Gene": 5,
-        "Metabolite": 33,
-        "DNA_Adduct": 14,
-        "Pathway": 7,
+        "Metabolite": 59,
+        "DNA_Adduct": 29,
+        "Pathway": 13,
         "Tissue": 3,
     }
     assert summary.edge_type_counts == {
-        "ACTIVATES": 44,
-        "DETOXIFIES": 25,
-        "TRANSPORTS": 7,
-        "FORMS_ADDUCT": 18,
-        "REPAIRS": 11,
-        "PATHWAY": 34,
+        "ACTIVATES": 106,
+        "DETOXIFIES": 48,
+        "TRANSPORTS": 9,
+        "FORMS_ADDUCT": 39,
+        "REPAIRS": 33,
+        "PATHWAY": 97,
         "EXPRESSED_IN": 7,
         "ENCODES": 4,
         "CUSTOM": 7,
+        "INDUCES": 2,
+        "INHIBITS": 1,
     }
     assert enzyme_categories == {
-        "Phase I": 19,
-        "Phase II": 14,
-        "Phase III": 3,
-        "DNA Repair": 5,
+        "Phase I": 22,
+        "Phase II": 21,
+        "Phase III": 4,
+        "DNA Repair": 8,
     }
     assert "AR proliferative transcriptional program" in summary.pathway_labels
     assert "CYP3A5" in summary.enzymes

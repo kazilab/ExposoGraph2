@@ -14,7 +14,7 @@
 
 Build, curate, and export carcinogen metabolism knowledge graphs using LLM-powered extraction and manual entry, then run quantitative multi-carcinogen, tissue-aware risk analysis on the resulting graph.
 
-**ExposoGraph 2.0** expands coverage to **14 IARC carcinogen classes**, ships a bundled reference knowledge graph of **212 nodes / 313 edges**, adds seven quantitative risk modules: enzyme flux modeling, exposure integration, multi-carcinogen interactions, tissue-specific subgraphs, population genomics, oxidative stress integration, toxicokinetic/toxicodynamic modeling, cross-species scaling, and a synthetic population simulator.
+**ExposoGraph 2.0** expands coverage to **14 IARC carcinogen classes**, ships a bundled reference knowledge graph of **214 nodes / 321 edges**, adds seven quantitative risk modules: enzyme flux modeling, exposure integration, multi-carcinogen interactions, tissue-specific subgraphs, population genomics, oxidative stress integration, toxicokinetic/toxicodynamic modeling, cross-species scaling, and a synthetic population simulator.
 
 Developed by: **Data analysis team @ KaziLab**
 Contact: **exposograph@kazilab.se**
@@ -149,7 +149,7 @@ package from your own notebook, or start from the runnable examples in
 ### Standalone D3.js Viewer (`map/index.html`)
 
 A zero-install HTML viewer is bundled at `ExposoGraph/map/index.html` with its
-graph payload in `ExposoGraph/map/graph-data.js` (**212 nodes / 313 edges** by
+graph payload in `ExposoGraph/map/graph-data.js` (**214 nodes / 321 edges** by
 default — the current bundled reference graph). This shipped payload is a
 curated graph export, not a rendering of the quantitative interaction engine.
 Open the HTML file
@@ -319,33 +319,34 @@ engine = build_reference_engine()
 summary = build_reference_architecture_summary()
 artifacts = write_reference_exports("exports/reference")
 
-len(graph.nodes)            # 212
-len(graph.edges)            # 313
+len(graph.nodes)            # 214
+len(graph.edges)            # 321
 engine.validate()           # []
-summary.node_count          # 212
-summary.edge_count          # 313
+summary.node_count          # 214
+summary.edge_count          # 321
 artifacts["graph_data_js"]  # bundled viewer export path
 ```
 
 #### Summary
 
-The legacy `build_full_legends_*` showcase API remains available for the
-paper-aligned **107-node / 124-edge** base example graph. The current shipped
-viewer payload now matches the bundled reference graph instead; if you call
-`build_full_legends_graph(include_heavy_metals=True)`, it currently resolves to
-the same **212 / 313** bundled footprint as `build_reference_graph()`.
+The `build_full_legends_*` showcase API now reads the same bundled
+**214-node / 321-edge** full-legends payload as the shipped viewer export. The
+`include_heavy_metals=True` option is retained for compatibility and currently
+resolves to the same **214 / 321** bundled footprint as
+`build_reference_graph()`.
 
 ```python
 from ExposoGraph import build_full_legends_architecture_summary
 
 summary = build_full_legends_architecture_summary()
 
-summary.node_count          # 107
-summary.edge_count          # 124
-summary.node_type_counts    # {'Carcinogen': 15, 'Enzyme': 41, 'Metabolite': 33,
-                            #  'DNA_Adduct': 12, 'Pathway': 6}
-summary.edge_type_counts    # {'ACTIVATES': 42, 'DETOXIFIES': 24, 'TRANSPORTS': 7,
-                            #  'FORMS_ADDUCT': 16, 'REPAIRS': 11, 'PATHWAY': 24}
+summary.node_count          # 214
+summary.edge_count          # 321
+summary.node_type_counts    # {'Carcinogen': 56, 'Enzyme': 60, 'Metabolite': 59,
+                            #  'DNA_Adduct': 27, 'Pathway': 12}
+summary.edge_type_counts    # {'ACTIVATES': 104, 'DETOXIFIES': 47, 'TRANSPORTS': 9,
+                            #  'FORMS_ADDUCT': 37, 'REPAIRS': 33, 'PATHWAY': 88,
+                            #  'INDUCES': 2, 'INHIBITS': 1}
 summary.carcinogen_classes  # grouped class inventories for section 2.2 rewrites
 ```
 
@@ -591,7 +592,38 @@ make test                        # pytest --no-cov
 make docs                        # sphinx dummy build
 make lint
 make typecheck
+make check-biomarker-mapping     # validate data/biomarker_mapping.json trace/update schema
 make test-cov                    # pytest with the configured 85% coverage gate
+```
+
+Biomarker mapping maintenance commands:
+
+```bash
+# Validate (no file changes)
+make check-biomarker-mapping
+
+# Rebuild biomarker_mapping.json from the split YAML manifest and compare it to the preserved old snapshot
+make build-biomarker-mapping
+make compare-biomarker-mapping
+
+# Validate via installed entrypoint
+exposograph-check-biomarker-mapping --mapping ExposoGraph/data/biomarker_mapping.json
+
+# Rebuild via installed entrypoint
+exposograph-build-biomarker-mapping \
+  --source ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml \
+  --out ExposoGraph/data/biomarker_mapping.json \
+  --old ExposoGraph/data/biomarker_mapping_old.json
+
+# Normalize and write trace/update fields when needed
+python -m ExposoGraph._biomarker_scaffold.scripts.registries.check_mapping \
+  --mapping ExposoGraph/data/biomarker_mapping.json --fix --write
+
+# Rebuild from the scaffold source manifest and compare with the old snapshot
+python -m ExposoGraph._biomarker_scaffold.scripts.registries.build_mapping \
+  --source ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml \
+  --out ExposoGraph/data/biomarker_mapping.json \
+  --old ExposoGraph/data/biomarker_mapping_old.json
 ```
 
 The repository now includes a staged GitHub Actions workflow in

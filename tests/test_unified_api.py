@@ -47,6 +47,26 @@ def test_patient_risk_query_exposes_flux_model_evidence_and_summary_labels():
     assert "Dioxin (receptor-mediated proxy)" in profile.summary
 
 
+def test_patient_risk_query_uses_biomarker_substrate_inputs_for_flux_and_exposure():
+    profile = patient_risk_query(
+        {"CYP1A1": "NM", "GSTM1": "NM", "NAT2": "NM"},
+        tissue="Lung",
+        biomarker_measurements={"urinary_1_hydroxypyrene": 0.175},
+        include_interactions=False,
+        include_tissue_report=False,
+    )
+
+    assert profile.biomarker_dose_estimates
+    pah_flux = profile.flux_profile.per_class_results["PAH"]
+    assert pah_flux.substrate_concentration_uM == profile.biomarker_dose_estimates[0]["tissue_conc_uM"]
+
+    pah_risk = next(
+        risk for risk in profile.exposure_profile.risk_scores if risk.carcinogen_class == "PAH"
+    )
+    assert pah_risk.exposure_tier == 3
+    assert pah_risk.biomarker_dose_estimate["biomarker"] == "urinary_1_hydroxypyrene"
+
+
 def _find_edge(graph, source: str, target: str):
     for edge in graph.edges:
         if edge.source == source and edge.target == target:

@@ -36,8 +36,8 @@ class TestGenePanels:
     def test_tier1_has_13_genes(self):
         assert len(TIER1_GENES) == 13
 
-    def test_tier2_has_23_genes(self):
-        assert len(TIER2_GENES) == 23
+    def test_tier2_has_25_genes(self):
+        assert len(TIER2_GENES) == 25
 
     def test_build_tier1_panel(self):
         kg = build_tier1_panel()
@@ -47,13 +47,13 @@ class TestGenePanels:
 
     def test_build_tier2_panel(self):
         kg = build_tier2_panel()
-        assert len(kg.nodes) == 23
+        assert len(kg.nodes) == 25
         assert all(n.type == NodeType.ENZYME for n in kg.nodes)
         assert all(n.tier == 2 for n in kg.nodes)
 
     def test_build_full_panel(self):
         kg = build_full_panel()
-        assert len(kg.nodes) == 36
+        assert len(kg.nodes) == 38
 
     def test_no_duplicate_ids(self):
         kg = build_full_panel()
@@ -65,7 +65,7 @@ class TestGenePanels:
         kg = build_full_panel()
         warnings = engine.load(kg)
         assert warnings == []
-        assert engine.node_count == 36
+        assert engine.node_count == 38
 
     def test_extended_panel_matches_phase_distribution(self):
         panel = build_full_panel()
@@ -77,7 +77,7 @@ class TestGenePanels:
         assert len(phase_i) == 15
         assert len(phase_ii) == 13
         assert len(phase_iii) == 3
-        assert len(repair) == 5
+        assert len(repair) == 7
 
     def test_all_genes_have_required_fields(self):
         for gene_list in [TIER1_GENES, TIER2_GENES]:
@@ -99,9 +99,9 @@ class TestGenePanels:
                 assert provenance[0]["url"].startswith("https://www.ncbi.nlm.nih.gov/gene/")
 
     def test_repair_genes_use_repair_class_not_phase(self):
-        repair_ids = {"XRCC1", "XPC", "ERCC2", "OGG1", "MGMT"}
+        repair_ids = {"XRCC1", "XPC", "ERCC2", "OGG1", "MGMT", "MLH1", "MSH2"}
         repair_genes = [g for g in TIER2_GENES if g["id"] in repair_ids]
-        assert len(repair_genes) == 5
+        assert len(repair_genes) == 7
         assert all(g["phase"] is None for g in repair_genes)
         assert all(g["group"].startswith("DNA Repair") for g in repair_genes)
 
