@@ -10,3 +10,4 @@ plotly>=6.0,<7.0
 dash>=4.0,<5.0
 dash-cytoscape>=1.0,<2.0
 pyjson5>=2.0.0
+PyYAML>=6.0,<7.0

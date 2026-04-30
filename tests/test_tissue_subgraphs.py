@@ -113,3 +113,16 @@ def test_tissue_threshold_sweep_retention_decreases_with_threshold():
     # Higher thresholds retain the same number of edges or fewer.
     values = [liver_matrix[t] for t in sorted(liver_matrix.keys())]
     assert all(values[i] >= values[i + 1] for i in range(len(values) - 1))
+
+
+def test_tissue_threshold_sweep_filters_pydantic_enum_model_dump():
+    graph = build_reference_graph()
+    graph_data = {
+        "nodes": [node.model_dump() for node in graph.nodes],
+        "edges": [edge.model_dump() for edge in graph.edges],
+    }
+
+    result = tissue_threshold_sweep(graph_data, tissues=["Liver", "Breast"])
+
+    assert result.edge_retention_matrix["Liver"][0.25] == 0.9159
+    assert result.edge_retention_matrix["Breast"][0.25] == 0.729

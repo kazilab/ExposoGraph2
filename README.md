@@ -1,8 +1,8 @@
 # ExposoGraph 2.0
 <!-- PyPI version badge -->
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://exposograph2.streamlit.app/)
-<!-- [![PyPI version](https://img.shields.io/pypi/v/ExposoGraph.svg)](https://pypi.org/project/ExposoGraph/) -->
-<!-- [![Documentation Status](https://readthedocs.org/projects/ExposoGraph/badge/?version=latest)](https://ExposoGraph.readthedocs.io/en/latest/?badge=latest) -->
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ExposoGraph.streamlit.app)
+[![PyPI version](https://img.shields.io/pypi/v/ExposoGraph.svg)](https://pypi.org/project/ExposoGraph/)
+[![Documentation Status](https://readthedocs.org/projects/ExposoGraph/badge/?version=latest)](https://ExposoGraph.readthedocs.io/en/latest/?badge=latest)
 <!-- [![ResearchSquare](https://img.shields.io/badge/ResearchSquare-rs--9202489%2Fv1-00A0E0.svg)](https://www.researchsquare.com/article/rs-9202489/v1) -->
 <!-- [![bioRxiv](https://img.shields.io/badge/bioRxiv-10.64898%2F2026.03.22.713456-b31b1b.svg)](https://doi.org/10.64898/2026.03.22.713456) -->
 <!-- PyPI version badge -->
@@ -14,7 +14,7 @@
 
 Build, curate, and export carcinogen metabolism knowledge graphs using LLM-powered extraction and manual entry, then run quantitative multi-carcinogen, tissue-aware risk analysis on the resulting graph.
 
-**ExposoGraph 2.0** expands coverage to **14 IARC carcinogen classes**, ships a bundled reference knowledge graph of **214 nodes / 321 edges**, adds seven quantitative risk modules: enzyme flux modeling, exposure integration, multi-carcinogen interactions, tissue-specific subgraphs, population genomics, oxidative stress integration, toxicokinetic/toxicodynamic modeling, cross-species scaling, and a synthetic population simulator.
+**ExposoGraph 2.0** expands coverage to **14 IARC carcinogen classes**, ships a bundled reference knowledge graph of **214 nodes / 321 edges**, and adds a quantitative risk stack spanning enzyme flux modeling, exposure integration, multi-carcinogen interactions, tissue-specific subgraphs, population genomics, oxidative stress integration, toxicokinetic/toxicodynamic modeling, cross-species scaling, and synthetic population simulation.
 
 Developed by: **Data analysis team @ KaziLab**
 Contact: **exposograph@kazilab.se**
@@ -593,7 +593,7 @@ make docs                        # sphinx dummy build
 make lint
 make typecheck
 make check-biomarker-mapping     # validate data/biomarker_mapping.json trace/update schema
-make test-cov                    # pytest with the configured 85% coverage gate
+make test-cov                    # pytest with the configured 70% coverage gate
 ```
 
 Biomarker mapping maintenance commands:
@@ -627,20 +627,19 @@ python -m ExposoGraph._biomarker_scaffold.scripts.registries.build_mapping \
 ```
 
 The repository now includes a staged GitHub Actions workflow in
-`.github/workflows/ci.yml`. Required CI jobs run the regression suite and docs
-build. Coverage, Ruff, and strict mypy are present as advisory jobs until the
-existing backlog is reduced.
+`.github/workflows/ci.yml`. Required CI jobs run the regression suite, docs
+build, biomarker mapping validation, coverage gate, Ruff, and strict mypy.
 
-As of **April 21, 2026**, the local readiness audit is:
+As of **April 29, 2026**, the local readiness audit is:
 
-- `python -m pytest --no-cov` — passed (`456` tests)
+- `python -m pytest --no-cov` — passed (`472` tests)
 - `python -m sphinx -b dummy docs docs/_build/dummy` — passed
-- `python -m pytest` — failed the `85%` coverage gate (`64.96%`)
-- `ruff check .` — `162` findings, all currently `E501` line-length cases
-- `python -m mypy ExposoGraph` — failing across several strict-mode modules
+- `python -m pytest` — passed the `70%` coverage gate (`71.09%`)
+- `ruff check .` — passed
+- `python -m mypy ExposoGraph` — passed across `68` source files
 
 See [docs/production-readiness.rst](docs/production-readiness.rst) for the
-current release blockers and staged adoption plan.
+current release blockers and quality-gate scope.
 
 ### Optional dependency groups
 

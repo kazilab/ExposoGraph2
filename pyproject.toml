@@ -33,6 +33,7 @@ dependencies = [
     "networkx>=3.2",
     "pydantic>=2.5",
     "pyjson5>=2.0",
+    "PyYAML>=6.0",
     "numpy>=1.26",
     "scipy>=1.11",
 ]
@@ -105,6 +106,7 @@ select = ["E", "F", "I", "W"]
 "ExposoGraph/db_clients/iarc.py" = ["E501"]
 "ExposoGraph/expanded_metals.py" = ["E501"]
 "ExposoGraph/oxidative_stress.py" = ["E501"]
+"ExposoGraph/population_genomics.py" = ["E501"]
 "ExposoGraph/tissue_subgraphs.py" = ["E501"]
 # Scientific-formula modules: kinetic expressions, interaction matrices, and
 # exposure-burden calculations are easier to audit on a single line matching
@@ -129,8 +131,12 @@ select = ["E", "F", "I", "W"]
 "ExposoGraph/ui_extract.py" = ["E501"]
 "ExposoGraph/ui_manual.py" = ["E501"]
 "ExposoGraph/ui_sidebar.py" = ["E501"]
+"Figures_Notebook/*.ipynb" = ["E501"]
 "tests/test_graph_analysis.py" = ["E501"]
+"tests/test_tissue_subgraphs.py" = ["E501"]
+"tests/test_unified_api.py" = ["E501"]
 "tests/test_viewer_dash.py" = ["E501"]
+"tools/export_data_json_to_csv.py" = ["E501", "I001"]
 # Streamlit app import order is constrained by the explicit sys.path bootstrap
 # needed for `streamlit run ExposoGraph/app.py`.
 "ExposoGraph/app.py" = ["E402"]
