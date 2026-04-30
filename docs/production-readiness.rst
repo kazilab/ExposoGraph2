@@ -1,7 +1,7 @@
 Production Readiness
 ====================
 
-As of **April 21, 2026**, ExposoGraph clears every configured quality gate and
+As of **April 29, 2026**, ExposoGraph clears every configured quality gate and
 is suitable for internal research use, and reproducible
 local analysis. All gates now run as blocking jobs in CI; there is no longer
 a split between required and advisory checks.
@@ -15,13 +15,13 @@ Current Gate Status
 
 Every gate below is green locally and blocking in CI:
 
-- ``python -m pytest --no-cov`` — **456 tests** passing
+- ``python -m pytest --no-cov`` — **472 tests** passing
 - ``python -m sphinx -b dummy docs docs/_build/dummy`` — clean build
-- ``python -m pytest`` — **71.17%** coverage vs. a **70%** floor
+- ``python -m pytest`` — **71.09%** coverage vs. a **70%** floor
   (see the configured ``[tool.coverage.run] omit`` list for modules that are
   deliberately excluded)
 - ``ruff check .`` — zero findings
-- ``python -m mypy ExposoGraph`` — strict mode clean across 61 source files
+- ``python -m mypy ExposoGraph`` — strict mode clean across 68 source files
 
 Local Commands
 --------------
@@ -47,7 +47,7 @@ The coverage floor and lint configuration encode some honest trade-offs. These
 are called out here so reviewers can challenge them explicitly:
 
 - **Coverage floor is 70%, not 85%.** The floor matches the currently tested
-  surface (71.17% at the time of writing). The largest remaining gaps live in
+  surface (71.09% at the time of writing). The largest remaining gaps live in
   quantitative modules with heavy scientific content — ``exposure_engine``,
   ``tissue_subgraphs``, ``tk_td_modeling``, ``cross_species``,
   ``oxidative_stress``, ``expanded_metals``, and parts of
@@ -68,8 +68,9 @@ are called out here so reviewers can challenge them explicitly:
   (``unified_api``, ``exporter`` for HTML/CSS/JS, ``llm_extractor`` for prompt
   literals, ``batch_runner`` for argparse epilogs), plus the existing figure
   and UI modules. Wrapping those lines obscures the underlying equations,
-  payloads, or example commands. ``ExposoGraph/app.py`` keeps its ``E402``
-  exemption for the Streamlit ``sys.path`` bootstrap.
+  payloads, notebook figure geometry, or example commands.
+  ``ExposoGraph/app.py`` keeps its ``E402`` exemption for the Streamlit
+  ``sys.path`` bootstrap.
 
 Remaining Release Blockers
 --------------------------

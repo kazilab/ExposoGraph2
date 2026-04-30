@@ -51,12 +51,15 @@ Continuous Integration
 ----------------------
 
 The repository now includes a GitHub Actions workflow at
-``.github/workflows/ci.yml``. It uses a staged quality model:
+``.github/workflows/ci.yml``. It runs the same required quality gates as the
+local ``Makefile``:
 
-- blocking jobs for the regression suite (``make test``) and docs build
-  (``make docs``)
-- advisory jobs for coverage, Ruff, and strict mypy while those backlogs are
-  still being reduced
+- regression suite without coverage (``make test``)
+- Sphinx dummy docs build (``make docs``)
+- biomarker mapping validation (``make check-biomarker-mapping``)
+- coverage-gated test run (``make test-cov``)
+- Ruff linting (``make lint``)
+- strict mypy type checking (``make typecheck``)
 
 Run the same commands locally from the repository root:
 
@@ -64,6 +67,9 @@ Run the same commands locally from the repository root:
 
    make ci
    make ci-advisory
+
+``make ci-advisory`` is retained as a compatibility alias and currently runs
+the same gates as ``make ci``.
 
 PyPI Publishing
 ---------------

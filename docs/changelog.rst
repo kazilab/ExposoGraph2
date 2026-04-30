@@ -4,6 +4,12 @@ Changelog
 Unreleased
 ----------
 
+- Restored the documented ``ExposoGraph._biomarker_scaffold`` package,
+  including split YAML registry sources, mapping rebuild/compare helpers, and
+  the scaffold checker used by the Makefile and console scripts
+- Promoted all local quality checks to a single required gate: tests, docs,
+  biomarker mapping validation, coverage, Ruff, and strict mypy now pass via
+  ``make ci``
 - Added a root ``Makefile`` and an in-tree GitHub Actions workflow
   (``.github/workflows/ci.yml``) so tests, docs, lint, typing, and coverage
   checks are codified in the repository rather than only described in prose
@@ -15,8 +21,7 @@ Unreleased
   scoping figure/UI modules whose authored geometry literals are clearer left
   unwrapped
 - Updated deployment and README guidance to reflect the current local workflow:
-  regression tests and docs are blocking checks, while coverage, Ruff, and
-  strict mypy remain advisory until their backlog is reduced
+  all configured quality gates now run together through ``make ci``
 - Clarified the standalone D3 viewer documentation so ``map/index.html`` is
   described as the bundled reference ``graph-data.js`` payload rather than the
   full quantitative interaction engine
