@@ -1,87 +1,49 @@
-"""Registry loading helpers."""
+"""Load and write biomarker mapping registry documents."""
 
 from __future__ import annotations
 
+import importlib
 import json
-from dataclasses import fields
 from pathlib import Path
-from typing import Any
-
-import yaml
-
-from .schema import BiomarkerRecord, EvidenceRecord
-
-
-class RegistryLoadError(ValueError):
-    """Raised when a registry or mapping file cannot be parsed."""
-
-
-def _read_structured_file(path: str | Path) -> Any:
-    path = Path(path)
-    if not path.exists():
-        raise RegistryLoadError(f"Registry file does not exist: {path}")
-    try:
-        text = path.read_text(encoding="utf-8")
-        if path.suffix.lower() in {".yaml", ".yml"}:
-            return yaml.safe_load(text) or []
-        if path.suffix.lower() == ".json":
-            return json.loads(text)
-        # Try YAML first because JSON is a YAML subset.
-        return yaml.safe_load(text) or []
-    except (OSError, json.JSONDecodeError, yaml.YAMLError) as exc:
-        raise RegistryLoadError(f"Failed to parse {path}: {exc}") from exc
-
-
-def load_yaml_registry(path: str | Path) -> list[dict[str, Any]]:
-    data = _read_structured_file(path)
-    if isinstance(data, dict) and "biomarkers" in data:
-        data = data["biomarkers"]
-    if not isinstance(data, list):
-        raise RegistryLoadError(f"Expected list of registry records in {path}")
-    if not all(isinstance(item, dict) for item in data):
-        raise RegistryLoadError(f"Every registry item in {path} must be an object")
-    return data
+from typing import Any, cast
 
 
 def load_json_mapping(path: str | Path) -> dict[str, Any]:
-    data = _read_structured_file(path)
-    if not isinstance(data, dict):
-        raise RegistryLoadError(f"Expected mapping object in {path}")
-    return data
+    """Load a JSON biomarker mapping document."""
+    source = Path(path)
+    with source.open("r", encoding="utf-8") as handle:
+        loaded = json.load(handle)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Expected JSON object in {source}")
+    return loaded
 
 
-def _build_evidence(raw_items: Any) -> list[EvidenceRecord]:
-    if raw_items is None:
-        return []
-    if not isinstance(raw_items, list):
-        raise RegistryLoadError("evidence must be a list")
-    known = {field.name for field in fields(EvidenceRecord)}
-    out: list[EvidenceRecord] = []
-    for item in raw_items:
-        if isinstance(item, str):
-            out.append(EvidenceRecord(source=item))
-            continue
-        if not isinstance(item, dict):
-            raise RegistryLoadError("each evidence item must be a string or object")
-        kwargs = {k: v for k, v in item.items() if k in known and k != "raw"}
-        extras = {k: v for k, v in item.items() if k not in known}
-        kwargs.setdefault("raw", extras)
-        out.append(EvidenceRecord(**kwargs))
-    return out
+def load_yaml_mapping(path: str | Path) -> dict[str, Any]:
+    """Load a YAML registry document."""
+    source = Path(path)
+    yaml_module = importlib.import_module("yaml")
+    with source.open("r", encoding="utf-8") as handle:
+        loaded = cast(Any, yaml_module).safe_load(handle)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Expected YAML mapping in {source}")
+    return loaded
 
 
-def _record_from_dict(item: dict[str, Any]) -> BiomarkerRecord:
-    known = {field.name for field in fields(BiomarkerRecord)}
-    kwargs = {k: v for k, v in item.items() if k in known and k not in {"raw", "evidence"}}
-    extras = {k: v for k, v in item.items() if k not in known}
-    kwargs["evidence"] = _build_evidence(item.get("evidence", []))
-    kwargs["raw"] = extras
-    missing = [name for name in ["biomarker_id", "canonical_name", "matrix", "chemical_class", "source_status"] if name not in kwargs or kwargs[name] in (None, "")]
-    if missing:
-        ident = item.get("biomarker_id", "<unknown>")
-        raise RegistryLoadError(f"Record {ident} missing required fields: {', '.join(missing)}")
-    return BiomarkerRecord(**kwargs)
+def load_registry_document(path: str | Path) -> dict[str, Any]:
+    """Load a registry document from ``.json``, ``.yaml``, or ``.yml``."""
+    source = Path(path)
+    if source.suffix.lower() == ".json":
+        return load_json_mapping(source)
+    if source.suffix.lower() in {".yaml", ".yml"}:
+        return load_yaml_mapping(source)
+    raise ValueError(f"Unsupported registry file type: {source.suffix}")
 
 
-def load_biomarker_records(path: str | Path) -> list[BiomarkerRecord]:
-    return [_record_from_dict(item) for item in load_yaml_registry(path)]
+def write_json_mapping(path: str | Path, document: dict[str, Any]) -> None:
+    """Write a JSON biomarker mapping document with stable formatting."""
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open("w", encoding="utf-8") as handle:
+        json.dump(document, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+

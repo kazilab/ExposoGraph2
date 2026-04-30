@@ -1,10 +1,11 @@
-schema_version: 1.1.0
-source_family: literature
-registry_phase: validated_proxy
-registry_tier: 2
-source_note: Literature-backed biomarker proxies, scenario proxies, and model-normalization
-  rows.
-biomarkers:
+_metadata:
+  path: ExposoGraph/_biomarker_scaffold/data/registries/source_literature.yaml
+  source_family: literature
+  registry_phase: validated_proxy
+  registry_tier: 2
+  source_note: Literature-backed biomarker proxies, scenario proxies, and model-normalization
+    rows.
+entries:
 - lifestyle_factor: moderate_alcohol
   biomarker: blood_ethanol
   matrix: whole_blood
@@ -29,9 +30,6 @@ biomarkers:
   provenance_note: Blood ethanol is treated as a scenario exposure proxy for moderate
     alcohol intake, not a NHANES biomarker range.
   entry_id: blood_ethanol::moderate_alcohol
-  trace:
-    created_index: 4
-    created_at: '2026-04-26T11:16:23.610786+00:00'
 - lifestyle_factor: moderate_alcohol
   biomarker: urinary_ethyl_glucuronide
   matrix: urine
@@ -56,9 +54,6 @@ biomarkers:
   provenance_note: Urinary ethyl glucuronide supports recent alcohol consumption.
     ALDH2 and Km_uM are aldehyde-flux normalization parameters.
   entry_id: urinary_ethyl_glucuronide::moderate_alcohol
-  trace:
-    created_index: 5
-    created_at: '2026-04-26T11:16:23.610792+00:00'
 - lifestyle_factor: heavy_alcohol
   biomarker: blood_ethanol
   matrix: whole_blood
@@ -83,9 +78,6 @@ biomarkers:
   provenance_note: Blood ethanol is treated as a scenario exposure proxy for heavy
     alcohol intake, not a population biomarker range.
   entry_id: blood_ethanol::heavy_alcohol
-  trace:
-    created_index: 6
-    created_at: '2026-04-26T11:16:23.610799+00:00'
 - lifestyle_factor: heavy_alcohol
   biomarker: saliva_acetaldehyde
   matrix: saliva
@@ -111,9 +103,6 @@ biomarkers:
   provenance_note: Salivary acetaldehyde supports local acetaldehyde exposure after
     alcohol. ALDH2 and Km_uM are aldehyde clearance normalization parameters.
   entry_id: saliva_acetaldehyde::heavy_alcohol
-  trace:
-    created_index: 7
-    created_at: '2026-04-26T11:16:23.610805+00:00'
 - lifestyle_factor: grilled_meat_frequent
   biomarker: urinary_PhIP
   matrix: urine
@@ -140,9 +129,6 @@ biomarkers:
     the CYP1A2 link is supported at pathway/activity level, while Km_uM remains the
     model normalization value.
   entry_id: urinary_PhIP::grilled_meat_frequent
-  trace:
-    created_index: 8
-    created_at: '2026-04-26T11:16:23.610811+00:00'
 - lifestyle_factor: processed_meat_frequent
   biomarker: urinary_NDMA_equivalent
   matrix: urine
@@ -170,9 +156,6 @@ biomarkers:
     proxy, not a directly validated single urinary biomarker row. CYP2E1 and Km_uM
     are NDMA activation normalization parameters.
   entry_id: urinary_NDMA_equivalent::processed_meat_frequent
-  trace:
-    created_index: 10
-    created_at: '2026-04-26T11:16:23.610823+00:00'
 - lifestyle_factor: occupational_benzene
   biomarker: urinary_t_t_muconic_acid
   matrix: urine
@@ -199,9 +182,6 @@ biomarkers:
   provenance_note: Urinary trans,trans-muconic acid supports benzene exposure. CYP2E1
     and Km_uM are benzene activation normalization parameters.
   entry_id: urinary_t_t_muconic_acid::occupational_benzene
-  trace:
-    created_index: 11
-    created_at: '2026-04-26T11:16:23.610829+00:00'
 - lifestyle_factor: occupational_TCE
   biomarker: urinary_trichloroacetic_acid
   matrix: urine
@@ -228,9 +208,6 @@ biomarkers:
   provenance_note: Urinary trichloroacetic acid supports TCE exposure/metabolism.
     GSTT1 and Km_uM are chlorinated-solvent bioactivation normalization parameters.
   entry_id: urinary_trichloroacetic_acid::occupational_TCE
-  trace:
-    created_index: 12
-    created_at: '2026-04-26T11:16:23.610835+00:00'
 - lifestyle_factor: aflatoxin_exposure
   biomarker: urinary_AFB1_N7_guanine
   matrix: urine
@@ -257,6 +234,3 @@ biomarkers:
   provenance_note: Urinary AFB1-N7-guanine supports biologically effective aflatoxin
     exposure. CYP3A4 and Km_uM are aflatoxin activation normalization parameters.
   entry_id: urinary_AFB1_N7_guanine::aflatoxin_exposure
-  trace:
-    created_index: 14
-    created_at: '2026-04-26T11:16:23.610847+00:00'

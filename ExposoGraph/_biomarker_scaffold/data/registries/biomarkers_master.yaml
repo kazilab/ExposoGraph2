@@ -1,46 +1,58 @@
-schema_version: 1.2.0
-description: Manifest for rebuilding biomarker_mapping.json from split source YAML
-  files.
-context: 'v6 Methods / Exposure integration module: ''The complete mapping of Tier
-  2 lifestyle multipliers to their primary biomarker data sources, published concentration
-  ranges, and derived [S]/Km ratios.'''
-version: 1.0.0
-created: '2026-04-20'
-manifest_type: biomarker_source_manifest
-registry_phase: split_manifest
-registry_tier: mixed
-source_note: Master manifest for the split biomarker registry. Edit the owning source
-  file, then rebuild and compare.
-update_workflow:
-- Edit the source YAML that owns the biomarker row.
-- Keep each biomarker in exactly one source file.
-- Run make build-biomarker-mapping to rebuild biomarker_mapping.json.
-- Run make compare-biomarker-mapping to diff the rebuilt JSON against biomarker_mapping_old.json.
-- Run make check-biomarker-mapping and pytest before publishing.
-sources:
-- path: source_nhanes.yaml
+_metadata:
+  schema_version: 1.2.0
+  generated_at: '2026-04-26T11:50:29.032557+00:00'
+  forward_update_compatible: true
+  customizable: true
+  description: Manifest for rebuilding biomarker_mapping.json from split source YAML
+    files.
+  context: 'v6 Methods / Exposure integration module: ''The complete mapping of Tier
+    2 lifestyle multipliers to their primary biomarker data sources, published concentration
+    ranges, and derived [S]/Km ratios.'''
+  version: 1.0.0
+  created: '2026-04-20'
+  manifest_type: biomarker_source_manifest
+  registry_phase: split_manifest
+  registry_tier: mixed
+  source_note: Master manifest for the split biomarker registry. Edit the owning source
+    file, then rebuild and compare.
+  update_workflow:
+  - Edit the source YAML that owns the biomarker row.
+  - Keep each biomarker in exactly one source file.
+  - Run make build-biomarker-mapping to rebuild biomarker_mapping.json.
+  - Run make compare-biomarker-mapping to diff the rebuilt JSON against biomarker_mapping_old.json.
+  - Run make check-biomarker-mapping and pytest before publishing.
+  source_registry_kind: manifest
+  source_registry: ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml
+  source_registry_entry_count: 15
+source_documents:
+- path: ExposoGraph/_biomarker_scaffold/data/registries/source_nhanes.yaml
+  entry_count: 6
   source_family: NHANES
   registry_phase: direct_measurement
   registry_tier: 1
   source_note: CDC NHANES biomarker measurements and biomonitoring tables used for
     direct exposure rows.
-- path: source_literature.yaml
+- path: ExposoGraph/_biomarker_scaffold/data/registries/source_literature.yaml
+  entry_count: 9
   source_family: literature
   registry_phase: validated_proxy
   registry_tier: 2
   source_note: Literature-backed biomarker proxies, scenario proxies, and model-normalization
     rows.
-- path: source_brenda.yaml
+- path: ExposoGraph/_biomarker_scaffold/data/registries/source_brenda.yaml
+  entry_count: 0
   source_family: BRENDA
   registry_phase: enzyme_kinetics
   registry_tier: 1
   source_note: Reserved for direct enzyme-kinetic rows; empty in the current split.
-- path: source_pubchem.yaml
+- path: ExposoGraph/_biomarker_scaffold/data/registries/source_pubchem.yaml
+  entry_count: 0
   source_family: PubChem
   registry_phase: chemical_identity
   registry_tier: 0
   source_note: Reserved for chemical identity metadata; empty in the current split.
-- path: source_comptox.yaml
+- path: ExposoGraph/_biomarker_scaffold/data/registries/source_comptox.yaml
+  entry_count: 0
   source_family: CompTox
   registry_phase: chemical_identity
   registry_tier: 0

@@ -119,6 +119,55 @@ ALLELE_FREQUENCIES: dict[str, dict[str, dict[str, float]]] = {
         "Middle Eastern": {"NM": 0.79, "UM_c1c1": 0.13, "IM": 0.08},
         "Other": {"NM": 0.78, "UM_c1c1": 0.14, "IM": 0.08},
     },
+    # CYP1B1 L432V (*3) is a common gain-of-function variant that elevates
+    # catalysis of PAH and estrogen-2/4-hydroxylation. Frequencies follow
+    # 1000G phase 3 / Bailey 1998. Mapped onto the standard PM/IM/NM/RM scale:
+    # NM = Leu/Leu reference, RM = Leu/Val (one *3 copy), UM = Val/Val (*3/*3).
+    "CYP1B1": {
+        "European": {"NM": 0.30, "RM": 0.50, "UM": 0.20},
+        "African": {"NM": 0.10, "RM": 0.45, "UM": 0.45},
+        "East Asian": {"NM": 0.55, "RM": 0.38, "UM": 0.07},
+        "Admixed American": {"NM": 0.28, "RM": 0.48, "UM": 0.24},
+        "South Asian": {"NM": 0.32, "RM": 0.49, "UM": 0.19},
+        "Middle Eastern": {"NM": 0.31, "RM": 0.49, "UM": 0.20},
+        "Other": {"NM": 0.31, "RM": 0.48, "UM": 0.21},
+    },
+    # EPHX1 Y113H/H139R confer slow / fast epoxide hydrolase phenotypes
+    # (Hassett et al. 1994; Smith & Harrison 1997). PM = slow (Y113H/Y113H),
+    # IM = intermediate, NM = wild type, RM = fast (H139R carriers).
+    "EPHX1": {
+        "European": {"PM": 0.06, "IM": 0.30, "NM": 0.50, "RM": 0.14},
+        "African": {"PM": 0.04, "IM": 0.26, "NM": 0.55, "RM": 0.15},
+        "East Asian": {"PM": 0.10, "IM": 0.36, "NM": 0.42, "RM": 0.12},
+        "Admixed American": {"PM": 0.07, "IM": 0.31, "NM": 0.48, "RM": 0.14},
+        "South Asian": {"PM": 0.07, "IM": 0.30, "NM": 0.49, "RM": 0.14},
+        "Middle Eastern": {"PM": 0.06, "IM": 0.30, "NM": 0.50, "RM": 0.14},
+        "Other": {"PM": 0.07, "IM": 0.30, "NM": 0.49, "RM": 0.14},
+    },
+    # NQO1*2 (Pro187Ser, rs1800566) homozygotes have ~5% activity (PM);
+    # heterozygotes ~50% (IM). Frequencies from 1000G / Eguchi-Ishimae 2005.
+    "NQO1": {
+        "European": {"NM": 0.62, "IM": 0.32, "PM": 0.06},
+        "African": {"NM": 0.66, "IM": 0.30, "PM": 0.04},
+        "East Asian": {"NM": 0.30, "IM": 0.50, "PM": 0.20},
+        "Admixed American": {"NM": 0.50, "IM": 0.40, "PM": 0.10},
+        "South Asian": {"NM": 0.55, "IM": 0.36, "PM": 0.09},
+        "Middle Eastern": {"NM": 0.60, "IM": 0.33, "PM": 0.07},
+        "Other": {"NM": 0.57, "IM": 0.36, "PM": 0.07},
+    },
+    # GSTP1 Ile105Val (*B/*C alleles): Val carriers have reduced thermal
+    # stability and 2-3x lower activity for several PAH-diol epoxide
+    # substrates (Watson et al. 1998; Hu et al. 1997). NM = Ile/Ile,
+    # IM = Ile/Val, PM = Val/Val.
+    "GSTP1": {
+        "European": {"NM": 0.43, "IM": 0.45, "PM": 0.12},
+        "African": {"NM": 0.36, "IM": 0.48, "PM": 0.16},
+        "East Asian": {"NM": 0.62, "IM": 0.33, "PM": 0.05},
+        "Admixed American": {"NM": 0.45, "IM": 0.43, "PM": 0.12},
+        "South Asian": {"NM": 0.48, "IM": 0.42, "PM": 0.10},
+        "Middle Eastern": {"NM": 0.44, "IM": 0.44, "PM": 0.12},
+        "Other": {"NM": 0.46, "IM": 0.43, "PM": 0.11},
+    },
 }
 
 ANCESTRY_DISTRIBUTION: dict[str, float] = {

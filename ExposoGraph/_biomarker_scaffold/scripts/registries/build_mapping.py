@@ -1,412 +1,294 @@
-"""Build and compare biomarker_mapping.json documents from split YAML sources."""
+"""Build ``biomarker_mapping.json`` from split YAML registry files."""
 
 from __future__ import annotations
 
 import argparse
+import copy
 import json
-from copy import deepcopy
+from collections.abc import Iterable
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import yaml
+from .loader import load_json_mapping, load_registry_document, write_json_mapping
 
-from .loader import load_json_mapping
-from .mapping_document import build_mapping_document, validate_mapping_document
-
-DEFAULT_MANIFEST_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "_biomarker_scaffold"
-    / "data"
-    / "registries"
-    / "biomarkers_master.yaml"
-)
-DEFAULT_SOURCE_PATH = DEFAULT_MANIFEST_PATH
-DEFAULT_OUTPUT_PATH = Path(__file__).resolve().parents[3] / "data" / "biomarker_mapping.json"
-DEFAULT_OLD_PATH = Path(__file__).resolve().parents[3] / "data" / "biomarker_mapping_old.json"
-REPO_ROOT = Path(__file__).resolve().parents[4]
-
-_IGNORED_ENTRY_KEYS = {"entry_id", "trace", "biomarker_id"}
-_SOURCE_DOCUMENT_KEYS = {"biomarkers", "entries"}
-_MANIFEST_KEYS = {"sources"}
+_PRIVATE_SOURCE_KEY = "_source_document"
 
 
-def _coerce_source_entry(raw_entry: dict[str, Any]) -> dict[str, Any]:
-    entry = deepcopy(raw_entry)
-    biomarker = entry.get("biomarker") or entry.get("biomarker_id")
-    if not biomarker:
-        raise ValueError("Each source entry must define biomarker or biomarker_id")
-    entry.setdefault("biomarker", biomarker)
-    entry.pop("biomarker_id", None)
-    if "lifestyle" in entry and "lifestyle_factor" not in entry:
-        entry["lifestyle_factor"] = entry.pop("lifestyle")
-    entry.setdefault("lifestyle_factor", "default")
-    if "references" not in entry or entry["references"] is None:
-        entry["references"] = []
-    return entry
+def _repo_root_from_source(source_path: Path) -> Path:
+    """Infer the repository root from the documented scaffold path."""
+    marker = Path("ExposoGraph") / "_biomarker_scaffold" / "data" / "registries"
+    parts = source_path.resolve().parts
+    marker_parts = marker.parts
+    for index in range(0, len(parts) - len(marker_parts) + 1):
+        if parts[index : index + len(marker_parts)] == marker_parts:
+            return Path(*parts[:index])
+    return Path.cwd()
 
 
-def _load_yaml_document(path: str | Path) -> Any:
-    path = Path(path)
-    return yaml.safe_load(path.read_text(encoding="utf-8"))
+def _resolve_registry_path(repo_root: Path, path_value: str) -> Path:
+    path = Path(path_value)
+    if path.is_absolute():
+        return path
+    return repo_root / path
 
 
-def _registry_path_text(path: Path) -> str:
-    resolved = path.resolve()
-    try:
-        return str(resolved.relative_to(REPO_ROOT))
-    except ValueError:
-        return str(resolved)
-
-
-def _split_source_document(
-    path: Path,
-    raw: Any,
+def _normalise_source_documents(
+    manifest_path: Path, manifest: dict[str, Any]
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    metadata: dict[str, Any] = {}
-    entries: Any = raw
-    if isinstance(raw, dict):
-        if "sources" in raw:
-            raise ValueError(f"Manifest files must be loaded through the manifest loader: {path}")
-        metadata = {k: v for k, v in raw.items() if k not in _SOURCE_DOCUMENT_KEYS}
-        if "biomarkers" in raw:
-            entries = raw["biomarkers"]
-        elif "entries" in raw:
-            entries = raw["entries"]
-        else:
-            entries = []
-    if entries is None:
-        entries = []
-    if not isinstance(entries, list):
-        raise ValueError(f"Source YAML must contain a list of biomarker records: {path}")
+    metadata = dict(manifest.get("_metadata") or manifest.get("metadata") or {})
+    raw_sources = (
+        manifest.get("source_documents")
+        or manifest.get("sources")
+        or metadata.get("source_documents")
+        or []
+    )
+    if not isinstance(raw_sources, list):
+        raise ValueError("Biomarker manifest source_documents must be a list")
 
-    out: list[dict[str, Any]] = []
-    for idx, item in enumerate(entries):
-        if not isinstance(item, dict):
-            raise ValueError(f"Source entry {idx} in {path} is not a mapping")
-        out.append(item)
-    return metadata, out
+    default_registry = "ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml"
+    metadata.setdefault("source_registry_kind", "manifest")
+    metadata.setdefault("source_registry", default_registry)
+    metadata.setdefault("manifest_type", "biomarker_source_manifest")
 
-
-def _resolve_source_spec(
-    manifest_path: Path,
-    spec: str | dict[str, Any],
-) -> tuple[Path, dict[str, Any]]:
-    if isinstance(spec, str):
-        source_path = Path(spec)
-        source_meta: dict[str, Any] = {}
-    elif isinstance(spec, dict):
-        source_path = Path(spec.get("path") or "")
-        if not source_path:
-            raise ValueError("Each manifest source entry must include a path")
-        source_meta = {k: v for k, v in spec.items() if k != "path"}
-    else:
-        raise ValueError("Manifest source entries must be strings or objects")
-
-    if not source_path.is_absolute():
-        source_path = manifest_path.parent / source_path
-    return source_path, source_meta
+    sources: list[dict[str, Any]] = []
+    for raw_source in raw_sources:
+        if not isinstance(raw_source, dict):
+            raise ValueError(f"Invalid source document entry in {manifest_path}: {raw_source!r}")
+        source = dict(raw_source)
+        source_path = source.get("path")
+        if not isinstance(source_path, str) or not source_path:
+            raise ValueError(f"Source document is missing a path: {raw_source!r}")
+        sources.append(source)
+    return metadata, sources
 
 
-def _trace_metadata(source_path: Path, source_meta: dict[str, Any]) -> dict[str, Any]:
-    trace: dict[str, Any] = {"source_registry": _registry_path_text(source_path)}
-    for key in ("source_family", "registry_phase", "registry_tier", "source_note"):
-        value = source_meta.get(key)
-        if value not in (None, ""):
-            trace[key] = value
-    return trace
-
-
-def _prepare_entries(
-    entries: list[dict[str, Any]],
-    source_path: Path,
-    source_meta: dict[str, Any],
-) -> list[dict[str, Any]]:
-    trace_template = _trace_metadata(source_path, source_meta)
-    prepared_entries: list[dict[str, Any]] = []
-    for entry in entries:
-        prepared = _coerce_source_entry(entry)
-        trace = dict(prepared.get("trace", {}))
-        for key, value in trace_template.items():
-            trace.setdefault(key, value)
-        prepared["trace"] = trace
-        prepared_entries.append(prepared)
-    return prepared_entries
-
-
-def _summarize_source(
-    source_path: Path,
-    source_meta: dict[str, Any],
-    entries: list[dict[str, Any]],
-) -> dict[str, Any]:
-    summary: dict[str, Any] = {
-        "path": _registry_path_text(source_path),
-        "entry_count": len(entries),
-    }
-    for key in ("source_family", "registry_phase", "registry_tier", "source_note"):
-        value = source_meta.get(key)
-        if value not in (None, ""):
-            summary[key] = value
-    return summary
-
-
-def _load_source_file(
-    path: Path,
+def _load_manifest_entries(
+    source_path: str | Path,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    raw = _load_yaml_document(path)
-    metadata, entries = _split_source_document(path, raw)
+    manifest_path = Path(source_path)
+    manifest = load_registry_document(manifest_path)
+    repo_root = _repo_root_from_source(manifest_path)
+    metadata, sources = _normalise_source_documents(manifest_path, manifest)
+
+    entries: list[dict[str, Any]] = []
+    normalized_sources: list[dict[str, Any]] = []
+    for source in sources:
+        registry_path = _resolve_registry_path(repo_root, str(source["path"]))
+        source_document = load_registry_document(registry_path)
+        source_metadata = dict(source_document.get("_metadata") or {})
+        source_entries = source_document.get("entries") or []
+        if not isinstance(source_entries, list):
+            raise ValueError(f"Registry entries must be a list in {registry_path}")
+
+        normalized_source = {**source_metadata, **source}
+        normalized_source["entry_count"] = len(source_entries)
+        normalized_sources.append(normalized_source)
+
+        for raw_entry in source_entries:
+            if not isinstance(raw_entry, dict):
+                raise ValueError(f"Invalid biomarker row in {registry_path}: {raw_entry!r}")
+            entry = copy.deepcopy(raw_entry)
+            entry[_PRIVATE_SOURCE_KEY] = normalized_source
+            entries.append(entry)
+
+    metadata["source_documents"] = normalized_sources
+    metadata["source_registry_entry_count"] = len(entries)
     return metadata, entries
 
 
-def _load_single_source_bundle(
-    path: Path,
-) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    source_metadata, entries = _load_source_file(path)
-    prepared_entries = _prepare_entries(entries, path, source_metadata)
-    metadata = dict(source_metadata)
-    metadata["source_registry_kind"] = "single"
-    metadata["source_registry"] = _registry_path_text(path)
-    metadata["source_registry_entry_count"] = len(prepared_entries)
-    metadata["source_documents"] = [
-        _summarize_source(path, source_metadata, prepared_entries),
-    ]
-    return metadata, prepared_entries
+def _entry_id(entry: dict[str, Any]) -> str:
+    existing = entry.get("entry_id")
+    if isinstance(existing, str) and existing:
+        return existing
+    biomarker = str(entry.get("biomarker", "")).strip()
+    lifestyle_factor = str(entry.get("lifestyle_factor", "")).strip()
+    if not biomarker or not lifestyle_factor:
+        raise ValueError(f"Biomarker entry is missing key fields: {entry!r}")
+    return f"{biomarker}::{lifestyle_factor}"
 
 
-def _load_manifest_bundle(
-    path: Path,
-) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    raw = _load_yaml_document(path)
-    if not isinstance(raw, dict) or "sources" not in raw:
-        return _load_single_source_bundle(path)
-
-    manifest_metadata = {k: v for k, v in raw.items() if k not in _MANIFEST_KEYS}
-    source_documents: list[dict[str, Any]] = []
-    entries: list[dict[str, Any]] = []
-    for spec in raw["sources"]:
-        source_path, source_meta = _resolve_source_spec(path, spec)
-        source_metadata, source_entries = _load_source_file(source_path)
-        combined_meta = dict(source_metadata)
-        combined_meta.update(source_meta)
-        prepared_entries = _prepare_entries(source_entries, source_path, combined_meta)
-        entries.extend(prepared_entries)
-        source_documents.append(_summarize_source(source_path, combined_meta, prepared_entries))
-
-    manifest_metadata["source_registry_kind"] = "manifest"
-    manifest_metadata["source_registry"] = _registry_path_text(path)
-    manifest_metadata["source_registry_entry_count"] = len(entries)
-    manifest_metadata["source_documents"] = source_documents
-    return manifest_metadata, entries
+def _created_at(entry: dict[str, Any], fallback: str) -> str:
+    trace = entry.get("trace")
+    if isinstance(trace, dict):
+        created_at = trace.get("created_at")
+        if isinstance(created_at, str) and created_at:
+            return created_at
+    return fallback
 
 
-def load_biomarker_mapping_source(
-    path: str | Path,
-) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Load a biomarker mapping YAML source or manifest document."""
-    path = Path(path)
-    raw = _load_yaml_document(path)
-    if isinstance(raw, dict) and "sources" in raw:
-        return _load_manifest_bundle(path)
-    return _load_single_source_bundle(path)
+def _public_entry(entry: dict[str, Any], index: int, generated_at: str) -> dict[str, Any]:
+    source_document = entry.get(_PRIVATE_SOURCE_KEY)
+    if not isinstance(source_document, dict):
+        raise ValueError(f"Biomarker entry is missing source document context: {entry!r}")
+
+    row = {
+        key: copy.deepcopy(value)
+        for key, value in entry.items()
+        if key not in {_PRIVATE_SOURCE_KEY, "trace"}
+    }
+    row["entry_id"] = _entry_id(row)
+    row["trace"] = {
+        "created_index": index,
+        "created_at": _created_at(entry, generated_at),
+        "source_registry": source_document["path"],
+        "source_family": source_document.get("source_family", ""),
+        "registry_phase": source_document.get("registry_phase", ""),
+        "registry_tier": source_document.get("registry_tier", ""),
+        "source_note": source_document.get("source_note", ""),
+    }
+    return row
 
 
 def load_biomarker_mapping_manifest(
-    path: str | Path,
+    source_path: str | Path,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Load a biomarker mapping manifest and all of its referenced sources."""
-    path = Path(path)
-    return _load_manifest_bundle(path)
+    """Load the source manifest and return normalized metadata plus entries."""
+    metadata, sourced_entries = _load_manifest_entries(source_path)
+    entries = [
+        {key: copy.deepcopy(value) for key, value in entry.items() if key != _PRIVATE_SOURCE_KEY}
+        for entry in sourced_entries
+    ]
+    return metadata, entries
 
 
-def build_biomarker_mapping_document(
-    source_path: str | Path = DEFAULT_SOURCE_PATH,
-    *,
-    metadata: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """Build a normalized biomarker mapping document from a YAML source."""
-    source_metadata, entries = load_biomarker_mapping_source(source_path)
-    build_metadata = dict(source_metadata)
-    if metadata:
-        build_metadata.update(metadata)
-    return build_mapping_document(entries=entries, metadata=build_metadata)
-
-
-def _entry_key(entry: dict[str, Any]) -> str:
-    biomarker = str(entry.get("biomarker") or entry.get("biomarker_id") or "").strip()
-    lifestyle = str(entry.get("lifestyle_factor") or entry.get("lifestyle") or "default").strip()
-    if biomarker:
-        return f"{biomarker}::{lifestyle}"
-    return str(entry.get("entry_id") or f"entry::{lifestyle}")
-
-
-def _compareable_entry(entry: dict[str, Any]) -> dict[str, Any]:
-    payload = deepcopy(entry)
-    for key in _IGNORED_ENTRY_KEYS:
-        payload.pop(key, None)
-    return payload
-
-
-def _index_entries(entries: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
-    index: dict[str, dict[str, Any]] = {}
-    for idx, entry in enumerate(entries):
-        if not isinstance(entry, dict):
-            raise ValueError(f"Entry {idx} is not a mapping")
-        key = _entry_key(entry)
-        if key in index:
-            raise ValueError(f"Duplicate biomarker/lifestyle combination in mapping: {key}")
-        index[key] = _compareable_entry(entry)
-    return index
-
-
-def compare_biomarker_mapping_documents(
-    old_document: dict[str, Any],
-    new_document: dict[str, Any],
-) -> dict[str, Any]:
-    """Compare two mapping documents using stable biomarker/lifestyle identities."""
-    old_entries = old_document.get("entries", [])
-    new_entries = new_document.get("entries", [])
-    if not isinstance(old_entries, list):
-        raise ValueError("Old document must contain an entries list")
-    if not isinstance(new_entries, list):
-        raise ValueError("New document must contain an entries list")
-
-    old_index = _index_entries([entry for entry in old_entries if isinstance(entry, dict)])
-    new_index = _index_entries([entry for entry in new_entries if isinstance(entry, dict)])
-
-    old_keys = set(old_index)
-    new_keys = set(new_index)
-    shared_keys = sorted(old_keys & new_keys)
-    added_keys = sorted(new_keys - old_keys)
-    removed_keys = sorted(old_keys - new_keys)
-
-    changed_entries: list[dict[str, Any]] = []
-    for key in shared_keys:
-        old_payload = old_index[key]
-        new_payload = new_index[key]
-        if old_payload == new_payload:
-            continue
-        changed_fields = sorted(
-            field
-            for field in set(old_payload) | set(new_payload)
-            if old_payload.get(field) != new_payload.get(field)
-        )
-        changed_entries.append({"entry_id": key, "fields_changed": changed_fields})
-
+def build_biomarker_mapping_document(source_path: str | Path) -> dict[str, Any]:
+    """Build the flattened JSON biomarker mapping document from a manifest."""
+    metadata, sourced_entries = _load_manifest_entries(source_path)
+    generated_at = datetime.now(timezone.utc).isoformat()
+    metadata = copy.deepcopy(metadata)
+    metadata.setdefault("schema_version", "1.2.0")
+    metadata["generated_at"] = generated_at
+    metadata.setdefault("forward_update_compatible", True)
+    metadata.setdefault("customizable", True)
+    metadata.setdefault(
+        "description",
+        "Manifest for rebuilding biomarker_mapping.json from split source YAML files.",
+    )
+    metadata.setdefault(
+        "context",
+        "v6 Methods / Exposure integration module: 'The complete mapping of Tier 2 "
+        "lifestyle multipliers to their primary biomarker data sources, published "
+        "concentration ranges, and derived [S]/Km ratios.'",
+    )
+    metadata.setdefault("version", "1.0.0")
+    metadata.setdefault("created", "2026-04-20")
+    metadata.setdefault("registry_phase", "split_manifest")
+    metadata.setdefault("registry_tier", "mixed")
+    metadata.setdefault(
+        "source_note",
+        "Master manifest for the split biomarker registry. Edit the owning source "
+        "file, then rebuild and compare.",
+    )
+    entries = [
+        _public_entry(entry, index=index, generated_at=generated_at)
+        for index, entry in enumerate(sourced_entries)
+    ]
     return {
-        "old_entry_count": len(old_index),
-        "new_entry_count": len(new_index),
-        "shared_entry_count": len(shared_keys),
-        "added_count": len(added_keys),
-        "removed_count": len(removed_keys),
-        "changed_count": len(changed_entries),
-        "added_entries": added_keys,
-        "removed_entries": removed_keys,
-        "changed_entries": changed_entries,
-        "mapped_biomarkers_unchanged": not added_keys and not removed_keys and not changed_entries,
+        "_metadata": metadata,
+        "_update_list": [],
+        "entries": entries,
     }
 
 
-def _print_summary(report: dict[str, Any]) -> None:
-    print(
-        "Comparison summary: "
-        f"{report['shared_entry_count']} shared, "
-        f"{report['added_count']} added, "
-        f"{report['removed_count']} removed, "
-        f"{report['changed_count']} changed"
+def _compare_key(entry: dict[str, Any]) -> str:
+    return _entry_id(entry)
+
+
+def _compare_entry(entry: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: copy.deepcopy(value)
+        for key, value in entry.items()
+        if key != "trace"
+    }
+
+
+def _entries_by_id(entries: Iterable[Any]) -> dict[str, dict[str, Any]]:
+    result: dict[str, dict[str, Any]] = {}
+    for raw_entry in entries:
+        if not isinstance(raw_entry, dict):
+            raise ValueError(f"Invalid biomarker entry: {raw_entry!r}")
+        result[_compare_key(raw_entry)] = _compare_entry(raw_entry)
+    return result
+
+
+def compare_biomarker_mapping_documents(
+    old_document: dict[str, Any], new_document: dict[str, Any]
+) -> dict[str, Any]:
+    """Compare biomarker rows while ignoring scaffold trace metadata."""
+    old_entries = _entries_by_id(old_document.get("entries") or [])
+    new_entries = _entries_by_id(new_document.get("entries") or [])
+
+    old_ids = set(old_entries)
+    new_ids = set(new_entries)
+    added = sorted(new_ids - old_ids)
+    removed = sorted(old_ids - new_ids)
+    changed = sorted(
+        entry_id
+        for entry_id in old_ids & new_ids
+        if old_entries[entry_id] != new_entries[entry_id]
     )
-    if report["mapped_biomarkers_unchanged"]:
-        print("Mapped biomarkers unchanged between the two documents.")
-    else:
-        if report["added_entries"]:
-            print("Added:")
-            for key in report["added_entries"]:
-                print(f"- {key}")
-        if report["removed_entries"]:
-            print("Removed:")
-            for key in report["removed_entries"]:
-                print(f"- {key}")
-        if report["changed_entries"]:
-            print("Changed:")
-            for item in report["changed_entries"]:
-                fields = ", ".join(item["fields_changed"])
-                print(f"- {item['entry_id']}: {fields}")
+
+    return {
+        "mapped_biomarkers_unchanged": not added and not removed and not changed,
+        "old_count": len(old_entries),
+        "new_count": len(new_entries),
+        "added_count": len(added),
+        "removed_count": len(removed),
+        "changed_count": len(changed),
+        "added": added,
+        "removed": removed,
+        "changed": changed,
+    }
 
 
-def main(argv: list[str] | None = None) -> int:
+def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description=(
-            "Rebuild biomarker_mapping.json from a split YAML manifest and compare it "
-            "with the old snapshot."
-        )
+        description="Build ExposoGraph biomarker_mapping.json from split YAML registries."
     )
     parser.add_argument(
         "--source",
-        default=str(DEFAULT_SOURCE_PATH),
-        help="YAML source manifest or source file path.",
+        default="ExposoGraph/_biomarker_scaffold/data/registries/biomarkers_master.yaml",
+        help="Path to the biomarker source manifest.",
     )
     parser.add_argument(
         "--out",
-        default=str(DEFAULT_OUTPUT_PATH),
-        help="Output biomarker_mapping.json path.",
+        default="ExposoGraph/data/biomarker_mapping.json",
+        help="Output JSON mapping path.",
     )
     parser.add_argument(
         "--old",
-        default=str(DEFAULT_OLD_PATH),
-        help="Preserved old biomarker_mapping.json path used for comparison.",
+        default=None,
+        help="Optional previous JSON mapping path to compare against.",
     )
     parser.add_argument(
         "--compare-only",
         action="store_true",
-        help="Skip rebuilding and compare --old and --out as existing JSON documents.",
+        help="Compare --old and --out without rebuilding --out.",
     )
-    parser.add_argument(
-        "--report",
-        help="Optional JSON path for the comparison report.",
-    )
-    args = parser.parse_args(argv)
+    return parser.parse_args()
 
+
+def main() -> None:
+    args = _parse_args()
     if args.compare_only:
-        old_path = Path(args.old)
-        new_path = Path(args.out)
-        old_document = load_json_mapping(old_path)
-        new_document = load_json_mapping(new_path)
+        if not args.old:
+            raise SystemExit("--compare-only requires --old")
+        old_document = load_json_mapping(args.old)
+        new_document = load_json_mapping(args.out)
         report = compare_biomarker_mapping_documents(old_document, new_document)
-        _print_summary(report)
-        if args.report:
-            report_path = Path(args.report)
-            report_path.parent.mkdir(parents=True, exist_ok=True)
-            report_text = json.dumps(report, indent=2, sort_keys=True) + "\n"
-            report_path.write_text(report_text, encoding="utf-8")
-        return 0
+        print(json.dumps(report, indent=2, sort_keys=True))
+        raise SystemExit(0 if report["mapped_biomarkers_unchanged"] else 1)
 
-    source_path = Path(args.source)
-    output_path = Path(args.out)
-    old_path = Path(args.old)
-
-    document = build_biomarker_mapping_document(source_path)
-    issues = validate_mapping_document(document)
-    if issues:
-        print(f"FAILED: {len(issues)} issue(s) found")
-        for issue in issues:
-            print(f"- {issue}")
-        return 1
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(document, indent=2, sort_keys=False) + "\n", encoding="utf-8")
-    print(f"Wrote rebuilt biomarker mapping to {output_path}")
-
-    if old_path.exists():
-        old_document = load_json_mapping(old_path)
+    document = build_biomarker_mapping_document(args.source)
+    write_json_mapping(args.out, document)
+    if args.old:
+        old_document = load_json_mapping(args.old)
         report = compare_biomarker_mapping_documents(old_document, document)
-        _print_summary(report)
-        if args.report:
-            report_path = Path(args.report)
-            report_path.parent.mkdir(parents=True, exist_ok=True)
-            report_text = json.dumps(report, indent=2, sort_keys=True) + "\n"
-            report_path.write_text(report_text, encoding="utf-8")
-    else:
-        print(f"Old snapshot not found at {old_path}; comparison skipped.")
-    return 0
+        print(json.dumps(report, indent=2, sort_keys=True))
+        raise SystemExit(0 if report["mapped_biomarkers_unchanged"] else 1)
+    print(f"Wrote {len(document['entries'])} biomarker rows to {args.out}")
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

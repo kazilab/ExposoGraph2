@@ -1,24 +1,39 @@
 """Clonal hematopoiesis of indeterminate potential (CHIP) somatic modifier layer.
 
-Implements the CHIP module from ExposoGraph 2.0 (CHIP somatic
-modifier layer) as a post-hoc somatic adjustment applied on top of germline
-flux and interaction results.
+Implements the CHIP module from ExposoGraph 2.0 as a post-hoc somatic
+adjustment applied on top of germline-derived flux and interaction results.
+
+CHIP-positive status is assigned when at least one mutation in a recognized
+driver gene (``CHIP_DRIVER_GENES``) passes the VAF threshold (``VAF_THRESHOLD``,
+default 2%), or when an external binary CHIP flag is supplied via
+:func:`derive_chip_status`.
 
 The module exposes two integration mechanisms:
 
-1. Aggregate risk modifier (default 1.4x) applied to CHIP-positive individuals
-   to reflect the 1.3-1.6x solid-tumor risk elevation observed in published
-   CHIP epidemiology (Jaiswal 2017, Bolton 2020, Niroula 2021).
-2. Gene-specific pathway modifiers. CHIP driver mutations (DNMT3A, TET2, ASXL1,
-   TP53) alter enzyme promoter methylation and damage response, producing
-   carcinogen-class-specific multipliers (PAH, nitrosamines, alkylating agents,
-   estrogens) when the relevant driver is present.
+1. Aggregate risk modifier (default 1.4x, parameterizable via the
+   ``aggregate_modifier`` argument of :func:`compute_chip_modifier`) applied
+   to all CHIP-positive individuals. The default is a conservative midrange
+   estimate of the ~1.3-1.6x solid-tumor risk elevation reported by Bolton
+   2020 (Nat Genet) and Niroula 2021 (Nat Med); Jaiswal 2017 (NEJM) documents
+   the broader CHIP-associated all-cause mortality and cardiovascular risk
+   that frames this literature.
+2. Gene-specific pathway modifiers, applied for a curated subset of CHIP
+   drivers: DNMT3A, TET2, ASXL1, TP53, and PPM1D. These genes alter enzyme
+   promoter methylation, chromatin remodeling, or DNA damage response, and
+   each contributes carcinogen-class-specific multipliers (e.g. PAH,
+   nitrosamines, alkylating agents, estrogens, dioxins, aldehydes, aflatoxin,
+   heavy metals, benzene). Other recognized drivers in ``CHIP_DRIVER_GENES``
+   (JAK2, SF3B1, SRSF2, IDH1, IDH2, GNB1, GNAS, CBL, BCOR) trigger
+   CHIP-positive status and the aggregate modifier but currently carry no
+   curated pathway multiplier; an explanatory note is recorded in
+   ``CHIPEffect.notes``.
 
 Germline x CHIP interaction is modelled multiplicatively: the CHIP-adjusted
-risk is (germline risk) * (aggregate modifier) * (gene-specific pathway
-multiplier). This matches with CHIP-positive individuals in the top germline 
-quintile show 2.3x composite scores vs 1.8x for CHIP-negative top-quintile 
-individuals.
+risk for one carcinogen class is (germline risk) * (aggregate modifier) *
+(product of applicable per-driver class multipliers). Multiple co-occurring
+drivers compose multiplicatively per class, consistent with the observation
+that CHIP-positive individuals in the top germline quintile show ~2.3x
+composite scores vs ~1.8x for CHIP-negative top-quintile individuals.
 
 All parameters are model-derived conservative estimates grounded in published
 epidemiology; they are expected to be refined as CHIP-stratified expression
@@ -38,8 +53,9 @@ from typing import Any, Iterable
 # (Jaiswal 2017, Bolton 2020, Niroula 2021).
 AGGREGATE_CHIP_MODIFIER: float = 1.4
 
-# VAF threshold for calling CHIP. somatic mutations in
-# hematologic malignancy-associated genes at variant allele frequency >=2%".
+# VAF threshold for calling CHIP: somatic mutations in hematologic
+# malignancy-associated driver genes at variant allele frequency >=2%
+# (Steensma 2015 consensus definition of CHIP).
 VAF_THRESHOLD: float = 0.02
 
 # Known CHIP driver genes (Genovese 2014, Jaiswal 2014, Steensma 2015).

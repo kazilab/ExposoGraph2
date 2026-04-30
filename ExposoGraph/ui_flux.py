@@ -9,6 +9,7 @@ import streamlit as st
 from .flux_engine import (
     CarcinogenClass,
     FluxTissueWeightSource,
+    PathwayFluxResult,
     compute_pathway_flux,
 )
 
@@ -31,7 +32,7 @@ _DEFAULT_GENOTYPES = {
 }
 
 
-def _enzyme_rows(result, *, activation: bool) -> list[dict[str, object]]:
+def _enzyme_rows(result: PathwayFluxResult, *, activation: bool) -> list[dict[str, object]]:
     enzymes = result.activation_enzymes if activation else result.detox_enzymes
     return [
         {

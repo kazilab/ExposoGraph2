@@ -311,6 +311,11 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
     if gene_upper == "CYP1A2":
         if diplotype_lower in ("*1f/*1f", "1f/1f", "cyp1a2*1f/*1f", "um_1f_1f"):
             return 1.5
+        if diplotype_lower in ("*1a/*1f", "1a/1f", "*1f/*1a", "1f/1a"):
+            # Heterozygous *1F: intermediate inducibility (Sachse et al. 1999;
+            # Ghotbi et al. 2007). Splits the difference between *1A/*1A (1.0)
+            # and *1F/*1F (1.5).
+            return 1.25
         if diplotype_lower in ("*1a/*1a", "1a/1a"):
             return 1.0
         if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
@@ -325,6 +330,24 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
             return 0.5
         if diplotype_lower in ("rapid", "rapid acetylator", "rapid_acetylator", "ra"):
             return 1.0
+
+    if gene_upper == "NAT1":
+        # NAT1 phenotype assignments: *4 is the reference (rapid), *10 has
+        # been associated with modestly increased acetylation activity in
+        # several reports (Bell et al. 1995; Lin et al. 1998), and *14 is a
+        # well-established slow allele (Hughes et al. 1998).
+        if diplotype_lower in ("*4/*4", "4/4", "rapid", "ra"):
+            return 1.0
+        if diplotype_lower in ("*4/*10", "*10/*4", "4/10", "10/4"):
+            return 1.05
+        if diplotype_lower in ("*10/*10", "10/10"):
+            return 1.1
+        if diplotype_lower in ("*4/*14", "*14/*4", "4/14", "14/4"):
+            return 0.75
+        if diplotype_lower in ("*10/*14", "*14/*10", "10/14", "14/10"):
+            return 0.8
+        if diplotype_lower in ("*14/*14", "14/14", "slow", "sa"):
+            return 0.5
 
     if gene_upper == "CYP2D6":
         if diplotype_lower in ("*1/*1", "*1/*2", "*2/*2"):
@@ -388,6 +411,44 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
         if diplotype_lower in ("*2a/*2a", "2a/2a"):
             return 1.5
 
+    # Gene-specific phenotype scales (override the generic PM=0/IM=0.5/NM=1.0
+    # standard for genes whose null/slow phenotype retains substantial residual
+    # activity in vivo).
+    if gene_upper == "EPHX1":
+        # Hassett 1994; Smith 1997: Y113H/Y113H ("slow") retains ~30-50% epoxide
+        # hydrolase activity, not zero.
+        if diplotype_lower in ("pm", "slow"):
+            return 0.4
+        if diplotype_lower in ("im", "intermediate"):
+            return 0.7
+        if diplotype_lower in ("rm", "rapid", "fast"):
+            return 1.3
+
+    if gene_upper == "NQO1":
+        # Siegel 1999; Ross 2004: NQO1*2 (Pro187Ser) homozygotes retain ~3-5%
+        # activity due to ubiquitin-mediated degradation; heterozygotes ~50%.
+        if diplotype_lower in ("pm", "*2/*2"):
+            return 0.05
+        if diplotype_lower in ("im", "*1/*2"):
+            return 0.5
+
+    if gene_upper == "GSTP1":
+        # Watson 1998; Hu 1997: Ile105Val (Val/Val) retains ~30-50% activity
+        # for many PAH-diol epoxide substrates (reduced thermal stability and
+        # affinity, not loss of function).
+        if diplotype_lower in ("pm", "val/val"):
+            return 0.4
+        if diplotype_lower in ("im", "ile/val"):
+            return 0.7
+
+    if gene_upper == "CYP1B1":
+        # Bailey 1998; Shimada 1999: CYP1B1*3 (L432V) carriers have modestly
+        # elevated catalysis (~25-50%), not the standard 2x ultrarapid scale.
+        if diplotype_lower in ("rm", "*1/*3", "leu/val"):
+            return 1.25
+        if diplotype_lower in ("um", "*3/*3", "val/val"):
+            return 1.5
+
     # Standard phenotype scale
     phenotype_map = {
         "pm": std["PM"],
@@ -440,6 +501,8 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
     if gene_upper == "CYP1A2":
         if diplotype_lower in ("*1f/*1f", "1f/1f", "cyp1a2*1f/*1f", "um_1f_1f"):
             return 1.5
+        if diplotype_lower in ("*1a/*1f", "1a/1f", "*1f/*1a", "1f/1a"):
+            return 1.25
         if diplotype_lower in ("*1a/*1a", "1a/1a"):
             return 1.0
         if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
@@ -454,6 +517,20 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
             return 0.5
         if diplotype_lower in ("rapid", "rapid acetylator", "rapid_acetylator", "ra"):
             return 1.0
+
+    if gene_upper == "NAT1":
+        if diplotype_lower in ("*4/*4", "4/4", "rapid", "ra"):
+            return 1.0
+        if diplotype_lower in ("*4/*10", "*10/*4", "4/10", "10/4"):
+            return 1.05
+        if diplotype_lower in ("*10/*10", "10/10"):
+            return 1.1
+        if diplotype_lower in ("*4/*14", "*14/*4", "4/14", "14/4"):
+            return 0.75
+        if diplotype_lower in ("*10/*14", "*14/*10", "10/14", "14/10"):
+            return 0.8
+        if diplotype_lower in ("*14/*14", "14/14", "slow", "sa"):
+            return 0.5
 
     if gene_upper == "CYP2D6":
         if diplotype_lower in ("*1/*1", "*1/*2", "*2/*2"):
@@ -495,6 +572,29 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
         if diplotype_lower in ("*1/*2a", "*1/2a", "wt/*2a", "*2a carrier"):
             return 1.25
         if diplotype_lower in ("*2a/*2a", "2a/2a"):
+            return 1.5
+
+    if gene_upper == "EPHX1":
+        if diplotype_lower in ("pm", "slow"):
+            return 0.4
+        if diplotype_lower in ("im", "intermediate"):
+            return 0.7
+        if diplotype_lower in ("rm", "rapid", "fast"):
+            return 1.3
+    if gene_upper == "NQO1":
+        if diplotype_lower in ("pm", "*2/*2"):
+            return 0.05
+        if diplotype_lower in ("im", "*1/*2"):
+            return 0.5
+    if gene_upper == "GSTP1":
+        if diplotype_lower in ("pm", "val/val"):
+            return 0.4
+        if diplotype_lower in ("im", "ile/val"):
+            return 0.7
+    if gene_upper == "CYP1B1":
+        if diplotype_lower in ("rm", "*1/*3", "leu/val"):
+            return 1.25
+        if diplotype_lower in ("um", "*3/*3", "val/val"):
             return 1.5
 
     phenotype_map = {

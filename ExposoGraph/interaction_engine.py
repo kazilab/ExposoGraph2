@@ -556,7 +556,7 @@ def _build_competitive_substrates(
     """Build the substrate concentration maps used by the interaction model.
 
     When ``tissue`` is pulmonary, CYP2A13 and CYP2F1 are added as additional
-    benzene / NNK activators to ambient (non-occupational) benzene metabolism 
+    benzene / NNK activators to ambient (non-occupational) benzene metabolism
     may be dominated by pulmonary
     CYP2A13 / CYP2F1 rather than hepatic CYP2E1.
     """
@@ -910,6 +910,195 @@ def gsh_depletion_model(
         consumption_exceeds_synthesis=tipping_point_reached,
         tipping_point_reached=tipping_point_reached,
         tipping_point_multiplier=_round(total_consumption / synthesis_rate, 3) if synthesis_rate > 0 else 0.0,
+        impaired_pathways=impaired_pathways,
+        individual_contributions=contributions,
+        time_to_depletion_h=time_to_depletion_h,
+        tissue=tissue,
+    )
+
+
+def gsh_depletion_biology_model(
+    exposure_profile: Mapping[str, float | dict[str, Any]],
+    *,
+    tissue: str = "Liver",
+    synthesis_scale: float = 1.0,
+) -> GSHStatus:
+    """Sigmoidal GSH steady state with feedback synthesis + saturable consumption.
+
+    Sibling to :func:`gsh_depletion_model`. Replaces the linear approximation's
+    constant synthesis and zero-order consumption with:
+
+    - Hill product-inhibition on the synthesis rate (gamma-GCS de-inhibition
+      as GSH falls): ``V_synth(G) = V_max / (1 + (G/Ki)**n)``.
+    - Michaelis-Menten saturable consumption in the GSH pool:
+      ``V_cons(G) = total_consumption * G / (K_m + G)``.
+
+    The transcendental steady state ``V_synth(G) = k*G + V_cons(G)`` is solved
+    by bisection. ``synthesis_scale`` rescales V_max for reduced-capacity
+    variants (e.g. 0.70 for GCLC, 0.50 for GCLM); the linear model has no
+    direct equivalent.
+
+    Output reuses :class:`GSHStatus` with biology-specific semantics:
+
+    - ``synthesis_rate_umol_h_g``: V_synth at the steady state. Rises above
+      the resting rate under exposure due to feedback de-repression.
+    - ``consumption_rate_umol_h_g``: substrate-driven (G-saturated) input
+      rate, identical to the linear model's value.
+    - ``tipping_point_reached``: ``fraction_normal < critical_threshold_fraction``.
+      There is no ``consumption >= synthesis`` cliff; the pool stabilises at
+      a non-zero floor under feedback de-repression.
+    - ``tipping_point_multiplier``: ``total_consumption / V_max_synth`` -
+      how saturated the de-inhibited synthesis ceiling is.
+    - ``time_to_depletion_h``: Euler-integrated time for the pool to fall
+      below the critical threshold from baseline. ``None`` if the steady
+      state is above the threshold.
+    """
+    params = _get_interaction_params()["gsh_depletion"]
+    biology_params = params.get("biology_model")
+    if biology_params is None:
+        raise KeyError(
+            "gsh_depletion.biology_model is missing from interaction_parameters.json"
+        )
+    consumers = params["consumers"]
+
+    baseline_mM = float(params["baseline_gsh_mM"])
+    critical_fraction = float(params["critical_threshold_fraction"])
+    half_life_h = float(params.get("half_life_h", 2.5))
+    liver_water_fraction = 0.70
+
+    Ki_mM = float(biology_params["Ki_feedback_mM"])
+    n_feedback = float(biology_params["n_feedback"])
+    Km_mM = float(biology_params["Km_GST_mM"])
+
+    G_baseline = baseline_mM * liver_water_fraction
+    Ki_amount = Ki_mM * liver_water_fraction
+    Km_amount = Km_mM * liver_water_fraction
+    k_turnover = math.log(2) / half_life_h
+
+    feedback_at_baseline = 1.0 + (G_baseline / Ki_amount) ** n_feedback
+    v_max_synth = synthesis_scale * k_turnover * G_baseline * feedback_at_baseline
+
+    rate_map = _to_gsh_rate_map(_normalize_exposure_profile(exposure_profile))
+    total_consumption = 0.0
+    contributions: dict[str, dict[str, float]] = {}
+
+    for rate_key, flux_umol_h_g in rate_map.items():
+        base_key = rate_key.removesuffix("_umol_h_g")
+        consumer_key = {
+            "PAH": "PAH_GSTM1",
+            "chromium_VI": "chromium_VI",
+            "arsenic": "arsenic_methylation",
+            "cadmium": "cadmium",
+            "acrolein": "acrolein",
+            "ethanol": "ethanol_ROS",
+            "BPDE": "BPDE_conjugation",
+            "acetaminophen": "acetaminophen_NAPQI",
+        }.get(base_key, base_key)
+
+        consumer = consumers.get(consumer_key)
+        gsh_ratio = float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        substrate_flux = float(flux_umol_h_g)
+        gsh_drain = substrate_flux * gsh_ratio
+        total_consumption += gsh_drain
+        contributions[consumer_key] = {
+            "substrate_flux_umol_h_g": _round(substrate_flux, 4),
+            "gsh_consumption_umol_h_g": _round(gsh_drain, 4),
+            "stoichiometry": gsh_ratio,
+            "fraction_of_total": 0.0,
+        }
+
+    for contribution in contributions.values():
+        if total_consumption > 0:
+            contribution["fraction_of_total"] = _round(
+                contribution["gsh_consumption_umol_h_g"] / total_consumption,
+                3,
+            )
+
+    def synth(G: float) -> float:
+        return v_max_synth / (1.0 + (G / Ki_amount) ** n_feedback)
+
+    def cons(G: float) -> float:
+        if G <= 0 or total_consumption <= 0:
+            return 0.0
+        return total_consumption * G / (Km_amount + G)
+
+    def f(G: float) -> float:
+        return synth(G) - k_turnover * G - cons(G)
+
+    G_lo, G_hi = 1e-12, G_baseline
+    if f(G_hi) >= 0:
+        G_ss = G_hi
+    elif f(G_lo) <= 0:
+        G_ss = 0.0
+    else:
+        for _ in range(200):
+            G_mid = 0.5 * (G_lo + G_hi)
+            if f(G_mid) > 0:
+                G_lo = G_mid
+            else:
+                G_hi = G_mid
+            if (G_hi - G_lo) < 1e-12:
+                break
+        G_ss = 0.5 * (G_lo + G_hi)
+
+    fraction_normal = G_ss / G_baseline if G_baseline > 0 else 0.0
+    steady_state_mM = G_ss / liver_water_fraction
+    synth_at_ss = synth(G_ss)
+    actual_cons_at_ss = cons(G_ss)
+    net_rate = synth_at_ss - k_turnover * G_ss - actual_cons_at_ss
+
+    tipping_point_reached = bool(fraction_normal < critical_fraction)
+    tipping_point_multiplier = (
+        _round(total_consumption / v_max_synth, 3) if v_max_synth > 0 else 0.0
+    )
+
+    impaired_pathways: list[str] = []
+    if fraction_normal < 0.30:
+        impaired_pathways.append("Phase II GST conjugation (general)")
+    if fraction_normal < critical_fraction:
+        impaired_pathways.extend(
+            [
+                "BPDE-GSH conjugation (PAH detox)",
+                "Arsenic methylation (GSTO1/GSTO2)",
+                "Chromium(VI) reduction",
+                "ROS scavenging (GPx)",
+            ]
+        )
+    if fraction_normal < 0.10:
+        impaired_pathways.append("Thioredoxin/GSSG reductase backup overwhelmed")
+
+    time_to_depletion_h: float | None = None
+    if total_consumption > 0 and fraction_normal < critical_fraction:
+        G = G_baseline
+        G_critical = critical_fraction * G_baseline
+        t = 0.0
+        dt = 0.01
+        max_t = 200.0
+        while t < max_t:
+            dG = synth(G) - k_turnover * G - cons(G)
+            G_next = G + dG * dt
+            if G_next <= G_critical:
+                if G > G_next:
+                    frac = (G - G_critical) / (G - G_next)
+                    time_to_depletion_h = _round(t + frac * dt, 2)
+                else:
+                    time_to_depletion_h = _round(t, 2)
+                break
+            if abs(dG) < 1e-9:
+                break
+            G = G_next
+            t += dt
+
+    return GSHStatus(
+        baseline_gsh_mM=baseline_mM,
+        steady_state_gsh_mM=_round(steady_state_mM, 3),
+        fraction_normal=_round(fraction_normal, 3),
+        consumption_rate_umol_h_g=_round(total_consumption, 4),
+        synthesis_rate_umol_h_g=_round(synth_at_ss, 4),
+        net_rate_umol_h_g=_round(net_rate, 4),
+        consumption_exceeds_synthesis=bool(total_consumption > v_max_synth),
+        tipping_point_reached=tipping_point_reached,
+        tipping_point_multiplier=tipping_point_multiplier,
         impaired_pathways=impaired_pathways,
         individual_contributions=contributions,
         time_to_depletion_h=time_to_depletion_h,

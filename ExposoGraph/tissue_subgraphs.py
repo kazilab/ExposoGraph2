@@ -715,7 +715,8 @@ def filter_graph_by_tissue(
 
     for node in filtered.get("nodes", []):
         node_id = node.get("id") or node.get("gene") or ""
-        node_type = str(node.get("type", ""))
+        node_type_value = getattr(node.get("type", ""), "value", node.get("type", ""))
+        node_type = str(node_type_value)
         node_type_norm = node_type.lower()
 
         if node_type_norm not in {"enzyme", "gene"}:

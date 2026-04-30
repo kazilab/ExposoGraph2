@@ -1,2 +1,2 @@
-"""ExposoGraph biomarker scaffold package."""
+"""Command modules used by the ExposoGraph biomarker scaffold."""
 

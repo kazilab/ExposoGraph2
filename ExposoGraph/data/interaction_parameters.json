@@ -1655,6 +1655,13 @@
     "half_life_h": 2.5,
     "liver_volume_g": 1500,
     "notes": "Below 20-30% normal GSH, Phase II conjugation capacity drops precipitously. Non-linear tipping point dynamics.",
+    "biology_model": {
+      "_description": "Sigmoidal extension used by gsh_depletion_biology_model(). Hill feedback synthesis (gamma-GCS product inhibition by GSH) plus Michaelis-Menten saturable consumption. V_max_synth is anchored internally by mass balance at baseline; no separate synthesis_rate is needed.",
+      "Ki_feedback_mM": 1.5,
+      "n_feedback": 2.0,
+      "Km_GST_mM": 3.5,
+      "_param_notes": "Ki ~1.5-2.3 mM (Richman & Meister 1975, gamma-GCS product inhibition by GSH). Km_GST is an apparent in-vivo value chosen so wild-type biology G_ss matches the linear model's 30%-impairment anchor at the same total consumption rate (~29 umol/h/g)."
+    },
     "consumers": {
       "PAH_GSTM1": {
         "enzyme": "GSTM1",
