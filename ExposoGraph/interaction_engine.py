@@ -16,6 +16,8 @@ from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Mapping
+from functools import partial
+import itertools
 
 # ── Dataclasses ────────────────────────────────────────────────────────────
 
@@ -136,7 +138,9 @@ class SynergyConfidenceInterval:
 
 # ── Data loading ───────────────────────────────────────────────────────────
 
-_INTERACTION_PARAMS_FILE = Path(__file__).parent / "data" / "interaction_parameters.json"
+_INTERACTION_PARAMS_FILE = (
+    Path(__file__).parent / "data" / "interaction_parameters.json"
+)
 _PROVENANCE_FILE = Path(__file__).parent / "data" / "parameter_provenance.json"
 _INTERACTION_CACHE: dict[str, Any] | None = None
 _PROVENANCE_CACHE: dict[str, Any] | None = None
@@ -468,7 +472,9 @@ def _canonical_carcinogen_key(name: str) -> str:
     """Normalize supported carcinogen aliases to canonical keys."""
     if name in BASELINE_RISK_SCORES or name == "ethanol":
         return name
-    cleaned = name.strip().replace(" ", "").replace("-", "").replace("[", "").replace("]", "")
+    cleaned = (
+        name.strip().replace(" ", "").replace("-", "").replace("[", "").replace("]", "")
+    )
     if cleaned in _CARCINOGEN_ALIASES:
         return _CARCINOGEN_ALIASES[cleaned]
     lowered = cleaned.lower()
@@ -508,7 +514,12 @@ def _extract_concentration_uM(carcinogen: str, value: float | dict[str, Any]) ->
 def _collect_known_enzymes(params: dict[str, Any]) -> list[str]:
     """Collect the enzyme names that should always receive baseline folds."""
     enzymes = set(_DEFAULT_ENZYMES)
-    for section in ("smoking", "chronic_alcohol", "TCDD_dioxin", "obesity_insulin_resistance"):
+    for section in (
+        "smoking",
+        "chronic_alcohol",
+        "TCDD_dioxin",
+        "obesity_insulin_resistance",
+    ):
         entries = params["enzyme_induction"].get(section, {})
         for enzyme in entries:
             if not enzyme.startswith("_"):
@@ -586,9 +597,7 @@ def _build_competitive_substrates(
                 "benzene", exposure_profile["benzene"]
             )
         if "NNK" in exposure_profile:
-            cyp2a13["NNK"] = _extract_concentration_uM(
-                "NNK", exposure_profile["NNK"]
-            )
+            cyp2a13["NNK"] = _extract_concentration_uM("NNK", exposure_profile["NNK"])
         if len(cyp2a13) >= 1:
             substrates["CYP2A13"] = cyp2a13
 
@@ -618,15 +627,22 @@ def _to_gsh_rate_map(exposure_profile: dict[str, Any]) -> dict[str, float]:
         if isinstance(value, dict) and "flux_umol_h_g" in value:
             rate_map[f"{canonical}_umol_h_g"] = float(value["flux_umol_h_g"])
         else:
-            rate_map[f"{canonical}_umol_h_g"] = _extract_exposure_multiplier(value) * _GSH_REFERENCE_RATES[canonical]
+            rate_map[f"{canonical}_umol_h_g"] = (
+                _extract_exposure_multiplier(value) * _GSH_REFERENCE_RATES[canonical]
+            )
     return rate_map
 
 
-def _severity_sorted(interactions: list[CriticalInteraction]) -> list[CriticalInteraction]:
+def _severity_sorted(
+    interactions: list[CriticalInteraction],
+) -> list[CriticalInteraction]:
     """Sort critical interactions by severity then amplification."""
     return sorted(
         interactions,
-        key=lambda item: (_SEVERITY_RANK.get(item.severity, 0), item.genotype_amplification),
+        key=lambda item: (
+            _SEVERITY_RANK.get(item.severity, 0),
+            item.genotype_amplification,
+        ),
         reverse=True,
     )
 
@@ -701,19 +717,27 @@ def enzyme_induction_modifier(
     if (lifestyle.get("heavy_smoking") or lifestyle.get("pack_years", 0) >= 30) and (
         lifestyle.get("alcohol_heavy") or lifestyle.get("chronic_alcohol")
     ):
-        _apply_enzyme_folds(enzyme_folds, induction["heavy_smoking_chronic_alcohol_combined"])
+        _apply_enzyme_folds(
+            enzyme_folds, induction["heavy_smoking_chronic_alcohol_combined"]
+        )
         active_inducers.append("heavy_smoking_chronic_alcohol_combined")
 
     if lifestyle.get("dioxin_exposed") or lifestyle.get("TCDD_exposed"):
         _apply_enzyme_folds(enzyme_folds, induction["TCDD_dioxin"])
         active_inducers.append("TCDD_dioxin")
 
-    if lifestyle.get("obesity") or lifestyle.get("NAFLD") or lifestyle.get("insulin_resistance"):
+    if (
+        lifestyle.get("obesity")
+        or lifestyle.get("NAFLD")
+        or lifestyle.get("insulin_resistance")
+    ):
         _apply_enzyme_folds(enzyme_folds, induction["obesity_insulin_resistance"])
         active_inducers.append("obesity_insulin_resistance")
 
     return EnzymeInductionProfile(
-        enzyme_folds={key: _round(value, 3) for key, value in sorted(enzyme_folds.items())},
+        enzyme_folds={
+            key: _round(value, 3) for key, value in sorted(enzyme_folds.items())
+        },
         active_inducers=sorted(dict.fromkeys(active_inducers)),
     )
 
@@ -779,10 +803,12 @@ def competitive_inhibition_flux(
             other_Km = float(other_params["Km_uM"]) * _scale_for(other_name, "Km")
             inhibition_term += float(other_conc) / other_Km
 
-        substrate_power = concentration ** hill_n
-        Km_power = Km_A ** hill_n
+        substrate_power = concentration**hill_n
+        Km_power = Km_A**hill_n
         single_flux = (Vmax_A * substrate_power) / (Km_power + substrate_power)
-        competitive_flux = (Vmax_A * substrate_power) / (Km_power * (1.0 + inhibition_term) + substrate_power)
+        competitive_flux = (Vmax_A * substrate_power) / (
+            Km_power * (1.0 + inhibition_term) + substrate_power
+        )
         flux_change_fraction = (
             (competitive_flux - single_flux) / single_flux if single_flux > 0 else 0.0
         )
@@ -793,7 +819,9 @@ def competitive_inhibition_flux(
             competitive_flux=_round(competitive_flux, 6),
             flux_change_fraction=_round(flux_change_fraction, 4),
             inhibition_term=_round(inhibition_term, 4),
-            activated_product_flux=_round(competitive_flux if product_carcinogenic else 0.0, 6),
+            activated_product_flux=_round(
+                competitive_flux if product_carcinogenic else 0.0, 6
+            ),
             Km_uM=Km_A,
             concentration_uM=concentration,
             product=str(sub_params.get("product", "unknown")),
@@ -841,7 +869,9 @@ def gsh_depletion_model(
         }.get(base_key, base_key)
 
         consumer = consumers.get(consumer_key)
-        gsh_ratio = float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        gsh_ratio = (
+            float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        )
         substrate_flux = float(flux_umol_h_g)
         gsh_drain = substrate_flux * gsh_ratio
         total_consumption += gsh_drain
@@ -909,7 +939,9 @@ def gsh_depletion_model(
         net_rate_umol_h_g=_round(net_rate, 4),
         consumption_exceeds_synthesis=tipping_point_reached,
         tipping_point_reached=tipping_point_reached,
-        tipping_point_multiplier=_round(total_consumption / synthesis_rate, 3) if synthesis_rate > 0 else 0.0,
+        tipping_point_multiplier=(
+            _round(total_consumption / synthesis_rate, 3) if synthesis_rate > 0 else 0.0
+        ),
         impaired_pathways=impaired_pathways,
         individual_contributions=contributions,
         time_to_depletion_h=time_to_depletion_h,
@@ -996,7 +1028,9 @@ def gsh_depletion_biology_model(
         }.get(base_key, base_key)
 
         consumer = consumers.get(consumer_key)
-        gsh_ratio = float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        gsh_ratio = (
+            float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        )
         substrate_flux = float(flux_umol_h_g)
         gsh_drain = substrate_flux * gsh_ratio
         total_consumption += gsh_drain
@@ -1205,7 +1239,12 @@ def compute_interaction_matrix(
 
     if enable_gsh_depletion:
         gsh_exposure = _to_gsh_rate_map(normalized_exposure)
-        if str(genotypes.get("GSTM1", "active")).lower() in {"null", "null/null", "deletion", "0"}:
+        if str(genotypes.get("GSTM1", "active")).lower() in {
+            "null",
+            "null/null",
+            "deletion",
+            "0",
+        }:
             if "PAH_umol_h_g" in gsh_exposure:
                 # Source-parity logic: absent GSTM1 greatly reduces PAH-GSH conjugation,
                 # so PAH contributes far less to shared-pool GSH consumption.
@@ -1221,7 +1260,9 @@ def compute_interaction_matrix(
         if enable_induction:
             induction_multiplier = 1.0
             for enzyme in CARCINOGEN_ENZYME_MAP.get(carcinogen, []):
-                induction_multiplier = max(induction_multiplier, combined_enzyme_activity.get(enzyme, 1.0))
+                induction_multiplier = max(
+                    induction_multiplier, combined_enzyme_activity.get(enzyme, 1.0)
+                )
         else:
             induction_multiplier = 1.0
 
@@ -1231,7 +1272,9 @@ def compute_interaction_matrix(
                 pulmonary_fractions: list[float] = []
                 for pulmonary_enzyme in ("CYP2A13", "CYP2F1"):
                     if pulmonary_enzyme in competitive_effects:
-                        sub_effect = competitive_effects[pulmonary_enzyme].substrates.get("benzene")
+                        sub_effect = competitive_effects[
+                            pulmonary_enzyme
+                        ].substrates.get("benzene")
                         if sub_effect is not None:
                             pulmonary_fractions.append(sub_effect.flux_change_fraction)
                 if pulmonary_fractions:
@@ -1240,17 +1283,24 @@ def compute_interaction_matrix(
                     sub_effect = competitive_effects["CYP2E1"].substrates.get("benzene")
                     if sub_effect is not None:
                         competition_multiplier = 1.0 + sub_effect.flux_change_fraction
-            elif carcinogen in {"NDMA", "vinyl_chloride"} and "CYP2E1" in competitive_effects:
+            elif (
+                carcinogen in {"NDMA", "vinyl_chloride"}
+                and "CYP2E1" in competitive_effects
+            ):
                 sub_effect = competitive_effects["CYP2E1"].substrates.get(carcinogen)
                 if sub_effect is not None:
                     competition_multiplier = 1.0 + sub_effect.flux_change_fraction
             elif carcinogen == "HCA" and "CYP1A1" in competitive_effects:
                 sub_effect = competitive_effects["CYP1A1"].substrates.get("PhIP")
                 if sub_effect is not None:
-                    competition_multiplier = min(competition_multiplier, 1.0 + sub_effect.flux_change_fraction)
+                    competition_multiplier = min(
+                        competition_multiplier, 1.0 + sub_effect.flux_change_fraction
+                    )
 
         if enable_gsh_depletion:
-            gsh_penalty = _compute_gsh_detox_penalty(carcinogen, gsh_status.fraction_normal, genotypes)
+            gsh_penalty = _compute_gsh_detox_penalty(
+                carcinogen, gsh_status.fraction_normal, genotypes
+            )
         else:
             gsh_penalty = 1.0
 
@@ -1263,7 +1313,9 @@ def compute_interaction_matrix(
     for index, left in enumerate(present_carcinogens):
         for right in present_carcinogens[index + 1 :]:
             independent_total = individual_risks[left] + individual_risks[right]
-            adjusted_total = interaction_adjusted_risks[left] + interaction_adjusted_risks[right]
+            adjusted_total = (
+                interaction_adjusted_risks[left] + interaction_adjusted_risks[right]
+            )
             synergy_matrix[f"{left}_x_{right}"] = _round(
                 adjusted_total / independent_total if independent_total > 0 else 1.0,
                 3,
@@ -1277,7 +1329,9 @@ def compute_interaction_matrix(
     )
 
     summary_parts: list[str] = []
-    induced = [name for name, fold in induction_effects.enzyme_folds.items() if fold > 1.5]
+    induced = [
+        name for name, fold in induction_effects.enzyme_folds.items() if fold > 1.5
+    ]
     if induced:
         summary_parts.append(
             f"Enzyme induction ({', '.join(induced)}) increases activation capacity."
@@ -1308,7 +1362,9 @@ def compute_interaction_matrix(
         classification = "antagonistic"
     else:
         classification = "near-additive"
-    summary_parts.append(f"Overall interaction factor: {interaction_factor:.2f}x ({classification}).")
+    summary_parts.append(
+        f"Overall interaction factor: {interaction_factor:.2f}x ({classification})."
+    )
 
     return InteractionMatrixResult(
         individual_risks=individual_risks,
@@ -1350,7 +1406,13 @@ def identify_critical_interactions(
                     "Loss of PAH-GSH conjugation removes a key detox pathway while other "
                     "GSH consumers can collapse the remaining shared glutathione pool."
                 ),
-                affected_carcinogens=["PAH", "chromium_VI", "arsenic", "acrolein", "AFB1"],
+                affected_carcinogens=[
+                    "PAH",
+                    "chromium_VI",
+                    "arsenic",
+                    "acrolein",
+                    "AFB1",
+                ],
                 genotype_amplification=2.5,
                 clinical_note=(
                     "Elevated smoker and mixed occupational-exposure risk; avoid combined "
@@ -1487,53 +1549,57 @@ def decompose_synergy(
     tissue: str = "Liver",
     lifestyle: dict[str, bool] | None = None,
 ) -> dict[str, SynergyDecomposition]:
-    """Decompose pairwise synergy into competition, GSH, and induction deltas.
 
-    Runs ``compute_interaction_matrix`` four times (full, competition-only,
-    GSH-only, induction-only) and reports
-    ``S = 1 + ΔS_comp + ΔS_gsh + ΔS_ind + residual`` for each carcinogen pair
-    in the exposure profile.
-    """
-    full_result = compute_interaction_matrix(
+    run_with_data = partial(
+        compute_interaction_matrix,
         exposure_profile,
         genotypes=genotypes,
         tissue=tissue,
         lifestyle=lifestyle,
     )
-    comp_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=True,
-        enable_gsh_depletion=False,
-    )
-    gsh_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=False,
-        enable_gsh_depletion=True,
-    )
-    ind_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=True,
-        enable_competition=False,
-        enable_gsh_depletion=False,
-    )
+
+    # 2. Define the flag names in the exact order of your bit positions
+    flag_names = ["enable_induction", "enable_competition", "enable_gsh_depletion"]
+    # 3. Generate the 8-way hypercube
+    hc = {}
+
+    # itertools.product([0, 1], repeat=3) yields (0,0,0), (0,0,1), ..., (1,1,1)
+    for bits in itertools.product([0, 1], repeat=3):
+        # Create the '000' style string key
+        str_key = "".join(map(str, bits))
+        # Map the 0/1 integers to boolean keyword arguments dynamically
+        # e.g., {'enable_induction': False, 'enable_competition': False, ...}
+        kwargs = {name: bool(bit) for name, bit in zip(flag_names, bits)}
+
+        hc[str_key] = run_with_data(**kwargs).synergy_matrix
+
+    def get_pair(index, pair):
+        return hc[index].get(pair, 1.0)
 
     decomposed: dict[str, SynergyDecomposition] = {}
-    for pair, composite in full_result.synergy_matrix.items():
-        delta_comp = comp_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_gsh = gsh_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_ind = ind_only.synergy_matrix.get(pair, 1.0) - 1.0
-        additive = 1.0 + delta_comp + delta_gsh + delta_ind
+    for pair, composite in hc["111"].items():
+        gp = partial(get_pair, pair=pair)
+        delta_ind = (
+            (1 / 3) * (gp("100") - gp("000"))
+            + (1 / 6) * (gp("110") - gp("010"))
+            + (1 / 6) * (gp("101") - gp("001"))
+            + (1 / 3) * (gp("111") - gp("011"))
+        )
+        delta_comp = (
+            (1 / 3) * (gp("010") - gp("000"))
+            + (1 / 6) * (gp("110") - gp("100"))
+            + (1 / 6) * (gp("011") - gp("001"))
+            + (1 / 3) * (gp("111") - gp("101"))
+        )
+        delta_gsh = (
+            (1 / 3) * (gp("001") - gp("000"))
+            + (1 / 6) * (gp("101") - gp("100"))
+            + (1 / 6) * (gp("011") - gp("010"))
+            + (1 / 3) * (gp("111") - gp("110"))
+        )
+        additive = (
+            1.0 + delta_comp + delta_gsh + delta_ind
+        )  # should correspond to synergy
         decomposed[pair] = SynergyDecomposition(
             pair=pair,
             composite=_round(composite, 4),
@@ -1596,7 +1662,8 @@ def monte_carlo_synergy_ci(
             for name in substrate_names
         }
         expression_perturbations = {
-            enzyme: math.exp(rng.gauss(0.0, expression_sigma)) for enzyme in enzyme_names
+            enzyme: math.exp(rng.gauss(0.0, expression_sigma))
+            for enzyme in enzyme_names
         }
 
         def _run(**flags: bool) -> dict[str, float]:
@@ -1611,9 +1678,15 @@ def monte_carlo_synergy_ci(
             ).synergy_matrix
 
         full = _run()
-        comp = _run(enable_induction=False, enable_competition=True, enable_gsh_depletion=False)
-        gsh = _run(enable_induction=False, enable_competition=False, enable_gsh_depletion=True)
-        ind = _run(enable_induction=True, enable_competition=False, enable_gsh_depletion=False)
+        comp = _run(
+            enable_induction=False, enable_competition=True, enable_gsh_depletion=False
+        )
+        gsh = _run(
+            enable_induction=False, enable_competition=False, enable_gsh_depletion=True
+        )
+        ind = _run(
+            enable_induction=True, enable_competition=False, enable_gsh_depletion=False
+        )
 
         for pair, composite in full.items():
             composite_draws.setdefault(pair, []).append(composite)
@@ -1623,7 +1696,10 @@ def monte_carlo_synergy_ci(
 
     def _summary(values: list[float]) -> tuple[float, tuple[float, float]]:
         mean = sum(values) / len(values) if values else 0.0
-        return _round(mean, 4), (_round(_percentile(values, 2.5), 4), _round(_percentile(values, 97.5), 4))
+        return _round(mean, 4), (
+            _round(_percentile(values, 2.5), 4),
+            _round(_percentile(values, 97.5), 4),
+        )
 
     intervals: dict[str, SynergyConfidenceInterval] = {}
     for pair in composite_draws:
@@ -1674,7 +1750,9 @@ def _competitive_effects_to_compat_dict(
     }
 
 
-def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[str, Any]:
+def _interaction_matrix_to_compat_dict(
+    result: InteractionMatrixResult,
+) -> dict[str, Any]:
     """Convert an interaction result into a source-style JSON-serializable dict."""
     return {
         "individual_risks": dict(result.individual_risks),
@@ -1691,12 +1769,16 @@ def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[
             "tipping_point_reached": result.gsh_status.tipping_point_reached,
             "tipping_point_multiplier": result.gsh_status.tipping_point_multiplier,
             "impaired_pathways": list(result.gsh_status.impaired_pathways),
-            "individual_contributions": deepcopy(result.gsh_status.individual_contributions),
+            "individual_contributions": deepcopy(
+                result.gsh_status.individual_contributions
+            ),
             "time_to_depletion_h": result.gsh_status.time_to_depletion_h,
             "tissue": result.gsh_status.tissue,
         },
         "induction_effects": dict(result.induction_effects.enzyme_folds),
-        "competitive_effects": _competitive_effects_to_compat_dict(result.competitive_effects),
+        "competitive_effects": _competitive_effects_to_compat_dict(
+            result.competitive_effects
+        ),
         "total_independent_risk": result.total_independent_risk,
         "total_interaction_risk": result.total_interaction_risk,
         "interaction_factor": result.interaction_factor,
@@ -1747,7 +1829,9 @@ def run_validation_case_1() -> tuple[InteractionMatrixResult, InteractionMatrixR
     print(f"  Interaction factor: {result_smoker.interaction_factor:.3f}x")
 
     print("\n--- Smoking + Heavy Drinking ---")
-    print(f"  CYP induction effects: {result_smoker_drinker.induction_effects.enzyme_folds}")
+    print(
+        f"  CYP induction effects: {result_smoker_drinker.induction_effects.enzyme_folds}"
+    )
     print(
         "  CYP2E1 induction (from alcohol): "
         f"{result_smoker_drinker.induction_effects.enzyme_folds.get('CYP2E1', 1.0):.1f}x"
@@ -1760,26 +1844,39 @@ def run_validation_case_1() -> tuple[InteractionMatrixResult, InteractionMatrixR
     if cyp2e1_effects is not None:
         print("  CYP2E1 competitive effects:")
         for substrate, flux in cyp2e1_effects.substrates.items():
-            print(f"    {substrate}: {flux.flux_change_fraction * 100:+.1f}% flux change vs single-substrate")
+            print(
+                f"    {substrate}: {flux.flux_change_fraction * 100:+.1f}% flux change vs single-substrate"
+            )
     print(f"  Individual risks: {result_smoker_drinker.individual_risks}")
-    print(f"  Interaction-adjusted risks: {result_smoker_drinker.interaction_adjusted_risks}")
+    print(
+        f"  Interaction-adjusted risks: {result_smoker_drinker.interaction_adjusted_risks}"
+    )
     print(
         "  GSH status: "
         f"{result_smoker_drinker.gsh_status.steady_state_gsh_mM:.2f} mM "
         f"({result_smoker_drinker.gsh_status.fraction_normal:.1%} of normal)"
     )
     if result_smoker_drinker.gsh_status.impaired_pathways:
-        print(f"  Impaired pathways: {result_smoker_drinker.gsh_status.impaired_pathways}")
-    print(f"  Total independent risk: {result_smoker_drinker.total_independent_risk:.1f}")
-    print(f"  Total interaction risk: {result_smoker_drinker.total_interaction_risk:.1f}")
+        print(
+            f"  Impaired pathways: {result_smoker_drinker.gsh_status.impaired_pathways}"
+        )
+    print(
+        f"  Total independent risk: {result_smoker_drinker.total_independent_risk:.1f}"
+    )
+    print(
+        f"  Total interaction risk: {result_smoker_drinker.total_interaction_risk:.1f}"
+    )
     print(f"  Interaction factor: {result_smoker_drinker.interaction_factor:.3f}x")
 
     synergy_ratio = (
-        result_smoker_drinker.total_interaction_risk / result_smoker.total_interaction_risk
+        result_smoker_drinker.total_interaction_risk
+        / result_smoker.total_interaction_risk
         if result_smoker.total_interaction_risk > 0
         else float("inf")
     )
-    print(f"\n  -> Synergy: Smoking+Drinking risk is {synergy_ratio:.2f}x higher than smoking alone")
+    print(
+        f"\n  -> Synergy: Smoking+Drinking risk is {synergy_ratio:.2f}x higher than smoking alone"
+    )
     print(
         "  -> CYP1A2-driven HCA risk delta: "
         f"{result_smoker_drinker.interaction_adjusted_risks.get('HCA', 0):.1f} vs "
@@ -1802,10 +1899,16 @@ def run_validation_case_2() -> InteractionMatrixResult:
     print("=" * 70)
 
     print("\n--- GSH consumption vs synthesis rate at escalating Cr(VI) exposure ---")
-    print("  Baseline: PAH (0.5 umol/h/g) + Arsenic (0.2 umol/h/g) + Acrolein (0.5 umol/h/g)")
-    print(f"  GSH synthesis rate: {_get_interaction_params()['gsh_depletion']['synthesis_rate_umol_h_g']} umol/h/g")
+    print(
+        "  Baseline: PAH (0.5 umol/h/g) + Arsenic (0.2 umol/h/g) + Acrolein (0.5 umol/h/g)"
+    )
+    print(
+        f"  GSH synthesis rate: {_get_interaction_params()['gsh_depletion']['synthesis_rate_umol_h_g']} umol/h/g"
+    )
     print()
-    print(f"  {'Cr(VI) umol/h/g':<18} {'Total GSH drain':<18} {'GSH fraction':<15} {'Tipping Point':<15} {'Impaired?'}")
+    print(
+        f"  {'Cr(VI) umol/h/g':<18} {'Total GSH drain':<18} {'GSH fraction':<15} {'Tipping Point':<15} {'Impaired?'}"
+    )
     print(f"  {'-' * 75}")
 
     tipping_point_announced = False
@@ -1829,7 +1932,10 @@ def run_validation_case_2() -> InteractionMatrixResult:
         )
 
     print("\n  --- GSTM1-null comparison at Cr(VI) = 5.0 umol/h/g ---")
-    for label, genotype in [("GSTM1-active", {"GSTM1": "active"}), ("GSTM1-null", {"GSTM1": "null"})]:
+    for label, genotype in [
+        ("GSTM1-active", {"GSTM1": "active"}),
+        ("GSTM1-null", {"GSTM1": "null"}),
+    ]:
         rate_map = {
             "PAH_umol_h_g": 0.5 * (0.1 if genotype.get("GSTM1") == "null" else 1.0),
             "arsenic_umol_h_g": 0.2,
@@ -1866,14 +1972,18 @@ def run_validation_case_2() -> InteractionMatrixResult:
         f"({result.gsh_status.tipping_point_multiplier:.2f}x synthesis rate)"
     )
     if result.gsh_status.time_to_depletion_h is not None:
-        print(f"    Time to critical depletion: {result.gsh_status.time_to_depletion_h:.1f} hours")
+        print(
+            f"    Time to critical depletion: {result.gsh_status.time_to_depletion_h:.1f} hours"
+        )
     print(f"    Impaired: {result.gsh_status.impaired_pathways}")
     print(f"    Interaction factor: {result.interaction_factor:.2f}x")
 
     return result
 
 
-def run_validation_case_3() -> tuple[CompetitiveInhibitionResult, CompetitiveInhibitionResult]:
+def run_validation_case_3() -> (
+    tuple[CompetitiveInhibitionResult, CompetitiveInhibitionResult]
+):
     """Case 3: competitive inhibition and the ethanol paradox at CYP2E1."""
     print("\n" + "=" * 70)
     print("VALIDATION CASE 3: CYP2E1 Competitive Inhibition (Ethanol Paradox)")
@@ -1901,8 +2011,12 @@ def run_validation_case_3() -> tuple[CompetitiveInhibitionResult, CompetitiveInh
         tissue="Liver",
     )
 
-    print("\n  --- CYP2E1 Flux (benzene activation): No competition vs Ethanol present ---")
-    print(f"  {'Scenario':<30} {'Benzene flux':<15} {'Change vs alone':<18} {'NDMA flux':<13} {'Inhibition term'}")
+    print(
+        "\n  --- CYP2E1 Flux (benzene activation): No competition vs Ethanol present ---"
+    )
+    print(
+        f"  {'Scenario':<30} {'Benzene flux':<15} {'Change vs alone':<18} {'NDMA flux':<13} {'Inhibition term'}"
+    )
     print(f"  {'-' * 80}")
     for label, result in [
         ("Benzene+NDMA alone", result_no_ethanol),
@@ -1921,19 +2035,35 @@ def run_validation_case_3() -> tuple[CompetitiveInhibitionResult, CompetitiveInh
     single_flux = result_no_ethanol.substrates["benzene"].single_flux
     dbtex_flux = result_dbtex.substrates["benzene"].competitive_flux
     reduction_pct = (1 - dbtex_flux / single_flux) * 100 if single_flux > 0 else 0.0
-    print(f"\n  *** Benzene activation reduction at saturating ethanol: {reduction_pct:.0f}% ***")
-    print(f"      (Haddad et al. 2001 reported 62% in DBTEX; model predicts {reduction_pct:.0f}%)")
+    print(
+        f"\n  *** Benzene activation reduction at saturating ethanol: {reduction_pct:.0f}% ***"
+    )
+    print(
+        f"      (Haddad et al. 2001 reported 62% in DBTEX; model predicts {reduction_pct:.0f}%)"
+    )
 
     print("\n  --- Ethanol CYP2E1 kinetics detail ---")
-    print("  Key insight: Ethanol (Km=13,000 uM) has lowest priority for CYP2E1 at physiological concentrations.")
-    print("  NDMA (Km=15 uM) has highest affinity — it preferentially monopolizes CYP2E1.")
-    print("  At high alcohol concentrations, competitive mass-action overwhelms CYP2E1.")
-    print("  Paradox: Drinking reduces benzene activation acutely, but chronic drinking induces CYP2E1.")
+    print(
+        "  Key insight: Ethanol (Km=13,000 uM) has lowest priority for CYP2E1 at physiological concentrations."
+    )
+    print(
+        "  NDMA (Km=15 uM) has highest affinity — it preferentially monopolizes CYP2E1."
+    )
+    print(
+        "  At high alcohol concentrations, competitive mass-action overwhelms CYP2E1."
+    )
+    print(
+        "  Paradox: Drinking reduces benzene activation acutely, but chronic drinking induces CYP2E1."
+    )
 
     ethanol = result_high_ethanol.substrates.get("ethanol")
     if ethanol is not None:
-        print(f"\n  Ethanol flux at 2000 uM: {ethanol.competitive_flux:.5f} (relative units)")
-        print("  Acetaldehyde production is proportional to ethanol flux and peaks when ethanol dominates CYP2E1.")
+        print(
+            f"\n  Ethanol flux at 2000 uM: {ethanol.competitive_flux:.5f} (relative units)"
+        )
+        print(
+            "  Acetaldehyde production is proportional to ethanol flux and peaks when ethanol dominates CYP2E1."
+        )
 
     return result_no_ethanol, result_dbtex
 
@@ -1944,7 +2074,9 @@ def run_validation_case_4(patient_id: str = "JHBUI-10030") -> InteractionMatrixR
     print(f"VALIDATION CASE 4: Patient {patient_id} — Full Interaction Profile")
     print("=" * 70)
 
-    profile_data = EXPOSURE_PROFILES.get("JHBUI_10030", EXPOSURE_PROFILES["smoker_moderate_drinker"])
+    profile_data = EXPOSURE_PROFILES.get(
+        "JHBUI_10030", EXPOSURE_PROFILES["smoker_moderate_drinker"]
+    )
     exposure = profile_data["exposure"]
     lifestyle = profile_data.get("lifestyle", {})
     genotypes = profile_data.get(
@@ -1971,27 +2103,40 @@ def run_validation_case_4(patient_id: str = "JHBUI-10030") -> InteractionMatrixR
             print(f"    {enzyme}: {fold:.2f}x")
 
     print("\n  --- Individual vs Interaction-Adjusted Risks ---")
-    print(f"  {'Carcinogen':<18} {'Indiv. Risk':<14} {'Adj. Risk':<14} {'Change':<10} {'Driver'}")
+    print(
+        f"  {'Carcinogen':<18} {'Indiv. Risk':<14} {'Adj. Risk':<14} {'Change':<10} {'Driver'}"
+    )
     print(f"  {'-' * 70}")
     for carcinogen in sorted(result.individual_risks):
         individual = result.individual_risks[carcinogen]
         adjusted = result.interaction_adjusted_risks.get(carcinogen, individual)
-        percent_change = (adjusted - individual) / individual * 100 if individual > 0 else 0.0
+        percent_change = (
+            (adjusted - individual) / individual * 100 if individual > 0 else 0.0
+        )
         enzymes = CARCINOGEN_ENZYME_MAP.get(carcinogen, [])
-        driver = "+".join(
-            f"{enzyme}({result.induction_effects.enzyme_folds.get(enzyme, 1.0):.1f}x)"
-            for enzyme in enzymes
-            if result.induction_effects.enzyme_folds.get(enzyme, 1.0) > 1.0
-        ) or "GSH/direct"
-        print(f"  {carcinogen:<18} {individual:<14.2f} {adjusted:<14.2f} {percent_change:>+.1f}%{'':<3} {driver}")
+        driver = (
+            "+".join(
+                f"{enzyme}({result.induction_effects.enzyme_folds.get(enzyme, 1.0):.1f}x)"
+                for enzyme in enzymes
+                if result.induction_effects.enzyme_folds.get(enzyme, 1.0) > 1.0
+            )
+            or "GSH/direct"
+        )
+        print(
+            f"  {carcinogen:<18} {individual:<14.2f} {adjusted:<14.2f} {percent_change:>+.1f}%{'':<3} {driver}"
+        )
 
     print("\n  --- GSH Status ---")
     print(
         f"    Steady-state GSH: {result.gsh_status.steady_state_gsh_mM:.2f} mM "
         f"({result.gsh_status.fraction_normal:.1%} of normal)"
     )
-    print(f"    GSH consumption: {result.gsh_status.consumption_rate_umol_h_g:.2f} umol/h/g")
-    print(f"    GSH synthesis:   {result.gsh_status.synthesis_rate_umol_h_g:.2f} umol/h/g")
+    print(
+        f"    GSH consumption: {result.gsh_status.consumption_rate_umol_h_g:.2f} umol/h/g"
+    )
+    print(
+        f"    GSH synthesis:   {result.gsh_status.synthesis_rate_umol_h_g:.2f} umol/h/g"
+    )
     print(
         f"    Tipping point:   {result.gsh_status.tipping_point_reached} "
         f"({result.gsh_status.tipping_point_multiplier:.2f}x synthesis rate)"
@@ -2003,7 +2148,9 @@ def run_validation_case_4(patient_id: str = "JHBUI-10030") -> InteractionMatrixR
     if cyp2e1_effects is not None:
         print("\n  --- CYP2E1 Competitive Effects ---")
         for substrate, flux in cyp2e1_effects.substrates.items():
-            print(f"    {substrate}: {flux.flux_change_fraction * 100:+.1f}% flux change")
+            print(
+                f"    {substrate}: {flux.flux_change_fraction * 100:+.1f}% flux change"
+            )
 
     print("\n  --- Summary ---")
     print(f"    Total independent risk:     {result.total_independent_risk:.2f}")
@@ -2057,13 +2204,32 @@ Examples:
   python -m ExposoGraph.interaction_cli --critical-interactions --genotypes '{"GSTM1":"null","NQO1":"homozygous_609TT"}'
         """,
     )
-    parser.add_argument("--profile", type=str, default=None, help="Predefined exposure profile name")
-    parser.add_argument("--genotypes", type=str, default="{}", help='JSON dict of genotypes, e.g. \'{"GSTM1":"null","CYP2E1":"NM"}\'')
-    parser.add_argument("--tissue", type=str, default="Liver", help="Target tissue (default: Liver)")
-    parser.add_argument("--validate", action="store_true", help="Run all 4 validation cases and exit")
-    parser.add_argument("--list-profiles", action="store_true", help="List all available profiles")
-    parser.add_argument("--critical-interactions", action="store_true", help="Identify critical interactions for given genotype")
-    parser.add_argument("--output-json", type=str, default=None, help="Save results to JSON file")
+    parser.add_argument(
+        "--profile", type=str, default=None, help="Predefined exposure profile name"
+    )
+    parser.add_argument(
+        "--genotypes",
+        type=str,
+        default="{}",
+        help='JSON dict of genotypes, e.g. \'{"GSTM1":"null","CYP2E1":"NM"}\'',
+    )
+    parser.add_argument(
+        "--tissue", type=str, default="Liver", help="Target tissue (default: Liver)"
+    )
+    parser.add_argument(
+        "--validate", action="store_true", help="Run all 4 validation cases and exit"
+    )
+    parser.add_argument(
+        "--list-profiles", action="store_true", help="List all available profiles"
+    )
+    parser.add_argument(
+        "--critical-interactions",
+        action="store_true",
+        help="Identify critical interactions for given genotype",
+    )
+    parser.add_argument(
+        "--output-json", type=str, default=None, help="Save results to JSON file"
+    )
 
     args = parser.parse_args(argv)
 
@@ -2087,7 +2253,11 @@ Examples:
         interactions = identify_critical_interactions(genotypes)
         if args.output_json:
             with open(args.output_json, "w") as handle:
-                json.dump(_critical_interactions_to_compat_list(interactions), handle, indent=2)
+                json.dump(
+                    _critical_interactions_to_compat_list(interactions),
+                    handle,
+                    indent=2,
+                )
             print(f"\nResults saved to: {args.output_json}")
             return 0
         print(f"\nCritical interactions for genotype: {genotypes}")
@@ -2100,7 +2270,10 @@ Examples:
 
     if args.profile:
         if args.profile not in EXPOSURE_PROFILES:
-            print(f"Error: Unknown profile '{args.profile}'. Use --list-profiles to see options.", file=sys.stderr)
+            print(
+                f"Error: Unknown profile '{args.profile}'. Use --list-profiles to see options.",
+                file=sys.stderr,
+            )
             return 1
 
         profile = EXPOSURE_PROFILES[args.profile]
@@ -2131,7 +2304,9 @@ Examples:
         for carcinogen, risk in sorted(result.individual_risks.items()):
             adjusted = result.interaction_adjusted_risks.get(carcinogen, risk)
             percent_change = (adjusted - risk) / risk * 100 if risk > 0 else 0.0
-            print(f"  {carcinogen:<20} {risk:.2f} -> {adjusted:.2f} ({percent_change:+.1f}%)")
+            print(
+                f"  {carcinogen:<20} {risk:.2f} -> {adjusted:.2f} ({percent_change:+.1f}%)"
+            )
         print(
             f"\nGSH Status: {result.gsh_status.steady_state_gsh_mM:.2f} mM "
             f"({result.gsh_status.fraction_normal:.1%} normal)"
