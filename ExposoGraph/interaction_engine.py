@@ -1558,17 +1558,11 @@ def decompose_synergy(
         lifestyle=lifestyle,
     )
 
-    # 2. Define the flag names in the exact order of your bit positions
     flag_names = ["enable_induction", "enable_competition", "enable_gsh_depletion"]
-    # 3. Generate the 8-way hypercube
-    hc = {}
+    hc = {}  # hypercube for tuples of boolean flages
 
-    # itertools.product([0, 1], repeat=3) yields (0,0,0), (0,0,1), ..., (1,1,1)
     for bits in itertools.product([0, 1], repeat=3):
-        # Create the '000' style string key
         str_key = "".join(map(str, bits))
-        # Map the 0/1 integers to boolean keyword arguments dynamically
-        # e.g., {'enable_induction': False, 'enable_competition': False, ...}
         kwargs = {name: bool(bit) for name, bit in zip(flag_names, bits)}
 
         hc[str_key] = run_with_data(**kwargs).synergy_matrix

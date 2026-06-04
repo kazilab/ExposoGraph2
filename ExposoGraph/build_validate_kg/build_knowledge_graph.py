@@ -53,14 +53,14 @@ for enzyme_name, inter_metadata in competitive_inhibition_metadata.items():
             valid_classes.CompetitiveInhibitionSubstrate(**metadata_dict)
         )
     if "inhibitors" in inter_metadata:
-        pass  # come back to
+        pass  # come back to, this is enzyme and substrate again I think
     if "substrate_inhibition" in inter_metadata:
         pass  # come back to
     if "induction" in inter_metadata:
-        pass  # come back to
+        pass  # come back to, this isn't
 
 # need to add this to edges, but as invisible
-# we also need to some kind of type to this edge
+# we also need to some kind of type to this edge, maybe "INTERACTS_WITH"
 
 phase2_conjugation_metadata = interaction_params["phase2_conjugation"]
 phase2_conjugation_metadata.pop("_description")
