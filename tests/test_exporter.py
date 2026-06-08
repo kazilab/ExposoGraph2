@@ -98,7 +98,7 @@ class TestGraphDataJs:
         out = to_graph_data_js(engine, tmp_path / "graph-data.js")
         assert out.exists()
 
-        content = out.read_text()
+        content = out.read_text(encoding="utf-8")
         assert "GRAPH_DATA" in content
         assert "Auto-generated" in content
 
@@ -119,7 +119,7 @@ const GRAPH_DATA = {
 };
 """
         p = tmp_path / "test.js"
-        p.write_text(js_content)
+        p.write_text(js_content, encoding="utf-8")
         kg = parse_graph_data_js(p)
         assert len(kg.nodes) == 2
         assert len(kg.edges) == 1
@@ -136,7 +136,7 @@ const GRAPH_DATA = {
 };
 """
         p = tmp_path / "commented.js"
-        p.write_text(js_content)
+        p.write_text(js_content, encoding="utf-8")
         kg = parse_graph_data_js(p)
         assert len(kg.nodes) == 1
 
@@ -150,7 +150,7 @@ const GRAPH_DATA = {
 };
 """
         p = tmp_path / "url.js"
-        p.write_text(js_content)
+        p.write_text(js_content, encoding="utf-8")
         kg = parse_graph_data_js(p)
         assert kg.nodes[0].detail == "https://example.org/pathway"
 
@@ -159,7 +159,7 @@ class TestJsonExport:
     def test_export_valid_json(self, tmp_path):
         engine = _sample_engine()
         out = to_json(engine, tmp_path / "kg.json")
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert len(data["nodes"]) == 2
         assert len(data["edges"]) == 1
 
@@ -171,7 +171,7 @@ class TestJsonExport:
             tmp_path / "kg_validated.json",
             visibility=GraphVisibility.VALIDATED_ONLY,
         )
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
 
         assert {node["id"] for node in data["nodes"]} == {"CYP1A1", "BaP"}
         assert len(data["edges"]) == 1
@@ -181,7 +181,7 @@ class TestNoneCleanup:
     def test_none_values_stripped(self, tmp_path):
         engine = _sample_engine()
         out = to_json(engine, tmp_path / "kg.json")
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for node in data["nodes"]:
             assert None not in node.values()
 
@@ -191,7 +191,7 @@ class TestViewerBundle:
         engine = _sample_engine()
         template_dir = tmp_path / "template"
         template_dir.mkdir()
-        (template_dir / "index.html").write_text("<html>viewer</html>")
+        (template_dir / "index.html").write_text("<html>viewer</html>", encoding="utf-8")
 
         out_dir = export_viewer_bundle(
             engine,
@@ -200,7 +200,7 @@ class TestViewerBundle:
         )
 
         assert out_dir.exists()
-        assert (out_dir / "index.html").read_text() == "<html>viewer</html>"
+        assert (out_dir / "index.html").read_text(encoding="utf-8") == "<html>viewer</html>"
         assert (out_dir / "graph-data.js").exists()
 
     def test_export_viewer_bundle_writes_builtin_template_when_missing(self, tmp_path):
@@ -210,7 +210,7 @@ class TestViewerBundle:
 
         assert out_dir.exists()
         assert (out_dir / "index.html").exists()
-        assert "ExposoGraph Graph Viewer" in (out_dir / "index.html").read_text()
+        assert "ExposoGraph Graph Viewer" in (out_dir / "index.html").read_text(encoding="utf-8")
         assert (out_dir / "graph-data.js").exists()
 
 
@@ -220,7 +220,7 @@ class TestInteractiveHtml:
 
         out = to_interactive_html(engine, tmp_path / "graph.html")
 
-        html = out.read_text()
+        html = out.read_text(encoding="utf-8")
         assert "GRAPH_DATA" in html
         assert "ExposoGraph Graph Viewer" in html
 
@@ -228,7 +228,8 @@ class TestInteractiveHtml:
         engine = _sample_engine()
         template = tmp_path / "template.html"
         template.write_text(
-            '<html><head><script src="./graph-data.js"></script></head><body></body></html>'
+            '<html><head><script src="./graph-data.js"></script></head><body></body></html>',
+            encoding="utf-8",
         )
 
         html = to_interactive_html_string(engine, template_path=template)
@@ -240,7 +241,8 @@ class TestInteractiveHtml:
         engine = _sample_engine()
         template = tmp_path / "template.html"
         template.write_text(
-            '<html><head><script src="./graph-data.js"></script></head><body></body></html>'
+            '<html><head><script src="./graph-data.js"></script></head><body></body></html>',
+            encoding="utf-8",
         )
 
         out = to_interactive_html(engine, tmp_path / "graph.html", template_path=template)
@@ -253,7 +255,8 @@ class TestInteractiveHtml:
         engine = _sample_engine()
         template = tmp_path / "template.html"
         template.write_text(
-            '<html><head><script src="./graph-data.js"></script></head><body></body></html>'
+            '<html><head><script src="./graph-data.js"></script></head><body></body></html>',
+            encoding="utf-8",
         )
         out = to_interactive_html(engine, tmp_path / "graph.html", template_path=template)
 
@@ -265,7 +268,8 @@ class TestInteractiveHtml:
         engine = _mixed_visibility_engine()
         template = tmp_path / "template.html"
         template.write_text(
-            '<html><head><script src="./graph-data.js"></script></head><body></body></html>'
+            '<html><head><script src="./graph-data.js"></script></head><body></body></html>',
+            encoding="utf-8",
         )
 
         html = to_interactive_html_string(
@@ -316,7 +320,7 @@ class TestPlotlyExport:
             tmp_path / "graph_plotly.html",
             visibility=GraphVisibility.EXPLORATORY_ONLY,
         )
-        exported = out.read_text()
+        exported = out.read_text(encoding="utf-8")
 
         assert "Mystery Chemical" in exported
         assert "Novel Exposure" in exported
