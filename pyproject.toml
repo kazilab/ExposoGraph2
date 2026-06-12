@@ -8,7 +8,7 @@ version = "0.0.5"
 description = "ExposoGraph — LLM-powered extraction and manual curation of carcinogen metabolism pathways"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [
     { name = "Data analysis team @ KaziLab", email = "exposograph@kazilab.se" },
 ]
@@ -36,6 +36,8 @@ dependencies = [
     "PyYAML>=6.0",
     "numpy>=1.26",
     "scipy>=1.11",
+    "matplotlib>=3.10.9",
+    "streamlit>=1.57.0",
 ]
 
 [project.optional-dependencies]
