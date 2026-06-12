@@ -484,26 +484,38 @@ body.is-resizing * { user-select: none !important; }
     </div>
 
     <!-- Node Legend -->
-    <div class="panel">
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Node Types</div>
-      <div class="panel-body" id="node-legend"></div>
+      <div class="panel-body" id="node-legend" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; min-height: 0;"></div>
     </div>
 
     <!-- Edge Legend -->
-    <div class="panel">
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Edge Types</div>
-      <div class="panel-body" id="edge-legend"></div>
+      <div class="panel-body" id="edge-legend" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; min-height: 0;"></div>
     </div>
 
-    <!-- Carcinogen Filter -->
-    <div class="panel">
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Filter by Carcinogen Class</div>
-      <div class="panel-body">
-        <div class="filter-group" id="carcinogen-filters"></div>
+      <div class="filter-group" id="carcinogen-filters" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; padding-left: 1px; min-height: 0;"></div>
+    </div>
+
+
+  <!-- Filter by Tissue Panel with restricted max-height -->
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 45vh;">
+      <div class="panel-header">Filter by Tissue</div>
+    
+    <!-- Enabled vertical scrolling and added a bottom padding safety gap -->
+      <div class="panel-body" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 25px; min-height: 0;">
+        <label class="control-label" for="tissue-select">GTEx/HPA Tissue</label>
+        <select class="select-control" id="tissue-select"></select>
+        <label class="control-label" for="tissue-threshold">Minimum nTPM Weight</label>
+        <input class="range-control" id="tissue-threshold" type="range" min="0" max="1" step="0.05" value="0.05">
+      <div class="helper-text" id="tissue-summary">
+        GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.
       </div>
     </div>
-
-    <div class="panel">
+    <!-- <div class="panel">
       <div class="panel-header">Filter by Tissue</div>
       <div class="panel-body">
         <label class="control-label" for="tissue-select">GTEx/HPA Tissue</label>
@@ -514,7 +526,7 @@ body.is-resizing * { user-select: none !important; }
           GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Detail Panel -->
     <div class="panel detail-panel" id="detail-panel">
@@ -576,7 +588,16 @@ const EDGE_COLORS = {
   PATHWAY: "#555b6a",
   EXPRESSED_IN: "#c2855a",
   ENCODES: "#3d8b8b",
-  CUSTOM: "#9ea9bd"
+  CUSTOM: "#9ea9bd",
+  INHIBITS: "#d58961",
+  ACCUMULATES: "#d00000",
+  DEPLETES: "#d00000",
+  ANTAGONIZES: "#d00000",
+  INDUCES: "#d00000",
+  GENERATES: "#d00000",
+  REGULATES: "#d00000",
+  METABOLIZES: "#d00000",
+  CO_EXPOSED: "#d00000"
 };
 
 const EDGE_LABELS = {
@@ -588,7 +609,16 @@ const EDGE_LABELS = {
   PATHWAY: "Pathway membership",
   EXPRESSED_IN: "Expressed in (gene → tissue)",
   ENCODES: "Encodes (variant locus → gene or enzyme)",
-  CUSTOM: "Custom curated relation"
+  CUSTOM: "Custom curated relation",
+  INHIBITS: "Inhibits (active site inhibition)",
+  ACCUMULATES: "to be labeled",
+  DEPLETES: "to be labeled",
+  ANTAGONIZES: "to be labeled",
+  INDUCES: "to be labeled",
+  GENERATES: "to be labeled",
+  REGULATES: "to be labeled",
+  METABOLIZES: "to be labeled",
+  CO_EXPOSED: "to be labeled"
 };
 
 const NODE_SIZES = {
