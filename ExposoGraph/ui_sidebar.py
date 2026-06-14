@@ -55,6 +55,8 @@ def render(engine: GraphEngine, repository: GraphRepository | None) -> None:
         st.caption(
             f"**{engine.node_count}** nodes · **{engine.edge_count}** edges"
         )
+        st.divider()
+        _render_graph_filters(engine)
         active_visibility = st.selectbox(
             "Graph visibility",
             options=[visibility.value for visibility in GraphVisibility],
@@ -405,3 +407,66 @@ def _render_validation(engine: GraphEngine) -> None:
             st.caption(f"⚠ {e}")
     elif engine.node_count > 0:
         st.success("Graph valid")
+
+def _render_graph_filters(engine: GraphEngine) -> None:
+    """Render universal graph filters synchronized with Python intersection logic."""
+    st.markdown("##### Active Graph Filters")
+    
+    # ── 1. Carcinogen Class Selection ──────────────────────────────────────
+    # Dynamically look up all unique node group designations from memory
+    all_nodes = [data for _, data in engine.G.nodes(data=True)]
+    carcinogen_groups = sorted(list({
+        data.get("group") for data in all_nodes 
+        if data.get("type") == "Carcinogen" and data.get("group")
+    }))
+    
+    selected_carcinogen = st.selectbox(
+        "Carcinogen Class",
+        options=["All Groups"] + carcinogen_groups,
+        format_func=lambda x: x.replace("_", " ") if x != "All Groups" else x,
+        help="Returns neighbors-of-neighbors of carcinogens in this group."
+    )
+    # Map the "All Groups" string back to None for the intersection logic
+    st.session_state["carcinogen_group_select"] = (
+        None if selected_carcinogen == "All Groups" else selected_carcinogen
+    )
+
+    # ── 2. Node & Edge Type Toggles ────────────────────────────────────────
+    # Extract unique categories present across the graph
+    node_types = sorted(list({data.get("type") for _, data in engine.G.nodes(data=True) if data.get("type")}))
+    edge_types = sorted(list({data.get("type") for _, _, _, data in engine.G.edges(keys=True, data=True) if data.get("type")}))
+
+    selected_node_type = st.selectbox("Node Types", options=["All Nodes"] + node_types)
+    st.session_state["node_type_select"] = (
+        None if selected_node_type == "All Nodes" else selected_node_type
+    )
+
+    selected_edge_type = st.selectbox("Edge Types", options=["All Edges"] + edge_types)
+    st.session_state["edge_type_select"] = (
+        None if selected_edge_type == "All Edges" else selected_edge_type
+    )
+
+    # ── 3. Tissue & Weight Metrics ─────────────────────────────────────────
+    # Scrape unique tissues from data blocks
+    discovered_tissues = set()
+    for _, d in engine.G.nodes(data=True):
+        t_field = d.get("tissue") or d.get("tissues")
+        if isinstance(t_field, dict):
+            discovered_tissues.update(t_field.keys())
+        elif isinstance(t_field, str):
+            discovered_tissues.add(t_field)
+
+    selected_tissue = st.selectbox("Filter by Tissue Environment", options=["All Tissues"] + sorted(list(discovered_tissues)))
+    
+    if selected_tissue != "All Tissues":
+        st.session_state["tissue_select"] = selected_tissue
+        st.session_state["tissue_threshold"] = st.slider(
+            "Minimum Tissue weight", 
+            min_value=0.0, 
+            max_value=1.0, 
+            value=0.05, 
+            step=0.05
+        )
+    else:
+        st.session_state["tissue_select"] = None
+        st.session_state["tissue_threshold"] = None

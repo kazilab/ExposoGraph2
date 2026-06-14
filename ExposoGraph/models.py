@@ -32,7 +32,16 @@ class EdgeType(str, Enum):
     INDUCES = "INDUCES"
     INHIBITS = "INHIBITS"
     ENCODES = "ENCODES"
-    CUSTOM = "CUSTOM"
+    CUSTOM = "CUSTOM" 
+    # new edge types
+    ACCUMULATES = "ACCUMULATES"
+    GENERATES = "GENERATES"
+    DEPLETES = "DEPLETES"
+    ANTAGONIZES = "ANTAGONIZES"
+    REGULATES = "REGULATES"
+    STABILIZES = "STABILIZES"
+    METABOLIZES = "METABOLIZES"
+    CO_EXPOSED = "CO_EXPOSED"
 
 
 class CurationStatus(str, Enum):

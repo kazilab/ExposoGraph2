@@ -495,10 +495,10 @@ body.is-resizing * { user-select: none !important; }
       <div class="panel-body" id="edge-legend" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; min-height: 0;"></div>
     </div>
 
-    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
+    <!-- <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Filter by Carcinogen Class</div>
       <div class="filter-group" id="carcinogen-filters" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; padding-left: 1px; min-height: 0;"></div>
-    </div>
+    </div> -->
 
 
   <!-- Filter by Tissue Panel with restricted max-height -->
@@ -738,29 +738,31 @@ Object.entries(EDGE_COLORS).forEach(([type, color]) => {
   if (count === 0) return;
   const item = document.createElement("div");
   item.className = "edge-legend-item";
+  // item.dataset.type = type; // adding for edges too
   item.innerHTML = `<span class="edge-line" style="background:${color}"></span>
     <span class="legend-label">${EDGE_LABELS[type]}</span>
     <span class="legend-count">${count}</span>`;
+  // item.addEventListener("click", () => highlightType(type)); // adding for edges too
   edgeLegend.appendChild(item);
 });
 
 // ── Carcinogen Filters ───────────────────────────────────────────────
-const carcinogenGroups = [...new Set(nodes.filter(n => n.type === "Carcinogen").map(n => n.group))];
-const filterContainer = document.getElementById("carcinogen-filters");
-const allBtn = document.createElement("button");
-allBtn.className = "filter-btn active";
-allBtn.textContent = "All";
-allBtn.addEventListener("click", () => filterByCarcinogen(null));
-filterContainer.appendChild(allBtn);
+// const carcinogenGroups = [...new Set(nodes.filter(n => n.type === "Carcinogen").map(n => n.group))];
+// const filterContainer = document.getElementById("carcinogen-filters");
+// const allBtn = document.createElement("button");
+// allBtn.className = "filter-btn active";
+// allBtn.textContent = "All";
+// allBtn.addEventListener("click", () => filterByCarcinogen(null));
+// filterContainer.appendChild(allBtn);
 
-carcinogenGroups.forEach(g => {
-  const btn = document.createElement("button");
-  btn.className = "filter-btn";
-  btn.textContent = g.replace("_", " ");
-  btn.dataset.group = g;
-  btn.addEventListener("click", () => filterByCarcinogen(g));
-  filterContainer.appendChild(btn);
-});
+// carcinogenGroups.forEach(g => {
+//   const btn = document.createElement("button");
+//   btn.className = "filter-btn";
+//   btn.textContent = g.replace("_", " ");
+//   btn.dataset.group = g;
+//   btn.addEventListener("click", () => filterByCarcinogen(g));
+//   filterContainer.appendChild(btn);
+// });
 
 // ── Tissue Filter Controls ──────────────────────────────────────────
 const tissueSelect = document.getElementById("tissue-select");
@@ -1293,9 +1295,9 @@ function applyCarcinogenFilter(group) {
     }
   });
 
-  node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
-  link.style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? 0.7 : 0.02)
-    .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? 2 : 0.3);
+  // node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05); //removing opacity
+  // link.style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? 0.7 : 0.02)
+    // .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? 2 : 0.3);
 
   updateHeaderStats(connectedIds, relevantEdgeIds);
 }
@@ -1353,10 +1355,10 @@ function applyTissueFilter(tissue, threshold) {
   });
 
   tissueSummary.textContent = `${tissue}: ${activeIds.size} GTEx/HPA-supported enzyme/gene nodes with nTPM weight >= ${threshold.toFixed(2)}. ${tissueSourceNote}`;
-  node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
-  link
-    .style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 0.35 : 0.7) : 0.02)
-    .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 1.2 : 2) : 0.3);
+  // node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05); //removing filter
+  // link
+    // .style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 0.35 : 0.7) : 0.02)
+    // .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 1.2 : 2) : 0.3);
 
   updateHeaderStats(connectedIds, relevantEdgeIds);
 }

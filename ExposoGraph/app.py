@@ -58,6 +58,22 @@ st.markdown(
 
 engine = get_engine()
 repository = get_repository()
+
+# -- load Knowledge Graph # ----------------------
+
+# NEW INITIAL BOOTSTRAP PIPELINE: Load default reference assets on startup
+if "graph_initialized" not in st.session_state:
+    try:
+        # Dynamically point to the reference data file location inside your repository
+        default_js_path = Path(__file__).resolve().parent / "map" / "graph_data.json"
+        if default_js_path.exists():
+            engine.load_from_json(default_js_path)
+            st.session_state.graph_initialized = True
+    except Exception as e:
+        st.warning(f"Could not pre-load reference map: {e}")
+
+
+
 if "extract_text" not in st.session_state:
     st.session_state.extract_text = ""
 if "project_name" not in st.session_state:

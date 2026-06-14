@@ -4487,16 +4487,15 @@ const GRAPH_DATA = {
         }
       ]
     },
-        //heavy metal carcinogens
     {
-        "id": "Pb",
-        "label": "Lead",
-        "type": "Carcinogen",
-        "group": "Heavy_Metal",
-        "iarc": "Group 2A",
-        "exposure": "Contaminated water, occupational dust/fumes, legacy paint",
-        "detail": "IARC Group 2A probable carcinogen. 30-year bone half-life. Target: kidney, brain, blood.",
-        "atomic_number": 82,
+      "id": "Pb",
+      "label": "Lead",
+      "type": "Carcinogen",
+      "group": "Heavy_Metal",
+      "iarc": "Group 2A",
+      "exposure": "Contaminated water, occupational dust/fumes, legacy paint",
+      "detail": "IARC Group 2A probable carcinogen. 30-year bone half-life. Target: kidney, brain, blood.",
+      "atomic_number": 82
     },
     {
         "id": "Hg",
@@ -4506,7 +4505,7 @@ const GRAPH_DATA = {
         "iarc": "Group 2B",
         "exposure": "Fish consumption (methylmercury), dental amalgams, occupational vapor",
         "detail": "IARC Group 2B possible carcinogen. 70-day half-life. Target: brain, kidney. High thiol affinity.",
-        "atomic_number": 80,
+        "atomic_number": 80
     },
     {
         "id": "Co",
@@ -4516,7 +4515,7 @@ const GRAPH_DATA = {
         "iarc": "Group 2B",
         "exposure": "Hard metal tools, carbide manufacturing, hip prostheses",
         "detail": "IARC Group 2B possible carcinogen. Hypoxia mimic. Target: lung, thyroid. 10-day half-life.",
-        "atomic_number": 27,
+        "atomic_number": 27
     },
     {
         "id": "Sb",
@@ -4526,9 +4525,8 @@ const GRAPH_DATA = {
         "iarc": "Group 2B",
         "exposure": "Mining, smelting, often co-exposed with arsenic",
         "detail": "IARC Group 2B possible carcinogen. Often co-toxic with arsenic. Target: lung, heart, liver.",
-        "atomic_number": 51,
+        "atomic_number": 51
     },
-    // Lead-specific enzymes
     {
         "id": "ALAD",
         "label": "ALAD",
@@ -4538,7 +4536,7 @@ const GRAPH_DATA = {
         "detail": "Delta-aminolevulinic acid dehydratase. Primary lead target. Inhibition causes delta-ALA accumulation and ROS.",
         "tissue": "blood, liver, kidney",
         "group": "Heme_Synthesis",
-        "metal_targets": ["Pb"],
+        "metal_targets": ["Pb"]
     },
     {
         "id": "ALAS1",
@@ -4548,10 +4546,8 @@ const GRAPH_DATA = {
         "role": "Activation",
         "detail": "Aminolevulinic acid synthase 1. Rate-limiting in heme synthesis.",
         "tissue": "liver, erythroid",
-        "group": "Heme_Synthesis",
+        "group": "Heme_Synthesis"
     },
-
-    // Mercury-specific
     {
         "id": "SEPP1",
         "label": "SEPP1",
@@ -4561,10 +4557,8 @@ const GRAPH_DATA = {
         "detail": "Selenoprotein P. Protective against mercury toxicity via selenium antagonism.",
         "tissue": "liver, plasma",
         "group": "Selenium_Protection",
-        "metal_targets": ["Hg"],
+        "metal_targets": ["Hg"]
     },
-
-    // Cobalt-specific (HIF pathway)
     {
         "id": "EGLN1",
         "label": "EGLN1 (PHD2)",
@@ -4574,15 +4568,15 @@ const GRAPH_DATA = {
         "detail": "Prolyl hydroxylase domain 2. Inhibited by cobalt, stabilizing HIF-1α (hypoxia mimicry).",
         "tissue": "ubiquitous",
         "group": "HIF_Pathway",
-        "metal_targets": ["Co"],
+        "metal_targets": ["Co"]
     },
     {
         "id": "HIF1A",
         "label": "HIF-1α",
-        "type": "Gene",  // Actually a transcription factor
+        "type": "Gene",  
         "detail": "Hypoxia inducible factor 1 alpha. Stabilized by cobalt, driving transcriptional reprogramming.",
         "tissue": "ubiquitous",
-        "group": "HIF_Pathway",
+        "group": "HIF_Pathway"
     },
     {
         "id": "GPx",
@@ -4592,7 +4586,7 @@ const GRAPH_DATA = {
         "role": "Detoxification",
         "detail": "Selenoprotein; mercury inhibits selenol-dependent activity.",
         "tissue": "ubiquitous",
-        "group": "Antioxidant",
+        "group": "Antioxidant"
     },
     {
         "id": "VEGF",
@@ -4600,9 +4594,8 @@ const GRAPH_DATA = {
         "type": "Gene",
         "detail": "Angiogenic factor upregulated under HIF-1α (cobalt hypoxia mimicry).",
         "tissue": "ubiquitous",
-        "group": "HIF_Pathway",
+        "group": "HIF_Pathway"
     },
-// Transporter nodes for expanded metals
     {
         "id": "DMT1_Pb",
         "label": "DMT1 (SLC11A2)",
@@ -4612,7 +4605,7 @@ const GRAPH_DATA = {
         "detail": "Divalent metal transporter 1. Major entry route for lead (shared with iron).",
         "tissue": "intestine, kidney, brain",
         "group": "Metal_Transport",
-        "metal_targets": ["Pb", "Cd", "Co"],
+        "metal_targets": ["Pb", "Cd", "Co"]
     },
     {
         "id": "LAT1_Hg",
@@ -4623,7 +4616,7 @@ const GRAPH_DATA = {
         "detail": "L-type amino acid transporter 1. Methylmercury-cysteine complex mimicry entry.",
         "tissue": "brain (BBB), placenta, intestine",
         "group": "Amino_Acid_Transport",
-        "metal_targets": ["Hg"],
+        "metal_targets": ["Hg"]
     },
     {
         "id": "ZIP14_Co",
@@ -4634,17 +4627,15 @@ const GRAPH_DATA = {
         "detail": "Zinc/iron permease 14. Transports non-transferrin bound cobalt and iron.",
         "tissue": "liver, pancreas, heart",
         "group": "Metal_Transport",
-        "metal_targets": ["Co", "Fe"],
+        "metal_targets": ["Co", "Fe"]
     },
-
-// Metabolite nodes for expanded metals
     {
         "id": "delta_ALA",
         "label": "Delta-ALA",
         "type": "Metabolite",
         "reactivity": "High",
         "detail": "Delta-aminolevulinic acid. Accumulates with lead exposure. Auto-oxidizes generating ROS.",
-        "associated_metal": "Pb",
+        "associated_metal": "Pb"
     },
     {
         "id": "ALA_portporphyria",
@@ -4652,7 +4643,7 @@ const GRAPH_DATA = {
         "type": "Metabolite",
         "reactivity": "High",
         "detail": "Acquired porphyria from lead-induced ALAD inhibition.",
-        "associated_metal": "Pb",
+        "associated_metal": "Pb"
     },
     {
         "id": "MeHg_GSH",
@@ -4660,7 +4651,7 @@ const GRAPH_DATA = {
         "type": "Metabolite",
         "reactivity": "Intermediate",
         "detail": "Methylmercury-glutathione complex. Transported and excreted.",
-        "associated_metal": "Hg",
+        "associated_metal": "Hg"
     },
     {
         "id": "Co_plus2",
@@ -4668,40 +4659,33 @@ const GRAPH_DATA = {
         "type": "Metabolite",
         "reactivity": "High",
         "detail": "Cobalt(II) ion. Redox active, participates in Fenton-like reactions.",
-        "associated_metal": "Co",
+        "associated_metal": "Co"
     },
     {
         "id": "GSH",
         "label": "Glutathione",
         "type": "Metabolite",
         "reactivity": "High",
-        "detail": "Major cellular antioxidant; depleted by lead and mercury binding.",
-    },
+        "detail": "Major cellular antioxidant; depleted by lead and mercury binding."
+    }
   ],
   "edges": [
-        //    # Lead pathways
     {"source": "Pb", "target": "ALAD", "type": "INHIBITS", "carcinogen": "Pb", "evidence": "Lead binds to sulfhydryl groups in ALAD"},
     {"source": "ALAD", "target": "delta_ALA", "type": "ACCUMULATES", "carcinogen": "Pb", "evidence": "Inhibition causes ALA accumulation"},
     {"source": "delta_ALA", "target": "ROS_metal", "type": "GENERATES", "carcinogen": "Pb", "evidence": "Auto-oxidation of ALA generates ROS"},
     {"source": "DMT1_Pb", "target": "Pb", "type": "TRANSPORTS", "carcinogen": "Pb", "evidence": "DMT1 mediates lead uptake"},
     {"source": "Pb", "target": "GSH", "type": "DEPLETES", "carcinogen": "Pb", "evidence": "Lead binds GSH"},
-
-    // Mercury pathways
     {"source": "LAT1_Hg", "target": "Hg", "type": "TRANSPORTS", "carcinogen": "Hg", "evidence": "Methylmercury-cysteine mimicry"},
     {"source": "Hg", "target": "GSH", "type": "DEPLETES", "carcinogen": "Hg", "evidence": "High affinity thiol binding"},
     {"source": "Hg", "target": "GPx", "type": "INHIBITS", "carcinogen": "Hg", "evidence": "Selenol group binding"},
     {"source": "SEPP1", "target": "Hg", "type": "ANTAGONIZES", "carcinogen": "Hg", "evidence": "Selenium antagonism"},
     {"source": "Hg", "target": "MT1A", "type": "INDUCES", "carcinogen": "Hg", "evidence": "Mercury induces MT expression"},
-
-    //Cobalt pathways
     {"source": "Co", "target": "EGLN1", "type": "INHIBITS", "carcinogen": "Co", "evidence": "PHD2 inhibition by Co(II)"},
     {"source": "EGLN1", "target": "HIF1A", "type": "REGULATES", "carcinogen": "Co", "evidence": "PHD2 normally degrades HIF-1α"},
     {"source": "Co", "target": "HIF1A", "type": "STABILIZES", "carcinogen": "Co", "evidence": "Hypoxia mimicry"},
     {"source": "HIF1A", "target": "VEGF", "type": "INDUCES", "carcinogen": "Co", "evidence": "HIF-1α induces angiogenic factors"},
     {"source": "ZIP14_Co", "target": "Co", "type": "TRANSPORTS", "carcinogen": "Co", "evidence": "Non-transferrin bound uptake"},
     {"source": "Co_plus2", "target": "ROS_metal", "type": "GENERATES", "carcinogen": "Co", "evidence": "Fenton-like chemistry"},
-
-    // Antimony pathways
     {"source": "Sb", "target": "GSTO1", "type": "METABOLIZES", "carcinogen": "Sb", "evidence": "Similar to arsenic metabolism"},
     {"source": "Sb", "target": "As", "type": "CO_EXPOSED", "carcinogen": "Sb", "evidence": "Often co-exposed with arsenic in mining"},
     {

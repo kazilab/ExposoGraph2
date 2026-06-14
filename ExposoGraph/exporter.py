@@ -9,7 +9,7 @@ from collections import defaultdict
 from importlib.resources import files as resource_files
 from pathlib import Path
 from typing import Any
-
+import networkx as nx
 import pyjson5
 
 from .branding import APP_NAME, APP_VERSION
@@ -1051,15 +1051,18 @@ def to_interactive_html_string(
     data_script = _graph_data_script(engine, visibility=visibility)
     return _inline_graph_data_script(template, data_script)
 
-
 def bundle_to_html_string(
     template_path: str | Path,
-    graph_data_path: str | Path,
+    filtered_graph_dict: dict,  # Rename parameter to reflect dictionary usage
 ) -> str:
-    """Render a viewer bundle directory as a self-contained HTML document."""
+    """Render a viewer bundle directory injecting a dynamic backend NetworkX dataset."""
     template = Path(template_path).read_text(encoding="utf-8")
-    data_script = Path(graph_data_path).read_text(encoding="utf-8")
+    
+    # Directly stringify the python dictionary payload matching what D3 expects
+    data_script = f"window.GRAPH_DATA = {json.dumps(filtered_graph_dict)};"
+    
     return _inline_graph_data_script(template, data_script)
+
 
 
 def to_interactive_html(
