@@ -38,6 +38,7 @@ dependencies = [
     "scipy>=1.11",
     "matplotlib>=3.10.9",
     "streamlit>=1.57.0",
+    "streamlit-agraph>=0.0.45",
 ]
 
 [project.optional-dependencies]

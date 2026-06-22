@@ -8,8 +8,8 @@ from .engine import GraphEngine
 
 _MAP_DIR = Path(__file__).resolve().parent / "map"
 
+
 def render() -> None:
-    """Render the D3 map frame using the backend graph engine intersection filter."""
     st.markdown("#### Reference Map")
 
     if "engine" not in st.session_state:

@@ -71,7 +71,7 @@ class GraphEngine:
         if node_type:
             matching_nodes = [
                 n for n, d in self.G.nodes(data=True) 
-                if d.get("type") == node_type
+                if d.get("type") in list(node_type)#== node_type
             ]
             # Subgraph containing specified nodes and any edges between them
             active_subgraphs.append(self.G.subgraph(matching_nodes).copy())
@@ -115,11 +115,11 @@ class GraphEngine:
             core_tissue_nodes = set()
             for n, d in self.G.nodes(data=True):
                 # Assumes your tissue weight is stored in a dictionary attribute or directly
-                tissue_data = d.get("tissue") or d.get("tissues") or {}
+                tissue_data = d.get("tissue_weights")
                 if isinstance(tissue_data, dict) and tissue_data.get(tissue, 0.0) >= threshold:
                     core_tissue_nodes.add(n)
-                elif d.get("tissue") == tissue and d.get("weight", 0.0) >= threshold:
-                    core_tissue_nodes.add(n)
+                # elif d.get("tissue") == tissue and d.get("weight", 0.0) >= threshold:
+                #     core_tissue_nodes.add(n)
 
             # Gather those core nodes and all of their immediate neighbors
             tissue_neighborhood = set(core_tissue_nodes)

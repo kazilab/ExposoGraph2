@@ -434,31 +434,86 @@ def _render_graph_filters(engine: GraphEngine) -> None:
     # ── 2. Node & Edge Type Toggles ────────────────────────────────────────
     # Extract unique categories present across the graph
     node_types = sorted(list({data.get("type") for _, data in engine.G.nodes(data=True) if data.get("type")}))
+
+    # ---------------------------------------------------------
+    # CALLBACKS FOR EXCEL STATE SYNCHRONIZATION
+    # ---------------------------------------------------------
+
+    def on_master_change():
+        """Fires when user clicks 'Select All'. Flips all children to match."""
+        master_val = st.session_state["node_master_select"]
+        for node in node_types:
+            st.session_state[f"node_cb_{node}"] = master_val
+
+    def on_child_change():
+        """Fires when any child is clicked. Updates the 'Select All' checkbox."""
+        # Check if ALL child checkboxes are currently True
+        all_checked = all(st.session_state.get(f"node_cb_{node}", True) for node in node_types)
+        st.session_state["node_master_select"] = all_checked
+
+    # ---------------------------------------------------------
+    # UI RENDERING
+    # ---------------------------------------------------------
+
+    with st.expander("Filter Nodes", expanded=True):
+        
+        # 1. Master Checkbox with on_change callback
+        st.checkbox(
+            "Select All", 
+            value=True, 
+            key="node_master_select", 
+            on_change=on_master_change
+        )
+        
+        # 2. Scrollable container for child nodes
+        with st.container(height=200, border=False):
+            selected_node_types = []
+            
+            for node in node_types:
+                # Initialize key in session state if it doesn't exist yet
+                if f"node_cb_{node}" not in st.session_state:
+                    st.session_state[f"node_cb_{node}"] = st.session_state["node_master_select"]
+                    
+                # Render child checkbox with on_change callback
+                is_checked = st.checkbox(
+                    label=node, 
+                    key=f"node_cb_{node}",
+                    on_change=on_child_change
+                )
+                
+                if is_checked:
+                    selected_node_types.append(node)
+
+    # 3. Synchronize cleanly with your downstream graph filtering logic
+    if st.session_state["node_master_select"]:
+        st.session_state["node_type_select"] = None  # "All" are active
+    else:
+        st.session_state["node_type_select"] = selected_node_types
+
+    # selected_node_type = st.selectbox("Nodes", options=["All"] + node_types)
+    # st.session_state["node_type_select"] = (
+    #     None if selected_node_type == "All" else selected_node_type
+    # )
     edge_types = sorted(list({data.get("type") for _, _, _, data in engine.G.edges(keys=True, data=True) if data.get("type")}))
 
-    selected_node_type = st.selectbox("Node Types", options=["All Nodes"] + node_types)
-    st.session_state["node_type_select"] = (
-        None if selected_node_type == "All Nodes" else selected_node_type
-    )
-
-    selected_edge_type = st.selectbox("Edge Types", options=["All Edges"] + edge_types)
+    selected_edge_type = st.selectbox("Edges", options=["All"] + edge_types)
     st.session_state["edge_type_select"] = (
-        None if selected_edge_type == "All Edges" else selected_edge_type
+        None if selected_edge_type == "All" else selected_edge_type
     )
 
     # ── 3. Tissue & Weight Metrics ─────────────────────────────────────────
     # Scrape unique tissues from data blocks
     discovered_tissues = set()
     for _, d in engine.G.nodes(data=True):
-        t_field = d.get("tissue") or d.get("tissues")
+        t_field = d.get("tissue_weights")
         if isinstance(t_field, dict):
             discovered_tissues.update(t_field.keys())
         elif isinstance(t_field, str):
             discovered_tissues.add(t_field)
 
-    selected_tissue = st.selectbox("Filter by Tissue Environment", options=["All Tissues"] + sorted(list(discovered_tissues)))
+    selected_tissue = st.selectbox("Filter by Tissue", options=["All"] + sorted(list(discovered_tissues)))
     
-    if selected_tissue != "All Tissues":
+    if selected_tissue != "All":
         st.session_state["tissue_select"] = selected_tissue
         st.session_state["tissue_threshold"] = st.slider(
             "Minimum Tissue weight", 
