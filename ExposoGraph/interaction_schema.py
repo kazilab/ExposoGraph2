@@ -25,6 +25,7 @@ class ReactionRole(ValueEnum):
     BIOACTIVATION = "bioactivation"
     DETOXIFICATION = "detoxification"
     CLEARANCE = "clearance"
+    PROTECTIVE_REPAIR = "protective_repair"
     DUAL_ROLE = "dual_role"
     PROBE_ONLY = "probe_only"
     UNKNOWN = "unknown"
@@ -69,6 +70,31 @@ class ReleaseTarget(ValueEnum):
     V3_0 = "v3_0"
     FUTURE = "future"
     UNKNOWN = "unknown"
+
+
+class InhibitionMode(ValueEnum):
+    COMPETITIVE = "competitive"
+    PURE_NONCOMPETITIVE = "pure_noncompetitive"
+    UNCOMPETITIVE = "uncompetitive"
+    MIXED = "mixed"
+    UNKNOWN = "unknown"
+
+
+class ConcentrationBasis(ValueEnum):
+    NOMINAL = "nominal"
+    TOTAL = "total"
+    UNBOUND = "unbound"
+    INTRACELLULAR = "intracellular"
+    TISSUE_EFFECTIVE = "tissue_effective"
+    MODEL_DERIVED = "model_derived"
+    UNKNOWN = "unknown"
+
+
+class ApplicabilityDomain(ValueEnum):
+    IN_DOMAIN = "in_domain"
+    CONDITIONALLY_IN_DOMAIN = "conditionally_in_domain"
+    OUTSIDE_DOMAIN = "outside_domain"
+    NOT_ASSESSABLE = "not_assessable"
 
 
 def enum_from_value(enum_cls: type[ValueEnum], value: Any, default: ValueEnum) -> ValueEnum:

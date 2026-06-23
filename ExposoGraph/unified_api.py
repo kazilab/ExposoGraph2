@@ -110,6 +110,7 @@ class PatientRiskProfile:
     methylation_status: MethylationStatus | None = None
     methylation_effect: EpigeneticEffect | None = None
     methylation_adjusted_risks: dict[str, float] = field(default_factory=dict)
+    biological_output_integration: dict[str, Any] = field(default_factory=dict)
     summary: str = ""
 
 
@@ -1052,9 +1053,26 @@ def patient_risk_query(
         methylation_status=resolved_methylation_status,
         methylation_effect=methylation_effect,
         methylation_adjusted_risks=methylation_adjusted_risks,
+        biological_output_integration=_build_biological_output_integration(interactions),
     )
     profile.summary = summarize_risk_profile(profile)
     return profile
+
+
+def _build_biological_output_integration(interactions: InteractionMatrixResult | None) -> dict[str, Any]:
+    if interactions is None:
+        return {}
+    substrate_outputs: dict[str, Any] = {}
+    for enzyme, enzyme_result in interactions.competitive_effects.items():
+        for substrate, flux in enzyme_result.substrates.items():
+            if flux.biological_output is not None:
+                substrate_outputs[f"{enzyme}:{substrate}"] = deepcopy(flux.biological_output)
+    return {
+        "substrate_outputs": substrate_outputs,
+        "mechanism_attribution": deepcopy(interactions.mechanism_attribution),
+        "source": "interaction_engine.live_biological_output",
+    }
+
 
 
 def summarize_risk_profile(profile: PatientRiskProfile) -> str:
