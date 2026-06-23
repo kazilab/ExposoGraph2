@@ -1,5 +1,12 @@
-from typing import List, Optional, Literal, Union, Annotated, Dict
-from pydantic import BaseModel, Field, field_validator, TypeAdapter, Discriminator
+from typing import List, Optional, Literal, Union, Annotated, Dict, Any
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    TypeAdapter,
+    Discriminator,
+    model_validator,
+)
 
 # --- SHARED TYPES ---
 
@@ -18,17 +25,9 @@ class Lifesyle(BaseModel):
     pass
 
 
-class Exposure(BaseModel):
-    type: Literal["Exposure"]
-    visible: bool = False
-    pass
-
-
 class Patient(BaseModel):
     type: Literal["Patient"]
     visible: bool = False
-    # will include patient information potential, exposure
-    # lifestyle, etc.
 
 
 class Tissue(BaseModel):
@@ -42,7 +41,7 @@ class Substrate(BaseModel):
 
 
 class CarcinogenClass(BaseModel):
-    type: Literal["CarcinogenClass"]
+    type: str = None
     class_id: int
     class_label: str
     index_carcinogen: str
@@ -51,6 +50,21 @@ class CarcinogenClass(BaseModel):
     key_enzymes_activation: List[str]
     key_enzymes_detox: List[str]
     visible: bool = False
+    epa_cancer_slope_factor: Optional[CancerSlopeFactor] = None
+    epa_inhalation_unit_risk: Optional[InhalationUnitRisk] = None
+    regulatory_limits: Dict[str, str] = Field(default_factory=dict)
+    population_prevalence_notes: Optional[str] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def populate_type_field(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            # If 'type' is not explicitly provided, default it to 'class_label'
+            if "type" not in data or data["type"] is None:
+                data["type"] = data.get("class_label")
+        return data
+
+    model_config = {"validate_assignment": True}
 
 
 class ExposureScenario(BaseModel):
@@ -59,14 +73,20 @@ class ExposureScenario(BaseModel):
     daily_intake_ug_kg: float = Field(ge=0)
     multiplier_vs_baseline: float = Field(ge=0)
     source: str
-    # Optional context-specific fields
+    type: str = None
     biomarker: Optional[str] = None
     air_concentration_ng_m3: Optional[float] = Field(default=None, ge=0)
     dietary_bap_ug_day: Optional[float] = Field(default=None, ge=0)
     note: Optional[str] = None
 
-    class Config:
-        extra = "forbid"  # Prevents typos and undocumented keys
+    @model_validator(mode="before")
+    @classmethod
+    def populate_type_field(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            # If 'type' is not explicitly provided, default it to 'label'
+            if "type" not in data or data["type"] is None:
+                data["type"] = data.get("label")
+        return data
 
 
 class CancerSlopeFactor(BaseModel):
@@ -224,8 +244,8 @@ class BaseNode(BaseModel):
     id: str
     label: str
     detail: str
-    origin: str
-    match_status: str
+    origin: Optional[str] = None
+    match_status: Optional[str] = None
     provenance: List[NodeProvenance] = Field(default_factory=list)
     # begin optional fields
     source_db: Optional[str] = None
@@ -278,6 +298,11 @@ class PathwayNode(BaseNode):
     model_config = {"validate_assignment": True}
 
 
+class GeneNode(BaseNode):
+    type: Literal["Gene"]
+    model_config = {"validate_assignment": True}
+
+
 # --- Edge Data --- #
 
 
@@ -296,8 +321,8 @@ class BaseEdge(BaseModel):
     visible: Optional[bool] = True
     source: str = Field(..., description="The ID of the source node")
     target: str = Field(..., description="The ID of the target node")
-    match_status: str
-    origin: str
+    match_status: Optional[str] = None
+    origin: Optional[str] = None
     provenance: List[EdgeProvenance] = Field(default_factory=list)
     label: Optional[str] = None
     source_db: Optional[str] = None
@@ -321,11 +346,20 @@ class VisibleEdge(BaseEdge):
         "REPAIRS",
         "INDUCES",
         "INHIBITS",
+        "DEPLETES",  # NEW
+        "GENERATES",
+        "ANTAGONIZES",
+        "REGULATES",
+        "STABILIZES",
+        "CO_EXPOSED",
+        "ACCUMULATES",
     ]
     model_config = {"validate_assignment": True}
 
 
-AnyNode = Union[CarcinogenNode, EnzymeNode, MetaboliteNode, DnaAdductNode, PathwayNode]
+AnyNode = Union[
+    CarcinogenNode, EnzymeNode, MetaboliteNode, DnaAdductNode, PathwayNode, GeneNode
+]
 AnnotatedNode = Annotated[AnyNode, Discriminator("type")]
 AnyEdge = Union[VisibleEdge]
 AnnotatedEdge = Annotated[AnyEdge, Discriminator("type")]

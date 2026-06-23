@@ -5,11 +5,19 @@ from __future__ import annotations
 import hashlib
 import re
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 # ── Enums ────────────────────────────────────────────────────────────────
+
 
 class NodeType(str, Enum):
     CARCINOGEN = "Carcinogen"
@@ -32,7 +40,7 @@ class EdgeType(str, Enum):
     INDUCES = "INDUCES"
     INHIBITS = "INHIBITS"
     ENCODES = "ENCODES"
-    CUSTOM = "CUSTOM" 
+    CUSTOM = "CUSTOM"
     # new edge types
     ACCUMULATES = "ACCUMULATES"
     GENERATES = "GENERATES"
@@ -127,7 +135,9 @@ def _first_nonempty(values: list[str]) -> str | None:
     return None
 
 
-def _normalize_provenance_fields(owner: BaseModel, *, summary_only_fields: tuple[str, ...]) -> None:
+def _normalize_provenance_fields(
+    owner: BaseModel, *, summary_only_fields: tuple[str, ...]
+) -> None:
     provenance = list(getattr(owner, "provenance", []))
     if not provenance:
         legacy = ProvenanceRecord(
@@ -159,6 +169,7 @@ def _normalize_provenance_fields(owner: BaseModel, *, summary_only_fields: tuple
 
 
 # ── Node ─────────────────────────────────────────────────────────────────
+
 
 class Node(BaseModel):
     id: str
@@ -228,6 +239,7 @@ class Node(BaseModel):
 
 # ── Edge ─────────────────────────────────────────────────────────────────
 
+
 class Edge(BaseModel):
     source: str
     target: str
@@ -256,7 +268,9 @@ class Edge(BaseModel):
             MatchStatus.CANONICAL,
             MatchStatus.ALIAS,
         ):
-            raise ValueError("Edges with type CUSTOM cannot be canonical or alias-matched")
+            raise ValueError(
+                "Edges with type CUSTOM cannot be canonical or alias-matched"
+            )
         if self.match_status in (MatchStatus.CANONICAL, MatchStatus.ALIAS):
             self.canonical_predicate = self.canonical_predicate or self.type.value
         elif self.match_status == MatchStatus.CUSTOM and not self.custom_predicate:
@@ -265,6 +279,7 @@ class Edge(BaseModel):
 
 
 # ── Top-level graph container ────────────────────────────────────────────
+
 
 class KnowledgeGraph(BaseModel):
     nodes: list[Node] = Field(default_factory=list)
@@ -280,9 +295,75 @@ class KnowledgeGraph(BaseModel):
             if edge.target not in node_ids:
                 bad.append(f"Edge references missing target node: {edge.target!r}")
             if edge.carcinogen and edge.carcinogen not in node_ids:
-                bad.append(f"Edge references missing carcinogen node: {edge.carcinogen!r}")
+                bad.append(
+                    f"Edge references missing carcinogen node: {edge.carcinogen!r}"
+                )
         if bad:
             raise ValueError(
                 f"Referential integrity errors ({len(bad)}):\n  " + "\n  ".join(bad)
             )
         return self
+
+
+# --- Data classes for interactions, modifiers, and parameters added after base load
+class GenotypeModifiers(BaseModel):
+    activity_multiplier: float
+    frequency: float
+    alleles: Optional[str] = None
+    note: Optional[str] = None
+    model_config = {"extra": "ignore"}
+
+
+class ModifierMetrics(BaseModel):
+    activity_multiplier: float
+    frequency: float
+    alleles: Optional[str] = None
+    note: Optional[str] = None
+    model_config = {"extra": "ignore"}
+
+
+class GenotypeModifiersContainer(BaseModel):
+    """Maps genotype keys (e.g., 'UM', 'active') to their metric data."""
+
+    model_config = {"extra": "allow"}
+
+    @property
+    def modifiers(self) -> Dict[str, ModifierMetrics]:
+        """Helper to extract just the validated data dictionaries, ignoring description."""
+        print(self.model_dump(by_alias=True))
+        return {
+            k: ModifierMetrics(**v)
+            for k, v in self.model_dump(by_alias=True).items()
+            if k != "_description"
+        }
+
+
+class InteractionEdgeDataBase(BaseModel):
+    # key of outer dictionary is enzyme, key of inner dictionary is substrate
+    Km_uM: float
+    Vmax_relative: float
+    relative_priority: int
+    product: str
+    product_carcinogenic: bool
+    assumed_ki: bool = False
+    parameter_provenance_ref: Optional[str] = None
+    notes: Optional[str] = None
+    Ki_uM: Optional[float] = None
+
+
+# edge data between enzyme and substrate. Eventually connect back to carcinogen
+class CompetitiveInhibitionSubstrate(InteractionEdgeDataBase):
+    pass
+
+
+class Phase2ConjugationSubstrate(InteractionEdgeDataBase):
+    pass
+
+
+class EnzymeInduction(BaseModel):
+    fold_induction: float = (Field(ge=0),)
+    range_min: float = Field(ge=0)
+    range_max: float = Field(ge=0)
+    mechanism: str
+    tissue_specificity: str
+    notes: str

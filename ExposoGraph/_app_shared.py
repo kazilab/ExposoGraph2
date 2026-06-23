@@ -111,7 +111,7 @@ def start_engine(engine: GraphEngine) -> None:
                 Path(__file__).resolve().parent / "map" / "graph_data_final.json"
             )
             if default_js_path.exists():
-                engine.load_from_json(default_js_path)
+                engine.load_base_data(default_js_path)
                 st.session_state.graph_initialized = True
         except Exception as e:
             st.warning(f"Could not pre-load reference map: {e}")

@@ -10,10 +10,22 @@ import networkx as nx
 import re
 from .config import GraphMode
 from .grounding import prepare_knowledge_graph
-from .models import Edge, KnowledgeGraph, Node
+from .models import (
+    Edge,
+    KnowledgeGraph,
+    Node,
+    GenotypeModifiersContainer,
+    CompetitiveInhibitionSubstrate,
+    Phase2ConjugationSubstrate,
+    EnzymeInduction,
+)
 
 logger = logging.getLogger(__name__)
 
+
+def load_from_json(f_name):
+    with open(f_name, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 class GraphEngine:
@@ -23,6 +35,13 @@ class GraphEngine:
         self.G: nx.MultiDiGraph = nx.MultiDiGraph()
 
     # ── Mutations ────────────────────────────────────────────────────────
+    def _impute_node(
+        self, node_id: str, node_type: str = "unknown", visible: bool = True
+    ) -> None:
+        """Helper to initialize a missing node with default attributes."""
+        if node_id not in self.G:
+            logger.warning(f"Node_id {node_id} is missing. Imputing node into graph.")
+            self.G.add_node(node_id, type=node_type, visible=visible)
 
     def add_node(self, node: Node) -> None:
         self.G.add_node(node.id, **node.model_dump(exclude_none=True, mode="json"))
@@ -53,6 +72,84 @@ class GraphEngine:
         if self.G.has_edge(source, target):
             self.G.remove_edge(source, target)
 
+    def modify_node(
+        self,
+        node_id: str,
+        update_obj_name: str,
+        update_obj_value,
+        default_type: str = "unknown",
+        default_visible: bool = True,
+    ):
+        # Pass type and visible configurations down to the imputation helper
+        self._impute_node(node_id, node_type=default_type, visible=default_visible)
+        self.G.nodes[node_id][update_obj_name] = update_obj_value
+
+    def modify_edge(
+        self,
+        source_id: str,
+        target_id: str,
+        key: str,
+        value,
+        default_type: list | str = "unknown",
+        default_visible: bool = True,
+    ):
+        logger.debug(
+            f"modifying edge for source_id: {source_id}, target_id: {target_id}, key: {key} "
+        )
+        edge_needs_creation = 0
+        s = source_id
+        t = target_id
+
+        # Parse type array/list defaults safely
+        if isinstance(default_type, (list, tuple)) and len(default_type) >= 2:
+            source_type = default_type[0]
+            target_type = default_type[1]
+        else:
+            source_type = default_type
+            target_type = default_type
+
+        # 1. Check and impute endpoint nodes with structural index overrides
+        if source_id not in self.G:
+            logger.warning(f"source_id is not in G: {source_id}. Imputing node.")
+            self._impute_node(source_id, node_type=source_type, visible=default_visible)
+
+        if target_id not in self.G:
+            logger.warning(f"target_id is not in G: {target_id}. Imputing node.")
+            self._impute_node(target_id, node_type=target_type, visible=default_visible)
+            t = target_id
+
+        # 2. Check and flag missing edge
+        if (source_id, target_id) not in self.G.edges and (
+            target_id,
+            source_id,
+        ) not in self.G.edges:
+            logger.warning("edge hasn't been created yet. Imputing edge.")
+            edge_needs_creation = 1
+
+        if (
+            source_id,
+            target_id,
+        ) not in self.G.edges and edge_needs_creation == 0:  # edge exists, but wrong order
+            s = target_id
+            t = source_id
+
+        # 3. Apply assignment
+        if edge_needs_creation:
+            self.G.add_edge(s, t)
+
+        self.G[s][t][key] = value
+
+    # ── Getters ──────────────────────────────────────────────────
+    def get_node(self, node_id: str):
+        return dict(self.G[node_id])
+
+    def get_edge(self, source_id: str, target_id: str):
+        if (source_id, target_id) in self.G.edges:
+            return dict(self.G[source_id][target_id])
+        if (target_id, source_id) in self.G.edges:
+            return dict(self.G[target_id][source_id])
+
+    # ── Filtering ──────────────────────────────────────────────────
 
     def filter_by_criteria(
         self,
@@ -70,8 +167,9 @@ class GraphEngine:
         # ── 1. Node Type Filtering ───────────────────────────────────────
         if node_type:
             matching_nodes = [
-                n for n, d in self.G.nodes(data=True) 
-                if d.get("type") in list(node_type)#== node_type
+                n
+                for n, d in self.G.nodes(data=True)
+                if d.get("type") in list(node_type)  # == node_type
             ]
             # Subgraph containing specified nodes and any edges between them
             active_subgraphs.append(self.G.subgraph(matching_nodes).copy())
@@ -79,7 +177,8 @@ class GraphEngine:
         # ── 2. Edge Type Filtering ───────────────────────────────────────
         if edge_type:
             matching_edges = [
-                (u, v, k) for u, v, k, d in self.G.edges(keys=True, data=True)
+                (u, v, k)
+                for u, v, k, d in self.G.edges(keys=True, data=True)
                 if d.get("type") == edge_type
             ]
             # Subgraph containing exclusively these edges and their attached endpoints
@@ -89,34 +188,38 @@ class GraphEngine:
         if carcinogen_class:
             # Level 0: Core carcinogens matching the specified group field
             layer_0 = {
-                n for n, d in self.G.nodes(data=True)
+                n
+                for n, d in self.G.nodes(data=True)
                 if d.get("type") == "Carcinogen" and d.get("group") == carcinogen_class
             }
-            
+
             # Level 1: Neighbors of those core carcinogens
             layer_1 = set(layer_0)
             for node_id in layer_0:
                 layer_1.update(self.G.successors(node_id))
                 layer_1.update(self.G.predecessors(node_id))
-                
+
             # Level 2: Neighbors of neighbors
             layer_2 = set(layer_1)
             for node_id in layer_1:
                 layer_2.update(self.G.successors(node_id))
                 layer_2.update(self.G.predecessors(node_id))
-                
+
             active_subgraphs.append(self.G.subgraph(layer_2).copy())
 
         # ── 4. Tissue & Weight Filtering ─────────────────────────────────
         if tissue:
             threshold = min_tissue_weight if min_tissue_weight is not None else 0.0
-            
+
             # Find nodes where specified tissue field exists and is above threshold
             core_tissue_nodes = set()
             for n, d in self.G.nodes(data=True):
                 # Assumes your tissue weight is stored in a dictionary attribute or directly
                 tissue_data = d.get("tissue_weights")
-                if isinstance(tissue_data, dict) and tissue_data.get(tissue, 0.0) >= threshold:
+                if (
+                    isinstance(tissue_data, dict)
+                    and tissue_data.get(tissue, 0.0) >= threshold
+                ):
                     core_tissue_nodes.add(n)
                 # elif d.get("tissue") == tissue and d.get("weight", 0.0) >= threshold:
                 #     core_tissue_nodes.add(n)
@@ -126,11 +229,11 @@ class GraphEngine:
             for node_id in core_tissue_nodes:
                 tissue_neighborhood.update(self.G.successors(node_id))
                 tissue_neighborhood.update(self.G.predecessors(node_id))
-                
+
             active_subgraphs.append(self.G.subgraph(tissue_neighborhood).copy())
 
         # ── 5. Intersection Logic ────────────────────────────────────────
-        # Catch-all fallback: If NO filters are actively chosen, 
+        # Catch-all fallback: If NO filters are actively chosen,
         # return a full copy of the current state immediately!
         if not active_subgraphs:
             result_engine = GraphEngine()
@@ -149,11 +252,11 @@ class GraphEngine:
 
         # Build and populate the final isolated GraphEngine container
         filtered_engine = GraphEngine()
-        
+
         # Add intersecting nodes with their original dictionary properties
         for node_id in final_nodes:
             filtered_engine.G.add_node(node_id, **self.G.nodes[node_id])
-            
+
         # Add intersecting multi-edges with their original properties
         for u, v, k in final_edges:
             if u in final_nodes and v in final_nodes:
@@ -161,8 +264,72 @@ class GraphEngine:
 
         return filtered_engine
 
-
     # ── Bulk operations ──────────────────────────────────────────────────
+    def load_base_data(self, file_path: Path) -> None:
+        raw_data = load_from_json(file_path)
+        for node in raw_data.get("nodes"):
+            self.add_node(Node(**node))
+        for edge in raw_data.get("edges"):
+            self.add_edge(Edge(**edge))
+
+    def load_interaction_params(self, interaction_file_path: Path) -> None:
+        raw_data = load_from_json(interaction_file_path)
+
+
+        genotype_modifiers_metadata = raw_data["genotype_modifiers"]
+        genotype_modifiers_metadata.pop("_description")
+
+        # fix later, dumb to run through twice
+        genotype_class = GenotypeModifiersContainer(
+            **genotype_modifiers_metadata
+        ).model_dump()
+
+        for enzyme, gene_mod in genotype_class.items():
+            self.modify_node(enzyme, "genotype_modifiers", gene_mod)
+
+        competitive_inhibition_metadata = raw_data["competitive_inhibition"]
+        competitive_inhibition_metadata.pop("_description")
+        for enzyme_name, inter_metadata in competitive_inhibition_metadata.items():
+            inter_metadata.pop("_description")
+            for substrate_name, metadata_dict in inter_metadata["substrates"].items():
+                self.modify_edge(
+                    enzyme_name,
+                    substrate_name,
+                    "competitive_inhibition",
+                    CompetitiveInhibitionSubstrate(**metadata_dict),
+                    default_type=["Enzyme", "Substrate"],
+                    default_visible=False,
+                )
+
+        phase2_conjugation_metadata = raw_data["phase2_conjugation_metadata"]
+        phase2_conjugation_metadata.pop("_description")
+        for enzyme_name, inter_metadata in phase2_conjugation_metadata.items():
+            inter_metadata.pop("_description")
+            for substrate_name, metadata_dict in inter_metadata["substrates"].items():
+                self.modify_edge(
+                    enzyme_name,
+                    substrate_name,
+                    "phase2_conjugation",
+                    Phase2ConjugationSubstrate(**metadata_dict),
+                    default_type=["Enzyme", "Substrate"],
+                    default_visible=False,
+                )
+
+        enzyme_induction_metadata = raw_data["enzyme_induction_metadata"]
+        enzyme_induction_metadata.pop("_description")
+        for lifestyle_name, inter_metadata in enzyme_induction_metadata.items():
+            inter_metadata.pop("_primary_mechanism")
+            for enzyme, metadata_dict in inter_metadata.items():
+                self.modify_edge(
+                    lifestyle_name,
+                    substrate_name,
+                    "enzyme_induction",
+                    EnzymeInduction(**metadata_dict),
+                    default_type=["Lifestyle", "Enzyme"],
+                    default_visible=False,
+                )
+
+    def load_exposure_params(self, exposure_file_path: Path ) -> None:
 
     def _validated_reference_graph(self) -> KnowledgeGraph | None:
         if self.node_count == 0:
@@ -176,14 +343,6 @@ class GraphEngine:
             return None
         return validated_graph
 
-    def load_from_json(self, file_path: Path) -> None:
-        with open(file_path, "r", encoding="utf-8") as file:
-            raw_data = json.load(file)
-        for node in raw_data.get("nodes"):
-            self.add_node(Node(**node))
-        for edge in raw_data.get("edges"):
-            self.add_edge(Edge(**edge))
-        
     def load(
         self,
         kg: KnowledgeGraph,
@@ -253,9 +412,7 @@ class GraphEngine:
 
     def nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
         return [
-            data
-            for _, data in self.G.nodes(data=True)
-            if data.get("type") == node_type
+            data for _, data in self.G.nodes(data=True) if data.get("type") == node_type
         ]
 
     # ── Serialization ────────────────────────────────────────────────────

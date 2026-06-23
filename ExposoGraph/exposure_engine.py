@@ -191,8 +191,12 @@ class ProfileComparison:
             f"{self.profile_a_name}_total_score": self.profile_a_total_score,
             f"{self.profile_b_name}_total_score": self.profile_b_total_score,
             "overall_fold_change_B_vs_A": self.overall_fold_change,
-            f"{self.profile_a_name}_high_risk_classes": list(self.profile_a_high_risk_classes),
-            f"{self.profile_b_name}_high_risk_classes": list(self.profile_b_high_risk_classes),
+            f"{self.profile_a_name}_high_risk_classes": list(
+                self.profile_a_high_risk_classes
+            ),
+            f"{self.profile_b_name}_high_risk_classes": list(
+                self.profile_b_high_risk_classes
+            ),
         }
 
 
@@ -333,7 +337,9 @@ _EXPOSURE_TIER_LABELS = {
 }
 
 
-def _scenario_tier(scenario_id: str, scenario_data: Mapping[str, Any]) -> tuple[int, str]:
+def _scenario_tier(
+    scenario_id: str, scenario_data: Mapping[str, Any]
+) -> tuple[int, str]:
     """Classify a scenario into the manuscript three-tier exposure framework."""
     explicit = scenario_data.get("exposure_tier")
     if explicit is not None:
@@ -451,7 +457,10 @@ def _resolve_biomarker_dose_for_class(
         get_biomarker_entries,
     )
 
-    aliases = {carcinogen_class, *(_BIOMARKER_CLASS_ALIASES.get(carcinogen_class, set()))}
+    aliases = {
+        carcinogen_class,
+        *(_BIOMARKER_CLASS_ALIASES.get(carcinogen_class, set())),
+    }
     normalized_measurements = {
         str(name).strip().lower(): float(value)
         for name, value in biomarker_measurements.items()
@@ -488,6 +497,7 @@ def _resolve_biomarker_dose_for_class(
     return max(estimates, key=lambda est: float(est["s_over_km"]))
 
 
+# put into JSON
 _TISSUE_FACTORS: dict[tuple[str, str], float] = {
     ("PAH", "Lung"): 1.5,
     ("PAH", "Liver"): 0.8,
@@ -535,7 +545,10 @@ def _get_tissue_factor(carcinogen_class: str, tissue: str) -> float:
     tissue_normalized = tissue.replace(" ", "").replace("-", "").lower()
 
     for (cls, tis), factor in _TISSUE_FACTORS.items():
-        if cls.lower() == (class_key or "").lower() and tis.lower() == tissue_normalized:
+        if (
+            cls.lower() == (class_key or "").lower()
+            and tis.lower() == tissue_normalized
+        ):
             return factor
 
     return 1.0
@@ -573,7 +586,9 @@ def _interpret_risk(
     if combined < 0.5:
         action = "Minimal concern -- exposure level is very low regardless of genotype."
     elif category == ExposureRiskCategory.LOW:
-        action = "Genotype provides some protection or exposure is below population average."
+        action = (
+            "Genotype provides some protection or exposure is below population average."
+        )
     elif category == ExposureRiskCategory.AVERAGE:
         action = "Standard prevention and surveillance recommendations apply."
     elif category == ExposureRiskCategory.ELEVATED:
@@ -857,7 +872,9 @@ JHBUI10030_PROFILE_B: dict[str, Any] = {
 }
 
 
-def _source_risk_result(result: ExposureWeightedRisk | dict[str, Any]) -> dict[str, Any]:
+def _source_risk_result(
+    result: ExposureWeightedRisk | dict[str, Any],
+) -> dict[str, Any]:
     """Convert a typed risk result into the original dict-style payload."""
     if isinstance(result, dict):
         return result
@@ -881,7 +898,9 @@ def _source_risk_result(result: ExposureWeightedRisk | dict[str, Any]) -> dict[s
     }
 
 
-def _source_profile_result(result: ExposureProfileResult | dict[str, Any]) -> dict[str, Any]:
+def _source_profile_result(
+    result: ExposureProfileResult | dict[str, Any],
+) -> dict[str, Any]:
     """Convert a typed profile result into the original dict-style payload."""
     if isinstance(result, dict):
         return result
@@ -1074,9 +1093,7 @@ def compute_exposure_weighted_risk(
         or 1.0
     )
     raw_conc = (
-        sc_data.get("estimated_tissue_conc_uM")
-        or sc_data.get("tissue_conc_uM")
-        or 0.0
+        sc_data.get("estimated_tissue_conc_uM") or sc_data.get("tissue_conc_uM") or 0.0
     )
     if isinstance(raw_conc, dict):
         tissue_conc = float(max(raw_conc.values())) if raw_conc else 0.0
@@ -1592,50 +1609,97 @@ def run_exposure_validation_cases() -> None:
     print("=" * 78)
     gstm1_null = {"GSTM1": "null"}
     case1_nonsmoker = _source_risk_result(
-        compute_exposure_weighted_risk("PAH", gstm1_null, "Lung", exposure_scenario="general_population")
+        compute_exposure_weighted_risk(
+            "PAH", gstm1_null, "Lung", exposure_scenario="general_population"
+        )
     )
     case1_smoker = _source_risk_result(
-        compute_exposure_weighted_risk("PAH", gstm1_null, "Lung", exposure_scenario="smoker")
+        compute_exposure_weighted_risk(
+            "PAH", gstm1_null, "Lung", exposure_scenario="smoker"
+        )
     )
     case1_smoker_grilled = _source_risk_result(
-        compute_exposure_weighted_risk("PAH", gstm1_null, "Lung", exposure_scenario="smoker_heavy_grilled_meat")
+        compute_exposure_weighted_risk(
+            "PAH", gstm1_null, "Lung", exposure_scenario="smoker_heavy_grilled_meat"
+        )
     )
-    print(format_results_table([case1_nonsmoker, case1_smoker, case1_smoker_grilled], title="PAH Lung Validation"))
-    print(f"  Fold-change smoker vs baseline: {case1_smoker['combined_risk_score'] / case1_nonsmoker['combined_risk_score']:.1f}×")
+    print(
+        format_results_table(
+            [case1_nonsmoker, case1_smoker, case1_smoker_grilled],
+            title="PAH Lung Validation",
+        )
+    )
+    print(
+        f"  Fold-change smoker vs baseline: {case1_smoker['combined_risk_score'] / case1_nonsmoker['combined_risk_score']:.1f}×"
+    )
     print()
     print("=" * 78)
-    print("  CASE 2: Aldehyde Risk in Liver — ALDH2 *1/*2 Nondrinker vs Moderate Drinker")
+    print(
+        "  CASE 2: Aldehyde Risk in Liver — ALDH2 *1/*2 Nondrinker vs Moderate Drinker"
+    )
     print("=" * 78)
     aldh2_het = {"ALDH2": "*1/*2"}
     case2_nondrinker = _source_risk_result(
-        compute_exposure_weighted_risk("Aldehyde", aldh2_het, "Liver", exposure_scenario="nondrinker")
+        compute_exposure_weighted_risk(
+            "Aldehyde", aldh2_het, "Liver", exposure_scenario="nondrinker"
+        )
     )
     case2_moderate = _source_risk_result(
-        compute_exposure_weighted_risk("Aldehyde", aldh2_het, "Liver", exposure_scenario="moderate_drinker")
+        compute_exposure_weighted_risk(
+            "Aldehyde", aldh2_het, "Liver", exposure_scenario="moderate_drinker"
+        )
     )
     case2_wt = _source_risk_result(
-        compute_exposure_weighted_risk("Aldehyde", {"ALDH2": "*1/*1"}, "Liver", exposure_scenario="moderate_drinker")
+        compute_exposure_weighted_risk(
+            "Aldehyde",
+            {"ALDH2": "*1/*1"},
+            "Liver",
+            exposure_scenario="moderate_drinker",
+        )
     )
-    print(format_results_table([case2_nondrinker, case2_moderate, case2_wt], title="Aldehyde Liver Validation"))
+    print(
+        format_results_table(
+            [case2_nondrinker, case2_moderate, case2_wt],
+            title="Aldehyde Liver Validation",
+        )
+    )
     print(
         "  Fold-change ALDH2*1/*2 moderate vs nondrinker: "
         f"{case2_moderate['combined_risk_score'] / max(case2_nondrinker['combined_risk_score'], 0.001):.1f}×"
     )
     print()
     print("=" * 78)
-    print("  CASE 3: Heavy Metals (Chromium VI) Risk in Lung — General Population vs Occupational Worker")
+    print(
+        "  CASE 3: Heavy Metals (Chromium VI) Risk in Lung — General Population vs Occupational Worker"
+    )
     print("=" * 78)
     case3_general = _source_risk_result(
-        compute_exposure_weighted_risk("HeavyMetals", {}, "Lung", exposure_scenario="general_population")
+        compute_exposure_weighted_risk(
+            "HeavyMetals", {}, "Lung", exposure_scenario="general_population"
+        )
     )
     case3_occ = _source_risk_result(
-        compute_exposure_weighted_risk("HeavyMetals", {}, "Lung", exposure_scenario="occupational_chromium_vi")
+        compute_exposure_weighted_risk(
+            "HeavyMetals", {}, "Lung", exposure_scenario="occupational_chromium_vi"
+        )
     )
     case3_occ_null = _source_risk_result(
-        compute_exposure_weighted_risk("HeavyMetals", {"GSTM1": "null"}, "Lung", exposure_scenario="occupational_chromium_vi")
+        compute_exposure_weighted_risk(
+            "HeavyMetals",
+            {"GSTM1": "null"},
+            "Lung",
+            exposure_scenario="occupational_chromium_vi",
+        )
     )
-    print(format_results_table([case3_general, case3_occ, case3_occ_null], title="Heavy Metals Lung Validation"))
-    print(f"  Fold-change occupational vs baseline: {case3_occ['combined_risk_score'] / case3_general['combined_risk_score']:.1f}×")
+    print(
+        format_results_table(
+            [case3_general, case3_occ, case3_occ_null],
+            title="Heavy Metals Lung Validation",
+        )
+    )
+    print(
+        f"  Fold-change occupational vs baseline: {case3_occ['combined_risk_score'] / case3_general['combined_risk_score']:.1f}×"
+    )
     print()
     print("=" * 78)
     print("  CASE 4: Patient JHBUI-10030 — Full Profile A vs Profile B Comparison")
@@ -1651,18 +1715,52 @@ def run_exposure_validation_cases() -> None:
     print(format_comparison_table(comparison))
     aggregate = comparison.aggregate
     print("  CASE 4 AGGREGATE STATISTICS:")
-    print(f"  Profile A total risk score (all classes): {aggregate['Profile_A_total_score']:.3f}")
-    print(f"  Profile B total risk score (all classes): {aggregate['Profile_B_total_score']:.3f}")
-    print(f"  Overall fold-change Profile B vs A: {aggregate['overall_fold_change_B_vs_A']:.1f}×")
+    print(
+        f"  Profile A total risk score (all classes): {aggregate['Profile_A_total_score']:.3f}"
+    )
+    print(
+        f"  Profile B total risk score (all classes): {aggregate['Profile_B_total_score']:.3f}"
+    )
+    print(
+        f"  Overall fold-change Profile B vs A: {aggregate['overall_fold_change_B_vs_A']:.1f}×"
+    )
     print()
     print("=" * 78)
     print("  SUPPLEMENTAL: Lifetime Excess Cancer Risk (LECR) Estimates")
     print("=" * 78)
     lecr_cases = [
-        ("PAH", {"GSTM1": "null"}, "Lung", 0.000005, 70, "GSTM1-null nonsmoker, PAH oral dose"),
-        ("PAH", {"GSTM1": "null"}, "Lung", 0.000015, 40, "GSTM1-null smoker (40 yr exposure)"),
-        ("Aldehyde", {"ALDH2": "*1/*2"}, "Liver", 0.001, 30, "ALDH2*1/*2 moderate drinker, 30 yr"),
-        ("DietaryNitroso", {}, "Liver", 0.0001, 70, "High processed meat diet, wildtype"),
+        (
+            "PAH",
+            {"GSTM1": "null"},
+            "Lung",
+            0.000005,
+            70,
+            "GSTM1-null nonsmoker, PAH oral dose",
+        ),
+        (
+            "PAH",
+            {"GSTM1": "null"},
+            "Lung",
+            0.000015,
+            40,
+            "GSTM1-null smoker (40 yr exposure)",
+        ),
+        (
+            "Aldehyde",
+            {"ALDH2": "*1/*2"},
+            "Liver",
+            0.001,
+            30,
+            "ALDH2*1/*2 moderate drinker, 30 yr",
+        ),
+        (
+            "DietaryNitroso",
+            {},
+            "Liver",
+            0.0001,
+            70,
+            "High processed meat diet, wildtype",
+        ),
         ("HeavyMetals", {}, "Lung", 0.01, 25, "Occupational Cr(VI) 25 yr, wildtype"),
     ]
     print(f"  {'Case Description':<45} {'LECR':>12}  {'vs Threshold':>15}")
@@ -1708,21 +1806,83 @@ Examples:
   python -m ExposoGraph.exposure_cli --validate
         """,
     )
-    parser.add_argument("--genotypes", type=str, default="{}", help='JSON dict of genotypes, e.g. \'{"GSTM1":"null"}\'')
-    parser.add_argument("--tissue", type=str, default="Liver", help="Target tissue (default: Liver)")
-    parser.add_argument("--class", dest="carcinogen_class", type=str, default="PAH", help="Carcinogen class")
-    parser.add_argument("--scenario", type=str, default="general_population", help="Exposure scenario key")
-    parser.add_argument("--all-classes", action="store_true", help="Run all carcinogen classes with a given scenario")
-    parser.add_argument("--list-scenarios", type=str, metavar="CLASS", help="List available scenarios for a class")
-    parser.add_argument("--questionnaire", action="store_true", help="Print the exposure questionnaire schema")
-    parser.add_argument("--lecr", action="store_true", help="Compute lifetime excess cancer risk")
-    parser.add_argument("--daily-dose", type=float, default=0.001, help="Daily dose in mg/kg-day for --lecr")
-    parser.add_argument("--duration", type=float, default=70.0, help="Exposure duration in years for --lecr")
-    parser.add_argument("--compare", nargs=2, metavar=("SCENARIO_A", "SCENARIO_B"), help="Compare two exposure scenarios")
-    parser.add_argument("--patient", type=str, help="Patient ID shortcut (currently supports JHBUI-10030)")
-    parser.add_argument("--full-comparison", action="store_true", help="Run full profile A vs B comparison for patient")
-    parser.add_argument("--validate", action="store_true", help="Run built-in exposure validation cases")
-    parser.add_argument("--json", action="store_true", help="Output raw JSON instead of formatted tables")
+    parser.add_argument(
+        "--genotypes",
+        type=str,
+        default="{}",
+        help='JSON dict of genotypes, e.g. \'{"GSTM1":"null"}\'',
+    )
+    parser.add_argument(
+        "--tissue", type=str, default="Liver", help="Target tissue (default: Liver)"
+    )
+    parser.add_argument(
+        "--class",
+        dest="carcinogen_class",
+        type=str,
+        default="PAH",
+        help="Carcinogen class",
+    )
+    parser.add_argument(
+        "--scenario",
+        type=str,
+        default="general_population",
+        help="Exposure scenario key",
+    )
+    parser.add_argument(
+        "--all-classes",
+        action="store_true",
+        help="Run all carcinogen classes with a given scenario",
+    )
+    parser.add_argument(
+        "--list-scenarios",
+        type=str,
+        metavar="CLASS",
+        help="List available scenarios for a class",
+    )
+    parser.add_argument(
+        "--questionnaire",
+        action="store_true",
+        help="Print the exposure questionnaire schema",
+    )
+    parser.add_argument(
+        "--lecr", action="store_true", help="Compute lifetime excess cancer risk"
+    )
+    parser.add_argument(
+        "--daily-dose",
+        type=float,
+        default=0.001,
+        help="Daily dose in mg/kg-day for --lecr",
+    )
+    parser.add_argument(
+        "--duration",
+        type=float,
+        default=70.0,
+        help="Exposure duration in years for --lecr",
+    )
+    parser.add_argument(
+        "--compare",
+        nargs=2,
+        metavar=("SCENARIO_A", "SCENARIO_B"),
+        help="Compare two exposure scenarios",
+    )
+    parser.add_argument(
+        "--patient",
+        type=str,
+        help="Patient ID shortcut (currently supports JHBUI-10030)",
+    )
+    parser.add_argument(
+        "--full-comparison",
+        action="store_true",
+        help="Run full profile A vs B comparison for patient",
+    )
+    parser.add_argument(
+        "--validate", action="store_true", help="Run built-in exposure validation cases"
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output raw JSON instead of formatted tables",
+    )
 
     args = parser.parse_args(argv)
 
@@ -1768,7 +1928,13 @@ Examples:
             profile_b_name="Profile_B",
         )
         if args.json:
-            print(json.dumps(_source_profile_comparison(profile_comparison), indent=2, default=str))
+            print(
+                json.dumps(
+                    _source_profile_comparison(profile_comparison),
+                    indent=2,
+                    default=str,
+                )
+            )
         else:
             print(format_comparison_table(profile_comparison))
         return 0
@@ -1798,7 +1964,9 @@ Examples:
                 f"    Combined risk: {scenario_comparison.scenario_b.combined_risk_score:.4f}  "
                 f"[{scenario_comparison.scenario_b.risk_category.value}]"
             )
-            print(f"\n  Fold-change B vs A: {scenario_comparison.fold_change_b_vs_a:.2f}×")
+            print(
+                f"\n  Fold-change B vs A: {scenario_comparison.fold_change_b_vs_a:.2f}×"
+            )
             print(f"\n  Interpretation: {scenario_comparison.interpretation}\n")
         return 0
 
@@ -1860,7 +2028,11 @@ Examples:
     if args.json:
         print(json.dumps(asdict(result), indent=2, default=str))
     else:
-        print(format_results_table([result], title=f"{args.carcinogen_class} — {args.tissue}"))
+        print(
+            format_results_table(
+                [result], title=f"{args.carcinogen_class} — {args.tissue}"
+            )
+        )
         print(f"\nInterpretation: {result.interpretation}\n")
     return 0
 

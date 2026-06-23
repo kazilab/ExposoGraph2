@@ -1,10 +1,11 @@
 import json
-import build_helpers as bh
+import kg_helpers as kgh
 from pydantic import TypeAdapter, ValidationError, Discriminator
 from typing import Any, Dict, List, Annotated, Union
 import networkx as nx
 import validation_classes as valid_classes
 from abc import ABC, abstractmethod
+from ExposoGraph.engine import GraphEngine
 
 
 def build_node_dict(node_metadata_list, node_adapter):
@@ -19,9 +20,16 @@ def build_edge_dict(edge_metadata_list, edge_adapter):
     return edgelist
 
 
-graph_data = "../map/graph-data.js"
+def kg_from_graph_data_json(graph_data_file_path: str = "../map/graph_data_final.json"):
+    raw_data = kgh.load_json(graph_data)
+    node_dict = build_node_dict(raw_data["nodes"], valid_classes.node_adapter)
+    edge_dict = build_edge_dict(raw_data["edges"], valid_classes.edge_adapter)
+    net = nx.from_edgelist(edge_dict.keys())
+
+
+graph_data = "../map/graph_data_final.json"
 inter_path = "../data/interaction_parameters.json"
-raw_data = bh.parse_static_js_const(graph_data, "GRAPH_DATA")
+raw_data = kgh.load_json(graph_data)
 
 
 node_dict = build_node_dict(raw_data["nodes"], valid_classes.node_adapter)
@@ -29,8 +37,7 @@ edge_dict = build_edge_dict(raw_data["edges"], valid_classes.edge_adapter)
 
 net = nx.from_edgelist(edge_dict.keys())
 
-with open(inter_path) as f:
-    interaction_params = json.load(f)
+interaction_params = kgh.load_json(inter_path)
 
 genotype_modifiers_metadata = interaction_params["genotype_modifiers"]
 genotype_modifiers_metadata.pop("_description")

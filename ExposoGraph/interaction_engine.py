@@ -260,6 +260,7 @@ CARCINOGEN_GSH_DETOX: dict[str, str | None] = {
 
 _DEFAULT_ENZYMES = ["CYP1A1", "CYP1A2", "CYP1B1", "CYP2E1", "CYP3A4"]
 
+# add to when carcinogens are entered into the system, under some sort of alias
 _CARCINOGEN_ALIASES: dict[str, str] = {
     "pah": "PAH",
     "bap": "PAH",
@@ -288,6 +289,7 @@ _CARCINOGEN_ALIASES: dict[str, str] = {
     "ethanol": "ethanol",
 }
 
+# turn this into json
 _REFERENCE_CONCENTRATIONS_UM: dict[str, float] = {
     "benzene": 10.0,
     "NDMA": 0.5,
@@ -298,7 +300,7 @@ _REFERENCE_CONCENTRATIONS_UM: dict[str, float] = {
     "AFB1": 1.0,
     "NNK": 0.5,
 }
-
+# turn this into json (?)
 _GSH_REFERENCE_RATES: dict[str, float] = {
     "PAH": 0.5,
     "chromium_VI": 0.3,
@@ -310,7 +312,7 @@ _GSH_REFERENCE_RATES: dict[str, float] = {
 
 _SEVERITY_RANK = {"CRITICAL": 3, "HIGH": 2, "MODERATE": 1}
 
-
+# turn this into json
 EXPOSURE_PROFILES: dict[str, dict[str, Any]] = {
     "smoker": {
         "_description": (
