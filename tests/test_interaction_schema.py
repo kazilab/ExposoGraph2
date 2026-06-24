@@ -1,8 +1,11 @@
 from ExposoGraph.interaction_schema import (
     AssumptionWarning,
+    ApplicabilityDomain,
     CompetitiveInteraction,
+    ConcentrationBasis,
     EvidenceGrade,
     EvidenceRecord,
+    InhibitionMode,
     KineticParameterSet,
     MetabolicReaction,
     ReactionRole,
@@ -23,6 +26,21 @@ def test_phase3_enums_include_mechanism_placeholders_without_behavior():
     assert RiskDirectionIfFluxDecreases.UNKNOWN.value == "unknown"
     assert RiskEndpoint.DNA_ADDUCT.value == "DNA_adduct"
     assert SMEReviewStatus.DEFERRED_3_0.value == "deferred_3_0"
+
+
+def test_reversible_inhibition_contract_enums_are_json_friendly():
+    assert InhibitionMode.COMPETITIVE.value == "competitive"
+    assert InhibitionMode.PURE_NONCOMPETITIVE.value == "pure_noncompetitive"
+    assert InhibitionMode.UNCOMPETITIVE.value == "uncompetitive"
+    assert InhibitionMode.MIXED.value == "mixed"
+    assert InhibitionMode.UNKNOWN.value == "unknown"
+    assert ConcentrationBasis.NOMINAL.value == "nominal"
+    assert ConcentrationBasis.TISSUE_EFFECTIVE.value == "tissue_effective"
+    assert ConcentrationBasis.UNKNOWN.value == "unknown"
+    assert ApplicabilityDomain.IN_DOMAIN.value == "in_domain"
+    assert ApplicabilityDomain.CONDITIONALLY_IN_DOMAIN.value == "conditionally_in_domain"
+    assert ApplicabilityDomain.OUTSIDE_DOMAIN.value == "outside_domain"
+    assert ApplicabilityDomain.NOT_ASSESSABLE.value == "not_assessable"
 
 
 def test_competitive_interaction_defaults_leave_mechanism_unresolved():

@@ -204,7 +204,11 @@ def _interpretation_channel(annotation: ReactionRoleAnnotation) -> str:
         RiskDirectionIfFluxDecreases.MIXED,
     }:
         return "neutral"
-    if annotation.reaction_role in {ReactionRole.DETOXIFICATION, ReactionRole.CLEARANCE}:
+    if annotation.reaction_role in {
+        ReactionRole.DETOXIFICATION,
+        ReactionRole.CLEARANCE,
+        ReactionRole.PROTECTIVE_REPAIR,
+    }:
         return "detox_failure"
     if annotation.risk_direction_if_flux_decreases is RiskDirectionIfFluxDecreases.INCREASE:
         return "detox_failure"

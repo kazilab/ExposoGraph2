@@ -104,6 +104,16 @@ class EnzymeFlux:
     parameter_basis: str = ""
 
 
+@dataclass(frozen=True)
+class KineticFluxApplication:
+    """Internal record for applying one resolved kinetic modifier to a flux."""
+
+    baseline_flux: float
+    kinetic_modifier: float
+    modified_flux: float
+    applied_once: bool = True
+
+
 @dataclass
 class PathwayFluxResult:
     """Result of pathway flux computation for one carcinogen class."""
@@ -251,6 +261,30 @@ def michaelis_menten(S: float, Vmax: float, Km: float) -> float:
     if S < 0:
         raise ValueError(f"Substrate concentration cannot be negative, got {S}")
     return Vmax * S / (Km + S)
+
+
+def apply_kinetic_modifier_once(baseline_flux: float, kinetic_modifier: float) -> KineticFluxApplication:
+    """Apply one resolved kinetic modifier to a non-negative baseline flux."""
+
+    baseline = _finite_nonnegative(baseline_flux, "baseline_flux")
+    modifier = _finite_nonnegative(kinetic_modifier, "kinetic_modifier")
+    return KineticFluxApplication(
+        baseline_flux=baseline,
+        kinetic_modifier=modifier,
+        modified_flux=baseline * modifier,
+    )
+
+
+def _finite_nonnegative(value: float, field_name: str) -> float:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{field_name} must be finite and non-negative") from exc
+    if not math.isfinite(numeric) or numeric < 0.0:
+        raise ValueError(f"{field_name} must be finite and non-negative")
+    if numeric == 0.0:
+        return 0.0
+    return numeric
 
 
 def hill_equation(S: float, Vmax: float, K50: float, n: float) -> float:
