@@ -1067,11 +1067,17 @@ def _build_biological_output_integration(interactions: InteractionMatrixResult |
         for substrate, flux in enzyme_result.substrates.items():
             if flux.biological_output is not None:
                 substrate_outputs[f"{enzyme}:{substrate}"] = deepcopy(flux.biological_output)
-    return {
+    payload = {
         "substrate_outputs": substrate_outputs,
         "mechanism_attribution": deepcopy(interactions.mechanism_attribution),
         "source": "interaction_engine.live_biological_output",
     }
+    if interactions.mechanism_attribution is not None:
+        payload["mechanism_resolved_risks"] = {
+            carcinogen: resolved.to_dict()
+            for carcinogen, resolved in interactions.mechanism_resolved_risks.items()
+        }
+    return payload
 
 
 
