@@ -2137,8 +2137,15 @@ def _selected_competitive_effect(
                     )
                 )
         if pulmonary_candidates:
+            resolved_candidates = [
+                candidate
+                for candidate in pulmonary_candidates
+                if _kinetic_mechanism_state(candidate[4].kinetic_resolution_status)
+                == "mechanism_resolved"
+            ]
+            selectable_candidates = resolved_candidates or pulmonary_candidates
             _, enzyme, flux_substrate, interpretation_substrate, sub_effect = max(
-                pulmonary_candidates,
+                selectable_candidates,
                 key=lambda item: item[0],
             )
             return enzyme, flux_substrate, interpretation_substrate, sub_effect

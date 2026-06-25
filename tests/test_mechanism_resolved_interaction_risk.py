@@ -107,6 +107,55 @@ def _inhibition_provenance(result, carcinogen):
     return result.mechanism_resolved_risks[carcinogen].provenance["inhibition"]
 
 
+def test_pulmonary_benzene_nnk_selects_resolved_cyp2a13_candidate():
+    exposure = {"benzene": 1.0, "NNK": 1.0}
+    result = compute_interaction_matrix(
+        exposure,
+        tissue="Lung",
+        enable_induction=False,
+        enable_gsh_depletion=False,
+        include_biological_outputs=True,
+    )
+    without_outputs = compute_interaction_matrix(
+        exposure,
+        tissue="Lung",
+        enable_induction=False,
+        enable_gsh_depletion=False,
+        include_biological_outputs=False,
+    )
+
+    cyp2a13 = result.competitive_effects["CYP2A13"].substrates["benzene"]
+    cyp2f1 = result.competitive_effects["CYP2F1"].substrates["benzene"]
+    selected = result.mechanism_resolved_risks["benzene"]
+    selected_output = cyp2a13.biological_output
+    diagnostic_output = cyp2f1.biological_output
+
+    assert engine._kinetic_mechanism_state(cyp2a13.kinetic_resolution_status) == "mechanism_resolved"
+    assert engine._kinetic_mechanism_state(cyp2f1.kinetic_resolution_status) == "mechanism_absent"
+    assert cyp2a13.flux_change_fraction < 0.0
+    assert cyp2a13.kinetic_modifier != pytest.approx(1.0)
+    assert cyp2f1.flux_change_fraction == pytest.approx(0.0)
+
+    inhibition = selected.provenance["inhibition"]
+    assert inhibition["enzyme"] == "CYP2A13"
+    assert selected.inhibition_status == "mechanism_resolved"
+    assert selected_output is not None
+    assert selected_output["selected_authoritative_effect"] is True
+    assert selected_output["kinetic_effect"]["mechanism_state"] == "mechanism_resolved"
+    assert selected_output["kinetic_effect"]["provenance"]["enzyme"] == "CYP2A13"
+    assert selected_output["interpretation_substrate"] == "benzene"
+
+    assert diagnostic_output is not None
+    assert diagnostic_output["selected_authoritative_effect"] is False
+    assert diagnostic_output["kinetic_effect"]["mechanism_state"] == "mechanism_absent"
+    assert selected.inhibition_burden_multiplier == pytest.approx(1.0)
+    assert selected.review_required is True
+    assert selected_output["endpoint_toxic_flux"]["burden_multiplier"] == pytest.approx(1.0)
+    assert selected_output["reaction_role_interpretation"]["review_required"] is True
+    assert selected_output["reaction_role_interpretation"]["warnings"]
+    assert _principal_numbers(result) == _principal_numbers(without_outputs)
+
+
 def _stub_recursive_attribution(monkeypatch):
     monkeypatch.setattr(
         engine,
