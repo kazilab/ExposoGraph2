@@ -29,7 +29,11 @@ from .endpoint_toxic_flux import (
     interpret_endpoint_toxic_flux,
 )
 from .flux_engine import apply_kinetic_modifier_once
-from .gsh_redox_capacity import GSHRedoxCapacityInput, compute_gsh_redox_capacity
+from .gsh_redox_capacity import (
+    GSHModelVersion,
+    GSHRedoxCapacityInput,
+    compute_gsh_redox_capacity,
+)
 from .interaction_schema import (
     ApplicabilityDomain,
     AssumptionWarning,
@@ -108,6 +112,11 @@ class GSHStatus:
     individual_contributions: dict[str, Any]
     time_to_depletion_h: float | None
     tissue: str
+    model_version: str = GSHModelVersion.LEGACY_DETACHED_GSH_PENALTY.value
+    redox_capacity_ratio: float | None = None
+    detox_penalty_multiplier: float | None = None
+    warnings: list[dict[str, Any]] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -854,6 +863,269 @@ def _to_gsh_rate_map(exposure_profile: dict[str, Any]) -> dict[str, float]:
     return rate_map
 
 
+def _gsh_consumer_key(base_key: str) -> str:
+    return {
+        "PAH": "PAH_GSTM1",
+        "chromium_VI": "chromium_VI",
+        "arsenic": "arsenic_methylation",
+        "cadmium": "cadmium",
+        "acrolein": "acrolein",
+        "ethanol": "ethanol_ROS",
+        "BPDE": "BPDE_conjugation",
+        "acetaminophen": "acetaminophen_NAPQI",
+    }.get(base_key, base_key)
+
+
+def _warning_dict(code: str, message: str, *, field: str | None = None) -> dict[str, Any]:
+    payload: dict[str, Any] = {"code": code, "message": message}
+    if field is not None:
+        payload["field"] = field
+    return payload
+
+
+def _warning_to_dict(warning: Any) -> dict[str, Any]:
+    if hasattr(warning, "to_dict"):
+        return warning.to_dict()
+    if isinstance(warning, Mapping):
+        return dict(warning)
+    return _warning_dict(str(warning), str(warning))
+
+
+def _explicit_dk_activation_scale(
+    base_key: str,
+    rate_key: str,
+    exposure_profile: Mapping[str, Any],
+) -> tuple[float | None, dict[str, float] | None]:
+    for key in (base_key, rate_key):
+        value = exposure_profile.get(key)
+        if not isinstance(value, Mapping):
+            continue
+        if "d_factor" not in value or "k_factor" not in value:
+            continue
+        try:
+            d_factor = max(0.0, float(value["d_factor"]))
+            k_factor = max(0.0, float(value["k_factor"]))
+        except (TypeError, ValueError):
+            continue
+        if not math.isfinite(d_factor) or not math.isfinite(k_factor):
+            continue
+        return d_factor * k_factor, {"d_factor": d_factor, "k_factor": k_factor}
+    return None, None
+
+
+def _matrix_gsh_activation_scale(
+    base_key: str,
+    rate_key: str,
+    exposure_profile: Mapping[str, Any],
+    inhibition_burdens: Mapping[str, _InhibitionBurdenResolution],
+    warnings: list[dict[str, Any]],
+) -> tuple[float, str, dict[str, Any]]:
+    direct = inhibition_burdens.get(base_key)
+    direct_fallback_details: dict[str, Any] = {}
+    if direct is not None:
+        try:
+            direct_activation_ratio = float(direct.activation_burden_ratio)
+        except (TypeError, ValueError):
+            direct_activation_ratio = math.nan
+        direct_fallback_details = {
+            "direct_activation_available": False,
+            "inhibition_status": direct.status,
+            "review_required": direct.review_required,
+            "activation_burden_ratio": _round(direct_activation_ratio, 6)
+            if math.isfinite(direct_activation_ratio)
+            else None,
+        }
+        has_quantified_direct_activation = (
+            direct.status == "mechanism_resolved"
+            and not direct.review_required
+            and math.isfinite(direct_activation_ratio)
+            and direct_activation_ratio >= 0.0
+            and not math.isclose(direct_activation_ratio, 1.0)
+        )
+    else:
+        direct_activation_ratio = math.nan
+        has_quantified_direct_activation = False
+
+    if direct is not None and has_quantified_direct_activation:
+        return (
+            max(0.0, direct_activation_ratio),
+            "direct_activation_burden_ratio",
+            {
+                "activation_burden_ratio": _round(direct_activation_ratio, 6),
+                "inhibition_status": direct.status,
+            },
+        )
+
+    dk_scale, dk_details = _explicit_dk_activation_scale(base_key, rate_key, exposure_profile)
+    if dk_scale is not None:
+        return (
+            dk_scale,
+            "d_times_k_approximation",
+            {
+                **direct_fallback_details,
+                **(dk_details or {}),
+                "internal_d_or_k_computation": False,
+            },
+        )
+
+    warnings.append(
+        _warning_dict(
+            "gsh_upstream_activation_missing_neutral",
+            "GSH-relevant matrix contribution lacked direct activation burden or explicit D/K factors; using neutral scaling.",
+            field="upstream_activation_burden_ratio",
+        )
+    )
+    return (
+        1.0,
+        "neutral_missing_upstream_activation",
+        {**direct_fallback_details, "upstream_activation_burden_ratio": 1.0},
+    )
+
+
+def _compute_matrix_gsh_redox_status(
+    exposure_profile: Mapping[str, Any],
+    *,
+    genotypes: Mapping[str, str],
+    tissue: str,
+    inhibition_burdens: Mapping[str, _InhibitionBurdenResolution],
+) -> GSHStatus:
+    params = _get_interaction_params()["gsh_depletion"]
+    consumers = params["consumers"]
+
+    baseline_mM = float(params["baseline_gsh_mM"])
+    critical_fraction = float(params["critical_threshold_fraction"])
+    synthesis_capacity = float(params["synthesis_rate_umol_h_g"])
+    half_life_h = float(params.get("half_life_h", 2.5))
+    liver_water_fraction = 0.70
+    baseline_umol_g = baseline_mM * liver_water_fraction
+    turnover_capacity = baseline_umol_g * math.log(2) / half_life_h
+
+    rate_map = _to_gsh_rate_map(dict(exposure_profile))
+    if str(genotypes.get("GSTM1", "active")).lower() in {"null", "null/null", "deletion", "0"}:
+        if "PAH_umol_h_g" in rate_map:
+            rate_map["PAH_umol_h_g"] *= 0.1
+
+    warnings: list[dict[str, Any]] = []
+    total_base_consumption = 0.0
+    total_scaled_consumption = 0.0
+    contributions: dict[str, dict[str, Any]] = {}
+
+    for rate_key, flux_umol_h_g in rate_map.items():
+        base_key = rate_key.removesuffix("_umol_h_g")
+        consumer_key = _gsh_consumer_key(base_key)
+        consumer = consumers.get(consumer_key)
+        gsh_ratio = float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        substrate_flux = float(flux_umol_h_g)
+        base_gsh_drain = substrate_flux * gsh_ratio
+        upstream_scale, scaling_source, scaling_details = _matrix_gsh_activation_scale(
+            base_key,
+            rate_key,
+            exposure_profile,
+            inhibition_burdens,
+            warnings,
+        )
+        scaled_gsh_drain = base_gsh_drain * upstream_scale
+        total_base_consumption += base_gsh_drain
+        total_scaled_consumption += scaled_gsh_drain
+        contributions[consumer_key] = {
+            "substrate_flux_umol_h_g": _round(substrate_flux, 4),
+            "base_gsh_consumption_umol_h_g": _round(base_gsh_drain, 4),
+            "gsh_consumption_umol_h_g": _round(scaled_gsh_drain, 4),
+            "stoichiometry": gsh_ratio,
+            "upstream_activation_scale": _round(upstream_scale, 6),
+            "upstream_scaling_source": scaling_source,
+            "upstream_scaling_provenance": scaling_details,
+            "fraction_of_total": 0.0,
+        }
+
+    for contribution in contributions.values():
+        if total_scaled_consumption > 0:
+            contribution["fraction_of_total"] = _round(
+                contribution["gsh_consumption_umol_h_g"] / total_scaled_consumption,
+                3,
+            )
+
+    gsh_result = compute_gsh_redox_capacity(
+        GSHRedoxCapacityInput(
+            tissue=tissue,
+            consumption_load=total_scaled_consumption,
+            synthesis_capacity=synthesis_capacity,
+            turnover_capacity=turnover_capacity,
+            baseline_capacity=1.0,
+            model_version=GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY,
+            metadata={
+                "source": "interaction_engine.compute_interaction_matrix",
+                "matrix_level_shared_pool": True,
+                "upstream_activation_scaled": True,
+                "base_gsh_consumption_load": total_base_consumption,
+                "scaled_gsh_consumption_load": total_scaled_consumption,
+                "upstream_activation_source_preference": "direct_activation_burden_ratio",
+                "d_times_k_fallback_only_when_explicit": True,
+            },
+        )
+    )
+    warnings.extend(_warning_to_dict(warning) for warning in gsh_result.warnings)
+
+    fraction_normal = gsh_result.gsh_fraction
+    steady_state_mM = baseline_mM * fraction_normal
+    net_rate = synthesis_capacity - total_scaled_consumption
+    consumption_exceeds_synthesis = bool(total_scaled_consumption >= synthesis_capacity)
+    tipping_point_reached = consumption_exceeds_synthesis
+
+    time_to_depletion_h: float | None = None
+    if total_scaled_consumption > synthesis_capacity:
+        net_drain = total_scaled_consumption - synthesis_capacity
+        gsh_to_lose = baseline_umol_g * (1.0 - critical_fraction)
+        time_to_depletion_h = _round(gsh_to_lose / net_drain, 2)
+
+    impaired_pathways: list[str] = []
+    if fraction_normal < 0.30:
+        impaired_pathways.append("Phase II GST conjugation (general)")
+    if fraction_normal < critical_fraction:
+        impaired_pathways.extend(
+            [
+                "BPDE-GSH conjugation (PAH detox)",
+                "Arsenic methylation (GSTO1/GSTO2)",
+                "Chromium(VI) reduction",
+                "ROS scavenging (GPx)",
+            ]
+        )
+    if fraction_normal < 0.10:
+        impaired_pathways.append("Thioredoxin/GSSG reductase backup overwhelmed")
+
+    return GSHStatus(
+        baseline_gsh_mM=baseline_mM,
+        steady_state_gsh_mM=_round(steady_state_mM, 3),
+        fraction_normal=_round(fraction_normal, 6),
+        consumption_rate_umol_h_g=_round(total_scaled_consumption, 4),
+        synthesis_rate_umol_h_g=_round(synthesis_capacity, 4),
+        net_rate_umol_h_g=_round(net_rate, 4),
+        consumption_exceeds_synthesis=consumption_exceeds_synthesis,
+        tipping_point_reached=tipping_point_reached,
+        tipping_point_multiplier=_round(total_scaled_consumption / synthesis_capacity, 3)
+        if synthesis_capacity > 0
+        else 0.0,
+        impaired_pathways=impaired_pathways,
+        individual_contributions=contributions,
+        time_to_depletion_h=time_to_depletion_h,
+        tissue=tissue,
+        model_version=str(gsh_result.model_version),
+        redox_capacity_ratio=gsh_result.redox_capacity_ratio,
+        detox_penalty_multiplier=gsh_result.detox_penalty_multiplier,
+        warnings=warnings,
+        metadata={
+            "source": "gsh_redox_capacity.compute_gsh_redox_capacity",
+            "legacy_matrix_gsh_behavior": False,
+            "base_gsh_consumption_load": _round(total_base_consumption, 6),
+            "scaled_gsh_consumption_load": _round(total_scaled_consumption, 6),
+            "turnover_at_current_fraction": gsh_result.metadata.get("turnover_at_current_fraction")
+            if gsh_result.metadata
+            else None,
+            "redox_capacity_result": gsh_result.to_dict(),
+        },
+    )
+
+
 def _severity_sorted(interactions: list[CriticalInteraction]) -> list[CriticalInteraction]:
     """Sort critical interactions by severity then amplification."""
     return sorted(
@@ -882,6 +1154,14 @@ def _make_inert_gsh_status(tissue: str) -> GSHStatus:
         individual_contributions={},
         time_to_depletion_h=None,
         tissue=tissue,
+        model_version=str(GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY),
+        redox_capacity_ratio=1.0,
+        detox_penalty_multiplier=1.0,
+        metadata={
+            "source": "interaction_engine._make_inert_gsh_status",
+            "gsh_depletion_enabled": False,
+            "legacy_matrix_gsh_behavior": False,
+        },
     )
 
 
@@ -2092,6 +2372,8 @@ def _compute_gsh_detox_components(
     carcinogen: str,
     gsh_fraction: float,
     genotypes: dict[str, str],
+    *,
+    redox_detox_penalty: float | None = None,
 ) -> tuple[float, float, float]:
     if CARCINOGEN_GSH_DETOX.get(carcinogen) is None:
         return 1.0, 1.0, 1.0
@@ -2105,12 +2387,15 @@ def _compute_gsh_detox_components(
     elif carcinogen == "PAH" and gstp1 == "Val105Val":
         genotype_factor = 1.5
 
-    if gsh_fraction >= 0.30:
-        gsh_penalty = 1.0
-    elif gsh_fraction >= 0.20:
-        gsh_penalty = 1.0 + (0.30 - gsh_fraction) / 0.10 * 0.5
+    if redox_detox_penalty is not None:
+        gsh_penalty = max(1.0, float(redox_detox_penalty))
     else:
-        gsh_penalty = 1.5 + (0.20 - gsh_fraction) / 0.20 * 3.0
+        if gsh_fraction >= 0.30:
+            gsh_penalty = 1.0
+        elif gsh_fraction >= 0.20:
+            gsh_penalty = 1.0 + (0.30 - gsh_fraction) / 0.10 * 0.5
+        else:
+            gsh_penalty = 1.5 + (0.20 - gsh_fraction) / 0.20 * 3.0
 
     return genotype_factor, _round(gsh_penalty, 3), _round(genotype_factor * gsh_penalty, 3)
 
@@ -2417,29 +2702,17 @@ def compute_interaction_matrix(
                 include_biological_outputs=False,
             )
 
-    if enable_gsh_depletion:
-        gsh_exposure = _to_gsh_rate_map(normalized_exposure)
-        if str(genotypes.get("GSTM1", "active")).lower() in {"null", "null/null", "deletion", "0"}:
-            if "PAH_umol_h_g" in gsh_exposure:
-                # Source-parity logic: absent GSTM1 greatly reduces PAH-GSH conjugation,
-                # so PAH contributes far less to shared-pool GSH consumption.
-                gsh_exposure["PAH_umol_h_g"] *= 0.1
-        gsh_status = gsh_depletion_model(gsh_exposure, tissue=tissue)
-    else:
-        gsh_status = _make_inert_gsh_status(tissue)
-
-    mechanism_resolved_risks: dict[str, MechanismResolvedRisk] = {}
+    induction_multipliers: dict[str, float] = {}
+    inhibition_burdens: dict[str, _InhibitionBurdenResolution] = {}
     selected_inhibition_resolutions: dict[tuple[str, str], _InhibitionBurdenResolution] = {}
-    interaction_adjusted_risks: dict[str, float] = {}
     for carcinogen in present_carcinogens:
-        base_risk = individual_risks[carcinogen]
-
         if enable_induction:
             induction_multiplier = 1.0
             for enzyme in CARCINOGEN_ENZYME_MAP.get(carcinogen, []):
                 induction_multiplier = max(induction_multiplier, combined_enzyme_activity.get(enzyme, 1.0))
         else:
             induction_multiplier = 1.0
+        induction_multipliers[carcinogen] = induction_multiplier
 
         inhibition_burden = _resolve_endpoint_inhibition_burden(
             carcinogen,
@@ -2447,16 +2720,36 @@ def compute_interaction_matrix(
             tissue=tissue,
             enable_competition=enable_competition,
         )
+        inhibition_burdens[carcinogen] = inhibition_burden
         if inhibition_burden.enzyme and inhibition_burden.flux_substrate:
             selected_inhibition_resolutions[
                 (inhibition_burden.enzyme, inhibition_burden.flux_substrate)
             ] = inhibition_burden
+
+    if enable_gsh_depletion:
+        gsh_status = _compute_matrix_gsh_redox_status(
+            normalized_exposure,
+            genotypes=genotypes,
+            tissue=tissue,
+            inhibition_burdens=inhibition_burdens,
+        )
+    else:
+        gsh_status = _make_inert_gsh_status(tissue)
+
+    mechanism_resolved_risks: dict[str, MechanismResolvedRisk] = {}
+    interaction_adjusted_risks: dict[str, float] = {}
+    gsh_warning_codes = _warning_codes_from_records(gsh_status.warnings)
+    for carcinogen in present_carcinogens:
+        base_risk = individual_risks[carcinogen]
+        induction_multiplier = induction_multipliers[carcinogen]
+        inhibition_burden = inhibition_burdens[carcinogen]
 
         if enable_gsh_depletion:
             susceptibility_modifier, gsh_pool_penalty, gsh_penalty = _compute_gsh_detox_components(
                 carcinogen,
                 gsh_status.fraction_normal,
                 genotypes,
+                redox_detox_penalty=gsh_status.detox_penalty_multiplier,
             )
         else:
             susceptibility_modifier = 1.0
@@ -2485,11 +2778,20 @@ def compute_interaction_matrix(
             adjusted_relative_risk=adjusted_risk,
             inhibition_status=inhibition_burden.status,
             review_required=inhibition_burden.review_required,
-            warnings=list(inhibition_burden.warnings),
+            warnings=list(dict.fromkeys([*inhibition_burden.warnings, *gsh_warning_codes])),
             provenance={
                 "baseline_risk_source": "BASELINE_RISK_SCORES",
                 "induction_source": "enzyme_induction_modifier",
-                "gsh_source": "gsh_depletion_model._compute_gsh_detox_penalty",
+                "gsh_source": "gsh_redox_capacity.compute_gsh_redox_capacity",
+                "gsh": {
+                    "model_version": gsh_status.model_version,
+                    "redox_capacity_ratio": gsh_status.redox_capacity_ratio,
+                    "detox_penalty_multiplier": gsh_status.detox_penalty_multiplier,
+                    "matrix_gsh_penalty_applied_once": True,
+                    "diagnostic_gsh_capacity_included": False,
+                    "legacy_matrix_gsh_behavior": False,
+                    "warnings": gsh_warning_codes,
+                },
                 **inhibition_burden.to_provenance(),
             },
         )
@@ -2958,6 +3260,11 @@ def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[
             "individual_contributions": deepcopy(result.gsh_status.individual_contributions),
             "time_to_depletion_h": result.gsh_status.time_to_depletion_h,
             "tissue": result.gsh_status.tissue,
+            "model_version": result.gsh_status.model_version,
+            "redox_capacity_ratio": result.gsh_status.redox_capacity_ratio,
+            "detox_penalty_multiplier": result.gsh_status.detox_penalty_multiplier,
+            "warnings": deepcopy(result.gsh_status.warnings),
+            "metadata": deepcopy(result.gsh_status.metadata),
         },
         "induction_effects": dict(result.induction_effects.enzyme_folds),
         "competitive_effects": _competitive_effects_to_compat_dict(result.competitive_effects),

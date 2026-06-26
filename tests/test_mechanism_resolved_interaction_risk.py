@@ -11,6 +11,7 @@ from ExposoGraph.interaction_engine import (
     _resolve_endpoint_inhibition_burden,
     compute_interaction_matrix,
 )
+from ExposoGraph.gsh_redox_capacity import GSHModelVersion
 from ExposoGraph.unified_api import _build_biological_output_integration, patient_risk_query
 
 
@@ -43,6 +44,11 @@ def _principal_numbers(result):
             "tipping_point_multiplier": result.gsh_status.tipping_point_multiplier,
             "time_to_depletion_h": result.gsh_status.time_to_depletion_h,
             "individual_contributions": deepcopy_dict(result.gsh_status.individual_contributions),
+            "model_version": result.gsh_status.model_version,
+            "redox_capacity_ratio": result.gsh_status.redox_capacity_ratio,
+            "detox_penalty_multiplier": result.gsh_status.detox_penalty_multiplier,
+            "warnings": deepcopy_dict(result.gsh_status.warnings),
+            "metadata": deepcopy_dict(result.gsh_status.metadata),
         },
         "induction_effects": dict(result.induction_effects.enzyme_folds),
         "competitive_effects": {
@@ -68,6 +74,22 @@ def _principal_numbers(result):
 
 def deepcopy_dict(value):
     return json.loads(json.dumps(value))
+
+
+def _inhibition_burden(
+    *,
+    activation_burden_ratio: float,
+    status: str = "mechanism_resolved",
+    review_required: bool = False,
+):
+    return engine._InhibitionBurdenResolution(
+        burden_multiplier=1.0,
+        activation_burden_ratio=activation_burden_ratio,
+        detox_failure_ratio=1.0,
+        endpoint_toxic_flux_ratio=1.0,
+        status=status,
+        review_required=review_required,
+    )
 
 
 def _flux(
@@ -776,6 +798,156 @@ def test_exact_once_non_neutral_induction_gsh_and_susceptibility_factors():
         )
     else:
         assert hca_selected["effective_burden"]["gsh_detox_penalty_ratio"] == pytest.approx(1.0)
+
+
+def test_matrix_gsh_status_uses_phase7_redox_model_as_authoritative_pool():
+    result = compute_interaction_matrix(
+        {"PAH": 8.0, "ethanol": 12.0},
+        genotypes={"GSTM1": "null"},
+        lifestyle={"smoking": True, "chronic_alcohol": True},
+        include_biological_outputs=True,
+    )
+
+    assert (
+        result.gsh_status.model_version
+        == GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY.value
+    )
+    assert result.gsh_status.redox_capacity_ratio == pytest.approx(
+        result.gsh_status.fraction_normal
+    )
+    assert result.gsh_status.detox_penalty_multiplier >= 1.0
+
+    pah = result.mechanism_resolved_risks["PAH"]
+    assert pah.gsh_pool_penalty == pytest.approx(
+        round(result.gsh_status.detox_penalty_multiplier, 3)
+    )
+    assert pah.matrix_gsh_penalty == pytest.approx(
+        pah.gsh_pool_penalty * pah.susceptibility_modifier
+    )
+    assert pah.provenance["gsh"]["matrix_gsh_penalty_applied_once"] is True
+    assert pah.provenance["gsh"]["diagnostic_gsh_capacity_included"] is False
+    assert pah.provenance["gsh"]["legacy_matrix_gsh_behavior"] is False
+
+
+def test_matrix_gsh_direct_activation_burden_scales_shared_pool():
+    low_activation = engine._compute_matrix_gsh_redox_status(
+        {"PAH_umol_h_g": 1.0},
+        genotypes={},
+        tissue="Liver",
+        inhibition_burdens={"PAH": _inhibition_burden(activation_burden_ratio=2.0)},
+    )
+    high_activation = engine._compute_matrix_gsh_redox_status(
+        {"PAH_umol_h_g": 1.0},
+        genotypes={},
+        tissue="Liver",
+        inhibition_burdens={"PAH": _inhibition_burden(activation_burden_ratio=5.0)},
+    )
+
+    assert high_activation.fraction_normal < low_activation.fraction_normal
+    assert (
+        high_activation.detox_penalty_multiplier
+        > low_activation.detox_penalty_multiplier
+    )
+    assert high_activation.consumption_rate_umol_h_g == pytest.approx(
+        low_activation.consumption_rate_umol_h_g * 2.5
+    )
+    assert (
+        high_activation.individual_contributions["PAH_GSTM1"]["upstream_scaling_source"]
+        == "direct_activation_burden_ratio"
+    )
+
+
+def test_matrix_gsh_direct_activation_is_preferred_over_explicit_d_times_k():
+    status = engine._compute_matrix_gsh_redox_status(
+        {"PAH_umol_h_g": {"flux_umol_h_g": 1.0, "d_factor": 4.0, "k_factor": 5.0}},
+        genotypes={},
+        tissue="Liver",
+        inhibition_burdens={"PAH": _inhibition_burden(activation_burden_ratio=2.0)},
+    )
+
+    contribution = status.individual_contributions["PAH_GSTM1"]
+    assert contribution["upstream_activation_scale"] == pytest.approx(2.0)
+    assert contribution["gsh_consumption_umol_h_g"] == pytest.approx(2.0)
+    assert contribution["upstream_scaling_source"] == "direct_activation_burden_ratio"
+
+
+def test_matrix_gsh_uses_d_times_k_when_unresolved_activation_is_not_direct():
+    status = engine._compute_matrix_gsh_redox_status(
+        {
+            "PAH_umol_h_g": {
+                "flux_umol_h_g": 1.0,
+                "d_factor": 2.0,
+                "k_factor": 3.0,
+            }
+        },
+        genotypes={},
+        tissue="Liver",
+        inhibition_burdens={
+            "PAH": _inhibition_burden(
+                activation_burden_ratio=1.0,
+                status="mechanism_unresolved",
+                review_required=True,
+            )
+        },
+    )
+    neutral = engine._compute_matrix_gsh_redox_status(
+        {"PAH_umol_h_g": 1.0},
+        genotypes={},
+        tissue="Liver",
+        inhibition_burdens={},
+    )
+
+    contribution = status.individual_contributions["PAH_GSTM1"]
+    assert contribution["upstream_activation_scale"] == pytest.approx(6.0)
+    assert contribution["gsh_consumption_umol_h_g"] == pytest.approx(6.0)
+    assert contribution["upstream_scaling_source"] == "d_times_k_approximation"
+    assert contribution["upstream_scaling_provenance"]["direct_activation_available"] is False
+    assert contribution["upstream_scaling_provenance"]["inhibition_status"] == "mechanism_unresolved"
+    assert status.fraction_normal < neutral.fraction_normal
+    assert status.detox_penalty_multiplier > neutral.detox_penalty_multiplier
+    assert "gsh_upstream_activation_missing_neutral" not in {
+        warning["code"] for warning in status.warnings
+    }
+
+
+def test_matrix_gsh_missing_upstream_burden_with_unresolved_record_warns_and_uses_neutral():
+    status = engine._compute_matrix_gsh_redox_status(
+        {"PAH_umol_h_g": 2.0},
+        genotypes={},
+        tissue="Liver",
+        inhibition_burdens={
+            "PAH": _inhibition_burden(
+                activation_burden_ratio=1.0,
+                status="mechanism_unresolved",
+                review_required=True,
+            )
+        },
+    )
+
+    contribution = status.individual_contributions["PAH_GSTM1"]
+    assert contribution["upstream_activation_scale"] == pytest.approx(1.0)
+    assert contribution["gsh_consumption_umol_h_g"] == pytest.approx(2.0)
+    assert contribution["upstream_scaling_source"] == "neutral_missing_upstream_activation"
+    assert contribution["upstream_scaling_provenance"]["direct_activation_available"] is False
+    assert contribution["upstream_scaling_provenance"]["inhibition_status"] == "mechanism_unresolved"
+    assert "gsh_upstream_activation_missing_neutral" in {
+        warning["code"] for warning in status.warnings
+    }
+
+
+def test_non_gsh_relevant_pathway_does_not_receive_shared_pool_penalty():
+    result = compute_interaction_matrix(
+        {"HCA": 4.0, "acetaminophen_umol_h_g": 200.0},
+        include_biological_outputs=True,
+    )
+
+    assert result.gsh_status.detox_penalty_multiplier > 1.0
+    hca = result.mechanism_resolved_risks["HCA"]
+    assert hca.gsh_pool_penalty == pytest.approx(1.0)
+    assert hca.matrix_gsh_penalty == pytest.approx(1.0)
+    assert hca.final_mechanism_multiplier == pytest.approx(
+        hca.induction_multiplier * hca.inhibition_burden_multiplier
+    )
 
 
 def test_factor_application_and_derived_fields_use_resolved_risks():
