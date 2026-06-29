@@ -25,7 +25,7 @@ from ExposoGraph import (
     ui_preview,
     ui_sidebar,
 )
-from ExposoGraph._app_shared import get_engine, get_repository
+from ExposoGraph._app_shared import get_engine, get_repository, start_engine
 from ExposoGraph.branding import (
     APP_NAME,
     APP_TAGLINE,
@@ -58,6 +58,8 @@ st.markdown(
 
 engine = get_engine()
 repository = get_repository()
+start_engine(engine)
+
 if "extract_text" not in st.session_state:
     st.session_state.extract_text = ""
 if "project_name" not in st.session_state:
@@ -75,16 +77,18 @@ st.markdown(f"## {APP_NAME}")
 st.caption(f"{APP_TAGLINE} · Version {APP_VERSION}")
 st.caption(f"{DEVELOPED_BY} · {CONTACT_EMAIL} · Copyright {COPYRIGHT_HOLDER}")
 
-tab_map, tab_flux, tab_extract, tab_manual, tab_preview, tab_d3_viewer, tab_data = st.tabs(
-    [
-        "Reference Map",
-        "Flux Engine",
-        "LLM Extract",
-        "Manual Entry",
-        "Graph Preview",
-        "D3 HTML Viewer",
-        "Raw Data",
-    ]
+tab_map, tab_flux, tab_extract, tab_manual, tab_preview, tab_d3_viewer, tab_data = (
+    st.tabs(
+        [
+            "Reference Map",
+            "Flux Engine",
+            "LLM Extract",
+            "Manual Entry",
+            "Graph Preview",
+            "D3 HTML Viewer",
+            "Raw Data",
+        ]
+    )
 )
 
 with tab_map:
