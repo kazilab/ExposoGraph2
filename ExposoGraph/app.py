@@ -58,7 +58,6 @@ st.markdown(
 
 engine = get_engine()
 repository = get_repository()
-start_engine(engine)
 
 if "extract_text" not in st.session_state:
     st.session_state.extract_text = ""

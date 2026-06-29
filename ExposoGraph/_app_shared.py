@@ -108,7 +108,7 @@ def start_engine(engine: GraphEngine) -> None:
     if "graph_initialized" not in st.session_state:
         try:
             default_js_path = (
-                Path(__file__).resolve().parent / "map" / "graph_data_final.json"
+                Path(__file__).resolve().parent / "map" / "graph_data.json"
             )
             if default_js_path.exists():
                 engine.load_base_data(default_js_path)
