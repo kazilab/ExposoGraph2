@@ -16,13 +16,10 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from ExposoGraph import (
-    ui_d3_viewer,
     ui_data,
-    ui_extract,
     ui_flux,
     ui_manual,
     ui_map_viewer,
-    ui_preview,
     ui_sidebar,
 )
 from ExposoGraph._app_shared import get_engine, get_repository, start_engine
@@ -76,18 +73,13 @@ st.markdown(f"## {APP_NAME}")
 st.caption(f"{APP_TAGLINE} · Version {APP_VERSION}")
 st.caption(f"{DEVELOPED_BY} · {CONTACT_EMAIL} · Copyright {COPYRIGHT_HOLDER}")
 
-tab_map, tab_flux, tab_extract, tab_manual, tab_preview, tab_d3_viewer, tab_data = (
-    st.tabs(
-        [
-            "Reference Map",
-            "Flux Engine",
-            "LLM Extract",
-            "Manual Entry",
-            "Graph Preview",
-            "D3 HTML Viewer",
-            "Raw Data",
-        ]
-    )
+tab_map, tab_flux, tab_manual, tab_data = st.tabs(
+    [
+        "Reference Map",
+        "Flux Engine",
+        "Manual Entry",
+        "Raw Data",
+    ]
 )
 
 with tab_map:
@@ -96,17 +88,8 @@ with tab_map:
 with tab_flux:
     ui_flux.render()
 
-with tab_extract:
-    ui_extract.render(engine)
-
 with tab_manual:
     ui_manual.render(engine)
-
-with tab_preview:
-    ui_preview.render(engine)
-
-with tab_d3_viewer:
-    ui_d3_viewer.render(engine)
 
 with tab_data:
     ui_data.render(engine)

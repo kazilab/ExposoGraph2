@@ -14,7 +14,6 @@ from .config import GraphVisibility, get_app_mode, persistence_enabled
 from .engine import GraphEngine
 from .exporter import parse_graph_data_text
 from .graph_filters import graph_visibility_label
-from .llm_extractor import EXAMPLE_INPUT
 from .models import (
     CurationConfidence,
     CurationRecord,
@@ -129,10 +128,6 @@ def get_pending_extraction() -> KnowledgeGraph | None:
     if raw is None:
         return None
     return KnowledgeGraph(**raw)
-
-
-def load_example_text() -> None:
-    st.session_state["extract_text"] = EXAMPLE_INPUT
 
 
 # ── Pure helpers ──────────────────────────────────────────────────────────
