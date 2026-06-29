@@ -103,7 +103,8 @@ select = ["E", "F", "I", "W"]
 # Data-literal modules: long evidence strings, citation records, allele-frequency
 # tables, and IARC classification dicts do not benefit from line wrapping.
 "ExposoGraph/reference_data.py" = ["E501"]
-"ExposoGraph/population_simulation/_core.py" = ["E501"]
+
+
 "ExposoGraph/wave2_classes.py" = ["E501"]
 "ExposoGraph/db_clients/iarc.py" = ["E501"]
 "ExposoGraph/expanded_metals.py" = ["E501"]
