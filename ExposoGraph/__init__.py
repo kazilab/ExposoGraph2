@@ -81,20 +81,6 @@ from .epigenomic_modifier import (
     methylation_status_to_dict,
     parse_methylation_calls,
 )
-from .example_graphs import (
-    ArchitectureInventoryGroup,
-    ArchitectureSummary,
-    build_androgen_module_engine,
-    build_androgen_module_graph,
-    build_full_legends_architecture_summary,
-    build_full_legends_engine,
-    build_full_legends_graph,
-    build_reference_architecture_summary,
-    build_reference_engine,
-    build_reference_graph,
-    write_full_legends_exports,
-    write_reference_exports,
-)
 from .exemplar_pathways_figure import render_exemplar_pathways_figure
 from .expanded_metals import (
     MetalProfile,
