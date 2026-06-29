@@ -12,7 +12,6 @@ from ChatGPT Codex and Claude Code.
 """
 
 from ._version import __version__
-from .androgen_publication_figure import render_androgen_publication_figure
 from .biomarker_mapping import (
     BiomarkerDoseEstimate,
     BiomarkerEntry,
@@ -533,7 +532,6 @@ __all__ = [
     "pharmacogenomic_risk_class_rows",
     "pharmacogenomic_risk_gene_rows",
     "persistence_enabled",
-    "render_androgen_publication_figure",
     "render_exemplar_pathways_figure",
     "render_architecture_figure",
     "render_pharmacogenomic_risk_figure",
