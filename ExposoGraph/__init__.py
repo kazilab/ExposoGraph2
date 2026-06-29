@@ -62,21 +62,6 @@ from .config import (
     normalize_graph_visibility,
     persistence_enabled,
 )
-from .cytoscape_adapter import (
-    CytoscapeBundle,
-    ViewerLayoutMode,
-    build_cytoscape_bundle,
-    build_cytoscape_elements,
-    build_cytoscape_metadata,
-    compute_viewer_positions,
-    load_cytoscape_bundle,
-    load_viewer_positions,
-    normalize_viewer_layout_mode,
-    viewer_layout,
-    viewer_stylesheet,
-    write_cytoscape_bundle,
-    write_viewer_positions,
-)
 from .db_clients import CTDClient, IARCClassifier, IARCGroup, KEGGClient
 from .engine import GraphEngine
 from .epigenomic_modifier import (
@@ -309,19 +294,6 @@ from .pharmacogenomic_risk_figure import (
     pharmacogenomic_risk_gene_rows,
     render_pharmacogenomic_risk_figure,
 )
-from .population_genomics import (
-    AlleleFrequency,
-    Population,
-    PopulationRiskProfile,
-    annotate_nodes_with_population_data,
-    build_population_aware_panel,
-    calculate_population_risk_score,
-    compare_population_risks,
-    get_allele_frequencies,
-    get_genes_by_population_prevalence,
-    get_population_frequency,
-    get_population_risk_profiles,
-)
 from .reference_data import (
     ACTIVITY_SCORE_METADATA,
     ACTIVITY_SCORES,
@@ -398,22 +370,6 @@ from .unified_api import (
     enrich_knowledge_graph,
     patient_risk_query,
     summarize_risk_profile,
-)
-from .viewer_dash import (
-    apply_viewer_filters,
-    build_detail_payload,
-    create_dash_viewer_app,
-    launch_dash_viewer,
-)
-from .wave2_classes import (
-    WAVE2_CLASS_PROFILES,
-    CarcinogenClassProfile,
-    build_single_class_graph,
-    build_wave2_class_graph,
-    get_all_wave2_classes,
-    get_class_profile,
-    get_class_specific_nodes,
-    merge_wave2_classes_into,
 )
 
 __all__ = [
