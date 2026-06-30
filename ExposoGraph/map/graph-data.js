@@ -4846,9 +4846,303 @@ const GRAPH_DATA = {
                 "Kidney": 0.5244,
                 "Esophagus": 1.0
             }
+        },
+        {
+            "id": "Pb",
+            "label": "Lead",
+            "type": "Carcinogen",
+            "group": "Heavy_Metal",
+            "iarc": "Group 2A",
+            "exposure": "Contaminated water, occupational dust/fumes, legacy paint",
+            "detail": "IARC Group 2A probable carcinogen. 30-year bone half-life. Target: kidney, brain, blood.",
+            "atomic_number": 82,
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "Hg",
+            "label": "Mercury",
+            "type": "Carcinogen",
+            "group": "Heavy_Metal",
+            "iarc": "Group 2B",
+            "exposure": "Fish consumption (methylmercury), dental amalgams, occupational vapor",
+            "detail": "IARC Group 2B possible carcinogen. 70-day half-life. Target: brain, kidney. High thiol affinity.",
+            "atomic_number": 80,
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "Co",
+            "label": "Cobalt",
+            "type": "Carcinogen",
+            "group": "Heavy_Metal",
+            "iarc": "Group 2B",
+            "exposure": "Hard metal tools, carbide manufacturing, hip prostheses",
+            "detail": "IARC Group 2B possible carcinogen. Hypoxia mimic. Target: lung, thyroid. 10-day half-life.",
+            "atomic_number": 27,
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "Sb",
+            "label": "Antimony",
+            "type": "Carcinogen",
+            "group": "Heavy_Metal",
+            "iarc": "Group 2B",
+            "exposure": "Mining, smelting, often co-exposed with arsenic",
+            "detail": "IARC Group 2B possible carcinogen. Often co-toxic with arsenic. Target: lung, heart, liver.",
+            "atomic_number": 51,
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "ALAD",
+            "label": "ALAD",
+            "type": "Enzyme",
+            "phase": "II",
+            "role": "Detoxification",
+            "detail": "Delta-aminolevulinic acid dehydratase. Primary lead target. Inhibition causes delta-ALA accumulation and ROS.",
+            "tissue": "blood, liver, kidney",
+            "group": "Heme_Synthesis",
+            "metal_targets": [
+                "Pb"
+            ],
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "ALAS1",
+            "label": "ALAS1",
+            "type": "Enzyme",
+            "phase": "I",
+            "role": "Activation",
+            "detail": "Aminolevulinic acid synthase 1. Rate-limiting in heme synthesis.",
+            "tissue": "liver, erythroid",
+            "group": "Heme_Synthesis",
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "SEPP1",
+            "label": "SEPP1",
+            "type": "Enzyme",
+            "phase": "II",
+            "role": "Detoxification",
+            "detail": "Selenoprotein P. Protective against mercury toxicity via selenium antagonism.",
+            "tissue": "liver, plasma",
+            "group": "Selenium_Protection",
+            "metal_targets": [
+                "Hg"
+            ],
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "EGLN1",
+            "label": "EGLN1 (PHD2)",
+            "type": "Enzyme",
+            "phase": "I",
+            "role": "Regulation",
+            "detail": "Prolyl hydroxylase domain 2. Inhibited by cobalt, stabilizing HIF-1\u03b1 (hypoxia mimicry).",
+            "tissue": "ubiquitous",
+            "group": "HIF_Pathway",
+            "metal_targets": [
+                "Co"
+            ],
+            "origin": "imported",
+            "match_status": "canonical",
+        },
+        {
+            "id": "GPx",
+            "label": "Glutathione peroxidase",
+            "type": "Enzyme",
+            "phase": "II",
+            "role": "Detoxification",
+            "detail": "Selenoprotein; mercury inhibits selenol-dependent activity.",
+            "tissue": "ubiquitous",
+            "group": "Antioxidant"
+        },
+        {
+            "id": "DMT1_Pb",
+            "label": "DMT1 (SLC11A2)",
+            "type": "Enzyme",
+            "phase": "III",
+            "role": "Transport",
+            "detail": "Divalent metal transporter 1. Major entry route for lead (shared with iron).",
+            "tissue": "intestine, kidney, brain",
+            "group": "Metal_Transport",
+            "metal_targets": [
+                "Pb",
+                "Cd",
+                "Co"
+            ]
+        },
+        {
+            "id": "LAT1_Hg",
+            "label": "LAT1 (SLC7A5)",
+            "type": "Enzyme",
+            "phase": "III",
+            "role": "Transport",
+            "detail": "L-type amino acid transporter 1. Methylmercury-cysteine complex mimicry entry.",
+            "tissue": "brain (BBB), placenta, intestine",
+            "group": "Amino_Acid_Transport",
+            "metal_targets": [
+                "Hg"
+            ]
+        },
+        {
+            "id": "ZIP14_Co",
+            "label": "ZIP14 (SLC39A14)",
+            "type": "Enzyme",
+            "phase": "III",
+            "role": "Transport",
+            "detail": "Zinc/iron permease 14. Transports non-transferrin bound cobalt and iron.",
+            "tissue": "liver, pancreas, heart",
+            "group": "Metal_Transport",
+            "metal_targets": [
+                "Co",
+                "Fe"
+            ]
+        },
+        {
+            "id": "delta_ALA",
+            "label": "Delta-ALA",
+            "type": "Metabolite",
+            "reactivity": "High",
+            "detail": "Delta-aminolevulinic acid. Accumulates with lead exposure. Auto-oxidizes generating ROS.",
+            "associated_metal": "Pb"
+        },
+        {
+            "id": "ALA_portporphyria",
+            "label": "ALA Porphyria",
+            "type": "Metabolite",
+            "reactivity": "High",
+            "detail": "Acquired porphyria from lead-induced ALAD inhibition.",
+            "associated_metal": "Pb"
+        },
+        {
+            "id": "MeHg_GSH",
+            "label": "Methylmercury-GSH",
+            "type": "Metabolite",
+            "reactivity": "Intermediate",
+            "detail": "Methylmercury-glutathione complex. Transported and excreted.",
+            "associated_metal": "Hg"
+        },
+        {
+            "id": "Co_plus2",
+            "label": "Co(II)",
+            "type": "Metabolite",
+            "reactivity": "High",
+            "detail": "Cobalt(II) ion. Redox active, participates in Fenton-like reactions.",
+            "associated_metal": "Co"
+        },
+        {
+            "id": "GSH",
+            "label": "Glutathione",
+            "type": "Metabolite",
+            "reactivity": "High",
+            "detail": "Major cellular antioxidant; depleted by lead and mercury binding."
         }
   ],
   "edges": [
+      {
+          "source": "Pb",
+          "target": "ALAD",
+          "type": "ACTIVATES",
+          "carcinogen": "Pb",
+          "evidence": "Lead binds to sulfhydryl groups in ALAD"
+      },
+      {
+          "source": "ALAD",
+          "target": "delta_ALA",
+          "type": "ACTIVATES",
+          "carcinogen": "Pb",
+          "evidence": "Inhibition causes ALA accumulation"
+      },
+      {
+          "source": "delta_ALA",
+          "target": "ROS_metal",
+          "type": "ACTIVATES",
+          "carcinogen": "Pb",
+          "evidence": "Auto-oxidation of ALA generates ROS"
+      },
+      {
+          "source": "DMT1_Pb",
+          "target": "Pb",
+          "type": "TRANSPORTS",
+          "carcinogen": "Pb",
+          "evidence": "DMT1 mediates lead uptake"
+      },
+      {
+          "source": "Pb",
+          "target": "GSH",
+          "type": "ACTIVATES",
+          "carcinogen": "Pb",
+          "evidence": "Lead binds GSH"
+      },
+      {
+          "source": "LAT1_Hg",
+          "target": "Hg",
+          "type": "TRANSPORTS",
+          "carcinogen": "Hg",
+          "evidence": "Methylmercury-cysteine mimicry"
+      },
+      {
+          "source": "Hg",
+          "target": "GSH",
+          "type": "ACTIVATES",
+          "carcinogen": "Hg",
+          "evidence": "High affinity thiol binding"
+      },
+      {
+          "source": "Hg",
+          "target": "GPx",
+          "type": "ACTIVATES",
+          "carcinogen": "Hg",
+          "evidence": "Selenol group binding"
+      },
+      {
+          "source": "SEPP1",
+          "target": "Hg",
+          "type": "TRANSPORTS",
+          "carcinogen": "Hg",
+          "evidence": "Selenium antagonism"
+      },
+      {
+          "source": "Hg",
+          "target": "MT1A",
+          "type": "ACTIVATES",
+          "carcinogen": "Hg",
+          "evidence": "Mercury induces MT expression"
+      },
+      {
+          "source": "Co",
+          "target": "EGLN1",
+          "type": "ACTIVATES",
+          "carcinogen": "Co",
+          "evidence": "PHD2 inhibition by Co(II)"
+      },
+      {
+          "source": "ZIP14_Co",
+          "target": "Co",
+          "type": "TRANSPORTS",
+          "carcinogen": "Co",
+          "evidence": "Non-transferrin bound uptake"
+      },
+      {
+          "source": "Co_plus2",
+          "target": "ROS_metal",
+          "type": "ACTIVATES",
+          "carcinogen": "Co",
+          "evidence": "Fenton-like chemistry"
+      },
+      {
+          "source": "Sb",
+          "target": "GSTO1",
+          "type": "ACTIVATES",
+          "carcinogen": "Sb",
+          "evidence": "Similar to arsenic metabolism"
+      },
     {
       "source": "BaP",
       "target": "Oxo_dG",
