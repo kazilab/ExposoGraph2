@@ -254,23 +254,6 @@ from .mutational_signatures import (
 from .mutational_signatures import (
     summary_to_dict as signature_summary_to_dict,
 )
-from .oxidative_stress import (
-    OSMarkerType,
-    OxidativeStressMarker,
-    ReactiveSpecies,
-    ROSGenerationPathway,
-    build_os_marker_graph,
-    calculate_os_risk_score,
-    get_antioxidant_response,
-    get_markers_by_metal,
-    get_markers_by_type,
-    get_os_marker,
-    get_primary_ros_species,
-    get_recommended_os_panel,
-    get_ros_pathways,
-    integrate_os_into_metabolism_chain,
-    requires_fenton_chemistry,
-)
 from .pharmacogenomic_risk_figure import (
     PharmacogenomicRiskClassProfile,
     PharmacogenomicRiskGeneProfile,
