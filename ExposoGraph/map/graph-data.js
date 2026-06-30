@@ -4960,7 +4960,9 @@ const GRAPH_DATA = {
             "role": "Detoxification",
             "detail": "Selenoprotein; mercury inhibits selenol-dependent activity.",
             "tissue": "ubiquitous",
-            "group": "Antioxidant"
+            "group": "Antioxidant",
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "DMT1_Pb",
@@ -4975,7 +4977,9 @@ const GRAPH_DATA = {
                 "Pb",
                 "Cd",
                 "Co"
-            ]
+            ],
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "LAT1_Hg",
@@ -4988,7 +4992,9 @@ const GRAPH_DATA = {
             "group": "Amino_Acid_Transport",
             "metal_targets": [
                 "Hg"
-            ]
+            ],
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "ZIP14_Co",
@@ -5002,7 +5008,9 @@ const GRAPH_DATA = {
             "metal_targets": [
                 "Co",
                 "Fe"
-            ]
+            ],
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "delta_ALA",
@@ -5010,7 +5018,9 @@ const GRAPH_DATA = {
             "type": "Metabolite",
             "reactivity": "High",
             "detail": "Delta-aminolevulinic acid. Accumulates with lead exposure. Auto-oxidizes generating ROS.",
-            "associated_metal": "Pb"
+            "associated_metal": "Pb",
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "ALA_portporphyria",
@@ -5018,7 +5028,9 @@ const GRAPH_DATA = {
             "type": "Metabolite",
             "reactivity": "High",
             "detail": "Acquired porphyria from lead-induced ALAD inhibition.",
-            "associated_metal": "Pb"
+            "associated_metal": "Pb",
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "MeHg_GSH",
@@ -5026,7 +5038,9 @@ const GRAPH_DATA = {
             "type": "Metabolite",
             "reactivity": "Intermediate",
             "detail": "Methylmercury-glutathione complex. Transported and excreted.",
-            "associated_metal": "Hg"
+            "associated_metal": "Hg",
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "Co_plus2",
@@ -5034,14 +5048,18 @@ const GRAPH_DATA = {
             "type": "Metabolite",
             "reactivity": "High",
             "detail": "Cobalt(II) ion. Redox active, participates in Fenton-like reactions.",
-            "associated_metal": "Co"
+            "associated_metal": "Co",
+            "origin": "imported",
+            "match_status": "canonical",
         },
         {
             "id": "GSH",
             "label": "Glutathione",
             "type": "Metabolite",
             "reactivity": "High",
-            "detail": "Major cellular antioxidant; depleted by lead and mercury binding."
+            "detail": "Major cellular antioxidant; depleted by lead and mercury binding.",
+            "origin": "imported",
+            "match_status": "canonical",
         }
   ],
   "edges": [
@@ -5050,98 +5068,126 @@ const GRAPH_DATA = {
           "target": "ALAD",
           "type": "ACTIVATES",
           "carcinogen": "Pb",
-          "evidence": "Lead binds to sulfhydryl groups in ALAD"
+          "evidence": "Lead binds to sulfhydryl groups in ALAD",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "ALAD",
           "target": "delta_ALA",
           "type": "ACTIVATES",
           "carcinogen": "Pb",
-          "evidence": "Inhibition causes ALA accumulation"
+          "evidence": "Inhibition causes ALA accumulation",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "delta_ALA",
           "target": "ROS_metal",
           "type": "ACTIVATES",
           "carcinogen": "Pb",
-          "evidence": "Auto-oxidation of ALA generates ROS"
+          "evidence": "Auto-oxidation of ALA generates ROS",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "DMT1_Pb",
           "target": "Pb",
           "type": "TRANSPORTS",
           "carcinogen": "Pb",
-          "evidence": "DMT1 mediates lead uptake"
+          "evidence": "DMT1 mediates lead uptake",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Pb",
           "target": "GSH",
           "type": "ACTIVATES",
           "carcinogen": "Pb",
-          "evidence": "Lead binds GSH"
+          "evidence": "Lead binds GSH",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "LAT1_Hg",
           "target": "Hg",
           "type": "TRANSPORTS",
           "carcinogen": "Hg",
-          "evidence": "Methylmercury-cysteine mimicry"
+          "evidence": "Methylmercury-cysteine mimicry",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Hg",
           "target": "GSH",
           "type": "ACTIVATES",
           "carcinogen": "Hg",
-          "evidence": "High affinity thiol binding"
+          "evidence": "High affinity thiol binding",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Hg",
           "target": "GPx",
           "type": "ACTIVATES",
           "carcinogen": "Hg",
-          "evidence": "Selenol group binding"
+          "evidence": "Selenol group binding",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "SEPP1",
           "target": "Hg",
           "type": "TRANSPORTS",
           "carcinogen": "Hg",
-          "evidence": "Selenium antagonism"
+          "evidence": "Selenium antagonism",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Hg",
           "target": "MT1A",
           "type": "ACTIVATES",
           "carcinogen": "Hg",
-          "evidence": "Mercury induces MT expression"
+          "evidence": "Mercury induces MT expression",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Co",
           "target": "EGLN1",
           "type": "ACTIVATES",
           "carcinogen": "Co",
-          "evidence": "PHD2 inhibition by Co(II)"
+          "evidence": "PHD2 inhibition by Co(II)",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "ZIP14_Co",
           "target": "Co",
           "type": "TRANSPORTS",
           "carcinogen": "Co",
-          "evidence": "Non-transferrin bound uptake"
+          "evidence": "Non-transferrin bound uptake",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Co_plus2",
           "target": "ROS_metal",
           "type": "ACTIVATES",
           "carcinogen": "Co",
-          "evidence": "Fenton-like chemistry"
+          "evidence": "Fenton-like chemistry",
+          "origin": "imported",
+          "match_status": "canonical",
       },
       {
           "source": "Sb",
           "target": "GSTO1",
           "type": "ACTIVATES",
           "carcinogen": "Sb",
-          "evidence": "Similar to arsenic metabolism"
+          "evidence": "Similar to arsenic metabolism",
+          "origin": "imported",
+          "match_status": "canonical",
       },
     {
       "source": "BaP",
