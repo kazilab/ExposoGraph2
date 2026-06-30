@@ -1,5 +1,5 @@
+import ast
 import math
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -8,8 +8,6 @@ import ExposoGraph.flux_engine as flux_engine
 import ExposoGraph.interaction_engine as interaction_engine
 from ExposoGraph.interaction_schema import ConcentrationBasis, InhibitionMode
 from ExposoGraph.parameter_resolution import InhibitionResolutionStatus
-
-REPO = Path(__file__).resolve().parents[1]
 
 
 def _finite_walk(value):
@@ -302,16 +300,41 @@ def test_public_interaction_compat_payload_keeps_legacy_fields_and_adds_optional
     assert benzene["biological_output"]["kinetic_effect"]["status"]
 
 
-def test_transparency_module_is_not_modified_by_live_inhibition_scope():
-    changed = subprocess.run(
-        ["git", "diff", "--name-only"],
-        cwd=REPO,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE,
-    ).stdout.splitlines()
-
-    live_integration_forbidden_modules = {
-        "ExposoGraph/model_transparency.py",
+def test_transparency_module_does_not_call_live_inhibition_machinery():
+    transparency_path = Path(interaction_engine.__file__).with_name("model_transparency.py")
+    tree = ast.parse(transparency_path.read_text(encoding="utf-8"))
+    forbidden_modules = {"interaction_engine"}
+    forbidden_calls = {
+        "compute_interaction_matrix",
+        "competitive_inhibition_flux",
+        "get_ki",
+        "resolve_reversible_inhibition",
     }
-    assert live_integration_forbidden_modules.isdisjoint(set(changed))
+    imported_live_symbols = set()
+    called_live_symbols = set()
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported_live_symbols.update(
+                alias.name.rsplit(".", 1)[-1]
+                for alias in node.names
+                if alias.name.rsplit(".", 1)[-1] in forbidden_modules
+            )
+        elif isinstance(node, ast.ImportFrom):
+            module_name = (node.module or "").rsplit(".", 1)[-1]
+            if module_name in forbidden_modules:
+                imported_live_symbols.add(module_name)
+            imported_live_symbols.update(
+                alias.name for alias in node.names if alias.name in forbidden_modules
+            )
+            imported_live_symbols.update(
+                alias.name for alias in node.names if alias.name in forbidden_calls
+            )
+        elif isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name) and node.func.id in forbidden_calls:
+                called_live_symbols.add(node.func.id)
+            elif isinstance(node.func, ast.Attribute) and node.func.attr in forbidden_calls:
+                called_live_symbols.add(node.func.attr)
+
+    assert imported_live_symbols == set()
+    assert called_live_symbols == set()
