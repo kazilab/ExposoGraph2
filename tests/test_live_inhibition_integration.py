@@ -255,6 +255,47 @@ def test_multiple_explicit_inhibition_contexts_are_deferred_without_quantitative
     _finite_walk(benzene.__dict__)
 
 
+def test_implicit_mixed_competitor_resolution_does_not_quantify_partial_aggregate():
+    result = interaction_engine.competitive_inhibition_flux(
+        "CYP2E1",
+        {"benzene": 10.0, "ethanol": 2000.0, "unknown_competitor": 100.0},
+    )
+    benzene = result.substrates["benzene"]
+
+    assert benzene.kinetic_modifier is None
+    assert benzene.modified_flux is None
+    assert benzene.competitive_flux == benzene.single_flux
+    assert benzene.kinetic_resolution_status == InhibitionResolutionStatus.REVIEW_REQUIRED.value
+    assert benzene.discrepancy_classification == "incomplete_competitor_resolution"
+    assert "INCOMPLETE_COMPETITOR_KI_RESOLUTION" in benzene.kinetic_warning_codes
+    assert "KI_MISSING" in benzene.kinetic_warning_codes
+    assert benzene.aggregate_resolution["active_competitor_count"] == 2
+    assert benzene.aggregate_resolution["resolved_competitor_count"] == 1
+    assert benzene.aggregate_resolution["unresolved_competitor_count"] == 1
+    assert benzene.aggregate_resolution["all_active_competitors_resolved"] is False
+    _finite_walk(benzene.__dict__)
+
+
+def test_implicit_aggregate_preserves_per_inhibitor_provenance_in_biological_output():
+    result = interaction_engine.competitive_inhibition_flux(
+        "CYP2E1",
+        {"benzene": 10.0, "ethanol": 2000.0, "unknown_competitor": 100.0},
+    )
+    benzene = result.substrates["benzene"]
+    aggregate = benzene.biological_output["kinetic_effect"]["provenance"]["aggregate_resolution"]
+    competitors = {item["inhibitor"]: item for item in aggregate["competitors"]}
+
+    assert aggregate["all_active_competitors_resolved"] is False
+    assert competitors["ethanol"]["resolved"] is True
+    assert competitors["ethanol"]["ki_uM"] == pytest.approx(13000.0)
+    assert competitors["ethanol"]["resolution_method"] == "measured_value"
+    assert competitors["ethanol"]["source_kind"] == "curated"
+    assert competitors["unknown_competitor"]["resolved"] is False
+    assert "KI_MISSING" in competitors["unknown_competitor"]["warnings"]
+    assert aggregate["aggregate_status"] == InhibitionResolutionStatus.REVIEW_REQUIRED.value
+    _finite_walk(aggregate)
+
+
 def test_live_internal_results_remain_finite():
     result = interaction_engine.competitive_inhibition_flux(
         "CYP2E1",

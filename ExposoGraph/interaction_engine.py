@@ -85,6 +85,7 @@ class SubstrateFluxChange:
     modifier_applied_once: bool = False
     discrepancy_classification: str = "not_compared"
     biological_output: dict[str, Any] | None = None
+    aggregate_resolution: dict[str, Any] | None = None
 
 
 @dataclass
@@ -1334,6 +1335,11 @@ def competitive_inhibition_flux(
             centralized_resolver_used=bool(resolution["centralized_resolver_used"]),
             modifier_applied_once=modifier_applied_once,
             discrepancy_classification=str(resolution["discrepancy_classification"]),
+            aggregate_resolution=(
+                deepcopy(resolution["aggregate_resolution"])
+                if resolution.get("aggregate_resolution") is not None
+                else None
+            ),
         )
         if include_biological_outputs:
             flux_change.biological_output = _build_live_biological_output(
@@ -1386,23 +1392,70 @@ def _resolve_live_inhibition_modifier(
     normalized_inhibitor_load = 0.0
     warning_codes: set[str] = set()
     resolved_any = False
+    competitor_details: list[dict[str, Any]] = []
     for other_name, other_conc in positive_competitors:
         ki = get_ki(enzyme, other_name, target_substrate=target_substrate)
+        competitor_warnings = [
+            warning.code.upper()
+            for warning in (ki.warnings or [])
+            if getattr(warning, "code", None)
+        ]
         if ki.warnings:
-            warning_codes.update(warning.code.upper() for warning in ki.warnings)
+            warning_codes.update(competitor_warnings)
+        detail: dict[str, Any] = {
+            "inhibitor": other_name,
+            "concentration_uM": other_conc,
+            "ki_uM": None,
+            "normalized_load_contribution": None,
+            "resolution_method": str(ki.resolution_method),
+            "source_kind": str(ki.source_kind),
+            "confidence": ki.uncertainty.confidence if ki.uncertainty else None,
+            "warnings": competitor_warnings,
+            "resolved": False,
+            "metadata": deepcopy(ki.metadata) if ki.metadata is not None else None,
+        }
         if ki.value is None:
             warning_codes.add("KI_MISSING")
+            if "KI_MISSING" not in detail["warnings"]:
+                detail["warnings"].append("KI_MISSING")
+            competitor_details.append(detail)
             continue
         ki_value = float(ki.value)
         if ki.resolution_method.value == "assumed_equal_km":
             ki_value *= float(scale_for(other_name, "Km"))
         if ki_value <= 0.0 or not math.isfinite(ki_value):
             warning_codes.add("OUTSIDE_REVERSIBLE_INHIBITION_DOMAIN")
+            detail["warnings"].append("OUTSIDE_REVERSIBLE_INHIBITION_DOMAIN")
+            competitor_details.append(detail)
             continue
-        normalized_inhibitor_load += other_conc / ki_value
+        contribution = other_conc / ki_value
+        normalized_inhibitor_load += contribution
         resolved_any = True
+        detail.update(
+            {
+                "ki_uM": _round(ki_value, 6),
+                "normalized_load_contribution": _round(contribution, 8),
+                "resolved": True,
+            }
+        )
+        competitor_details.append(detail)
+
+    unresolved_count = sum(1 for detail in competitor_details if not detail["resolved"])
+    aggregate_resolution = {
+        "mode": "implicit_competitive_load",
+        "target_substrate": target_substrate,
+        "active_competitor_count": len(positive_competitors),
+        "resolved_competitor_count": len(positive_competitors) - unresolved_count,
+        "unresolved_competitor_count": unresolved_count,
+        "all_active_competitors_resolved": unresolved_count == 0,
+        "normalized_inhibitor_load": _round(normalized_inhibitor_load, 8),
+        "competitors": competitor_details,
+    }
 
     if not resolved_any:
+        warning_codes.add("INCOMPLETE_COMPETITOR_KI_RESOLUTION")
+        aggregate_resolution["aggregate_status"] = str(InhibitionResolutionStatus.REVIEW_REQUIRED)
+        aggregate_resolution["aggregate_warnings"] = sorted(warning_codes or {"KI_MISSING"})
         return _modifier_record(
             modifier=None,
             status=InhibitionResolutionStatus.REVIEW_REQUIRED,
@@ -1411,6 +1464,22 @@ def _resolve_live_inhibition_modifier(
             applied_resolver=False,
             inhibition_term=0.0,
             discrepancy_classification="changed_fallback_behavior",
+            aggregate_resolution=aggregate_resolution,
+        )
+
+    if unresolved_count:
+        warning_codes.add("INCOMPLETE_COMPETITOR_KI_RESOLUTION")
+        aggregate_resolution["aggregate_status"] = str(InhibitionResolutionStatus.REVIEW_REQUIRED)
+        aggregate_resolution["aggregate_warnings"] = sorted(warning_codes)
+        return _modifier_record(
+            modifier=None,
+            status=InhibitionResolutionStatus.REVIEW_REQUIRED,
+            mode=InhibitionMode.COMPETITIVE,
+            warning_codes=warning_codes,
+            applied_resolver=False,
+            inhibition_term=normalized_inhibitor_load,
+            discrepancy_classification="incomplete_competitor_resolution",
+            aggregate_resolution=aggregate_resolution,
         )
 
     resolved = resolve_reversible_inhibition(
@@ -1431,6 +1500,8 @@ def _resolve_live_inhibition_modifier(
         }
     )
     warning_codes.update(warning.code for warning in (resolved.warnings or []))
+    aggregate_resolution["aggregate_status"] = str(resolved.status)
+    aggregate_resolution["aggregate_warnings"] = sorted(warning_codes)
     if resolved.status not in {
         InhibitionResolutionStatus.RESOLVED_DIRECT,
         InhibitionResolutionStatus.RESOLVED_DERIVED,
@@ -1443,6 +1514,7 @@ def _resolve_live_inhibition_modifier(
             applied_resolver=True,
             inhibition_term=normalized_inhibitor_load,
             discrepancy_classification="actual_defect",
+            aggregate_resolution=aggregate_resolution,
         )
 
     return _modifier_record(
@@ -1453,6 +1525,7 @@ def _resolve_live_inhibition_modifier(
         applied_resolver=True,
         inhibition_term=normalized_inhibitor_load,
         discrepancy_classification="numerical_precision",
+        aggregate_resolution=aggregate_resolution,
     )
 
 
@@ -1542,6 +1615,7 @@ def _modifier_record(
     applied_resolver: bool,
     inhibition_term: float = 0.0,
     discrepancy_classification: str,
+    aggregate_resolution: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "modifier": modifier,
@@ -1551,6 +1625,7 @@ def _modifier_record(
         "centralized_resolver_used": applied_resolver,
         "inhibition_term": inhibition_term,
         "discrepancy_classification": discrepancy_classification,
+        "aggregate_resolution": aggregate_resolution,
     }
 
 def _build_live_biological_output(
@@ -1609,6 +1684,8 @@ def _build_live_biological_output(
             "output_role": output_role,
         },
     }
+    if flux.aggregate_resolution is not None:
+        kinetic_effect["provenance"]["aggregate_resolution"] = deepcopy(flux.aggregate_resolution)
 
     annotation = None
     if selected_resolution is not None:
