@@ -345,11 +345,7 @@ class InteractionMatrixResult:
 
 @dataclass
 class SynergyDecomposition:
-    """Additive decomposition of a carcinogen-pair synergy factor.
-    ``S_composite ≈ 1 + ΔS_comp + ΔS_gsh + ΔS_ind``.
-    ``residual`` captures the departure from pure additivity (cross-mechanism
-    coupling from multiplicative combination in the full model).
-    """
+    """Pairwise synergy attribution with compatibility singleton fields."""
 
     pair: str
     composite: float
@@ -358,6 +354,18 @@ class SynergyDecomposition:
     delta_ind: float
     additive_estimate: float
     residual: float
+    shapley_decomposition: dict[str, Any] = field(default_factory=dict)
+    main_effects: dict[str, float] = field(default_factory=dict)
+    pairwise_interactions: dict[str, float] = field(default_factory=dict)
+    three_way_interaction: float = 0.0
+    reconstruction_residual: float = 0.0
+    shapley_residual: float = 0.0
+    residuals_are_zero_within_tolerance: bool = True
+    state_values: dict[str, float] = field(default_factory=dict)
+    decomposition_basis: str = "eight_state_shapley"
+    residual_policy: str = "numerical_reconstruction_check_only"
+    compatibility_fields: dict[str, Any] = field(default_factory=dict)
+    dominant_mechanism: str = "near-additive"
 
 
 @dataclass
@@ -3117,74 +3125,187 @@ def identify_critical_interactions(
     return _severity_sorted(interactions)
 
 
+_SYNERGY_MECHANISM_LABELS = {
+    "induction": "enzyme induction",
+    "competition": "competitive inhibition",
+    "gsh": "GSH depletion",
+    "induction+competition": "induction x competition",
+    "induction+gsh": "induction x GSH",
+    "competition+gsh": "competition x GSH",
+    "induction+competition+gsh": "induction x competition x GSH",
+}
+
+
+def _effect_by_mechanism(effects: list[dict[str, Any]]) -> dict[str, float]:
+    return {
+        str(effect["mechanism"]): float(effect["effect"])
+        for effect in effects
+    }
+
+
+def _interaction_by_key(terms: list[dict[str, Any]]) -> dict[str, float]:
+    keyed: dict[str, float] = {}
+    for term in terms:
+        key = "+".join(str(mechanism) for mechanism in term["mechanisms"])
+        keyed[key] = float(term["effect"])
+    return keyed
+
+
+def _dominant_synergy_mechanism(
+    main_effects: dict[str, float],
+    pairwise_interactions: dict[str, float],
+    three_way_interaction: float,
+) -> str:
+    terms = {
+        _SYNERGY_MECHANISM_LABELS[key]: value
+        for key, value in {
+            **main_effects,
+            **pairwise_interactions,
+            "induction+competition+gsh": three_way_interaction,
+        }.items()
+    }
+    positive_terms = {key: value for key, value in terms.items() if value > 0.0}
+    if positive_terms:
+        return max(positive_terms, key=positive_terms.get)
+    if main_effects.get("competition", 0.0) < 0.0:
+        return "competitive antagonism"
+    return "near-additive"
+
+
+def _compute_synergy_state_results(
+    exposure_profile: Mapping[str, float | dict[str, Any]],
+    *,
+    genotypes: dict[str, str] | None,
+    tissue: str,
+    lifestyle: Mapping[str, bool | int | float] | None,
+    param_perturbations: dict[str, dict[str, float]] | None = None,
+    expression_perturbations: dict[str, float] | None = None,
+) -> dict[str, InteractionMatrixResult]:
+    state_results: dict[str, InteractionMatrixResult] = {}
+    for state in generate_mechanism_states():
+        state_results[state.key] = compute_interaction_matrix(
+            exposure_profile,
+            genotypes=genotypes,
+            tissue=tissue,
+            lifestyle=lifestyle,
+            enable_induction=state.induction,
+            enable_competition=state.competition,
+            enable_gsh_depletion=state.gsh,
+            param_perturbations=param_perturbations,
+            expression_perturbations=expression_perturbations,
+            include_biological_outputs=False,
+        )
+    return state_results
+
+
+def _build_pair_synergy_decomposition(
+    pair: str,
+    state_results: dict[str, InteractionMatrixResult],
+    *,
+    tolerance: float,
+) -> SynergyDecomposition:
+    state_values = {
+        state.key: state_results[state.key].synergy_matrix.get(pair, 1.0)
+        for state in generate_mechanism_states()
+    }
+    attribution = compute_mechanism_attribution(state_values, tolerance=tolerance).to_dict()
+    main_effects = _effect_by_mechanism(attribution["shapley_main_effects"])
+    singleton_effects = _interaction_by_key(attribution["singleton_effects"])
+    pairwise_interactions = _interaction_by_key(attribution["pairwise_interactions"])
+    three_way_interaction = float(attribution["three_way_interaction"]["effect"])
+    reconstruction_residual = float(attribution["interaction_reconstruction_residual"])
+    shapley_residual = float(attribution["shapley_residual"])
+    additive_estimate = (
+        1.0
+        + sum(singleton_effects.values())
+        + sum(pairwise_interactions.values())
+        + three_way_interaction
+    )
+    compatibility_fields = {
+        "policy": "compatibility_only",
+        "basis": "singleton_effects_from_eight_state_decomposition",
+        "residual": "numerical_reconstruction_check_only",
+        "primary_fields": [
+            "main_effects",
+            "pairwise_interactions",
+            "three_way_interaction",
+            "reconstruction_residual",
+        ],
+    }
+    shapley_decomposition = {
+        "decomposition_basis": "eight_state_shapley",
+        "state_count": len(state_values),
+        "state_values": {key: _round(value, 6) for key, value in state_values.items()},
+        "main_effects": {key: _round(value, 6) for key, value in main_effects.items()},
+        "singleton_effects": {key: _round(value, 6) for key, value in singleton_effects.items()},
+        "pairwise_interactions": {
+            key: _round(value, 6) for key, value in pairwise_interactions.items()
+        },
+        "three_way_interaction": _round(three_way_interaction, 6),
+        "reconstruction_residual": _round(reconstruction_residual, 12),
+        "shapley_residual": _round(shapley_residual, 12),
+        "residuals_are_zero_within_tolerance": bool(
+            attribution["residuals_are_zero_within_tolerance"]
+        ),
+        "tolerance": float(attribution["tolerance"]),
+        "residual_policy": "numerical_reconstruction_check_only",
+        "source": "compute_interaction_matrix",
+    }
+    return SynergyDecomposition(
+        pair=pair,
+        composite=_round(float(attribution["full_value"]), 4),
+        delta_comp=_round(singleton_effects.get("competition", 0.0), 4),
+        delta_gsh=_round(singleton_effects.get("gsh", 0.0), 4),
+        delta_ind=_round(singleton_effects.get("induction", 0.0), 4),
+        additive_estimate=_round(additive_estimate, 4),
+        residual=_round(reconstruction_residual, 12),
+        shapley_decomposition=shapley_decomposition,
+        main_effects={key: _round(value, 6) for key, value in main_effects.items()},
+        pairwise_interactions={
+            key: _round(value, 6) for key, value in pairwise_interactions.items()
+        },
+        three_way_interaction=_round(three_way_interaction, 6),
+        reconstruction_residual=_round(reconstruction_residual, 12),
+        shapley_residual=_round(shapley_residual, 12),
+        residuals_are_zero_within_tolerance=bool(
+            attribution["residuals_are_zero_within_tolerance"]
+        ),
+        state_values={key: _round(value, 6) for key, value in state_values.items()},
+        compatibility_fields=compatibility_fields,
+        dominant_mechanism=_dominant_synergy_mechanism(
+            main_effects,
+            pairwise_interactions,
+            three_way_interaction,
+        ),
+    )
+
+
 def decompose_synergy(
     exposure_profile: dict[str, float | dict[str, Any]],
     *,
     genotypes: dict[str, str] | None = None,
     tissue: str = "Liver",
     lifestyle: dict[str, bool] | None = None,
+    param_perturbations: dict[str, dict[str, float]] | None = None,
+    expression_perturbations: dict[str, float] | None = None,
+    include_biological_outputs: bool = False,
+    tolerance: float = 1e-9,
 ) -> dict[str, SynergyDecomposition]:
-    """Decompose pairwise synergy into competition, GSH, and induction deltas.
-
-    Runs ``compute_interaction_matrix`` four times (full, competition-only,
-    GSH-only, induction-only) and reports
-    ``S = 1 + ΔS_comp + ΔS_gsh + ΔS_ind + residual`` for each carcinogen pair
-    in the exposure profile.
-    """
-    full_result = compute_interaction_matrix(
+    """Decompose pairwise synergy with the eight-state attribution layer."""
+    _ = include_biological_outputs
+    state_results = _compute_synergy_state_results(
         exposure_profile,
         genotypes=genotypes,
         tissue=tissue,
         lifestyle=lifestyle,
-        include_biological_outputs=False,
+        param_perturbations=param_perturbations,
+        expression_perturbations=expression_perturbations,
     )
-    comp_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=True,
-        enable_gsh_depletion=False,
-        include_biological_outputs=False,
-    )
-    gsh_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=False,
-        enable_gsh_depletion=True,
-        include_biological_outputs=False,
-    )
-    ind_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=True,
-        enable_competition=False,
-        enable_gsh_depletion=False,
-        include_biological_outputs=False,
-    )
-
-    decomposed: dict[str, SynergyDecomposition] = {}
-    for pair, composite in full_result.synergy_matrix.items():
-        delta_comp = comp_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_gsh = gsh_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_ind = ind_only.synergy_matrix.get(pair, 1.0) - 1.0
-        additive = 1.0 + delta_comp + delta_gsh + delta_ind
-        decomposed[pair] = SynergyDecomposition(
-            pair=pair,
-            composite=_round(composite, 4),
-            delta_comp=_round(delta_comp, 4),
-            delta_gsh=_round(delta_gsh, 4),
-            delta_ind=_round(delta_ind, 4),
-            additive_estimate=_round(additive, 4),
-            residual=_round(composite - additive, 4),
-        )
-    return decomposed
+    full_result = state_results["induction+competition+gsh"]
+    return {
+        pair: _build_pair_synergy_decomposition(pair, state_results, tolerance=tolerance)
+        for pair in full_result.synergy_matrix
+    }
 
 
 def monte_carlo_synergy_ci(
@@ -3198,13 +3319,13 @@ def monte_carlo_synergy_ci(
     expression_sigma: float = 0.3,
     seed: int | None = None,
 ) -> dict[str, SynergyConfidenceInterval]:
-    """Bootstrap 95% CIs for pairwise synergy factors and mechanism deltas.
+    """Bootstrap 95% CIs for pairwise synergy factors and singleton effects.
 
     Km/Vmax parameters are perturbed by multiplicative lognormal noise with
     ``sigma=km_sigma`` (default ≈ ±50% one-sigma spread); enzyme expression
     weights are perturbed with ``sigma=expression_sigma`` (default ≈ ±30%).
-    For each iteration the synergy is decomposed and the aggregated draws are
-    summarized as mean and 2.5/97.5 percentile bounds per carcinogen pair.
+    For each iteration the eight-state decomposition is summarized as mean and
+    2.5/97.5 percentile bounds per carcinogen pair.
     """
     if n_iterations < 2:
         raise ValueError("n_iterations must be >= 2 for confidence intervals")
@@ -3240,28 +3361,21 @@ def monte_carlo_synergy_ci(
             enzyme: math.exp(rng.gauss(0.0, expression_sigma)) for enzyme in enzyme_names
         }
 
-        def _run(**flags: bool) -> dict[str, float]:
-            return compute_interaction_matrix(
-                exposure_profile,
-                genotypes=genotypes,
-                tissue=tissue,
-                lifestyle=lifestyle,
-                param_perturbations=param_perturbations,
-                expression_perturbations=expression_perturbations,
-                include_biological_outputs=False,
-                **flags,
-            ).synergy_matrix
+        decomposed = decompose_synergy(
+            exposure_profile,
+            genotypes=genotypes,
+            tissue=tissue,
+            lifestyle=lifestyle,
+            param_perturbations=param_perturbations,
+            expression_perturbations=expression_perturbations,
+            include_biological_outputs=False,
+        )
 
-        full = _run()
-        comp = _run(enable_induction=False, enable_competition=True, enable_gsh_depletion=False)
-        gsh = _run(enable_induction=False, enable_competition=False, enable_gsh_depletion=True)
-        ind = _run(enable_induction=True, enable_competition=False, enable_gsh_depletion=False)
-
-        for pair, composite in full.items():
-            composite_draws.setdefault(pair, []).append(composite)
-            delta_comp_draws.setdefault(pair, []).append(comp.get(pair, 1.0) - 1.0)
-            delta_gsh_draws.setdefault(pair, []).append(gsh.get(pair, 1.0) - 1.0)
-            delta_ind_draws.setdefault(pair, []).append(ind.get(pair, 1.0) - 1.0)
+        for pair, decomposition in decomposed.items():
+            composite_draws.setdefault(pair, []).append(decomposition.composite)
+            delta_comp_draws.setdefault(pair, []).append(decomposition.delta_comp)
+            delta_gsh_draws.setdefault(pair, []).append(decomposition.delta_gsh)
+            delta_ind_draws.setdefault(pair, []).append(decomposition.delta_ind)
 
     def _summary(values: list[float]) -> tuple[float, tuple[float, float]]:
         mean = sum(values) / len(values) if values else 0.0

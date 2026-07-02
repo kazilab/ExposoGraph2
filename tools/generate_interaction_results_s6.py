@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import csv
 import sys
-from dataclasses import asdict
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -135,12 +134,7 @@ def _decomposition_rows() -> list[dict[str, Any]]:
         if pair not in decomposed:
             continue
         dec = decomposed[pair]
-        rows.append(
-            {
-                "profile": profile_name,
-                **asdict(dec),
-            }
-        )
+        rows.append(_decomposition_row(profile_name, dec))
 
     for audit in PAIR_AUDITS:
         result = compute_interaction_matrix(
@@ -155,11 +149,22 @@ def _decomposition_rows() -> list[dict[str, Any]]:
                         "profile": audit["label"],
                         "pair": pair,
                         "composite": score,
-                        "delta_comp": "",
-                        "delta_gsh": "",
-                        "delta_ind": "",
-                        "additive_estimate": "",
-                        "residual": "",
+                        "dominant_mechanism": "",
+                        "main_effect_induction": "",
+                        "main_effect_competition": "",
+                        "main_effect_gsh": "",
+                        "interaction_induction_competition": "",
+                        "interaction_induction_gsh": "",
+                        "interaction_competition_gsh": "",
+                        "interaction_three_way": "",
+                        "reconstruction_residual": "",
+                        "shapley_residual": "",
+                        "residual_policy": "",
+                        "state_count": "",
+                        "compatibility_delta_comp": "",
+                        "compatibility_delta_gsh": "",
+                        "compatibility_delta_ind": "",
+                        "compatibility_policy": "",
                         "note": audit["expected_note"],
                     }
                 )
@@ -169,15 +174,50 @@ def _decomposition_rows() -> list[dict[str, Any]]:
                     "profile": audit["label"],
                     "pair": "none",
                     "composite": result.interaction_factor,
-                    "delta_comp": "",
-                    "delta_gsh": "",
-                    "delta_ind": "",
-                    "additive_estimate": "",
-                    "residual": "",
+                    "dominant_mechanism": "",
+                    "main_effect_induction": "",
+                    "main_effect_competition": "",
+                    "main_effect_gsh": "",
+                    "interaction_induction_competition": "",
+                    "interaction_induction_gsh": "",
+                    "interaction_competition_gsh": "",
+                    "interaction_three_way": "",
+                    "reconstruction_residual": "",
+                    "shapley_residual": "",
+                    "residual_policy": "",
+                    "state_count": "",
+                    "compatibility_delta_comp": "",
+                    "compatibility_delta_gsh": "",
+                    "compatibility_delta_ind": "",
+                    "compatibility_policy": "",
                     "note": audit["expected_note"],
                 }
             )
     return rows
+
+
+def _decomposition_row(profile: str, dec: Any) -> dict[str, Any]:
+    return {
+        "profile": profile,
+        "pair": dec.pair,
+        "composite": dec.composite,
+        "dominant_mechanism": dec.dominant_mechanism,
+        "main_effect_induction": dec.main_effects["induction"],
+        "main_effect_competition": dec.main_effects["competition"],
+        "main_effect_gsh": dec.main_effects["gsh"],
+        "interaction_induction_competition": dec.pairwise_interactions["induction+competition"],
+        "interaction_induction_gsh": dec.pairwise_interactions["induction+gsh"],
+        "interaction_competition_gsh": dec.pairwise_interactions["competition+gsh"],
+        "interaction_three_way": dec.three_way_interaction,
+        "reconstruction_residual": dec.reconstruction_residual,
+        "shapley_residual": dec.shapley_residual,
+        "residual_policy": dec.residual_policy,
+        "state_count": len(dec.state_values),
+        "compatibility_delta_comp": dec.delta_comp,
+        "compatibility_delta_gsh": dec.delta_gsh,
+        "compatibility_delta_ind": dec.delta_ind,
+        "compatibility_policy": dec.compatibility_fields["policy"],
+    }
 
 
 def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -244,7 +284,8 @@ def _add_metadata_sheet(wb: Workbook) -> None:
         (
             "Formula",
             "pair_synergy = adjusted pair risk / independent pair risk; "
-            "decomposition reports competition, GSH, induction, and residual deltas.",
+            "decomposition reports Shapley main effects, pairwise mechanism interactions, "
+            "the three-way term, and numerical reconstruction residual.",
         ),
         (
             "Important caveat",

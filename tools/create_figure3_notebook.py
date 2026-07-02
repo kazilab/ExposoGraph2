@@ -41,7 +41,7 @@ The default figure uses the built-in `smoker_moderate_drinker` profile from
 `ExposoGraph.interaction_engine.EXPOSURE_PROFILES`, because it is the package's
 representative tobacco-plus-alcohol co-exposure scenario. Pairwise scores are
 computed with `compute_interaction_matrix()` and mechanism decomposition is
-computed with `decompose_synergy()`.
+computed with the eight-state `decompose_synergy()` output.
 
 Important package-alignment notes:
 
@@ -146,7 +146,7 @@ CLASS_SUPPORT_NOTES = {
 For each canonical pair in the selected ExposoGraph profile, the notebook:
 
 1. runs the full interaction matrix,
-2. decomposes synergy into competition, GSH, induction, and residual terms,
+2. decomposes synergy into Shapley main effects and mechanism-interaction terms,
 3. maps canonical carcinogens to manuscript classes,
 4. stores the strongest modeled canonical pair for each class-pair cell.
             """
@@ -188,18 +188,7 @@ def dominant_from_decomposition(pair_name: str) -> str:
     dec = decomposition.get(pair_name)
     if dec is None:
         return "not_decomposed"
-    terms = {
-        "competitive inhibition": dec.delta_comp,
-        "GSH depletion": dec.delta_gsh,
-        "enzyme induction": dec.delta_ind,
-        "residual": dec.residual,
-    }
-    positive_terms = {key: value for key, value in terms.items() if value > 0}
-    if positive_terms:
-        return max(positive_terms, key=positive_terms.get)
-    if dec.delta_comp < 0:
-        return "competitive antagonism"
-    return "near-additive"
+    return dec.dominant_mechanism
 
 
 for pair_name, score in result.synergy_matrix.items():
@@ -254,10 +243,14 @@ with long_csv.open("w", newline="", encoding="utf-8") as handle:
         "source_canonical_pair",
         "support",
         "dominant_mechanism",
-        "delta_comp",
-        "delta_gsh",
-        "delta_ind",
-        "residual",
+        "main_effect_induction",
+        "main_effect_competition",
+        "main_effect_gsh",
+        "interaction_induction_competition",
+        "interaction_induction_gsh",
+        "interaction_competition_gsh",
+        "interaction_three_way",
+        "reconstruction_residual",
     ]
     writer = csv.DictWriter(handle, fieldnames=fieldnames)
     writer.writeheader()
@@ -274,10 +267,14 @@ with long_csv.open("w", newline="", encoding="utf-8") as handle:
                 "source_canonical_pair": pair,
                 "support": support[i, j],
                 "dominant_mechanism": dominant_mechanism[i, j],
-                "delta_comp": "" if dec is None else dec.delta_comp,
-                "delta_gsh": "" if dec is None else dec.delta_gsh,
-                "delta_ind": "" if dec is None else dec.delta_ind,
-                "residual": "" if dec is None else dec.residual,
+                "main_effect_induction": "" if dec is None else dec.main_effects["induction"],
+                "main_effect_competition": "" if dec is None else dec.main_effects["competition"],
+                "main_effect_gsh": "" if dec is None else dec.main_effects["gsh"],
+                "interaction_induction_competition": "" if dec is None else dec.pairwise_interactions["induction+competition"],
+                "interaction_induction_gsh": "" if dec is None else dec.pairwise_interactions["induction+gsh"],
+                "interaction_competition_gsh": "" if dec is None else dec.pairwise_interactions["competition+gsh"],
+                "interaction_three_way": "" if dec is None else dec.three_way_interaction,
+                "reconstruction_residual": "" if dec is None else dec.reconstruction_residual,
             })
 
 print(matrix_csv)
