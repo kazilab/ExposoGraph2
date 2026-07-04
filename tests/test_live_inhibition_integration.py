@@ -1,5 +1,5 @@
+import ast
 import math
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -8,8 +8,6 @@ import ExposoGraph.flux_engine as flux_engine
 import ExposoGraph.interaction_engine as interaction_engine
 from ExposoGraph.interaction_schema import ConcentrationBasis, InhibitionMode
 from ExposoGraph.parameter_resolution import InhibitionResolutionStatus
-
-REPO = Path(__file__).resolve().parents[1]
 
 
 def _finite_walk(value):
@@ -257,6 +255,47 @@ def test_multiple_explicit_inhibition_contexts_are_deferred_without_quantitative
     _finite_walk(benzene.__dict__)
 
 
+def test_implicit_mixed_competitor_resolution_does_not_quantify_partial_aggregate():
+    result = interaction_engine.competitive_inhibition_flux(
+        "CYP2E1",
+        {"benzene": 10.0, "ethanol": 2000.0, "unknown_competitor": 100.0},
+    )
+    benzene = result.substrates["benzene"]
+
+    assert benzene.kinetic_modifier is None
+    assert benzene.modified_flux is None
+    assert benzene.competitive_flux == benzene.single_flux
+    assert benzene.kinetic_resolution_status == InhibitionResolutionStatus.REVIEW_REQUIRED.value
+    assert benzene.discrepancy_classification == "incomplete_competitor_resolution"
+    assert "INCOMPLETE_COMPETITOR_KI_RESOLUTION" in benzene.kinetic_warning_codes
+    assert "KI_MISSING" in benzene.kinetic_warning_codes
+    assert benzene.aggregate_resolution["active_competitor_count"] == 2
+    assert benzene.aggregate_resolution["resolved_competitor_count"] == 1
+    assert benzene.aggregate_resolution["unresolved_competitor_count"] == 1
+    assert benzene.aggregate_resolution["all_active_competitors_resolved"] is False
+    _finite_walk(benzene.__dict__)
+
+
+def test_implicit_aggregate_preserves_per_inhibitor_provenance_in_biological_output():
+    result = interaction_engine.competitive_inhibition_flux(
+        "CYP2E1",
+        {"benzene": 10.0, "ethanol": 2000.0, "unknown_competitor": 100.0},
+    )
+    benzene = result.substrates["benzene"]
+    aggregate = benzene.biological_output["kinetic_effect"]["provenance"]["aggregate_resolution"]
+    competitors = {item["inhibitor"]: item for item in aggregate["competitors"]}
+
+    assert aggregate["all_active_competitors_resolved"] is False
+    assert competitors["ethanol"]["resolved"] is True
+    assert competitors["ethanol"]["ki_uM"] == pytest.approx(13000.0)
+    assert competitors["ethanol"]["resolution_method"] == "measured_value"
+    assert competitors["ethanol"]["source_kind"] == "curated"
+    assert competitors["unknown_competitor"]["resolved"] is False
+    assert "KI_MISSING" in competitors["unknown_competitor"]["warnings"]
+    assert aggregate["aggregate_status"] == InhibitionResolutionStatus.REVIEW_REQUIRED.value
+    _finite_walk(aggregate)
+
+
 def test_live_internal_results_remain_finite():
     result = interaction_engine.competitive_inhibition_flux(
         "CYP2E1",
@@ -302,16 +341,41 @@ def test_public_interaction_compat_payload_keeps_legacy_fields_and_adds_optional
     assert benzene["biological_output"]["kinetic_effect"]["status"]
 
 
-def test_transparency_module_is_not_modified_by_live_inhibition_scope():
-    changed = subprocess.run(
-        ["git", "diff", "--name-only"],
-        cwd=REPO,
-        check=True,
-        text=True,
-        stdout=subprocess.PIPE,
-    ).stdout.splitlines()
-
-    live_integration_forbidden_modules = {
-        "ExposoGraph/model_transparency.py",
+def test_transparency_module_does_not_call_live_inhibition_machinery():
+    transparency_path = Path(interaction_engine.__file__).with_name("model_transparency.py")
+    tree = ast.parse(transparency_path.read_text(encoding="utf-8"))
+    forbidden_modules = {"interaction_engine"}
+    forbidden_calls = {
+        "compute_interaction_matrix",
+        "competitive_inhibition_flux",
+        "get_ki",
+        "resolve_reversible_inhibition",
     }
-    assert live_integration_forbidden_modules.isdisjoint(set(changed))
+    imported_live_symbols = set()
+    called_live_symbols = set()
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported_live_symbols.update(
+                alias.name.rsplit(".", 1)[-1]
+                for alias in node.names
+                if alias.name.rsplit(".", 1)[-1] in forbidden_modules
+            )
+        elif isinstance(node, ast.ImportFrom):
+            module_name = (node.module or "").rsplit(".", 1)[-1]
+            if module_name in forbidden_modules:
+                imported_live_symbols.add(module_name)
+            imported_live_symbols.update(
+                alias.name for alias in node.names if alias.name in forbidden_modules
+            )
+            imported_live_symbols.update(
+                alias.name for alias in node.names if alias.name in forbidden_calls
+            )
+        elif isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name) and node.func.id in forbidden_calls:
+                called_live_symbols.add(node.func.id)
+            elif isinstance(node.func, ast.Attribute) and node.func.attr in forbidden_calls:
+                called_live_symbols.add(node.func.attr)
+
+    assert imported_live_symbols == set()
+    assert called_live_symbols == set()

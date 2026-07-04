@@ -85,6 +85,7 @@ class SubstrateFluxChange:
     modifier_applied_once: bool = False
     discrepancy_classification: str = "not_compared"
     biological_output: dict[str, Any] | None = None
+    aggregate_resolution: dict[str, Any] | None = None
 
 
 @dataclass
@@ -344,11 +345,7 @@ class InteractionMatrixResult:
 
 @dataclass
 class SynergyDecomposition:
-    """Additive decomposition of a carcinogen-pair synergy factor.
-    ``S_composite ≈ 1 + ΔS_comp + ΔS_gsh + ΔS_ind``.
-    ``residual`` captures the departure from pure additivity (cross-mechanism
-    coupling from multiplicative combination in the full model).
-    """
+    """Pairwise synergy attribution with compatibility singleton fields."""
 
     pair: str
     composite: float
@@ -357,6 +354,18 @@ class SynergyDecomposition:
     delta_ind: float
     additive_estimate: float
     residual: float
+    shapley_decomposition: dict[str, Any] = field(default_factory=dict)
+    main_effects: dict[str, float] = field(default_factory=dict)
+    pairwise_interactions: dict[str, float] = field(default_factory=dict)
+    three_way_interaction: float = 0.0
+    reconstruction_residual: float = 0.0
+    shapley_residual: float = 0.0
+    residuals_are_zero_within_tolerance: bool = True
+    state_values: dict[str, float] = field(default_factory=dict)
+    decomposition_basis: str = "eight_state_shapley"
+    residual_policy: str = "numerical_reconstruction_check_only"
+    compatibility_fields: dict[str, Any] = field(default_factory=dict)
+    dominant_mechanism: str = "near-additive"
 
 
 @dataclass
@@ -1334,6 +1343,11 @@ def competitive_inhibition_flux(
             centralized_resolver_used=bool(resolution["centralized_resolver_used"]),
             modifier_applied_once=modifier_applied_once,
             discrepancy_classification=str(resolution["discrepancy_classification"]),
+            aggregate_resolution=(
+                deepcopy(resolution["aggregate_resolution"])
+                if resolution.get("aggregate_resolution") is not None
+                else None
+            ),
         )
         if include_biological_outputs:
             flux_change.biological_output = _build_live_biological_output(
@@ -1386,23 +1400,70 @@ def _resolve_live_inhibition_modifier(
     normalized_inhibitor_load = 0.0
     warning_codes: set[str] = set()
     resolved_any = False
+    competitor_details: list[dict[str, Any]] = []
     for other_name, other_conc in positive_competitors:
         ki = get_ki(enzyme, other_name, target_substrate=target_substrate)
+        competitor_warnings = [
+            warning.code.upper()
+            for warning in (ki.warnings or [])
+            if getattr(warning, "code", None)
+        ]
         if ki.warnings:
-            warning_codes.update(warning.code.upper() for warning in ki.warnings)
+            warning_codes.update(competitor_warnings)
+        detail: dict[str, Any] = {
+            "inhibitor": other_name,
+            "concentration_uM": other_conc,
+            "ki_uM": None,
+            "normalized_load_contribution": None,
+            "resolution_method": str(ki.resolution_method),
+            "source_kind": str(ki.source_kind),
+            "confidence": ki.uncertainty.confidence if ki.uncertainty else None,
+            "warnings": competitor_warnings,
+            "resolved": False,
+            "metadata": deepcopy(ki.metadata) if ki.metadata is not None else None,
+        }
         if ki.value is None:
             warning_codes.add("KI_MISSING")
+            if "KI_MISSING" not in detail["warnings"]:
+                detail["warnings"].append("KI_MISSING")
+            competitor_details.append(detail)
             continue
         ki_value = float(ki.value)
         if ki.resolution_method.value == "assumed_equal_km":
             ki_value *= float(scale_for(other_name, "Km"))
         if ki_value <= 0.0 or not math.isfinite(ki_value):
             warning_codes.add("OUTSIDE_REVERSIBLE_INHIBITION_DOMAIN")
+            detail["warnings"].append("OUTSIDE_REVERSIBLE_INHIBITION_DOMAIN")
+            competitor_details.append(detail)
             continue
-        normalized_inhibitor_load += other_conc / ki_value
+        contribution = other_conc / ki_value
+        normalized_inhibitor_load += contribution
         resolved_any = True
+        detail.update(
+            {
+                "ki_uM": _round(ki_value, 6),
+                "normalized_load_contribution": _round(contribution, 8),
+                "resolved": True,
+            }
+        )
+        competitor_details.append(detail)
+
+    unresolved_count = sum(1 for detail in competitor_details if not detail["resolved"])
+    aggregate_resolution = {
+        "mode": "implicit_competitive_load",
+        "target_substrate": target_substrate,
+        "active_competitor_count": len(positive_competitors),
+        "resolved_competitor_count": len(positive_competitors) - unresolved_count,
+        "unresolved_competitor_count": unresolved_count,
+        "all_active_competitors_resolved": unresolved_count == 0,
+        "normalized_inhibitor_load": _round(normalized_inhibitor_load, 8),
+        "competitors": competitor_details,
+    }
 
     if not resolved_any:
+        warning_codes.add("INCOMPLETE_COMPETITOR_KI_RESOLUTION")
+        aggregate_resolution["aggregate_status"] = str(InhibitionResolutionStatus.REVIEW_REQUIRED)
+        aggregate_resolution["aggregate_warnings"] = sorted(warning_codes or {"KI_MISSING"})
         return _modifier_record(
             modifier=None,
             status=InhibitionResolutionStatus.REVIEW_REQUIRED,
@@ -1411,6 +1472,22 @@ def _resolve_live_inhibition_modifier(
             applied_resolver=False,
             inhibition_term=0.0,
             discrepancy_classification="changed_fallback_behavior",
+            aggregate_resolution=aggregate_resolution,
+        )
+
+    if unresolved_count:
+        warning_codes.add("INCOMPLETE_COMPETITOR_KI_RESOLUTION")
+        aggregate_resolution["aggregate_status"] = str(InhibitionResolutionStatus.REVIEW_REQUIRED)
+        aggregate_resolution["aggregate_warnings"] = sorted(warning_codes)
+        return _modifier_record(
+            modifier=None,
+            status=InhibitionResolutionStatus.REVIEW_REQUIRED,
+            mode=InhibitionMode.COMPETITIVE,
+            warning_codes=warning_codes,
+            applied_resolver=False,
+            inhibition_term=normalized_inhibitor_load,
+            discrepancy_classification="incomplete_competitor_resolution",
+            aggregate_resolution=aggregate_resolution,
         )
 
     resolved = resolve_reversible_inhibition(
@@ -1431,6 +1508,8 @@ def _resolve_live_inhibition_modifier(
         }
     )
     warning_codes.update(warning.code for warning in (resolved.warnings or []))
+    aggregate_resolution["aggregate_status"] = str(resolved.status)
+    aggregate_resolution["aggregate_warnings"] = sorted(warning_codes)
     if resolved.status not in {
         InhibitionResolutionStatus.RESOLVED_DIRECT,
         InhibitionResolutionStatus.RESOLVED_DERIVED,
@@ -1443,6 +1522,7 @@ def _resolve_live_inhibition_modifier(
             applied_resolver=True,
             inhibition_term=normalized_inhibitor_load,
             discrepancy_classification="actual_defect",
+            aggregate_resolution=aggregate_resolution,
         )
 
     return _modifier_record(
@@ -1453,6 +1533,7 @@ def _resolve_live_inhibition_modifier(
         applied_resolver=True,
         inhibition_term=normalized_inhibitor_load,
         discrepancy_classification="numerical_precision",
+        aggregate_resolution=aggregate_resolution,
     )
 
 
@@ -1542,6 +1623,7 @@ def _modifier_record(
     applied_resolver: bool,
     inhibition_term: float = 0.0,
     discrepancy_classification: str,
+    aggregate_resolution: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "modifier": modifier,
@@ -1551,6 +1633,7 @@ def _modifier_record(
         "centralized_resolver_used": applied_resolver,
         "inhibition_term": inhibition_term,
         "discrepancy_classification": discrepancy_classification,
+        "aggregate_resolution": aggregate_resolution,
     }
 
 def _build_live_biological_output(
@@ -1609,6 +1692,8 @@ def _build_live_biological_output(
             "output_role": output_role,
         },
     }
+    if flux.aggregate_resolution is not None:
+        kinetic_effect["provenance"]["aggregate_resolution"] = deepcopy(flux.aggregate_resolution)
 
     annotation = None
     if selected_resolution is not None:
@@ -3040,74 +3125,187 @@ def identify_critical_interactions(
     return _severity_sorted(interactions)
 
 
+_SYNERGY_MECHANISM_LABELS = {
+    "induction": "enzyme induction",
+    "competition": "competitive inhibition",
+    "gsh": "GSH depletion",
+    "induction+competition": "induction x competition",
+    "induction+gsh": "induction x GSH",
+    "competition+gsh": "competition x GSH",
+    "induction+competition+gsh": "induction x competition x GSH",
+}
+
+
+def _effect_by_mechanism(effects: list[dict[str, Any]]) -> dict[str, float]:
+    return {
+        str(effect["mechanism"]): float(effect["effect"])
+        for effect in effects
+    }
+
+
+def _interaction_by_key(terms: list[dict[str, Any]]) -> dict[str, float]:
+    keyed: dict[str, float] = {}
+    for term in terms:
+        key = "+".join(str(mechanism) for mechanism in term["mechanisms"])
+        keyed[key] = float(term["effect"])
+    return keyed
+
+
+def _dominant_synergy_mechanism(
+    main_effects: dict[str, float],
+    pairwise_interactions: dict[str, float],
+    three_way_interaction: float,
+) -> str:
+    terms = {
+        _SYNERGY_MECHANISM_LABELS[key]: value
+        for key, value in {
+            **main_effects,
+            **pairwise_interactions,
+            "induction+competition+gsh": three_way_interaction,
+        }.items()
+    }
+    positive_terms = {key: value for key, value in terms.items() if value > 0.0}
+    if positive_terms:
+        return max(positive_terms, key=positive_terms.get)
+    if main_effects.get("competition", 0.0) < 0.0:
+        return "competitive antagonism"
+    return "near-additive"
+
+
+def _compute_synergy_state_results(
+    exposure_profile: Mapping[str, float | dict[str, Any]],
+    *,
+    genotypes: dict[str, str] | None,
+    tissue: str,
+    lifestyle: Mapping[str, bool | int | float] | None,
+    param_perturbations: dict[str, dict[str, float]] | None = None,
+    expression_perturbations: dict[str, float] | None = None,
+) -> dict[str, InteractionMatrixResult]:
+    state_results: dict[str, InteractionMatrixResult] = {}
+    for state in generate_mechanism_states():
+        state_results[state.key] = compute_interaction_matrix(
+            exposure_profile,
+            genotypes=genotypes,
+            tissue=tissue,
+            lifestyle=lifestyle,
+            enable_induction=state.induction,
+            enable_competition=state.competition,
+            enable_gsh_depletion=state.gsh,
+            param_perturbations=param_perturbations,
+            expression_perturbations=expression_perturbations,
+            include_biological_outputs=False,
+        )
+    return state_results
+
+
+def _build_pair_synergy_decomposition(
+    pair: str,
+    state_results: dict[str, InteractionMatrixResult],
+    *,
+    tolerance: float,
+) -> SynergyDecomposition:
+    state_values = {
+        state.key: state_results[state.key].synergy_matrix.get(pair, 1.0)
+        for state in generate_mechanism_states()
+    }
+    attribution = compute_mechanism_attribution(state_values, tolerance=tolerance).to_dict()
+    main_effects = _effect_by_mechanism(attribution["shapley_main_effects"])
+    singleton_effects = _interaction_by_key(attribution["singleton_effects"])
+    pairwise_interactions = _interaction_by_key(attribution["pairwise_interactions"])
+    three_way_interaction = float(attribution["three_way_interaction"]["effect"])
+    reconstruction_residual = float(attribution["interaction_reconstruction_residual"])
+    shapley_residual = float(attribution["shapley_residual"])
+    additive_estimate = (
+        1.0
+        + sum(singleton_effects.values())
+        + sum(pairwise_interactions.values())
+        + three_way_interaction
+    )
+    compatibility_fields = {
+        "policy": "compatibility_only",
+        "basis": "singleton_effects_from_eight_state_decomposition",
+        "residual": "numerical_reconstruction_check_only",
+        "primary_fields": [
+            "main_effects",
+            "pairwise_interactions",
+            "three_way_interaction",
+            "reconstruction_residual",
+        ],
+    }
+    shapley_decomposition = {
+        "decomposition_basis": "eight_state_shapley",
+        "state_count": len(state_values),
+        "state_values": {key: _round(value, 6) for key, value in state_values.items()},
+        "main_effects": {key: _round(value, 6) for key, value in main_effects.items()},
+        "singleton_effects": {key: _round(value, 6) for key, value in singleton_effects.items()},
+        "pairwise_interactions": {
+            key: _round(value, 6) for key, value in pairwise_interactions.items()
+        },
+        "three_way_interaction": _round(three_way_interaction, 6),
+        "reconstruction_residual": _round(reconstruction_residual, 12),
+        "shapley_residual": _round(shapley_residual, 12),
+        "residuals_are_zero_within_tolerance": bool(
+            attribution["residuals_are_zero_within_tolerance"]
+        ),
+        "tolerance": float(attribution["tolerance"]),
+        "residual_policy": "numerical_reconstruction_check_only",
+        "source": "compute_interaction_matrix",
+    }
+    return SynergyDecomposition(
+        pair=pair,
+        composite=_round(float(attribution["full_value"]), 4),
+        delta_comp=_round(singleton_effects.get("competition", 0.0), 4),
+        delta_gsh=_round(singleton_effects.get("gsh", 0.0), 4),
+        delta_ind=_round(singleton_effects.get("induction", 0.0), 4),
+        additive_estimate=_round(additive_estimate, 4),
+        residual=_round(reconstruction_residual, 12),
+        shapley_decomposition=shapley_decomposition,
+        main_effects={key: _round(value, 6) for key, value in main_effects.items()},
+        pairwise_interactions={
+            key: _round(value, 6) for key, value in pairwise_interactions.items()
+        },
+        three_way_interaction=_round(three_way_interaction, 6),
+        reconstruction_residual=_round(reconstruction_residual, 12),
+        shapley_residual=_round(shapley_residual, 12),
+        residuals_are_zero_within_tolerance=bool(
+            attribution["residuals_are_zero_within_tolerance"]
+        ),
+        state_values={key: _round(value, 6) for key, value in state_values.items()},
+        compatibility_fields=compatibility_fields,
+        dominant_mechanism=_dominant_synergy_mechanism(
+            main_effects,
+            pairwise_interactions,
+            three_way_interaction,
+        ),
+    )
+
+
 def decompose_synergy(
     exposure_profile: dict[str, float | dict[str, Any]],
     *,
     genotypes: dict[str, str] | None = None,
     tissue: str = "Liver",
     lifestyle: dict[str, bool] | None = None,
+    param_perturbations: dict[str, dict[str, float]] | None = None,
+    expression_perturbations: dict[str, float] | None = None,
+    include_biological_outputs: bool = False,
+    tolerance: float = 1e-9,
 ) -> dict[str, SynergyDecomposition]:
-    """Decompose pairwise synergy into competition, GSH, and induction deltas.
-
-    Runs ``compute_interaction_matrix`` four times (full, competition-only,
-    GSH-only, induction-only) and reports
-    ``S = 1 + ΔS_comp + ΔS_gsh + ΔS_ind + residual`` for each carcinogen pair
-    in the exposure profile.
-    """
-    full_result = compute_interaction_matrix(
+    """Decompose pairwise synergy with the eight-state attribution layer."""
+    _ = include_biological_outputs
+    state_results = _compute_synergy_state_results(
         exposure_profile,
         genotypes=genotypes,
         tissue=tissue,
         lifestyle=lifestyle,
-        include_biological_outputs=False,
+        param_perturbations=param_perturbations,
+        expression_perturbations=expression_perturbations,
     )
-    comp_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=True,
-        enable_gsh_depletion=False,
-        include_biological_outputs=False,
-    )
-    gsh_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=False,
-        enable_gsh_depletion=True,
-        include_biological_outputs=False,
-    )
-    ind_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=True,
-        enable_competition=False,
-        enable_gsh_depletion=False,
-        include_biological_outputs=False,
-    )
-
-    decomposed: dict[str, SynergyDecomposition] = {}
-    for pair, composite in full_result.synergy_matrix.items():
-        delta_comp = comp_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_gsh = gsh_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_ind = ind_only.synergy_matrix.get(pair, 1.0) - 1.0
-        additive = 1.0 + delta_comp + delta_gsh + delta_ind
-        decomposed[pair] = SynergyDecomposition(
-            pair=pair,
-            composite=_round(composite, 4),
-            delta_comp=_round(delta_comp, 4),
-            delta_gsh=_round(delta_gsh, 4),
-            delta_ind=_round(delta_ind, 4),
-            additive_estimate=_round(additive, 4),
-            residual=_round(composite - additive, 4),
-        )
-    return decomposed
+    full_result = state_results["induction+competition+gsh"]
+    return {
+        pair: _build_pair_synergy_decomposition(pair, state_results, tolerance=tolerance)
+        for pair in full_result.synergy_matrix
+    }
 
 
 def monte_carlo_synergy_ci(
@@ -3121,13 +3319,13 @@ def monte_carlo_synergy_ci(
     expression_sigma: float = 0.3,
     seed: int | None = None,
 ) -> dict[str, SynergyConfidenceInterval]:
-    """Bootstrap 95% CIs for pairwise synergy factors and mechanism deltas.
+    """Bootstrap 95% CIs for pairwise synergy factors and singleton effects.
 
     Km/Vmax parameters are perturbed by multiplicative lognormal noise with
     ``sigma=km_sigma`` (default ≈ ±50% one-sigma spread); enzyme expression
     weights are perturbed with ``sigma=expression_sigma`` (default ≈ ±30%).
-    For each iteration the synergy is decomposed and the aggregated draws are
-    summarized as mean and 2.5/97.5 percentile bounds per carcinogen pair.
+    For each iteration the eight-state decomposition is summarized as mean and
+    2.5/97.5 percentile bounds per carcinogen pair.
     """
     if n_iterations < 2:
         raise ValueError("n_iterations must be >= 2 for confidence intervals")
@@ -3163,28 +3361,21 @@ def monte_carlo_synergy_ci(
             enzyme: math.exp(rng.gauss(0.0, expression_sigma)) for enzyme in enzyme_names
         }
 
-        def _run(**flags: bool) -> dict[str, float]:
-            return compute_interaction_matrix(
-                exposure_profile,
-                genotypes=genotypes,
-                tissue=tissue,
-                lifestyle=lifestyle,
-                param_perturbations=param_perturbations,
-                expression_perturbations=expression_perturbations,
-                include_biological_outputs=False,
-                **flags,
-            ).synergy_matrix
+        decomposed = decompose_synergy(
+            exposure_profile,
+            genotypes=genotypes,
+            tissue=tissue,
+            lifestyle=lifestyle,
+            param_perturbations=param_perturbations,
+            expression_perturbations=expression_perturbations,
+            include_biological_outputs=False,
+        )
 
-        full = _run()
-        comp = _run(enable_induction=False, enable_competition=True, enable_gsh_depletion=False)
-        gsh = _run(enable_induction=False, enable_competition=False, enable_gsh_depletion=True)
-        ind = _run(enable_induction=True, enable_competition=False, enable_gsh_depletion=False)
-
-        for pair, composite in full.items():
-            composite_draws.setdefault(pair, []).append(composite)
-            delta_comp_draws.setdefault(pair, []).append(comp.get(pair, 1.0) - 1.0)
-            delta_gsh_draws.setdefault(pair, []).append(gsh.get(pair, 1.0) - 1.0)
-            delta_ind_draws.setdefault(pair, []).append(ind.get(pair, 1.0) - 1.0)
+        for pair, decomposition in decomposed.items():
+            composite_draws.setdefault(pair, []).append(decomposition.composite)
+            delta_comp_draws.setdefault(pair, []).append(decomposition.delta_comp)
+            delta_gsh_draws.setdefault(pair, []).append(decomposition.delta_gsh)
+            delta_ind_draws.setdefault(pair, []).append(decomposition.delta_ind)
 
     def _summary(values: list[float]) -> tuple[float, tuple[float, float]]:
         mean = sum(values) / len(values) if values else 0.0
