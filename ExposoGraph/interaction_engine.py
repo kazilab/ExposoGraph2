@@ -17,10 +17,23 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Mapping
 
-from .effective_burden import EffectiveBurdenInput, GSHBurdenCouplingInput, compute_effective_carcinogenic_burden
-from .endpoint_toxic_flux import EndpointFluxInput, interpret_endpoint_toxic_flux
+from .effective_burden import (
+    EffectiveBurdenInput,
+    EffectiveBurdenResult,
+    GSHBurdenCouplingInput,
+    compute_effective_carcinogenic_burden,
+)
+from .endpoint_toxic_flux import (
+    EndpointFluxInput,
+    EndpointToxicFluxResult,
+    interpret_endpoint_toxic_flux,
+)
 from .flux_engine import apply_kinetic_modifier_once
-from .gsh_redox_capacity import GSHRedoxCapacityInput, compute_gsh_redox_capacity
+from .gsh_redox_capacity import (
+    GSHModelVersion,
+    GSHRedoxCapacityInput,
+    compute_gsh_redox_capacity,
+)
 from .interaction_schema import (
     ApplicabilityDomain,
     AssumptionWarning,
@@ -72,6 +85,7 @@ class SubstrateFluxChange:
     modifier_applied_once: bool = False
     discrepancy_classification: str = "not_compared"
     biological_output: dict[str, Any] | None = None
+    aggregate_resolution: dict[str, Any] | None = None
 
 
 @dataclass
@@ -99,6 +113,201 @@ class GSHStatus:
     individual_contributions: dict[str, Any]
     time_to_depletion_h: float | None
     tissue: str
+    model_version: str = GSHModelVersion.LEGACY_DETACHED_GSH_PENALTY.value
+    redox_capacity_ratio: float | None = None
+    detox_penalty_multiplier: float | None = None
+    warnings: list[dict[str, Any]] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class MechanismResolvedRisk:
+    """Per-carcinogen mechanism calculation used for adjusted relative risk."""
+
+    carcinogen: str
+    baseline_relative_risk: float
+    induction_multiplier: float
+    inhibition_burden_multiplier: float
+    activation_burden_ratio: float
+    detox_failure_ratio: float
+    matrix_gsh_penalty: float
+    gsh_pool_penalty: float
+    susceptibility_modifier: float
+    susceptibility_applied_in: str | None
+    final_mechanism_multiplier: float
+    adjusted_relative_risk: float
+    inhibition_status: str
+    review_required: bool
+    warnings: list[str] = field(default_factory=list)
+    provenance: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return _json_sanitize(
+            {
+                "carcinogen": self.carcinogen,
+                "baseline_relative_risk": self.baseline_relative_risk,
+                "induction_multiplier": self.induction_multiplier,
+                "inhibition_burden_multiplier": self.inhibition_burden_multiplier,
+                "activation_burden_ratio": self.activation_burden_ratio,
+                "detox_failure_ratio": self.detox_failure_ratio,
+                "matrix_gsh_penalty": self.matrix_gsh_penalty,
+                "gsh_pool_penalty": self.gsh_pool_penalty,
+                "susceptibility_modifier": self.susceptibility_modifier,
+                "susceptibility_applied_in": self.susceptibility_applied_in,
+                "final_mechanism_multiplier": self.final_mechanism_multiplier,
+                "adjusted_relative_risk": self.adjusted_relative_risk,
+                "inhibition_status": self.inhibition_status,
+                "review_required": self.review_required,
+                "warnings": list(self.warnings),
+                "provenance": deepcopy(self.provenance),
+            }
+        )
+
+
+@dataclass
+class _InhibitionBurdenResolution:
+    burden_multiplier: float
+    activation_burden_ratio: float
+    detox_failure_ratio: float
+    endpoint_toxic_flux_ratio: float | None
+    status: str
+    review_required: bool
+    enzyme: str | None = None
+    flux_substrate: str | None = None
+    interpretation_substrate: str | None = None
+    tissue: str | None = None
+    flux_ratio: float | None = None
+    warnings: list[str] = field(default_factory=list)
+    reaction_role_annotation: Any | None = None
+    reaction_role_block: dict[str, Any] | None = None
+    endpoint_toxic_flux_result: EndpointToxicFluxResult | None = None
+    effective_burden_result: EffectiveBurdenResult | None = None
+    provenance: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def reaction_role_interpretation(self) -> dict[str, Any]:
+        if self.reaction_role_block is not None:
+            return deepcopy(self.reaction_role_block)
+        if self.status == "mechanism_absent":
+            directional = "not_applicable_mechanism_absent"
+        elif self.review_required:
+            directional = "withheld_review_required"
+        else:
+            directional = "no_directional_change"
+        return {
+            "role": str(ReactionRole.UNKNOWN),
+            "directional_interpretation": directional,
+            "risk_direction_if_flux_decreases": str(RiskDirectionIfFluxDecreases.UNKNOWN),
+            "annotation_record_id": self.provenance.get("annotation_record_id"),
+            "review_required": self.review_required,
+            "warnings": list(self.warnings),
+            "sme_notes": [],
+            "status": self.status,
+        }
+
+    @property
+    def endpoint_toxic_flux(self) -> dict[str, Any] | None:
+        if self.endpoint_toxic_flux_result is None:
+            if self.enzyme is None or self.interpretation_substrate is None:
+                return None
+            reaction_role = self.reaction_role_interpretation
+            endpoint_block = {
+                "enzyme": self.enzyme,
+                "substrate": self.interpretation_substrate,
+                "tissue": self.tissue,
+                "endpoint": None,
+                "flux_ratio": self.flux_ratio,
+                "endpoint_toxic_flux_ratio": self.endpoint_toxic_flux_ratio,
+                "burden_multiplier": self.burden_multiplier,
+                "activation_burden_ratio": self.activation_burden_ratio,
+                "detox_failure_ratio": self.detox_failure_ratio,
+                "reaction_role": reaction_role.get("role"),
+                "risk_direction_if_flux_decreases": reaction_role.get(
+                    "risk_direction_if_flux_decreases"
+                ),
+                "annotation_record_id": reaction_role.get("annotation_record_id"),
+                "warnings": list(self.warnings),
+                "role_warnings": deepcopy(reaction_role.get("warnings", [])),
+                "sme_notes": deepcopy(reaction_role.get("sme_notes", [])),
+                "metadata": {
+                    "source": "interaction_engine.selected_inhibition_resolution",
+                    "kinetic_mechanism_state": self.status,
+                    "flux_substrate": self.flux_substrate,
+                    "neutral_authoritative_resolution": True,
+                },
+                "status": self.status,
+            }
+        else:
+            endpoint_block = self.endpoint_toxic_flux_result.to_dict()
+        endpoint_block["review_required"] = self.review_required
+        return endpoint_block
+
+    @property
+    def effective_burden(self) -> dict[str, Any] | None:
+        if self.effective_burden_result is None:
+            if self.enzyme is None or self.interpretation_substrate is None:
+                return None
+            reaction_role = self.reaction_role_interpretation
+            effective_block = {
+                "activation_burden_ratio": self.activation_burden_ratio,
+                "detox_failure_ratio": self.detox_failure_ratio,
+                "gsh_detox_penalty_ratio": 1.0,
+                "susceptibility_modifier": 1.0,
+                "effective_carcinogenic_burden_ratio": self.burden_multiplier,
+                "gsh_relevant": False,
+                "gsh_consumption_load": None,
+                "gsh_consumption_load_scaled": None,
+                "gsh_fraction": None,
+                "redox_capacity_ratio": None,
+                "model_boundary": "interaction_matrix_selected_inhibition_resolution",
+                "warnings": list(self.warnings),
+                "evidence": None,
+                "gsh_coupling_result": None,
+                "reaction_role": reaction_role.get("role"),
+                "risk_direction_if_flux_decreases": reaction_role.get(
+                    "risk_direction_if_flux_decreases"
+                ),
+                "annotation_record_id": reaction_role.get("annotation_record_id"),
+                "role_warnings": deepcopy(reaction_role.get("warnings", [])),
+                "sme_notes": deepcopy(reaction_role.get("sme_notes", [])),
+                "metadata": {
+                    "source": "interaction_engine.selected_inhibition_resolution",
+                    "kinetic_mechanism_state": self.status,
+                    "flux_substrate": self.flux_substrate,
+                    "neutral_authoritative_resolution": True,
+                },
+                "status": self.status,
+            }
+        else:
+            effective_block = self.effective_burden_result.to_dict()
+        effective_block["review_required"] = self.review_required
+        return effective_block
+
+    def to_provenance(self) -> dict[str, Any]:
+        return _json_sanitize(
+            {
+                "inhibition": {
+                    "enzyme": self.enzyme,
+                    "flux_substrate": self.flux_substrate,
+                    "interpretation_substrate": self.interpretation_substrate,
+                    "flux_ratio": self.flux_ratio,
+                    "endpoint_toxic_flux_ratio": self.endpoint_toxic_flux_ratio,
+                    "status": self.status,
+                    "review_required": self.review_required,
+                    "warnings": list(self.warnings),
+                    "reaction_role_interpretation": deepcopy(self.reaction_role_interpretation),
+                    "reaction_role_annotation": (
+                        self.reaction_role_annotation.to_dict()
+                        if self.reaction_role_annotation is not None
+                        and hasattr(self.reaction_role_annotation, "to_dict")
+                        else deepcopy(self.reaction_role_annotation)
+                    ),
+                    "endpoint_toxic_flux": deepcopy(self.endpoint_toxic_flux),
+                    "effective_burden": deepcopy(self.effective_burden),
+                    **deepcopy(self.provenance),
+                }
+            }
+        )
 
 
 @dataclass
@@ -131,15 +340,12 @@ class InteractionMatrixResult:
     lifestyle: dict[str, Any]
     summary: str
     mechanism_attribution: dict[str, Any] | None = None
+    mechanism_resolved_risks: dict[str, MechanismResolvedRisk] = field(default_factory=dict)
 
 
 @dataclass
 class SynergyDecomposition:
-    """Additive decomposition of a carcinogen-pair synergy factor.
-    ``S_composite ≈ 1 + ΔS_comp + ΔS_gsh + ΔS_ind``.
-    ``residual`` captures the departure from pure additivity (cross-mechanism
-    coupling from multiplicative combination in the full model).
-    """
+    """Pairwise synergy attribution with compatibility singleton fields."""
 
     pair: str
     composite: float
@@ -148,6 +354,18 @@ class SynergyDecomposition:
     delta_ind: float
     additive_estimate: float
     residual: float
+    shapley_decomposition: dict[str, Any] = field(default_factory=dict)
+    main_effects: dict[str, float] = field(default_factory=dict)
+    pairwise_interactions: dict[str, float] = field(default_factory=dict)
+    three_way_interaction: float = 0.0
+    reconstruction_residual: float = 0.0
+    shapley_residual: float = 0.0
+    residuals_are_zero_within_tolerance: bool = True
+    state_values: dict[str, float] = field(default_factory=dict)
+    decomposition_basis: str = "eight_state_shapley"
+    residual_policy: str = "numerical_reconstruction_check_only"
+    compatibility_fields: dict[str, Any] = field(default_factory=dict)
+    dominant_mechanism: str = "near-additive"
 
 
 @dataclass
@@ -654,6 +872,269 @@ def _to_gsh_rate_map(exposure_profile: dict[str, Any]) -> dict[str, float]:
     return rate_map
 
 
+def _gsh_consumer_key(base_key: str) -> str:
+    return {
+        "PAH": "PAH_GSTM1",
+        "chromium_VI": "chromium_VI",
+        "arsenic": "arsenic_methylation",
+        "cadmium": "cadmium",
+        "acrolein": "acrolein",
+        "ethanol": "ethanol_ROS",
+        "BPDE": "BPDE_conjugation",
+        "acetaminophen": "acetaminophen_NAPQI",
+    }.get(base_key, base_key)
+
+
+def _warning_dict(code: str, message: str, *, field: str | None = None) -> dict[str, Any]:
+    payload: dict[str, Any] = {"code": code, "message": message}
+    if field is not None:
+        payload["field"] = field
+    return payload
+
+
+def _warning_to_dict(warning: Any) -> dict[str, Any]:
+    if hasattr(warning, "to_dict"):
+        return warning.to_dict()
+    if isinstance(warning, Mapping):
+        return dict(warning)
+    return _warning_dict(str(warning), str(warning))
+
+
+def _explicit_dk_activation_scale(
+    base_key: str,
+    rate_key: str,
+    exposure_profile: Mapping[str, Any],
+) -> tuple[float | None, dict[str, float] | None]:
+    for key in (base_key, rate_key):
+        value = exposure_profile.get(key)
+        if not isinstance(value, Mapping):
+            continue
+        if "d_factor" not in value or "k_factor" not in value:
+            continue
+        try:
+            d_factor = max(0.0, float(value["d_factor"]))
+            k_factor = max(0.0, float(value["k_factor"]))
+        except (TypeError, ValueError):
+            continue
+        if not math.isfinite(d_factor) or not math.isfinite(k_factor):
+            continue
+        return d_factor * k_factor, {"d_factor": d_factor, "k_factor": k_factor}
+    return None, None
+
+
+def _matrix_gsh_activation_scale(
+    base_key: str,
+    rate_key: str,
+    exposure_profile: Mapping[str, Any],
+    inhibition_burdens: Mapping[str, _InhibitionBurdenResolution],
+    warnings: list[dict[str, Any]],
+) -> tuple[float, str, dict[str, Any]]:
+    direct = inhibition_burdens.get(base_key)
+    direct_fallback_details: dict[str, Any] = {}
+    if direct is not None:
+        try:
+            direct_activation_ratio = float(direct.activation_burden_ratio)
+        except (TypeError, ValueError):
+            direct_activation_ratio = math.nan
+        direct_fallback_details = {
+            "direct_activation_available": False,
+            "inhibition_status": direct.status,
+            "review_required": direct.review_required,
+            "activation_burden_ratio": _round(direct_activation_ratio, 6)
+            if math.isfinite(direct_activation_ratio)
+            else None,
+        }
+        has_quantified_direct_activation = (
+            direct.status == "mechanism_resolved"
+            and not direct.review_required
+            and math.isfinite(direct_activation_ratio)
+            and direct_activation_ratio >= 0.0
+            and not math.isclose(direct_activation_ratio, 1.0)
+        )
+    else:
+        direct_activation_ratio = math.nan
+        has_quantified_direct_activation = False
+
+    if direct is not None and has_quantified_direct_activation:
+        return (
+            max(0.0, direct_activation_ratio),
+            "direct_activation_burden_ratio",
+            {
+                "activation_burden_ratio": _round(direct_activation_ratio, 6),
+                "inhibition_status": direct.status,
+            },
+        )
+
+    dk_scale, dk_details = _explicit_dk_activation_scale(base_key, rate_key, exposure_profile)
+    if dk_scale is not None:
+        return (
+            dk_scale,
+            "d_times_k_approximation",
+            {
+                **direct_fallback_details,
+                **(dk_details or {}),
+                "internal_d_or_k_computation": False,
+            },
+        )
+
+    warnings.append(
+        _warning_dict(
+            "gsh_upstream_activation_missing_neutral",
+            "GSH-relevant matrix contribution lacked direct activation burden or explicit D/K factors; using neutral scaling.",
+            field="upstream_activation_burden_ratio",
+        )
+    )
+    return (
+        1.0,
+        "neutral_missing_upstream_activation",
+        {**direct_fallback_details, "upstream_activation_burden_ratio": 1.0},
+    )
+
+
+def _compute_matrix_gsh_redox_status(
+    exposure_profile: Mapping[str, Any],
+    *,
+    genotypes: Mapping[str, str],
+    tissue: str,
+    inhibition_burdens: Mapping[str, _InhibitionBurdenResolution],
+) -> GSHStatus:
+    params = _get_interaction_params()["gsh_depletion"]
+    consumers = params["consumers"]
+
+    baseline_mM = float(params["baseline_gsh_mM"])
+    critical_fraction = float(params["critical_threshold_fraction"])
+    synthesis_capacity = float(params["synthesis_rate_umol_h_g"])
+    half_life_h = float(params.get("half_life_h", 2.5))
+    liver_water_fraction = 0.70
+    baseline_umol_g = baseline_mM * liver_water_fraction
+    turnover_capacity = baseline_umol_g * math.log(2) / half_life_h
+
+    rate_map = _to_gsh_rate_map(dict(exposure_profile))
+    if str(genotypes.get("GSTM1", "active")).lower() in {"null", "null/null", "deletion", "0"}:
+        if "PAH_umol_h_g" in rate_map:
+            rate_map["PAH_umol_h_g"] *= 0.1
+
+    warnings: list[dict[str, Any]] = []
+    total_base_consumption = 0.0
+    total_scaled_consumption = 0.0
+    contributions: dict[str, dict[str, Any]] = {}
+
+    for rate_key, flux_umol_h_g in rate_map.items():
+        base_key = rate_key.removesuffix("_umol_h_g")
+        consumer_key = _gsh_consumer_key(base_key)
+        consumer = consumers.get(consumer_key)
+        gsh_ratio = float(consumer.get("gsh_per_umol_substrate", 1.0)) if consumer else 1.0
+        substrate_flux = float(flux_umol_h_g)
+        base_gsh_drain = substrate_flux * gsh_ratio
+        upstream_scale, scaling_source, scaling_details = _matrix_gsh_activation_scale(
+            base_key,
+            rate_key,
+            exposure_profile,
+            inhibition_burdens,
+            warnings,
+        )
+        scaled_gsh_drain = base_gsh_drain * upstream_scale
+        total_base_consumption += base_gsh_drain
+        total_scaled_consumption += scaled_gsh_drain
+        contributions[consumer_key] = {
+            "substrate_flux_umol_h_g": _round(substrate_flux, 4),
+            "base_gsh_consumption_umol_h_g": _round(base_gsh_drain, 4),
+            "gsh_consumption_umol_h_g": _round(scaled_gsh_drain, 4),
+            "stoichiometry": gsh_ratio,
+            "upstream_activation_scale": _round(upstream_scale, 6),
+            "upstream_scaling_source": scaling_source,
+            "upstream_scaling_provenance": scaling_details,
+            "fraction_of_total": 0.0,
+        }
+
+    for contribution in contributions.values():
+        if total_scaled_consumption > 0:
+            contribution["fraction_of_total"] = _round(
+                contribution["gsh_consumption_umol_h_g"] / total_scaled_consumption,
+                3,
+            )
+
+    gsh_result = compute_gsh_redox_capacity(
+        GSHRedoxCapacityInput(
+            tissue=tissue,
+            consumption_load=total_scaled_consumption,
+            synthesis_capacity=synthesis_capacity,
+            turnover_capacity=turnover_capacity,
+            baseline_capacity=1.0,
+            model_version=GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY,
+            metadata={
+                "source": "interaction_engine.compute_interaction_matrix",
+                "matrix_level_shared_pool": True,
+                "upstream_activation_scaled": True,
+                "base_gsh_consumption_load": total_base_consumption,
+                "scaled_gsh_consumption_load": total_scaled_consumption,
+                "upstream_activation_source_preference": "direct_activation_burden_ratio",
+                "d_times_k_fallback_only_when_explicit": True,
+            },
+        )
+    )
+    warnings.extend(_warning_to_dict(warning) for warning in gsh_result.warnings)
+
+    fraction_normal = gsh_result.gsh_fraction
+    steady_state_mM = baseline_mM * fraction_normal
+    net_rate = synthesis_capacity - total_scaled_consumption
+    consumption_exceeds_synthesis = bool(total_scaled_consumption >= synthesis_capacity)
+    tipping_point_reached = consumption_exceeds_synthesis
+
+    time_to_depletion_h: float | None = None
+    if total_scaled_consumption > synthesis_capacity:
+        net_drain = total_scaled_consumption - synthesis_capacity
+        gsh_to_lose = baseline_umol_g * (1.0 - critical_fraction)
+        time_to_depletion_h = _round(gsh_to_lose / net_drain, 2)
+
+    impaired_pathways: list[str] = []
+    if fraction_normal < 0.30:
+        impaired_pathways.append("Phase II GST conjugation (general)")
+    if fraction_normal < critical_fraction:
+        impaired_pathways.extend(
+            [
+                "BPDE-GSH conjugation (PAH detox)",
+                "Arsenic methylation (GSTO1/GSTO2)",
+                "Chromium(VI) reduction",
+                "ROS scavenging (GPx)",
+            ]
+        )
+    if fraction_normal < 0.10:
+        impaired_pathways.append("Thioredoxin/GSSG reductase backup overwhelmed")
+
+    return GSHStatus(
+        baseline_gsh_mM=baseline_mM,
+        steady_state_gsh_mM=_round(steady_state_mM, 3),
+        fraction_normal=_round(fraction_normal, 6),
+        consumption_rate_umol_h_g=_round(total_scaled_consumption, 4),
+        synthesis_rate_umol_h_g=_round(synthesis_capacity, 4),
+        net_rate_umol_h_g=_round(net_rate, 4),
+        consumption_exceeds_synthesis=consumption_exceeds_synthesis,
+        tipping_point_reached=tipping_point_reached,
+        tipping_point_multiplier=_round(total_scaled_consumption / synthesis_capacity, 3)
+        if synthesis_capacity > 0
+        else 0.0,
+        impaired_pathways=impaired_pathways,
+        individual_contributions=contributions,
+        time_to_depletion_h=time_to_depletion_h,
+        tissue=tissue,
+        model_version=str(gsh_result.model_version),
+        redox_capacity_ratio=gsh_result.redox_capacity_ratio,
+        detox_penalty_multiplier=gsh_result.detox_penalty_multiplier,
+        warnings=warnings,
+        metadata={
+            "source": "gsh_redox_capacity.compute_gsh_redox_capacity",
+            "legacy_matrix_gsh_behavior": False,
+            "base_gsh_consumption_load": _round(total_base_consumption, 6),
+            "scaled_gsh_consumption_load": _round(total_scaled_consumption, 6),
+            "turnover_at_current_fraction": gsh_result.metadata.get("turnover_at_current_fraction")
+            if gsh_result.metadata
+            else None,
+            "redox_capacity_result": gsh_result.to_dict(),
+        },
+    )
+
+
 def _severity_sorted(interactions: list[CriticalInteraction]) -> list[CriticalInteraction]:
     """Sort critical interactions by severity then amplification."""
     return sorted(
@@ -682,6 +1163,14 @@ def _make_inert_gsh_status(tissue: str) -> GSHStatus:
         individual_contributions={},
         time_to_depletion_h=None,
         tissue=tissue,
+        model_version=str(GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY),
+        redox_capacity_ratio=1.0,
+        detox_penalty_multiplier=1.0,
+        metadata={
+            "source": "interaction_engine._make_inert_gsh_status",
+            "gsh_depletion_enabled": False,
+            "legacy_matrix_gsh_behavior": False,
+        },
     )
 
 
@@ -854,6 +1343,11 @@ def competitive_inhibition_flux(
             centralized_resolver_used=bool(resolution["centralized_resolver_used"]),
             modifier_applied_once=modifier_applied_once,
             discrepancy_classification=str(resolution["discrepancy_classification"]),
+            aggregate_resolution=(
+                deepcopy(resolution["aggregate_resolution"])
+                if resolution.get("aggregate_resolution") is not None
+                else None
+            ),
         )
         if include_biological_outputs:
             flux_change.biological_output = _build_live_biological_output(
@@ -906,23 +1400,70 @@ def _resolve_live_inhibition_modifier(
     normalized_inhibitor_load = 0.0
     warning_codes: set[str] = set()
     resolved_any = False
+    competitor_details: list[dict[str, Any]] = []
     for other_name, other_conc in positive_competitors:
         ki = get_ki(enzyme, other_name, target_substrate=target_substrate)
+        competitor_warnings = [
+            warning.code.upper()
+            for warning in (ki.warnings or [])
+            if getattr(warning, "code", None)
+        ]
         if ki.warnings:
-            warning_codes.update(warning.code.upper() for warning in ki.warnings)
+            warning_codes.update(competitor_warnings)
+        detail: dict[str, Any] = {
+            "inhibitor": other_name,
+            "concentration_uM": other_conc,
+            "ki_uM": None,
+            "normalized_load_contribution": None,
+            "resolution_method": str(ki.resolution_method),
+            "source_kind": str(ki.source_kind),
+            "confidence": ki.uncertainty.confidence if ki.uncertainty else None,
+            "warnings": competitor_warnings,
+            "resolved": False,
+            "metadata": deepcopy(ki.metadata) if ki.metadata is not None else None,
+        }
         if ki.value is None:
             warning_codes.add("KI_MISSING")
+            if "KI_MISSING" not in detail["warnings"]:
+                detail["warnings"].append("KI_MISSING")
+            competitor_details.append(detail)
             continue
         ki_value = float(ki.value)
         if ki.resolution_method.value == "assumed_equal_km":
             ki_value *= float(scale_for(other_name, "Km"))
         if ki_value <= 0.0 or not math.isfinite(ki_value):
             warning_codes.add("OUTSIDE_REVERSIBLE_INHIBITION_DOMAIN")
+            detail["warnings"].append("OUTSIDE_REVERSIBLE_INHIBITION_DOMAIN")
+            competitor_details.append(detail)
             continue
-        normalized_inhibitor_load += other_conc / ki_value
+        contribution = other_conc / ki_value
+        normalized_inhibitor_load += contribution
         resolved_any = True
+        detail.update(
+            {
+                "ki_uM": _round(ki_value, 6),
+                "normalized_load_contribution": _round(contribution, 8),
+                "resolved": True,
+            }
+        )
+        competitor_details.append(detail)
+
+    unresolved_count = sum(1 for detail in competitor_details if not detail["resolved"])
+    aggregate_resolution = {
+        "mode": "implicit_competitive_load",
+        "target_substrate": target_substrate,
+        "active_competitor_count": len(positive_competitors),
+        "resolved_competitor_count": len(positive_competitors) - unresolved_count,
+        "unresolved_competitor_count": unresolved_count,
+        "all_active_competitors_resolved": unresolved_count == 0,
+        "normalized_inhibitor_load": _round(normalized_inhibitor_load, 8),
+        "competitors": competitor_details,
+    }
 
     if not resolved_any:
+        warning_codes.add("INCOMPLETE_COMPETITOR_KI_RESOLUTION")
+        aggregate_resolution["aggregate_status"] = str(InhibitionResolutionStatus.REVIEW_REQUIRED)
+        aggregate_resolution["aggregate_warnings"] = sorted(warning_codes or {"KI_MISSING"})
         return _modifier_record(
             modifier=None,
             status=InhibitionResolutionStatus.REVIEW_REQUIRED,
@@ -931,6 +1472,22 @@ def _resolve_live_inhibition_modifier(
             applied_resolver=False,
             inhibition_term=0.0,
             discrepancy_classification="changed_fallback_behavior",
+            aggregate_resolution=aggregate_resolution,
+        )
+
+    if unresolved_count:
+        warning_codes.add("INCOMPLETE_COMPETITOR_KI_RESOLUTION")
+        aggregate_resolution["aggregate_status"] = str(InhibitionResolutionStatus.REVIEW_REQUIRED)
+        aggregate_resolution["aggregate_warnings"] = sorted(warning_codes)
+        return _modifier_record(
+            modifier=None,
+            status=InhibitionResolutionStatus.REVIEW_REQUIRED,
+            mode=InhibitionMode.COMPETITIVE,
+            warning_codes=warning_codes,
+            applied_resolver=False,
+            inhibition_term=normalized_inhibitor_load,
+            discrepancy_classification="incomplete_competitor_resolution",
+            aggregate_resolution=aggregate_resolution,
         )
 
     resolved = resolve_reversible_inhibition(
@@ -951,6 +1508,8 @@ def _resolve_live_inhibition_modifier(
         }
     )
     warning_codes.update(warning.code for warning in (resolved.warnings or []))
+    aggregate_resolution["aggregate_status"] = str(resolved.status)
+    aggregate_resolution["aggregate_warnings"] = sorted(warning_codes)
     if resolved.status not in {
         InhibitionResolutionStatus.RESOLVED_DIRECT,
         InhibitionResolutionStatus.RESOLVED_DERIVED,
@@ -963,6 +1522,7 @@ def _resolve_live_inhibition_modifier(
             applied_resolver=True,
             inhibition_term=normalized_inhibitor_load,
             discrepancy_classification="actual_defect",
+            aggregate_resolution=aggregate_resolution,
         )
 
     return _modifier_record(
@@ -973,6 +1533,7 @@ def _resolve_live_inhibition_modifier(
         applied_resolver=True,
         inhibition_term=normalized_inhibitor_load,
         discrepancy_classification="numerical_precision",
+        aggregate_resolution=aggregate_resolution,
     )
 
 
@@ -1062,6 +1623,7 @@ def _modifier_record(
     applied_resolver: bool,
     inhibition_term: float = 0.0,
     discrepancy_classification: str,
+    aggregate_resolution: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     return {
         "modifier": modifier,
@@ -1071,6 +1633,7 @@ def _modifier_record(
         "centralized_resolver_used": applied_resolver,
         "inhibition_term": inhibition_term,
         "discrepancy_classification": discrepancy_classification,
+        "aggregate_resolution": aggregate_resolution,
     }
 
 def _build_live_biological_output(
@@ -1080,13 +1643,32 @@ def _build_live_biological_output(
     tissue: str,
     flux: SubstrateFluxChange,
     substrate_parameters: Mapping[str, Any],
+    selected_resolution: _InhibitionBurdenResolution | None = None,
 ) -> dict[str, Any]:
-    mechanism_state = _kinetic_mechanism_state(flux.kinetic_resolution_status)
-    review_required = mechanism_state == "mechanism_unresolved"
+    mechanism_state = (
+        selected_resolution.status
+        if selected_resolution is not None
+        else _kinetic_mechanism_state(flux.kinetic_resolution_status)
+    )
+    review_required = (
+        selected_resolution.review_required
+        if selected_resolution is not None
+        else mechanism_state == "mechanism_unresolved"
+    )
     flux_ratio = _safe_flux_ratio(flux.competitive_flux, flux.single_flux)
     warnings = list(flux.kinetic_warning_codes)
-    registry = get_default_reaction_role_registry()
-    annotation = registry.lookup(enzyme, substrate, tissue=tissue)
+    if selected_resolution is not None:
+        warnings = list(dict.fromkeys([*warnings, *selected_resolution.warnings]))
+    interpretation_substrate = (
+        selected_resolution.interpretation_substrate
+        if selected_resolution is not None and selected_resolution.interpretation_substrate
+        else substrate
+    )
+    output_role = (
+        "selected_authoritative_inhibition_effect"
+        if selected_resolution is not None
+        else "per_substrate_diagnostic"
+    )
 
     kinetic_effect = {
         "status": flux.kinetic_resolution_status,
@@ -1106,16 +1688,31 @@ def _build_live_biological_output(
             "source": "interaction_engine.competitive_inhibition_flux",
             "enzyme": enzyme,
             "substrate": substrate,
+            "interpretation_substrate": interpretation_substrate,
+            "output_role": output_role,
         },
     }
+    if flux.aggregate_resolution is not None:
+        kinetic_effect["provenance"]["aggregate_resolution"] = deepcopy(flux.aggregate_resolution)
 
-    reaction_role = _reaction_role_interpretation(annotation, flux_ratio, review_required)
-    endpoint_result = None
+    annotation = None
+    if selected_resolution is not None:
+        reaction_role = selected_resolution.reaction_role_interpretation
+    else:
+        registry = get_default_reaction_role_registry()
+        annotation = registry.lookup(enzyme, interpretation_substrate, tissue=tissue)
+        reaction_role = _reaction_role_interpretation(annotation, flux_ratio, review_required)
+    endpoint_result = selected_resolution.endpoint_toxic_flux_result if selected_resolution else None
     endpoint_block: dict[str, Any]
-    if flux_ratio is None or review_required:
+    if selected_resolution is not None:
+        endpoint_block = selected_resolution.endpoint_toxic_flux or {}
+        endpoint_block["live_engine_integration"] = True
+        endpoint_block["selected_authoritative_effect"] = True
+        endpoint_block["diagnostic_only"] = False
+    elif flux_ratio is None or review_required:
         endpoint_block = _unresolved_endpoint_block(
             enzyme,
-            substrate,
+            interpretation_substrate,
             tissue,
             flux_ratio,
             annotation,
@@ -1125,7 +1722,7 @@ def _build_live_biological_output(
         endpoint_result = interpret_endpoint_toxic_flux(
             EndpointFluxInput(
                 enzyme=enzyme,
-                substrate=substrate,
+                substrate=interpretation_substrate,
                 flux_ratio=flux_ratio,
                 tissue=tissue,
                 annotation=annotation,
@@ -1137,6 +1734,7 @@ def _build_live_biological_output(
         )
         endpoint_block = endpoint_result.to_dict()
         endpoint_block["live_engine_integration"] = True
+        endpoint_block["selected_authoritative_effect"] = False
         endpoint_block["review_required"] = reaction_role["review_required"]
 
     gsh_relevance = _resolve_live_gsh_relevance(enzyme, substrate, substrate_parameters)
@@ -1150,6 +1748,8 @@ def _build_live_biological_output(
             "redox_capacity_ratio": None,
             "detox_penalty_multiplier": 1.0,
             "live_engine_integration": True,
+            "diagnostic_only": True,
+            "included_in_authoritative_adjusted_risk": False,
         }
     elif endpoint_result is None or review_required:
         gsh_block = {
@@ -1160,6 +1760,8 @@ def _build_live_biological_output(
             "detox_penalty_multiplier": 1.0,
             "warnings": ["gsh_not_quantified_without_resolved_endpoint_flux"],
             "live_engine_integration": True,
+            "diagnostic_only": True,
+            "included_in_authoritative_adjusted_risk": False,
         }
     else:
         base_load = max(0.0, float(flux.single_flux)) * float(gsh_relevance["gsh_per_umol_substrate"])
@@ -1182,9 +1784,17 @@ def _build_live_biological_output(
         gsh_block["scaled_gsh_consumption_load"] = round(scaled_load, 6)
         gsh_block["review_required"] = False
         gsh_block["live_engine_integration"] = True
+        gsh_block["diagnostic_only"] = True
+        gsh_block["included_in_authoritative_adjusted_risk"] = False
 
-    effective_result = None
-    if endpoint_result is not None and not review_required:
+    effective_result = selected_resolution.effective_burden_result if selected_resolution else None
+    if selected_resolution is not None:
+        effective_block = selected_resolution.effective_burden or {}
+        effective_block["live_engine_integration"] = True
+        effective_block["selected_authoritative_effect"] = True
+        effective_block["diagnostic_only"] = False
+        effective_block["includes_diagnostic_gsh_capacity"] = False
+    elif endpoint_result is not None and not review_required:
         effective_result = compute_effective_carcinogenic_burden(
             EffectiveBurdenInput(
                 endpoint_toxic_flux_result=endpoint_result,
@@ -1208,15 +1818,23 @@ def _build_live_biological_output(
         effective_block = effective_result.to_dict()
         effective_block["live_engine_integration"] = True
         effective_block["review_required"] = False
+        effective_block["selected_authoritative_effect"] = False
+        effective_block["diagnostic_only"] = True
     else:
         effective_block = {
             "review_required": True,
             "effective_carcinogenic_burden_ratio": None,
             "warnings": ["effective_burden_not_quantified_without_resolved_endpoint_flux"],
             "live_engine_integration": True,
+            "selected_authoritative_effect": selected_resolution is not None,
+            "diagnostic_only": selected_resolution is None,
         }
 
-    transparency_inputs: list[Any] = [annotation]
+    transparency_inputs: list[Any] = []
+    if annotation is not None:
+        transparency_inputs.append(annotation)
+    elif selected_resolution is not None and selected_resolution.reaction_role_annotation is not None:
+        transparency_inputs.append(selected_resolution.reaction_role_annotation)
     if endpoint_result is not None:
         transparency_inputs.append(endpoint_result)
     if gsh_result is not None:
@@ -1243,8 +1861,44 @@ def _build_live_biological_output(
             "gsh_capacity_effect": gsh_block,
             "effective_burden": effective_block,
             "model_transparency": transparency,
+            "selected_authoritative_effect": selected_resolution is not None,
+            "diagnostic_role": output_role,
+            "interpretation_substrate": interpretation_substrate,
         }
     )
+
+
+def _competitive_substrate_parameters(enzyme: str, substrate: str) -> Mapping[str, Any]:
+    enzyme_data = _get_interaction_params()["competitive_inhibition"].get(enzyme, {})
+    param_substrates = enzyme_data.get("substrates", {})
+    return param_substrates.get(
+        substrate,
+        {
+            "Km_uM": 50.0,
+            "Vmax_relative": 0.5,
+            "product": "unknown",
+            "product_carcinogenic": False,
+        },
+    )
+
+
+def _attach_live_biological_outputs(
+    competitive_effects: dict[str, CompetitiveInhibitionResult],
+    selected_resolutions: Mapping[tuple[str, str], _InhibitionBurdenResolution],
+    *,
+    tissue: str,
+) -> None:
+    for enzyme, enzyme_result in competitive_effects.items():
+        for substrate, flux in enzyme_result.substrates.items():
+            selected_resolution = selected_resolutions.get((enzyme, substrate))
+            flux.biological_output = _build_live_biological_output(
+                enzyme=enzyme,
+                substrate=substrate,
+                tissue=tissue,
+                flux=flux,
+                substrate_parameters=_competitive_substrate_parameters(enzyme, substrate),
+                selected_resolution=selected_resolution,
+            )
 
 
 def _kinetic_mechanism_state(status: str) -> str:
@@ -1796,8 +2450,18 @@ def _compute_gsh_detox_penalty(
     genotypes: dict[str, str],
 ) -> float:
     """Return risk multiplier (>1) based on GSH depletion and genotype."""
+    return _compute_gsh_detox_components(carcinogen, gsh_fraction, genotypes)[2]
+
+
+def _compute_gsh_detox_components(
+    carcinogen: str,
+    gsh_fraction: float,
+    genotypes: dict[str, str],
+    *,
+    redox_detox_penalty: float | None = None,
+) -> tuple[float, float, float]:
     if CARCINOGEN_GSH_DETOX.get(carcinogen) is None:
-        return 1.0
+        return 1.0, 1.0, 1.0
 
     genotype_factor = 1.0
     gstm1 = str(genotypes.get("GSTM1", "active")).lower()
@@ -1808,14 +2472,248 @@ def _compute_gsh_detox_penalty(
     elif carcinogen == "PAH" and gstp1 == "Val105Val":
         genotype_factor = 1.5
 
-    if gsh_fraction >= 0.30:
-        gsh_penalty = 1.0
-    elif gsh_fraction >= 0.20:
-        gsh_penalty = 1.0 + (0.30 - gsh_fraction) / 0.10 * 0.5
+    if redox_detox_penalty is not None:
+        gsh_penalty = max(1.0, float(redox_detox_penalty))
     else:
-        gsh_penalty = 1.5 + (0.20 - gsh_fraction) / 0.20 * 3.0
+        if gsh_fraction >= 0.30:
+            gsh_penalty = 1.0
+        elif gsh_fraction >= 0.20:
+            gsh_penalty = 1.0 + (0.30 - gsh_fraction) / 0.10 * 0.5
+        else:
+            gsh_penalty = 1.5 + (0.20 - gsh_fraction) / 0.20 * 3.0
 
-    return _round(genotype_factor * gsh_penalty, 3)
+    return genotype_factor, _round(gsh_penalty, 3), _round(genotype_factor * gsh_penalty, 3)
+
+
+def _selected_competitive_effect(
+    carcinogen: str,
+    competitive_effects: dict[str, CompetitiveInhibitionResult],
+) -> tuple[str, str, str, SubstrateFluxChange] | None:
+    if carcinogen == "benzene":
+        pulmonary_candidates: list[tuple[float, str, str, str, SubstrateFluxChange]] = []
+        for pulmonary_enzyme in ("CYP2A13", "CYP2F1"):
+            enzyme_result = competitive_effects.get(pulmonary_enzyme)
+            if enzyme_result is None:
+                continue
+            sub_effect = enzyme_result.substrates.get("benzene")
+            if sub_effect is not None:
+                pulmonary_candidates.append(
+                    (
+                        sub_effect.flux_change_fraction,
+                        pulmonary_enzyme,
+                        "benzene",
+                        "benzene",
+                        sub_effect,
+                    )
+                )
+        if pulmonary_candidates:
+            resolved_candidates = [
+                candidate
+                for candidate in pulmonary_candidates
+                if _kinetic_mechanism_state(candidate[4].kinetic_resolution_status)
+                == "mechanism_resolved"
+            ]
+            selectable_candidates = resolved_candidates or pulmonary_candidates
+            _, enzyme, flux_substrate, interpretation_substrate, sub_effect = max(
+                selectable_candidates,
+                key=lambda item: item[0],
+            )
+            return enzyme, flux_substrate, interpretation_substrate, sub_effect
+        cyp2e1 = competitive_effects.get("CYP2E1")
+        if cyp2e1 is not None:
+            sub_effect = cyp2e1.substrates.get("benzene")
+            if sub_effect is not None:
+                return "CYP2E1", "benzene", "benzene", sub_effect
+        return None
+
+    if carcinogen in {"NDMA", "vinyl_chloride"}:
+        cyp2e1 = competitive_effects.get("CYP2E1")
+        if cyp2e1 is not None:
+            sub_effect = cyp2e1.substrates.get(carcinogen)
+            if sub_effect is not None:
+                return "CYP2E1", carcinogen, carcinogen, sub_effect
+        return None
+
+    if carcinogen == "HCA":
+        cyp1a1 = competitive_effects.get("CYP1A1")
+        if cyp1a1 is not None:
+            sub_effect = cyp1a1.substrates.get("PhIP")
+            if sub_effect is not None:
+                return "CYP1A1", "PhIP", "HCA", sub_effect
+        return None
+
+    return None
+
+
+def _neutral_inhibition_resolution(
+    status: str,
+    *,
+    warnings: list[str] | None = None,
+    review_required: bool = False,
+    enzyme: str | None = None,
+    flux_substrate: str | None = None,
+    interpretation_substrate: str | None = None,
+    tissue: str | None = None,
+    flux_ratio: float | None = None,
+    reaction_role_annotation: Any | None = None,
+    reaction_role_block: dict[str, Any] | None = None,
+    provenance: dict[str, Any] | None = None,
+) -> _InhibitionBurdenResolution:
+    return _InhibitionBurdenResolution(
+        burden_multiplier=1.0,
+        activation_burden_ratio=1.0,
+        detox_failure_ratio=1.0,
+        endpoint_toxic_flux_ratio=1.0 if flux_ratio is not None else None,
+        status=status,
+        review_required=review_required,
+        enzyme=enzyme,
+        flux_substrate=flux_substrate,
+        interpretation_substrate=interpretation_substrate,
+        tissue=tissue,
+        flux_ratio=flux_ratio,
+        warnings=warnings or [],
+        reaction_role_annotation=reaction_role_annotation,
+        reaction_role_block=reaction_role_block,
+        provenance=provenance or {},
+    )
+
+
+def _warning_codes_from_records(records: list[Any] | tuple[Any, ...]) -> list[str]:
+    codes: list[str] = []
+    for record in records:
+        if hasattr(record, "code"):
+            code = str(record.code)
+        elif isinstance(record, Mapping):
+            code = str(record.get("code", record))
+        else:
+            code = str(record)
+        if code and code not in codes:
+            codes.append(code)
+    return codes
+
+
+def _resolve_endpoint_inhibition_burden(
+    carcinogen: str,
+    competitive_effects: dict[str, CompetitiveInhibitionResult],
+    *,
+    tissue: str,
+    enable_competition: bool,
+) -> _InhibitionBurdenResolution:
+    if not enable_competition:
+        return _neutral_inhibition_resolution(
+            "mechanism_disabled",
+            provenance={"selection": "competition_toggle_off"},
+        )
+
+    selected = _selected_competitive_effect(carcinogen, competitive_effects)
+    if selected is None:
+        return _neutral_inhibition_resolution(
+            "mechanism_absent",
+            provenance={"selection": "no_supported_competitive_effect"},
+        )
+
+    enzyme, flux_substrate, interpretation_substrate, flux = selected
+    mechanism_state = _kinetic_mechanism_state(flux.kinetic_resolution_status)
+    flux_ratio = _safe_flux_ratio(flux.competitive_flux, flux.single_flux)
+    warning_codes = _warning_codes_from_records(flux.kinetic_warning_codes)
+    kinetic_review_required = mechanism_state not in {
+        "mechanism_resolved",
+        "mechanism_absent",
+    } or flux_ratio is None
+    registry = get_default_reaction_role_registry()
+    annotation = registry.lookup(enzyme, interpretation_substrate, tissue=tissue)
+    reaction_role = _reaction_role_interpretation(
+        annotation,
+        flux_ratio,
+        review_required=kinetic_review_required,
+    )
+    warning_codes.extend(_warning_codes_from_records(reaction_role.get("warnings", [])))
+    warning_codes = list(dict.fromkeys(warning_codes))
+    base_provenance = {
+        "selection": "existing_carcinogen_enzyme_substrate_precedence",
+        "kinetic_resolution_status": flux.kinetic_resolution_status,
+        "kinetic_mechanism_state": mechanism_state,
+        "modifier_applied_once": flux.modifier_applied_once,
+        "centralized_resolver_used": flux.centralized_resolver_used,
+        "annotation_record_id": annotation.record_id,
+        "reaction_role": str(annotation.reaction_role),
+        "risk_direction_if_flux_decreases": str(annotation.risk_direction_if_flux_decreases),
+    }
+
+    if mechanism_state == "mechanism_absent":
+        return _neutral_inhibition_resolution(
+            mechanism_state,
+            warnings=warning_codes,
+            review_required=bool(reaction_role["review_required"]),
+            enzyme=enzyme,
+            flux_substrate=flux_substrate,
+            interpretation_substrate=interpretation_substrate,
+            tissue=tissue,
+            flux_ratio=flux_ratio,
+            reaction_role_annotation=annotation,
+            reaction_role_block=reaction_role,
+            provenance=base_provenance,
+        )
+    if mechanism_state != "mechanism_resolved" or flux_ratio is None:
+        return _neutral_inhibition_resolution(
+            mechanism_state,
+            warnings=warning_codes or ["inhibition_burden_not_quantified_without_resolved_flux"],
+            review_required=True,
+            enzyme=enzyme,
+            flux_substrate=flux_substrate,
+            interpretation_substrate=interpretation_substrate,
+            tissue=tissue,
+            flux_ratio=flux_ratio,
+            reaction_role_annotation=annotation,
+            reaction_role_block=reaction_role,
+            provenance=base_provenance,
+        )
+
+    endpoint_result = interpret_endpoint_toxic_flux(
+        EndpointFluxInput(
+            enzyme=enzyme,
+            substrate=interpretation_substrate,
+            flux_ratio=flux_ratio,
+            tissue=tissue,
+            annotation=annotation,
+            metadata={
+                "source": "interaction_engine",
+                "flux_substrate": flux_substrate,
+                "kinetic_resolution_status": flux.kinetic_resolution_status,
+            },
+        )
+    )
+    effective_result = compute_effective_carcinogenic_burden(
+        EffectiveBurdenInput(
+            endpoint_toxic_flux_result=endpoint_result,
+            susceptibility_modifier=1.0,
+            gsh_relevant=False,
+            metadata={"source": "interaction_engine"},
+        )
+    )
+    warning_codes.extend(_warning_codes_from_records(endpoint_result.warnings))
+    warning_codes.extend(_warning_codes_from_records(effective_result.warnings))
+    warning_codes = list(dict.fromkeys(warning_codes))
+
+    return _InhibitionBurdenResolution(
+        burden_multiplier=effective_result.effective_carcinogenic_burden_ratio,
+        activation_burden_ratio=endpoint_result.activation_burden_ratio,
+        detox_failure_ratio=endpoint_result.detox_failure_ratio,
+        endpoint_toxic_flux_ratio=endpoint_result.endpoint_toxic_flux_ratio,
+        status=mechanism_state,
+        review_required=bool(reaction_role["review_required"]),
+        enzyme=enzyme,
+        flux_substrate=flux_substrate,
+        interpretation_substrate=interpretation_substrate,
+        tissue=tissue,
+        flux_ratio=flux_ratio,
+        warnings=warning_codes,
+        reaction_role_annotation=annotation,
+        reaction_role_block=reaction_role,
+        endpoint_toxic_flux_result=endpoint_result,
+        effective_burden_result=effective_result,
+        provenance=base_provenance,
+    )
 
 
 def compute_interaction_matrix(
@@ -1886,64 +2784,104 @@ def compute_interaction_matrix(
                 genotype_modifiers=genotype_activity,
                 tissue=tissue,
                 param_perturbations=param_perturbations,
-                include_biological_outputs=include_biological_outputs,
+                include_biological_outputs=False,
             )
 
-    if enable_gsh_depletion:
-        gsh_exposure = _to_gsh_rate_map(normalized_exposure)
-        if str(genotypes.get("GSTM1", "active")).lower() in {"null", "null/null", "deletion", "0"}:
-            if "PAH_umol_h_g" in gsh_exposure:
-                # Source-parity logic: absent GSTM1 greatly reduces PAH-GSH conjugation,
-                # so PAH contributes far less to shared-pool GSH consumption.
-                gsh_exposure["PAH_umol_h_g"] *= 0.1
-        gsh_status = gsh_depletion_model(gsh_exposure, tissue=tissue)
-    else:
-        gsh_status = _make_inert_gsh_status(tissue)
-
-    interaction_adjusted_risks: dict[str, float] = {}
+    induction_multipliers: dict[str, float] = {}
+    inhibition_burdens: dict[str, _InhibitionBurdenResolution] = {}
+    selected_inhibition_resolutions: dict[tuple[str, str], _InhibitionBurdenResolution] = {}
     for carcinogen in present_carcinogens:
-        base_risk = individual_risks[carcinogen]
-
         if enable_induction:
             induction_multiplier = 1.0
             for enzyme in CARCINOGEN_ENZYME_MAP.get(carcinogen, []):
                 induction_multiplier = max(induction_multiplier, combined_enzyme_activity.get(enzyme, 1.0))
         else:
             induction_multiplier = 1.0
+        induction_multipliers[carcinogen] = induction_multiplier
 
-        competition_multiplier = 1.0
-        if enable_competition:
-            if carcinogen == "benzene":
-                pulmonary_fractions: list[float] = []
-                for pulmonary_enzyme in ("CYP2A13", "CYP2F1"):
-                    if pulmonary_enzyme in competitive_effects:
-                        sub_effect = competitive_effects[pulmonary_enzyme].substrates.get("benzene")
-                        if sub_effect is not None:
-                            pulmonary_fractions.append(sub_effect.flux_change_fraction)
-                if pulmonary_fractions:
-                    competition_multiplier = 1.0 + max(pulmonary_fractions)
-                elif "CYP2E1" in competitive_effects:
-                    sub_effect = competitive_effects["CYP2E1"].substrates.get("benzene")
-                    if sub_effect is not None:
-                        competition_multiplier = 1.0 + sub_effect.flux_change_fraction
-            elif carcinogen in {"NDMA", "vinyl_chloride"} and "CYP2E1" in competitive_effects:
-                sub_effect = competitive_effects["CYP2E1"].substrates.get(carcinogen)
-                if sub_effect is not None:
-                    competition_multiplier = 1.0 + sub_effect.flux_change_fraction
-            elif carcinogen == "HCA" and "CYP1A1" in competitive_effects:
-                sub_effect = competitive_effects["CYP1A1"].substrates.get("PhIP")
-                if sub_effect is not None:
-                    competition_multiplier = min(competition_multiplier, 1.0 + sub_effect.flux_change_fraction)
+        inhibition_burden = _resolve_endpoint_inhibition_burden(
+            carcinogen,
+            competitive_effects,
+            tissue=tissue,
+            enable_competition=enable_competition,
+        )
+        inhibition_burdens[carcinogen] = inhibition_burden
+        if inhibition_burden.enzyme and inhibition_burden.flux_substrate:
+            selected_inhibition_resolutions[
+                (inhibition_burden.enzyme, inhibition_burden.flux_substrate)
+            ] = inhibition_burden
+
+    if enable_gsh_depletion:
+        gsh_status = _compute_matrix_gsh_redox_status(
+            normalized_exposure,
+            genotypes=genotypes,
+            tissue=tissue,
+            inhibition_burdens=inhibition_burdens,
+        )
+    else:
+        gsh_status = _make_inert_gsh_status(tissue)
+
+    mechanism_resolved_risks: dict[str, MechanismResolvedRisk] = {}
+    interaction_adjusted_risks: dict[str, float] = {}
+    gsh_warning_codes = _warning_codes_from_records(gsh_status.warnings)
+    for carcinogen in present_carcinogens:
+        base_risk = individual_risks[carcinogen]
+        induction_multiplier = induction_multipliers[carcinogen]
+        inhibition_burden = inhibition_burdens[carcinogen]
 
         if enable_gsh_depletion:
-            gsh_penalty = _compute_gsh_detox_penalty(carcinogen, gsh_status.fraction_normal, genotypes)
+            susceptibility_modifier, gsh_pool_penalty, gsh_penalty = _compute_gsh_detox_components(
+                carcinogen,
+                gsh_status.fraction_normal,
+                genotypes,
+                redox_detox_penalty=gsh_status.detox_penalty_multiplier,
+            )
         else:
+            susceptibility_modifier = 1.0
+            gsh_pool_penalty = 1.0
             gsh_penalty = 1.0
 
-        interaction_adjusted_risks[carcinogen] = _round(
-            base_risk * induction_multiplier * competition_multiplier * gsh_penalty,
-            3,
+        final_multiplier = _round(
+            induction_multiplier * inhibition_burden.burden_multiplier * gsh_penalty,
+            6,
         )
+        adjusted_risk = _round(base_risk * final_multiplier, 3)
+        resolved = MechanismResolvedRisk(
+            carcinogen=carcinogen,
+            baseline_relative_risk=base_risk,
+            induction_multiplier=_round(induction_multiplier, 6),
+            inhibition_burden_multiplier=_round(inhibition_burden.burden_multiplier, 6),
+            activation_burden_ratio=_round(inhibition_burden.activation_burden_ratio, 6),
+            detox_failure_ratio=_round(inhibition_burden.detox_failure_ratio, 6),
+            matrix_gsh_penalty=_round(gsh_penalty, 6),
+            gsh_pool_penalty=_round(gsh_pool_penalty, 6),
+            susceptibility_modifier=_round(susceptibility_modifier, 6),
+            susceptibility_applied_in=(
+                "matrix_gsh_penalty" if susceptibility_modifier != 1.0 else None
+            ),
+            final_mechanism_multiplier=final_multiplier,
+            adjusted_relative_risk=adjusted_risk,
+            inhibition_status=inhibition_burden.status,
+            review_required=inhibition_burden.review_required,
+            warnings=list(dict.fromkeys([*inhibition_burden.warnings, *gsh_warning_codes])),
+            provenance={
+                "baseline_risk_source": "BASELINE_RISK_SCORES",
+                "induction_source": "enzyme_induction_modifier",
+                "gsh_source": "gsh_redox_capacity.compute_gsh_redox_capacity",
+                "gsh": {
+                    "model_version": gsh_status.model_version,
+                    "redox_capacity_ratio": gsh_status.redox_capacity_ratio,
+                    "detox_penalty_multiplier": gsh_status.detox_penalty_multiplier,
+                    "matrix_gsh_penalty_applied_once": True,
+                    "diagnostic_gsh_capacity_included": False,
+                    "legacy_matrix_gsh_behavior": False,
+                    "warnings": gsh_warning_codes,
+                },
+                **inhibition_burden.to_provenance(),
+            },
+        )
+        mechanism_resolved_risks[carcinogen] = resolved
+        interaction_adjusted_risks[carcinogen] = resolved.adjusted_relative_risk
 
     synergy_matrix: dict[str, float] = {}
     for index, left in enumerate(present_carcinogens):
@@ -1976,15 +2914,16 @@ def compute_interaction_matrix(
         summary_parts.append(
             f"GSH depleted to {gsh_status.fraction_normal * 100:.0f}% of normal."
         )
-    cyp2e1_effects = competitive_effects.get("CYP2E1")
-    if cyp2e1_effects is not None:
-        for substrate, result in cyp2e1_effects.substrates.items():
-            percent_change = result.flux_change_fraction * 100
-            if abs(percent_change) > 10:
-                direction = "reduced" if percent_change < 0 else "increased"
-                summary_parts.append(
-                    f"CYP2E1 competition: {substrate} activation {direction} by {abs(percent_change):.0f}%."
-                )
+    for carcinogen, resolved in mechanism_resolved_risks.items():
+        inhibition = resolved.provenance.get("inhibition", {})
+        if inhibition.get("enzyme") != "CYP2E1":
+            continue
+        burden_change = (resolved.inhibition_burden_multiplier - 1.0) * 100.0
+        if abs(burden_change) > 10:
+            direction = "increased" if burden_change > 0 else "decreased"
+            summary_parts.append(
+                f"CYP2E1 competition: {carcinogen} endpoint burden {direction} by {abs(burden_change):.0f}%."
+            )
 
     synergy_threshold = float(rules.get("synergy_threshold", 1.2))
     antagonism_threshold = float(rules.get("antagonism_threshold", 0.8))
@@ -1998,6 +2937,11 @@ def compute_interaction_matrix(
 
     mechanism_attribution = None
     if include_biological_outputs:
+        _attach_live_biological_outputs(
+            competitive_effects,
+            selected_inhibition_resolutions,
+            tissue=tissue,
+        )
         mechanism_attribution = _compute_live_mechanism_attribution(
             normalized_exposure,
             genotypes=genotypes,
@@ -2022,6 +2966,9 @@ def compute_interaction_matrix(
         lifestyle=lifestyle,
         summary=" ".join(summary_parts),
         mechanism_attribution=mechanism_attribution,
+        mechanism_resolved_risks=(
+            mechanism_resolved_risks if include_biological_outputs else {}
+        ),
     )
 
 
@@ -2178,74 +3125,187 @@ def identify_critical_interactions(
     return _severity_sorted(interactions)
 
 
+_SYNERGY_MECHANISM_LABELS = {
+    "induction": "enzyme induction",
+    "competition": "competitive inhibition",
+    "gsh": "GSH depletion",
+    "induction+competition": "induction x competition",
+    "induction+gsh": "induction x GSH",
+    "competition+gsh": "competition x GSH",
+    "induction+competition+gsh": "induction x competition x GSH",
+}
+
+
+def _effect_by_mechanism(effects: list[dict[str, Any]]) -> dict[str, float]:
+    return {
+        str(effect["mechanism"]): float(effect["effect"])
+        for effect in effects
+    }
+
+
+def _interaction_by_key(terms: list[dict[str, Any]]) -> dict[str, float]:
+    keyed: dict[str, float] = {}
+    for term in terms:
+        key = "+".join(str(mechanism) for mechanism in term["mechanisms"])
+        keyed[key] = float(term["effect"])
+    return keyed
+
+
+def _dominant_synergy_mechanism(
+    main_effects: dict[str, float],
+    pairwise_interactions: dict[str, float],
+    three_way_interaction: float,
+) -> str:
+    terms = {
+        _SYNERGY_MECHANISM_LABELS[key]: value
+        for key, value in {
+            **main_effects,
+            **pairwise_interactions,
+            "induction+competition+gsh": three_way_interaction,
+        }.items()
+    }
+    positive_terms = {key: value for key, value in terms.items() if value > 0.0}
+    if positive_terms:
+        return max(positive_terms, key=positive_terms.get)
+    if main_effects.get("competition", 0.0) < 0.0:
+        return "competitive antagonism"
+    return "near-additive"
+
+
+def _compute_synergy_state_results(
+    exposure_profile: Mapping[str, float | dict[str, Any]],
+    *,
+    genotypes: dict[str, str] | None,
+    tissue: str,
+    lifestyle: Mapping[str, bool | int | float] | None,
+    param_perturbations: dict[str, dict[str, float]] | None = None,
+    expression_perturbations: dict[str, float] | None = None,
+) -> dict[str, InteractionMatrixResult]:
+    state_results: dict[str, InteractionMatrixResult] = {}
+    for state in generate_mechanism_states():
+        state_results[state.key] = compute_interaction_matrix(
+            exposure_profile,
+            genotypes=genotypes,
+            tissue=tissue,
+            lifestyle=lifestyle,
+            enable_induction=state.induction,
+            enable_competition=state.competition,
+            enable_gsh_depletion=state.gsh,
+            param_perturbations=param_perturbations,
+            expression_perturbations=expression_perturbations,
+            include_biological_outputs=False,
+        )
+    return state_results
+
+
+def _build_pair_synergy_decomposition(
+    pair: str,
+    state_results: dict[str, InteractionMatrixResult],
+    *,
+    tolerance: float,
+) -> SynergyDecomposition:
+    state_values = {
+        state.key: state_results[state.key].synergy_matrix.get(pair, 1.0)
+        for state in generate_mechanism_states()
+    }
+    attribution = compute_mechanism_attribution(state_values, tolerance=tolerance).to_dict()
+    main_effects = _effect_by_mechanism(attribution["shapley_main_effects"])
+    singleton_effects = _interaction_by_key(attribution["singleton_effects"])
+    pairwise_interactions = _interaction_by_key(attribution["pairwise_interactions"])
+    three_way_interaction = float(attribution["three_way_interaction"]["effect"])
+    reconstruction_residual = float(attribution["interaction_reconstruction_residual"])
+    shapley_residual = float(attribution["shapley_residual"])
+    additive_estimate = (
+        1.0
+        + sum(singleton_effects.values())
+        + sum(pairwise_interactions.values())
+        + three_way_interaction
+    )
+    compatibility_fields = {
+        "policy": "compatibility_only",
+        "basis": "singleton_effects_from_eight_state_decomposition",
+        "residual": "numerical_reconstruction_check_only",
+        "primary_fields": [
+            "main_effects",
+            "pairwise_interactions",
+            "three_way_interaction",
+            "reconstruction_residual",
+        ],
+    }
+    shapley_decomposition = {
+        "decomposition_basis": "eight_state_shapley",
+        "state_count": len(state_values),
+        "state_values": {key: _round(value, 6) for key, value in state_values.items()},
+        "main_effects": {key: _round(value, 6) for key, value in main_effects.items()},
+        "singleton_effects": {key: _round(value, 6) for key, value in singleton_effects.items()},
+        "pairwise_interactions": {
+            key: _round(value, 6) for key, value in pairwise_interactions.items()
+        },
+        "three_way_interaction": _round(three_way_interaction, 6),
+        "reconstruction_residual": _round(reconstruction_residual, 12),
+        "shapley_residual": _round(shapley_residual, 12),
+        "residuals_are_zero_within_tolerance": bool(
+            attribution["residuals_are_zero_within_tolerance"]
+        ),
+        "tolerance": float(attribution["tolerance"]),
+        "residual_policy": "numerical_reconstruction_check_only",
+        "source": "compute_interaction_matrix",
+    }
+    return SynergyDecomposition(
+        pair=pair,
+        composite=_round(float(attribution["full_value"]), 4),
+        delta_comp=_round(singleton_effects.get("competition", 0.0), 4),
+        delta_gsh=_round(singleton_effects.get("gsh", 0.0), 4),
+        delta_ind=_round(singleton_effects.get("induction", 0.0), 4),
+        additive_estimate=_round(additive_estimate, 4),
+        residual=_round(reconstruction_residual, 12),
+        shapley_decomposition=shapley_decomposition,
+        main_effects={key: _round(value, 6) for key, value in main_effects.items()},
+        pairwise_interactions={
+            key: _round(value, 6) for key, value in pairwise_interactions.items()
+        },
+        three_way_interaction=_round(three_way_interaction, 6),
+        reconstruction_residual=_round(reconstruction_residual, 12),
+        shapley_residual=_round(shapley_residual, 12),
+        residuals_are_zero_within_tolerance=bool(
+            attribution["residuals_are_zero_within_tolerance"]
+        ),
+        state_values={key: _round(value, 6) for key, value in state_values.items()},
+        compatibility_fields=compatibility_fields,
+        dominant_mechanism=_dominant_synergy_mechanism(
+            main_effects,
+            pairwise_interactions,
+            three_way_interaction,
+        ),
+    )
+
+
 def decompose_synergy(
     exposure_profile: dict[str, float | dict[str, Any]],
     *,
     genotypes: dict[str, str] | None = None,
     tissue: str = "Liver",
     lifestyle: dict[str, bool] | None = None,
+    param_perturbations: dict[str, dict[str, float]] | None = None,
+    expression_perturbations: dict[str, float] | None = None,
+    include_biological_outputs: bool = False,
+    tolerance: float = 1e-9,
 ) -> dict[str, SynergyDecomposition]:
-    """Decompose pairwise synergy into competition, GSH, and induction deltas.
-
-    Runs ``compute_interaction_matrix`` four times (full, competition-only,
-    GSH-only, induction-only) and reports
-    ``S = 1 + ΔS_comp + ΔS_gsh + ΔS_ind + residual`` for each carcinogen pair
-    in the exposure profile.
-    """
-    full_result = compute_interaction_matrix(
+    """Decompose pairwise synergy with the eight-state attribution layer."""
+    _ = include_biological_outputs
+    state_results = _compute_synergy_state_results(
         exposure_profile,
         genotypes=genotypes,
         tissue=tissue,
         lifestyle=lifestyle,
-        include_biological_outputs=False,
+        param_perturbations=param_perturbations,
+        expression_perturbations=expression_perturbations,
     )
-    comp_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=True,
-        enable_gsh_depletion=False,
-        include_biological_outputs=False,
-    )
-    gsh_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=False,
-        enable_competition=False,
-        enable_gsh_depletion=True,
-        include_biological_outputs=False,
-    )
-    ind_only = compute_interaction_matrix(
-        exposure_profile,
-        genotypes=genotypes,
-        tissue=tissue,
-        lifestyle=lifestyle,
-        enable_induction=True,
-        enable_competition=False,
-        enable_gsh_depletion=False,
-        include_biological_outputs=False,
-    )
-
-    decomposed: dict[str, SynergyDecomposition] = {}
-    for pair, composite in full_result.synergy_matrix.items():
-        delta_comp = comp_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_gsh = gsh_only.synergy_matrix.get(pair, 1.0) - 1.0
-        delta_ind = ind_only.synergy_matrix.get(pair, 1.0) - 1.0
-        additive = 1.0 + delta_comp + delta_gsh + delta_ind
-        decomposed[pair] = SynergyDecomposition(
-            pair=pair,
-            composite=_round(composite, 4),
-            delta_comp=_round(delta_comp, 4),
-            delta_gsh=_round(delta_gsh, 4),
-            delta_ind=_round(delta_ind, 4),
-            additive_estimate=_round(additive, 4),
-            residual=_round(composite - additive, 4),
-        )
-    return decomposed
+    full_result = state_results["induction+competition+gsh"]
+    return {
+        pair: _build_pair_synergy_decomposition(pair, state_results, tolerance=tolerance)
+        for pair in full_result.synergy_matrix
+    }
 
 
 def monte_carlo_synergy_ci(
@@ -2259,13 +3319,13 @@ def monte_carlo_synergy_ci(
     expression_sigma: float = 0.3,
     seed: int | None = None,
 ) -> dict[str, SynergyConfidenceInterval]:
-    """Bootstrap 95% CIs for pairwise synergy factors and mechanism deltas.
+    """Bootstrap 95% CIs for pairwise synergy factors and singleton effects.
 
     Km/Vmax parameters are perturbed by multiplicative lognormal noise with
     ``sigma=km_sigma`` (default ≈ ±50% one-sigma spread); enzyme expression
     weights are perturbed with ``sigma=expression_sigma`` (default ≈ ±30%).
-    For each iteration the synergy is decomposed and the aggregated draws are
-    summarized as mean and 2.5/97.5 percentile bounds per carcinogen pair.
+    For each iteration the eight-state decomposition is summarized as mean and
+    2.5/97.5 percentile bounds per carcinogen pair.
     """
     if n_iterations < 2:
         raise ValueError("n_iterations must be >= 2 for confidence intervals")
@@ -2301,28 +3361,21 @@ def monte_carlo_synergy_ci(
             enzyme: math.exp(rng.gauss(0.0, expression_sigma)) for enzyme in enzyme_names
         }
 
-        def _run(**flags: bool) -> dict[str, float]:
-            return compute_interaction_matrix(
-                exposure_profile,
-                genotypes=genotypes,
-                tissue=tissue,
-                lifestyle=lifestyle,
-                param_perturbations=param_perturbations,
-                expression_perturbations=expression_perturbations,
-                include_biological_outputs=False,
-                **flags,
-            ).synergy_matrix
+        decomposed = decompose_synergy(
+            exposure_profile,
+            genotypes=genotypes,
+            tissue=tissue,
+            lifestyle=lifestyle,
+            param_perturbations=param_perturbations,
+            expression_perturbations=expression_perturbations,
+            include_biological_outputs=False,
+        )
 
-        full = _run()
-        comp = _run(enable_induction=False, enable_competition=True, enable_gsh_depletion=False)
-        gsh = _run(enable_induction=False, enable_competition=False, enable_gsh_depletion=True)
-        ind = _run(enable_induction=True, enable_competition=False, enable_gsh_depletion=False)
-
-        for pair, composite in full.items():
-            composite_draws.setdefault(pair, []).append(composite)
-            delta_comp_draws.setdefault(pair, []).append(comp.get(pair, 1.0) - 1.0)
-            delta_gsh_draws.setdefault(pair, []).append(gsh.get(pair, 1.0) - 1.0)
-            delta_ind_draws.setdefault(pair, []).append(ind.get(pair, 1.0) - 1.0)
+        for pair, decomposition in decomposed.items():
+            composite_draws.setdefault(pair, []).append(decomposition.composite)
+            delta_comp_draws.setdefault(pair, []).append(decomposition.delta_comp)
+            delta_gsh_draws.setdefault(pair, []).append(decomposition.delta_gsh)
+            delta_ind_draws.setdefault(pair, []).append(decomposition.delta_ind)
 
     def _summary(values: list[float]) -> tuple[float, tuple[float, float]]:
         mean = sum(values) / len(values) if values else 0.0
@@ -2380,7 +3433,7 @@ def _competitive_effects_to_compat_dict(
 
 def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[str, Any]:
     """Convert an interaction result into a source-style JSON-serializable dict."""
-    return {
+    payload = {
         "individual_risks": dict(result.individual_risks),
         "interaction_adjusted_risks": dict(result.interaction_adjusted_risks),
         "synergy_matrix": dict(result.synergy_matrix),
@@ -2398,6 +3451,11 @@ def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[
             "individual_contributions": deepcopy(result.gsh_status.individual_contributions),
             "time_to_depletion_h": result.gsh_status.time_to_depletion_h,
             "tissue": result.gsh_status.tissue,
+            "model_version": result.gsh_status.model_version,
+            "redox_capacity_ratio": result.gsh_status.redox_capacity_ratio,
+            "detox_penalty_multiplier": result.gsh_status.detox_penalty_multiplier,
+            "warnings": deepcopy(result.gsh_status.warnings),
+            "metadata": deepcopy(result.gsh_status.metadata),
         },
         "induction_effects": dict(result.induction_effects.enzyme_folds),
         "competitive_effects": _competitive_effects_to_compat_dict(result.competitive_effects),
@@ -2410,6 +3468,12 @@ def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[
         "summary": result.summary,
         "mechanism_attribution": deepcopy(result.mechanism_attribution),
     }
+    if result.mechanism_attribution is not None:
+        payload["mechanism_resolved_risks"] = {
+            carcinogen: resolved.to_dict()
+            for carcinogen, resolved in result.mechanism_resolved_risks.items()
+        }
+    return payload
 
 
 def _critical_interactions_to_compat_list(

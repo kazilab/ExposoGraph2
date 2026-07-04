@@ -1,5 +1,9 @@
 """Smoke tests for the multi-carcinogen interaction engine."""
 
+import json
+from dataclasses import asdict
+from pathlib import Path
+
 import pytest
 
 from ExposoGraph import (
@@ -14,6 +18,18 @@ from ExposoGraph import (
     get_parameter_provenance,
     monte_carlo_synergy_ci,
 )
+
+
+MECHANISM_STATE_KEYS = {
+    "none",
+    "induction",
+    "competition",
+    "gsh",
+    "induction+competition",
+    "induction+gsh",
+    "competition+gsh",
+    "induction+competition+gsh",
+}
 
 
 def test_interaction_matrix_captures_synergy_between_two_classes():
@@ -42,7 +58,7 @@ def test_all_mechanisms_disabled_yields_unit_synergy():
     assert result.interaction_factor == pytest.approx(1.0)
 
 
-def test_decompose_synergy_returns_mechanism_deltas():
+def test_decompose_synergy_returns_eight_state_shapley_terms():
     decomp = decompose_synergy(
         {"PAH": 3.0, "HCA": 2.0, "benzene": 6.0},
         lifestyle={"smoking": True},
@@ -51,9 +67,35 @@ def test_decompose_synergy_returns_mechanism_deltas():
     for pair, dec in decomp.items():
         assert isinstance(dec, SynergyDecomposition)
         assert dec.pair == pair
-        # composite == 1 + sum(deltas) + residual by construction
-        reconstructed = 1.0 + dec.delta_comp + dec.delta_gsh + dec.delta_ind + dec.residual
-        assert reconstructed == pytest.approx(dec.composite, abs=1e-3)
+        assert dec.decomposition_basis == "eight_state_shapley"
+        assert set(dec.state_values) == MECHANISM_STATE_KEYS
+        assert set(dec.main_effects) == {"induction", "competition", "gsh"}
+        assert set(dec.pairwise_interactions) == {
+            "induction+competition",
+            "induction+gsh",
+            "competition+gsh",
+        }
+        assert isinstance(dec.three_way_interaction, float)
+        assert dec.shapley_decomposition["state_count"] == 8
+        assert dec.shapley_decomposition["source"] == "compute_interaction_matrix"
+
+        reconstructed = (
+            1.0
+            + dec.delta_ind
+            + dec.delta_comp
+            + dec.delta_gsh
+            + sum(dec.pairwise_interactions.values())
+            + dec.three_way_interaction
+            + dec.reconstruction_residual
+        )
+        assert reconstructed == pytest.approx(dec.composite, abs=1e-6)
+        assert dec.residual == pytest.approx(0.0, abs=1e-9)
+        assert dec.reconstruction_residual == pytest.approx(0.0, abs=1e-9)
+        assert dec.shapley_residual == pytest.approx(0.0, abs=1e-9)
+        assert dec.residuals_are_zero_within_tolerance is True
+        assert dec.residual_policy == "numerical_reconstruction_check_only"
+        assert dec.compatibility_fields["policy"] == "compatibility_only"
+        json.dumps(asdict(dec), allow_nan=False)
 
 
 def test_decompose_synergy_induction_dominates_for_smoker():
@@ -64,10 +106,87 @@ def test_decompose_synergy_induction_dominates_for_smoker():
     # Smoking induces CYP1A2/CYP1A1 → induction delta should be the dominant
     # positive contributor for at least one pair involving HCA or PAH.
     any_induction_driven = any(
-        dec.delta_ind >= max(abs(dec.delta_comp), abs(dec.delta_gsh))
+        dec.main_effects["induction"]
+        >= max(abs(dec.main_effects["competition"]), abs(dec.main_effects["gsh"]))
         for dec in decomp.values()
     )
     assert any_induction_driven
+
+
+def test_decompose_synergy_uses_authoritative_interaction_matrix_values():
+    exposure = {"PAH": 3.0, "HCA": 2.0, "benzene": 6.0, "ethanol": 8.0}
+    lifestyle = {"smoking": True, "chronic_alcohol": True}
+    matrix = compute_interaction_matrix(
+        exposure,
+        lifestyle=lifestyle,
+        include_biological_outputs=False,
+    )
+    decomp = decompose_synergy(exposure, lifestyle=lifestyle)
+
+    for pair, score in matrix.synergy_matrix.items():
+        assert pair in decomp
+        assert decomp[pair].composite == pytest.approx(score)
+        assert decomp[pair].state_values["induction+competition+gsh"] == pytest.approx(score)
+
+
+def test_decompose_synergy_biological_output_flag_does_not_change_principal_terms():
+    exposure = {"PAH": 3.0, "HCA": 2.0, "benzene": 6.0, "ethanol": 8.0}
+    lifestyle = {"smoking": True, "chronic_alcohol": True}
+    with_outputs = decompose_synergy(
+        exposure,
+        lifestyle=lifestyle,
+        include_biological_outputs=True,
+    )
+    without_outputs = decompose_synergy(
+        exposure,
+        lifestyle=lifestyle,
+        include_biological_outputs=False,
+    )
+
+    def principal(entry):
+        return {
+            "composite": entry.composite,
+            "main_effects": entry.main_effects,
+            "pairwise_interactions": entry.pairwise_interactions,
+            "three_way_interaction": entry.three_way_interaction,
+            "reconstruction_residual": entry.reconstruction_residual,
+            "state_values": entry.state_values,
+        }
+
+    assert {pair: principal(dec) for pair, dec in with_outputs.items()} == {
+        pair: principal(dec) for pair, dec in without_outputs.items()
+    }
+
+
+def test_figure3_notebook_generator_uses_final_decomposition_fields():
+    source = Path("tools/create_figure3_notebook.py").read_text(encoding="utf-8")
+
+    assert "dec.dominant_mechanism" in source
+    assert "main_effect_induction" in source
+    assert "interaction_induction_competition" in source
+    assert "reconstruction_residual" in source
+    assert '"residual": "" if dec is None else dec.residual' not in source
+
+
+def test_s6_decomposition_rows_use_final_decomposition_fields():
+    source = Path("tools/generate_interaction_results_s6.py").read_text(encoding="utf-8")
+
+    assert "def _decomposition_row" in source
+    assert "residual_policy" in source
+    assert '"residual_policy": dec.residual_policy' in source
+    assert "compatibility_policy" in source
+    for field in {
+        "main_effect_induction",
+        "main_effect_competition",
+        "main_effect_gsh",
+        "interaction_induction_competition",
+        "interaction_induction_gsh",
+        "interaction_competition_gsh",
+        "interaction_three_way",
+        "reconstruction_residual",
+    }:
+        assert field in source
+    assert '"residual": dec.residual' not in source
 
 
 def test_monte_carlo_synergy_ci_returns_ordered_bounds():
