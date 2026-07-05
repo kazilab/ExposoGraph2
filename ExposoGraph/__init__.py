@@ -81,7 +81,6 @@ from .epigenomic_modifier import (
     methylation_status_to_dict,
     parse_methylation_calls,
 )
-from .exemplar_pathways_figure import render_exemplar_pathways_figure
 from .expanded_metals import (
     MetalProfile,
     build_expanded_metal_graph,
