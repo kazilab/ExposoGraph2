@@ -4,8 +4,18 @@ import math
 import pytest
 
 from ExposoGraph.endpoint_toxic_flux import interpret_competitive_endpoint_flux
-from ExposoGraph.interaction_engine import _interaction_matrix_to_compat_dict, cli_main, competitive_inhibition_flux, compute_interaction_matrix
-from ExposoGraph.interaction_schema import ConcentrationBasis, InhibitionMode, ReactionRole, RiskDirectionIfFluxDecreases
+from ExposoGraph.interaction_engine import (
+    _interaction_matrix_to_compat_dict,
+    cli_main,
+    competitive_inhibition_flux,
+    compute_interaction_matrix,
+)
+from ExposoGraph.interaction_schema import (
+    ConcentrationBasis,
+    InhibitionMode,
+    ReactionRole,
+    RiskDirectionIfFluxDecreases,
+)
 from ExposoGraph.reaction_role_semantics import ReactionRoleAnnotation
 from ExposoGraph.unified_api import patient_risk_query
 
@@ -22,7 +32,11 @@ def _finite_walk(value):
 
 
 def _bio(enzyme, substrate, substrates):
-    return competitive_inhibition_flux(enzyme, substrates).substrates[substrate].biological_output
+    return (
+        competitive_inhibition_flux(enzyme, substrates)
+        .substrates[substrate]
+        .biological_output
+    )
 
 
 def test_live_modified_flux_reaches_reaction_role_and_endpoint_outputs():
@@ -30,11 +44,17 @@ def test_live_modified_flux_reaches_reaction_role_and_endpoint_outputs():
     benzene = _bio("CYP2E1", "benzene", {"benzene": 10.0, "ethanol": 2000.0})
 
     assert ndma["reaction_role_interpretation"]["role"] == "bioactivation"
-    assert ndma["reaction_role_interpretation"]["directional_interpretation"] == "toxic_product_formation_may_decrease"
+    assert (
+        ndma["reaction_role_interpretation"]["directional_interpretation"]
+        == "toxic_product_formation_may_decrease"
+    )
     assert ndma["endpoint_toxic_flux"]["activation_burden_ratio"] < 1.0
 
     assert benzene["reaction_role_interpretation"]["role"] == "detoxification"
-    assert benzene["reaction_role_interpretation"]["directional_interpretation"] == "burden_may_increase"
+    assert (
+        benzene["reaction_role_interpretation"]["directional_interpretation"]
+        == "burden_may_increase"
+    )
     assert benzene["endpoint_toxic_flux"]["detox_failure_ratio"] > 1.0
     assert benzene["effective_burden"]["effective_carcinogenic_burden_ratio"] > 1.0
 
@@ -53,27 +73,40 @@ def test_elimination_and_protective_repair_roles_increase_burden_when_inhibited(
         risk_direction_if_flux_decreases=RiskDirectionIfFluxDecreases.INCREASE,
     )
 
-    assert interpret_competitive_endpoint_flux(0.5, clearance).detox_failure_ratio == pytest.approx(2.0)
-    assert interpret_competitive_endpoint_flux(0.5, repair).detox_failure_ratio == pytest.approx(2.0)
+    assert interpret_competitive_endpoint_flux(
+        0.5, clearance
+    ).detox_failure_ratio == pytest.approx(2.0)
+    assert interpret_competitive_endpoint_flux(
+        0.5, repair
+    ).detox_failure_ratio == pytest.approx(2.0)
 
 
 def test_unknown_role_and_unresolved_inhibition_withhold_directional_interpretation():
-    unknown = _bio("CYP2E1", "acetaminophen", {"acetaminophen": 10.0, "ethanol": 2000.0})
-    unresolved = competitive_inhibition_flux(
-        "CYP2E1",
-        {"benzene": 10.0},
-        inhibition_contexts={
-            "benzene": {
-                "mode": InhibitionMode.UNKNOWN,
-                "inhibitor_concentration_uM": 2.0,
-                "concentration_basis": ConcentrationBasis.UNBOUND,
-                "parameter_concentration_basis": ConcentrationBasis.UNBOUND,
-            }
-        },
-    ).substrates["benzene"].biological_output
+    unknown = _bio(
+        "CYP2E1", "acetaminophen", {"acetaminophen": 10.0, "ethanol": 2000.0}
+    )
+    unresolved = (
+        competitive_inhibition_flux(
+            "CYP2E1",
+            {"benzene": 10.0},
+            inhibition_contexts={
+                "benzene": {
+                    "mode": InhibitionMode.UNKNOWN,
+                    "inhibitor_concentration_uM": 2.0,
+                    "concentration_basis": ConcentrationBasis.UNBOUND,
+                    "parameter_concentration_basis": ConcentrationBasis.UNBOUND,
+                }
+            },
+        )
+        .substrates["benzene"]
+        .biological_output
+    )
 
     assert unknown["reaction_role_interpretation"]["role"] == "unknown"
-    assert unknown["reaction_role_interpretation"]["directional_interpretation"] == "withheld_unknown_role"
+    assert (
+        unknown["reaction_role_interpretation"]["directional_interpretation"]
+        == "withheld_unknown_role"
+    )
     assert unknown["reaction_role_interpretation"]["review_required"] is True
 
     assert unresolved["kinetic_effect"]["mechanism_state"] == "mechanism_unresolved"
@@ -82,7 +115,9 @@ def test_unknown_role_and_unresolved_inhibition_withhold_directional_interpretat
 
 
 def test_gsh_capacity_changes_only_for_biologically_annotated_pathways():
-    acetaminophen = _bio("CYP2E1", "acetaminophen", {"acetaminophen": 10.0, "ethanol": 2000.0})
+    acetaminophen = _bio(
+        "CYP2E1", "acetaminophen", {"acetaminophen": 10.0, "ethanol": 2000.0}
+    )
     ndma = _bio("CYP2E1", "NDMA", {"NDMA": 1.0, "ethanol": 2000.0})
 
     assert acetaminophen["gsh_capacity_effect"]["gsh_relevant"] is True
@@ -102,10 +137,15 @@ def test_mechanism_attribution_uses_live_engine_generated_eight_states():
     )
 
     attribution = result.mechanism_attribution
-    assert attribution["state_calculation_source"] == "interaction_engine.compute_interaction_matrix"
+    assert (
+        attribution["state_calculation_source"]
+        == "interaction_engine.compute_interaction_matrix"
+    )
     assert len(attribution["state_values"]) == 8
     assert attribution["metadata"]["caller_metadata"]["engine_generated_states"] is True
-    assert attribution["metadata"]["caller_metadata"]["disabled_inhibition_modifier"] == pytest.approx(1.0)
+    assert attribution["metadata"]["caller_metadata"][
+        "disabled_inhibition_modifier"
+    ] == pytest.approx(1.0)
     assert attribution["mechanism_state_distinctions"]["mechanism_unresolved"]
 
 
@@ -136,7 +176,10 @@ def test_multiple_explicit_inhibition_contexts_remain_review_required_in_biologi
 
     assert benzene.kinetic_modifier is None
     assert benzene.biological_output["kinetic_effect"]["review_required"] is True
-    assert "MULTIPLE_INHIBITORS_NOT_JOINTLY_RESOLVED" in benzene.biological_output["kinetic_effect"]["warnings"]
+    assert (
+        "MULTIPLE_INHIBITORS_NOT_JOINTLY_RESOLVED"
+        in benzene.biological_output["kinetic_effect"]["warnings"]
+    )
 
 
 def test_model_transparency_and_serialization_expose_biological_output_assumptions_without_nan():
@@ -144,7 +187,12 @@ def test_model_transparency_and_serialization_expose_biological_output_assumptio
 
     assert output["kinetic_effect"]["equation_id"] == "reversible_inhibition.mixed.v1"
     assert output["model_transparency"]["live_engine_integration"] is True
-    assert output["model_transparency"]["model_card_summary"]["validation_summary"]["live_biological_output_integration"] is True
+    assert (
+        output["model_transparency"]["model_card_summary"]["validation_summary"][
+            "live_biological_output_integration"
+        ]
+        is True
+    )
     json.dumps(output, allow_nan=False)
     _finite_walk(output)
 
