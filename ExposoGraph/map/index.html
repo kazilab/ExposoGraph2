@@ -484,35 +484,37 @@ body.is-resizing * { user-select: none !important; }
     </div>
 
     <!-- Node Legend -->
-    <div class="panel">
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Node Types</div>
-      <div class="panel-body" id="node-legend"></div>
+      <div class="panel-body" id="node-legend" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; min-height: 0;"></div>
     </div>
 
     <!-- Edge Legend -->
-    <div class="panel">
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Edge Types</div>
-      <div class="panel-body" id="edge-legend"></div>
+      <div class="panel-body" id="edge-legend" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; min-height: 0;"></div>
     </div>
 
     <!-- Carcinogen Filter -->
-    <div class="panel">
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
       <div class="panel-header">Filter by Carcinogen Class</div>
-      <div class="panel-body">
-        <div class="filter-group" id="carcinogen-filters"></div>
+      <div class="panel-body" style="overflow-y: auto; overflow-x: hidden; min-height: 0; padding-bottom: 10px;">
+        <div class="filter-group" id="carcinogen-filters" style="padding-left: 1px;"></div>
       </div>
     </div>
 
-    <div class="panel">
+  <!-- Filter by Tissue Panel with restricted max-height -->
+    <div class="panel" style="display: flex; flex-direction: column; max-height: 45vh;">
       <div class="panel-header">Filter by Tissue</div>
-      <div class="panel-body">
+    
+    <!-- Enabled vertical scrolling and added a bottom padding safety gap -->
+      <div class="panel-body" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 25px; min-height: 0;">
         <label class="control-label" for="tissue-select">GTEx/HPA Tissue</label>
         <select class="select-control" id="tissue-select"></select>
         <label class="control-label" for="tissue-threshold">Minimum nTPM Weight</label>
         <input class="range-control" id="tissue-threshold" type="range" min="0" max="1" step="0.05" value="0.05">
-        <div class="helper-text" id="tissue-summary">
-          GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.
-        </div>
+      <div class="helper-text" id="tissue-summary">
+        GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.
       </div>
     </div>
 

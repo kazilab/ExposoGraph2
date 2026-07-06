@@ -14,7 +14,6 @@ from .config import GraphVisibility, get_app_mode, persistence_enabled
 from .engine import GraphEngine
 from .exporter import parse_graph_data_text
 from .graph_filters import graph_visibility_label
-from .llm_extractor import EXAMPLE_INPUT
 from .models import (
     CurationConfidence,
     CurationRecord,
@@ -63,13 +62,35 @@ EDGE_COLORS = {
 # ── Search field tuples ───────────────────────────────────────────────────
 
 NODE_SEARCH_FIELDS = (
-    "id", "label", "type", "detail", "group", "iarc", "phase", "role",
-    "source_db", "evidence", "pmid", "tissue", "variant", "phenotype",
-    "provenance", "curation",
+    "id",
+    "label",
+    "type",
+    "detail",
+    "group",
+    "iarc",
+    "phase",
+    "role",
+    "source_db",
+    "evidence",
+    "pmid",
+    "tissue",
+    "variant",
+    "phenotype",
+    "provenance",
+    "curation",
 )
 EDGE_SEARCH_FIELDS = (
-    "source", "target", "type", "label", "carcinogen",
-    "source_db", "evidence", "pmid", "tissue", "provenance", "curation",
+    "source",
+    "target",
+    "type",
+    "label",
+    "carcinogen",
+    "source_db",
+    "evidence",
+    "pmid",
+    "tissue",
+    "provenance",
+    "curation",
 )
 
 # ── Session state bootstrap ──────────────────────────────────────────────
@@ -80,6 +101,19 @@ def get_engine() -> GraphEngine:
         st.session_state.engine = GraphEngine()
     engine: GraphEngine = st.session_state.engine
     return engine
+
+
+def start_engine(engine: GraphEngine) -> None:
+    if "graph_initialized" not in st.session_state:
+        try:
+            default_js_path = (
+                Path(__file__).resolve().parent / "map" / "graph_data.json"
+            )
+            if default_js_path.exists():
+                engine.load_base_data(default_js_path)
+                st.session_state.graph_initialized = True
+        except Exception as e:
+            st.warning(f"Could not pre-load reference map: {e}")
 
 
 @st.cache_resource
@@ -94,10 +128,6 @@ def get_pending_extraction() -> KnowledgeGraph | None:
     if raw is None:
         return None
     return KnowledgeGraph(**raw)
-
-
-def load_example_text() -> None:
-    st.session_state["extract_text"] = EXAMPLE_INPUT
 
 
 # ── Pure helpers ──────────────────────────────────────────────────────────
@@ -144,7 +174,9 @@ def relative_path(path: Path) -> str:
         return str(path)
 
 
-def load_into_engine(engine: GraphEngine, kg: KnowledgeGraph, *, replace: bool) -> list[str]:
+def load_into_engine(
+    engine: GraphEngine, kg: KnowledgeGraph, *, replace: bool
+) -> list[str]:
     if replace:
         return engine.load(kg)
     return engine.merge(kg)
@@ -157,12 +189,12 @@ def slugify_project_name(value: str) -> str:
 
 
 def saved_project_paths() -> list[Path]:
-    return sorted(
-        list(PROJECTS_DIR.glob("*.html")) + list(PROJECTS_DIR.glob("*.json"))
-    )
+    return sorted(list(PROJECTS_DIR.glob("*.html")) + list(PROJECTS_DIR.glob("*.json")))
 
 
-def revision_label(revision_id: int, revisions_by_id: dict[int, GraphRevisionSummary]) -> str:
+def revision_label(
+    revision_id: int, revisions_by_id: dict[int, GraphRevisionSummary]
+) -> str:
     revision = revisions_by_id[revision_id]
     note = f" - {revision.note}" if revision.note else ""
     visibility = (

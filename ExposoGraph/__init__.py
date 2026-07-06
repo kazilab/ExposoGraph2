@@ -12,7 +12,6 @@ from ChatGPT Codex and Claude Code.
 """
 
 from ._version import __version__
-from .androgen_publication_figure import render_androgen_publication_figure
 from .biomarker_mapping import (
     BiomarkerDoseEstimate,
     BiomarkerEntry,
@@ -63,41 +62,6 @@ from .config import (
     normalize_graph_visibility,
     persistence_enabled,
 )
-from .cross_species import (
-    AllometricCoefficients,
-    ExtrapolationType,
-    LifeStage,
-    SpeciesCharacteristics,
-    UncertaintyFactors,
-    adjust_for_life_stage,
-    allometric_scale,
-    apply_uncertainty_factors,
-    calculate_reference_dose,
-    compare_species_physiology,
-    convert_auc,
-    convert_clearance,
-    convert_dose_mg_per_kg,
-    convert_volume_distribution,
-    extrapolate_study_duration,
-    get_life_stage_factor,
-    get_species_data,
-    pediatric_adjustment,
-)
-from .cytoscape_adapter import (
-    CytoscapeBundle,
-    ViewerLayoutMode,
-    build_cytoscape_bundle,
-    build_cytoscape_elements,
-    build_cytoscape_metadata,
-    compute_viewer_positions,
-    load_cytoscape_bundle,
-    load_viewer_positions,
-    normalize_viewer_layout_mode,
-    viewer_layout,
-    viewer_stylesheet,
-    write_cytoscape_bundle,
-    write_viewer_positions,
-)
 from .db_clients import CTDClient, IARCClassifier, IARCGroup, KEGGClient
 from .engine import GraphEngine
 from .epigenomic_modifier import (
@@ -117,21 +81,6 @@ from .epigenomic_modifier import (
     methylation_status_to_dict,
     parse_methylation_calls,
 )
-from .example_graphs import (
-    ArchitectureInventoryGroup,
-    ArchitectureSummary,
-    build_androgen_module_engine,
-    build_androgen_module_graph,
-    build_full_legends_architecture_summary,
-    build_full_legends_engine,
-    build_full_legends_graph,
-    build_reference_architecture_summary,
-    build_reference_engine,
-    build_reference_graph,
-    write_full_legends_exports,
-    write_reference_exports,
-)
-from .exemplar_pathways_figure import render_exemplar_pathways_figure
 from .expanded_metals import (
     MetalProfile,
     build_expanded_metal_graph,
@@ -279,8 +228,6 @@ from .interaction_engine import (
     run_validation_case_3,
     run_validation_case_4,
 )
-from .llm_backend import LLMBackend, OllamaBackend, OpenAIBackend, UsageRecord
-from .llm_extractor import extract_graph, extract_graph_with_usage
 from .models import (
     CurationConfidence,
     CurationRecord,
@@ -306,23 +253,6 @@ from .mutational_signatures import (
 from .mutational_signatures import (
     summary_to_dict as signature_summary_to_dict,
 )
-from .oxidative_stress import (
-    OSMarkerType,
-    OxidativeStressMarker,
-    ReactiveSpecies,
-    ROSGenerationPathway,
-    build_os_marker_graph,
-    calculate_os_risk_score,
-    get_antioxidant_response,
-    get_markers_by_metal,
-    get_markers_by_type,
-    get_os_marker,
-    get_primary_ros_species,
-    get_recommended_os_panel,
-    get_ros_pathways,
-    integrate_os_into_metabolism_chain,
-    requires_fenton_chemistry,
-)
 from .pharmacogenomic_risk_figure import (
     PharmacogenomicRiskClassProfile,
     PharmacogenomicRiskGeneProfile,
@@ -331,69 +261,6 @@ from .pharmacogenomic_risk_figure import (
     pharmacogenomic_risk_class_rows,
     pharmacogenomic_risk_gene_rows,
     render_pharmacogenomic_risk_figure,
-)
-from .population_genomics import (
-    AlleleFrequency,
-    Population,
-    PopulationRiskProfile,
-    annotate_nodes_with_population_data,
-    build_population_aware_panel,
-    calculate_population_risk_score,
-    compare_population_risks,
-    get_allele_frequencies,
-    get_genes_by_population_prevalence,
-    get_population_frequency,
-    get_population_risk_profiles,
-)
-from .population_simulation import (
-    ALLELE_FREQUENCIES,
-    ALLOFUS_PGX_GENES,
-    ANCESTRY_DISTRIBUTION,
-    BIGQUERY_SQL,
-    CANCER_PHENOTYPES,
-    DEFAULT_CONFIG,
-    GENOTYPE_CANCER_ORS,
-    HAPLOTYPE_BLOCKS,
-    PHENOTYPE_SQL,
-    REFERENCE_ORS,
-    GxEAnalysisResult,
-    ParticipantRiskSummary,
-    PopulationSimulation,
-    PopulationSimulationResult,
-    PopulationStats,
-    SyntheticParticipant,
-    ValidationResult,
-    analyze_genotype_exposure_interactions,
-    analyze_gxe_interactions,
-    build_cancer_labels,
-    build_participant_record,
-    classify_cancer_from_icd10,
-    classify_cancer_from_snomed,
-    compute_calibration,
-    compute_descriptive_stats,
-    compute_population_stats,
-    compute_risk_distributions,
-    compute_roc_auc,
-    derive_gst_from_wgs,
-    extract_lifestyle_from_surveys,
-    generate_population_report,
-    generate_synthetic_cancer_labels,
-    generate_synthetic_cohort,
-    get_bigquery_sql,
-    get_cancer_phenotype_definitions,
-    get_phenotype_sql,
-    load_all_pgx_files,
-    load_ancestry_predictions,
-    load_results,
-    parse_pgx_tsv,
-    pgx_to_exposograph_genotype,
-    run_full_validation,
-    run_participant_risk,
-    run_population_simulation,
-    run_synthetic_simulation,
-    sample_haplotype_block,
-    stratify_by_ancestry,
-    validate_against_published_ors,
 )
 from .reference_data import (
     ACTIVITY_SCORE_METADATA,
@@ -471,22 +338,6 @@ from .unified_api import (
     enrich_knowledge_graph,
     patient_risk_query,
     summarize_risk_profile,
-)
-from .viewer_dash import (
-    apply_viewer_filters,
-    build_detail_payload,
-    create_dash_viewer_app,
-    launch_dash_viewer,
-)
-from .wave2_classes import (
-    WAVE2_CLASS_PROFILES,
-    CarcinogenClassProfile,
-    build_single_class_graph,
-    build_wave2_class_graph,
-    get_all_wave2_classes,
-    get_class_profile,
-    get_class_specific_nodes,
-    merge_wave2_classes_into,
 )
 
 __all__ = [
@@ -605,7 +456,6 @@ __all__ = [
     "pharmacogenomic_risk_class_rows",
     "pharmacogenomic_risk_gene_rows",
     "persistence_enabled",
-    "render_androgen_publication_figure",
     "render_exemplar_pathways_figure",
     "render_architecture_figure",
     "render_pharmacogenomic_risk_figure",
