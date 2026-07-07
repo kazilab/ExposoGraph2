@@ -128,19 +128,24 @@ def _edge_matches(edge: Edge, kept_node_ids: set[str], criteria: GraphFilterCrit
 def _ids_matching_classes(graph: KnowledgeGraph, classes: frozenset[str]) -> set[str] | None:
     if not classes:
         return None
-    class_node_ids = {node.id for node in graph.nodes if _matches_class(node, classes)}
-    allowed = set(class_node_ids)
+
+    class_carcinogen_ids = {
+        node.id
+        for node in graph.nodes
+        if node.type == NodeType.CARCINOGEN and _matches_class(node, classes)
+    }
+    if not class_carcinogen_ids:
+        return set()
+
+    allowed = set(class_carcinogen_ids)
     for edge in graph.edges:
-        if (
-            edge.carcinogen in class_node_ids
-            or edge.source in class_node_ids
-            or edge.target in class_node_ids
-        ):
+        edge_context_matches = bool(edge.carcinogen and edge.carcinogen in class_carcinogen_ids)
+        endpoint_matches = edge.source in class_carcinogen_ids or edge.target in class_carcinogen_ids
+        if edge_context_matches or endpoint_matches:
             allowed.update({edge.source, edge.target})
             if edge.carcinogen:
                 allowed.add(edge.carcinogen)
     return allowed
-
 
 def _ids_matching_tissues(graph: KnowledgeGraph, criteria: GraphFilterCriteria) -> set[str] | None:
     if not criteria.tissues and criteria.min_tissue_weight is None:

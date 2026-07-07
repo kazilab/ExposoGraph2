@@ -42,6 +42,13 @@ def _graph() -> KnowledgeGraph:
                 group="PAH",
                 tissue_weights={"Lung": 0.7},
             ),
+            Node(
+                id="estradiol",
+                label="Estradiol",
+                type=NodeType.CARCINOGEN,
+                group="Hormone",
+                tissue_weights={"Lung": 0.2},
+            ),
             Node(id="lung", label="Lung", type=NodeType.TISSUE),
         ],
         edges=[
@@ -57,6 +64,13 @@ def _graph() -> KnowledgeGraph:
                 target="CYP1A1",
                 type=EdgeType.ACTIVATES,
                 carcinogen="benzo_a_pyrene",
+                tissue="Lung",
+            ),
+            Edge(
+                source="CYP1A1",
+                target="estradiol",
+                type=EdgeType.ACTIVATES,
+                carcinogen="estradiol",
                 tissue="Lung",
             ),
             Edge(source="GSTM1", target="lung", type=EdgeType.EXPRESSED_IN, tissue="Lung"),
@@ -85,6 +99,16 @@ def test_issue14_filter_by_carcinogen_class() -> None:
 
     assert {node.id for node in filtered.nodes} == {"benzo_a_pyrene", "CYP1A1"}
     assert {edge.carcinogen for edge in filtered.edges} == {"benzo_a_pyrene"}
+
+
+def test_issue14_class_filter_does_not_expand_from_class_labeled_noncarcinogen() -> None:
+    filtered = filter_graph_by_criteria(_graph(), carcinogen_classes=["PAH"])
+    node_ids = {node.id for node in filtered.nodes}
+    edge_contexts = {edge.carcinogen for edge in filtered.edges}
+
+    assert "estradiol" not in node_ids
+    assert "estradiol" not in edge_contexts
+    assert node_ids == {"benzo_a_pyrene", "CYP1A1"}
 
 
 def test_issue14_filter_by_tissue_weight_metadata() -> None:
