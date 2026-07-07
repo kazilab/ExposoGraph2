@@ -21,7 +21,7 @@ from .interaction_schema import (
     SerializableRecord,
     ValueEnum,
 )
-from .reaction_role_semantics import get_spyros_sme_reaction_role_records
+from .reaction_role_semantics import get_reaction_role_sme_records
 
 
 class AssumptionCategory(ValueEnum):
@@ -182,6 +182,60 @@ KNOWN_LIMITATIONS = [
     "Unknown reaction roles, endpoint signs, and biological mechanisms are not resolved by this layer.",
     "Release 2.0 boundaries keep deferred NAT2, ALDH, GST, EPHX1, and optional affinity fallback work inactive.",
 ]
+
+MODULE5_MECHANISM_MODEL_VERSION = "module5_mechanism_resolved_v2"
+MODULE5_RISK_CALCULATION_BASIS = "mechanism_resolved_adjusted_relative_risk"
+MODULE5_SYNERGY_DECOMPOSITION_BASIS = "eight_state_shapley"
+MODULE5_INHIBITION_PARAMETER_POLICY = (
+    "curated_Ki_preferred; Km_proxy_low_confidence_warned; IC50_conversion_guarded"
+)
+MODULE5_REACTION_ROLE_POLICY = (
+    "explicit_role_and_risk_direction_required; unknown_pending_or_deferred_biology_neutral_warned"
+)
+MODULE5_DIAGNOSTIC_OUTPUT_POLICY = (
+    "mechanism_resolved_adjusted_risk_authoritative; biological_output_marks_selected_or_diagnostic_effects"
+)
+
+
+def build_module5_model_card_summary(
+    *,
+    mechanism_model_version: str = MODULE5_MECHANISM_MODEL_VERSION,
+    risk_calculation_basis: str = MODULE5_RISK_CALCULATION_BASIS,
+    gsh_model_version: str | None = None,
+    inhibition_parameter_policy: str = MODULE5_INHIBITION_PARAMETER_POLICY,
+    reaction_role_policy: str = MODULE5_REACTION_ROLE_POLICY,
+    synergy_decomposition_basis: str = MODULE5_SYNERGY_DECOMPOSITION_BASIS,
+    diagnostic_output_policy: str = MODULE5_DIAGNOSTIC_OUTPUT_POLICY,
+    review_required_count: int = 0,
+    warning_count: int = 0,
+    unresolved_or_deferred_count: int = 0,
+    evidence_summary_available: bool = True,
+    detailed_records_location: Mapping[str, Any] | None = None,
+    ki_resolver_statuses: Iterable[str] | None = None,
+    reaction_role_review_statuses: Iterable[str] | None = None,
+    model_boundary_warnings_present: bool = False,
+) -> JsonDict:
+    """Build the compact public Module 5 model-card summary."""
+
+    return {
+        "mechanism_model_version": mechanism_model_version,
+        "risk_calculation_basis": risk_calculation_basis,
+        "gsh_model_version": gsh_model_version,
+        "inhibition_parameter_policy": inhibition_parameter_policy,
+        "reaction_role_policy": reaction_role_policy,
+        "synergy_decomposition_basis": synergy_decomposition_basis,
+        "diagnostic_output_policy": diagnostic_output_policy,
+        "review_required_count": int(review_required_count),
+        "warning_count": int(warning_count),
+        "unresolved_or_deferred_count": int(unresolved_or_deferred_count),
+        "evidence_summary_available": bool(evidence_summary_available),
+        "detailed_records_location": dict(detailed_records_location or {}),
+        "ki_resolver_statuses": sorted({str(item) for item in (ki_resolver_statuses or []) if item}),
+        "reaction_role_review_statuses": sorted(
+            {str(item) for item in (reaction_role_review_statuses or []) if item}
+        ),
+        "model_boundary_warnings_present": bool(model_boundary_warnings_present),
+    }
 
 
 def collect_assumption_warnings(*phase_outputs: Any) -> list[TransparencyRecord]:
@@ -393,7 +447,7 @@ def build_deferral_records(include_phase4_registry: bool = True) -> list[Deferra
 
     deferrals: list[DeferralRecord] = []
     if include_phase4_registry:
-        for record in get_spyros_sme_reaction_role_records():
+        for record in get_reaction_role_sme_records():
             if record.review_status is SMEReviewStatus.DEFERRED_3_0:
                 subject = _deferred_subject(record.enzyme)
                 deferrals.append(
@@ -619,7 +673,7 @@ def _metadata_boundary_records(metadata: Mapping[str, Any], records: list[Transp
 
 def _phase4_registry_queue_items() -> list[SMEReviewQueueItem]:
     items: list[SMEReviewQueueItem] = []
-    for record in get_spyros_sme_reaction_role_records():
+    for record in get_reaction_role_sme_records():
         if record.review_status not in REVIEW_QUEUE_STATUSES:
             continue
         message = _first_sme_note(record) or f"{record.enzyme} {record.substrate} requires review."

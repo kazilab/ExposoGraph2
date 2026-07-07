@@ -10,11 +10,7 @@ Streamlit Cloud
 
 3. Set the **main file path** to ``ExposoGraph/app.py``.
 
-4. Add your OpenAI API key in **Secrets management**:
-
-   .. code-block:: toml
-
-      OPENAI_API_KEY = "sk-..."
+4. Add any site-specific service credentials in **Secrets management**.
 
 5. Deploy. The app reads secrets via ``st.secrets`` and falls back to
    environment variables for local development.
@@ -35,7 +31,6 @@ Local Development
 
 .. code-block:: bash
 
-   export OPENAI_API_KEY="sk-..."
    export ExposoGraph_MODE=local
    pip install -e ".[streamlit]"
    streamlit run ExposoGraph/app.py
@@ -45,7 +40,7 @@ Or copy the example secrets file:
 .. code-block:: bash
 
    cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-   # Edit .streamlit/secrets.toml with your key
+   # Edit .streamlit/secrets.toml with local service settings
 
 Continuous Integration
 ----------------------

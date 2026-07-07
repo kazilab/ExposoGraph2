@@ -343,6 +343,13 @@ def couple_gsh_consumption_to_activation_burden(
         )
         upstream = d_value * k_value
         scaling_source = "d_times_k_approximation"
+        warnings.append(
+            _warning(
+                "gsh_d_times_k_fallback_used",
+                "GSH upstream activation used explicit D/K factors because direct upstream activation burden was absent.",
+                field="upstream_activation_burden_ratio",
+            )
+        )
     else:
         warnings.append(
             _warning(

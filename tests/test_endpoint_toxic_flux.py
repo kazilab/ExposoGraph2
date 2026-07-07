@@ -128,7 +128,7 @@ def test_probe_only_is_neutral_with_warning():
 def test_inactive_pending_tce_annotation_is_neutral_and_warned():
     result = endpoint_toxic_flux_from_registry_lookup("CYP2E1", "TCE", 0.5)
 
-    assert result.annotation_record_id == "spyros_tce_cyp2e1_candidate_pending"
+    assert result.annotation_record_id == "reaction_role_tce_cyp2e1_candidate_pending"
     assert result.endpoint_toxic_flux_ratio == pytest.approx(1.0)
     assert result.activation_burden_ratio == pytest.approx(1.0)
     assert result.detox_failure_ratio == pytest.approx(1.0)
@@ -145,7 +145,7 @@ def test_benzene_cyp2e1_record_maps_flux_decrease_to_higher_burden():
         endpoint=RiskEndpoint.DNA_ADDUCT,
     )
 
-    assert result.annotation_record_id == "spyros_benzene_cyp2e1_v2_flip"
+    assert result.annotation_record_id == "reaction_role_benzene_cyp2e1_v2_direction_adjustment"
     assert result.reaction_role is ReactionRole.DETOXIFICATION
     assert result.endpoint_toxic_flux_ratio == pytest.approx(2.0)
     assert result.detox_failure_ratio == pytest.approx(2.0)
@@ -162,7 +162,7 @@ def test_benzene_cyp2f1_and_cyp2a13_context_specific_behavior_is_preserved():
             endpoint=RiskEndpoint.DNA_ADDUCT,
         )
 
-        assert result.annotation_record_id == f"spyros_benzene_{enzyme.lower()}_bone_marrow_flip"
+        assert result.annotation_record_id == f"reaction_role_benzene_{enzyme.lower()}_bone_marrow_direction_adjustment"
         assert result.endpoint_toxic_flux_ratio == pytest.approx(2.0)
         assert result.detox_failure_ratio == pytest.approx(2.0)
 
@@ -171,7 +171,7 @@ def test_benzene_cyp2f1_and_cyp2a13_outside_context_do_not_globally_flip():
     for enzyme in ("CYP2F1", "CYP2A13"):
         result = endpoint_toxic_flux_from_registry_lookup(enzyme, "benzene", 0.5)
 
-        assert result.annotation_record_id == f"spyros_benzene_{enzyme.lower()}_outside_context_unknown"
+        assert result.annotation_record_id == f"reaction_role_benzene_{enzyme.lower()}_outside_context_unknown"
         assert result.endpoint_toxic_flux_ratio == pytest.approx(1.0)
         assert result.detox_failure_ratio == pytest.approx(1.0)
         assert "endpoint_role_unknown" in _warning_codes(result)
@@ -232,7 +232,7 @@ def test_endpoint_flux_input_uses_registry_lookup_when_annotation_is_absent():
         )
     )
 
-    assert result.annotation_record_id == "spyros_benzene_cyp2e1_v2_flip"
+    assert result.annotation_record_id == "reaction_role_benzene_cyp2e1_v2_direction_adjustment"
     assert result.flux_ratio == pytest.approx(0.5)
     assert result.endpoint_toxic_flux_ratio == pytest.approx(2.0)
 

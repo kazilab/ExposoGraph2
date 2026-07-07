@@ -23,6 +23,16 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Mapping, TypeAlias, cast
 
+from .flux_equations import (
+    activation_detox_ratio,
+    finite_nonnegative as _finite_nonnegative,
+    hill_equation,
+    michaelis_menten,
+    saturating_flux,
+    scaled_vmax,
+    susceptibility_score_log2 as _equation_susceptibility_score_log2,
+)
+
 # ── Enums ──────────────────────────────────────────────────────────────────
 
 
@@ -243,24 +253,7 @@ def _load_proxy_flux_provenance() -> JsonDict:
 # ── Core kinetic equations ─────────────────────────────────────────────────
 
 
-def michaelis_menten(S: float, Vmax: float, Km: float) -> float:
-    """Calculate reaction velocity using Michaelis-Menten kinetics.
-
-    v = Vmax * S / (Km + S)
-
-    Args:
-        S: Substrate concentration (uM).
-        Vmax: Maximum velocity.
-        Km: Michaelis constant (uM).
-
-    Returns:
-        Reaction velocity in same units as *Vmax*.
-    """
-    if Km <= 0:
-        raise ValueError(f"Km must be positive, got {Km}")
-    if S < 0:
-        raise ValueError(f"Substrate concentration cannot be negative, got {S}")
-    return Vmax * S / (Km + S)
+# Michaelis-Menten, Hill, and finite-input equations live in flux_equations.py.
 
 
 def apply_kinetic_modifier_once(baseline_flux: float, kinetic_modifier: float) -> KineticFluxApplication:
@@ -273,43 +266,6 @@ def apply_kinetic_modifier_once(baseline_flux: float, kinetic_modifier: float) -
         kinetic_modifier=modifier,
         modified_flux=baseline * modifier,
     )
-
-
-def _finite_nonnegative(value: float, field_name: str) -> float:
-    try:
-        numeric = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{field_name} must be finite and non-negative") from exc
-    if not math.isfinite(numeric) or numeric < 0.0:
-        raise ValueError(f"{field_name} must be finite and non-negative")
-    if numeric == 0.0:
-        return 0.0
-    return numeric
-
-
-def hill_equation(S: float, Vmax: float, K50: float, n: float) -> float:
-    """Calculate reaction velocity using Hill (cooperative) kinetics.
-
-    v = Vmax * S^n / (K50^n + S^n)
-
-    Args:
-        S: Substrate concentration (uM).
-        Vmax: Maximum velocity.
-        K50: Half-maximal concentration (uM).
-        n: Hill coefficient (n=1 reduces to Michaelis-Menten).
-
-    Returns:
-        Reaction velocity in same units as *Vmax*.
-    """
-    if K50 <= 0:
-        raise ValueError(f"K50 must be positive, got {K50}")
-    if n <= 0:
-        raise ValueError(f"Hill coefficient n must be positive, got {n}")
-    if S < 0:
-        raise ValueError(f"Substrate concentration cannot be negative, got {S}")
-    Sn = S ** n
-    K50n = K50 ** n
-    return float(Vmax * Sn / (K50n + Sn))
 
 
 # ── Modifier functions ─────────────────────────────────────────────────────
@@ -1116,9 +1072,7 @@ def _apply_qivive_scale(result: FluxResultDict, qivive_context: Mapping[str, flo
 
 def _susceptibility_score_log2(net_ratio: float) -> float:
     """Return log2 activation/detoxification susceptibility score."""
-    if net_ratio <= 0 or not math.isfinite(net_ratio):
-        return 0.0
-    return round(math.log2(net_ratio), 4)
+    return _equation_susceptibility_score_log2(net_ratio)
 
 
 def _positive_context_float(context: Mapping[str, Any], key: str, fallback: float) -> float:
@@ -1426,12 +1380,14 @@ def _compute_proxy_mm_term(
         tissue_weight_source,
         supported_tissues=term.get("supported_tissues"),
     )
-    vmax = (
-        float(term["vmax"])
-        * float(term.get("vmax_relative", 1.0))
-        * _relative_capacity_scale(term.get("relative_capacity"))
+    vmax = scaled_vmax(
+        float(term["vmax"]),
+        gm,
+        tw,
+        vmax_relative=float(term.get("vmax_relative", 1.0)),
+        relative_capacity_scale=_relative_capacity_scale(term.get("relative_capacity")),
     )
-    flux = michaelis_menten(S, vmax * gm * tw, float(term["km"]))
+    flux = michaelis_menten(S, vmax, float(term["km"]))
     return flux, gm, tw
 
 
@@ -1451,7 +1407,7 @@ def _compute_proxy_saturating_term(
         tissue_weight_source,
         supported_tissues=term.get("supported_tissues"),
     )
-    flux = float(term["scale"]) * gm * tw * S / (float(term["km"]) + S)
+    flux = saturating_flux(S, float(term["scale"]) * gm * tw, float(term["km"]))
     return flux, gm, tw
 
 
@@ -3057,13 +3013,7 @@ def compute_pathway_flux(
 
     act = float(result["total_activation"])
     det = float(result["total_detox"])
-
-    if det > 0:
-        net_ratio = act / det
-    elif act > 0:
-        net_ratio = 999.0
-    else:
-        net_ratio = 1.0
+    net_ratio = activation_detox_ratio(act, det)
 
     # Fractional contributions
     for edata in result.get("activation_enzymes", {}).values():

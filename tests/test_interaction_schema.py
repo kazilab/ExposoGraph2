@@ -67,7 +67,7 @@ def test_sme_notes_can_be_carried_without_driving_sign_logic():
             SMEReviewNote(
                 status=SMEReviewStatus.CANDIDATE,
                 release_target=ReleaseTarget.V3_0,
-                notes="Spyros draft input captured as SME note only.",
+                notes="SME draft input captured as SME note only.",
             )
         ],
     )

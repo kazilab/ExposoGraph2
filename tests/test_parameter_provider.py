@@ -87,7 +87,7 @@ def test_kg_provider_is_explicitly_deferred_scaffold():
         provider.get_competitive_interactions()
 
 
-def test_spyros_draft_fields_are_representable_as_review_notes_only():
+def test_reaction_role_draft_fields_are_representable_as_review_notes_only():
     interaction = CompetitiveInteraction(
         enzyme="CYP3A4",
         substrate="future SME substrate",

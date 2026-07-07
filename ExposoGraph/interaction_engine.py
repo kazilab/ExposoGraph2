@@ -29,6 +29,14 @@ from .endpoint_toxic_flux import (
     interpret_endpoint_toxic_flux,
 )
 from .flux_engine import apply_kinetic_modifier_once
+from .interaction_equations import (
+    adjusted_relative_risk as _adjusted_relative_risk,
+    explicit_dk_activation_scale as _explicit_dk_activation_scale,
+    final_mechanism_multiplier as _final_mechanism_multiplier,
+    gsh_detox_components as _gsh_detox_components,
+    gsh_upstream_activation_scale as _gsh_upstream_activation_scale,
+    pairwise_synergy_factor as _pairwise_synergy_factor,
+)
 from .gsh_redox_capacity import (
     GSHModelVersion,
     GSHRedoxCapacityInput,
@@ -47,7 +55,12 @@ from .interaction_schema import (
 )
 from .kinetic_resolver import get_ki, resolve_reversible_inhibition
 from .mechanism_attribution import compute_mechanism_attribution, generate_mechanism_states
-from .model_transparency import build_transparency_report
+from .model_transparency import (
+    MODULE5_MECHANISM_MODEL_VERSION,
+    MODULE5_SYNERGY_DECOMPOSITION_BASIS,
+    build_module5_model_card_summary,
+    build_transparency_report,
+)
 from .parameter_resolution import InhibitionResolutionStatus
 from .reaction_role_semantics import get_default_reaction_role_registry
 
@@ -156,6 +169,7 @@ class MechanismResolvedRisk:
                 "susceptibility_applied_in": self.susceptibility_applied_in,
                 "final_mechanism_multiplier": self.final_mechanism_multiplier,
                 "adjusted_relative_risk": self.adjusted_relative_risk,
+                "mechanism_model_version": MODULE5_MECHANISM_MODEL_VERSION,
                 "inhibition_status": self.inhibition_status,
                 "review_required": self.review_required,
                 "warnings": list(self.warnings),
@@ -616,8 +630,8 @@ EXPOSURE_PROFILES: dict[str, dict[str, Any]] = {
     },
     "industrial_worker": {
         "_description": (
-            "Industrial worker with occupational chromium(VI), benzene, and formaldehyde "
-            "exposure. Very high GSH consumption from Cr(VI)."
+            "Industrial exposure scenario with occupational chromium(VI), benzene, "
+            "and formaldehyde exposure. Very high GSH consumption from Cr(VI)."
         ),
         "exposure": {
             "chromium_VI": 10.0,
@@ -630,7 +644,7 @@ EXPOSURE_PROFILES: dict[str, dict[str, Any]] = {
     },
     "smoker_industrial_worker": {
         "_description": (
-            "Worst case for GSH depletion: industrial worker who smokes. Smoking PAH plus "
+            "Worst case for GSH depletion: high occupational exposure with smoking. Smoking PAH plus "
             "industrial Cr(VI) and benzene creates three simultaneous GSH consumers."
         ),
         "exposure": {
@@ -900,28 +914,6 @@ def _warning_to_dict(warning: Any) -> dict[str, Any]:
     return _warning_dict(str(warning), str(warning))
 
 
-def _explicit_dk_activation_scale(
-    base_key: str,
-    rate_key: str,
-    exposure_profile: Mapping[str, Any],
-) -> tuple[float | None, dict[str, float] | None]:
-    for key in (base_key, rate_key):
-        value = exposure_profile.get(key)
-        if not isinstance(value, Mapping):
-            continue
-        if "d_factor" not in value or "k_factor" not in value:
-            continue
-        try:
-            d_factor = max(0.0, float(value["d_factor"]))
-            k_factor = max(0.0, float(value["k_factor"]))
-        except (TypeError, ValueError):
-            continue
-        if not math.isfinite(d_factor) or not math.isfinite(k_factor):
-            continue
-        return d_factor * k_factor, {"d_factor": d_factor, "k_factor": k_factor}
-    return None, None
-
-
 def _matrix_gsh_activation_scale(
     base_key: str,
     rate_key: str,
@@ -930,65 +922,44 @@ def _matrix_gsh_activation_scale(
     warnings: list[dict[str, Any]],
 ) -> tuple[float, str, dict[str, Any]]:
     direct = inhibition_burdens.get(base_key)
-    direct_fallback_details: dict[str, Any] = {}
     if direct is not None:
         try:
             direct_activation_ratio = float(direct.activation_burden_ratio)
         except (TypeError, ValueError):
             direct_activation_ratio = math.nan
-        direct_fallback_details = {
-            "direct_activation_available": False,
-            "inhibition_status": direct.status,
-            "review_required": direct.review_required,
-            "activation_burden_ratio": _round(direct_activation_ratio, 6)
-            if math.isfinite(direct_activation_ratio)
-            else None,
-        }
-        has_quantified_direct_activation = (
-            direct.status == "mechanism_resolved"
-            and not direct.review_required
-            and math.isfinite(direct_activation_ratio)
-            and direct_activation_ratio >= 0.0
-            and not math.isclose(direct_activation_ratio, 1.0)
-        )
+        direct_status = direct.status
+        direct_review_required = direct.review_required
     else:
-        direct_activation_ratio = math.nan
-        has_quantified_direct_activation = False
-
-    if direct is not None and has_quantified_direct_activation:
-        return (
-            max(0.0, direct_activation_ratio),
-            "direct_activation_burden_ratio",
-            {
-                "activation_burden_ratio": _round(direct_activation_ratio, 6),
-                "inhibition_status": direct.status,
-            },
-        )
+        direct_activation_ratio = None
+        direct_status = None
+        direct_review_required = None
 
     dk_scale, dk_details = _explicit_dk_activation_scale(base_key, rate_key, exposure_profile)
-    if dk_scale is not None:
-        return (
-            dk_scale,
-            "d_times_k_approximation",
-            {
-                **direct_fallback_details,
-                **(dk_details or {}),
-                "internal_d_or_k_computation": False,
-            },
-        )
-
-    warnings.append(
-        _warning_dict(
-            "gsh_upstream_activation_missing_neutral",
-            "GSH-relevant matrix contribution lacked direct activation burden or explicit D/K factors; using neutral scaling.",
-            field="upstream_activation_burden_ratio",
-        )
+    scale, source, details, warning_code = _gsh_upstream_activation_scale(
+        direct_activation_ratio=direct_activation_ratio,
+        direct_status=direct_status,
+        direct_review_required=direct_review_required,
+        explicit_dk_scale=dk_scale,
+        explicit_dk_details=dk_details,
+        round_fn=_round,
     )
-    return (
-        1.0,
-        "neutral_missing_upstream_activation",
-        {**direct_fallback_details, "upstream_activation_burden_ratio": 1.0},
-    )
+    if warning_code == "gsh_d_times_k_fallback_used":
+        warnings.append(
+            _warning_dict(
+                "gsh_d_times_k_fallback_used",
+                "GSH upstream activation used explicit D/K factors because direct activation burden was absent.",
+                field="upstream_activation_burden_ratio",
+            )
+        )
+    elif warning_code == "gsh_upstream_activation_missing_neutral":
+        warnings.append(
+            _warning_dict(
+                "gsh_upstream_activation_missing_neutral",
+                "GSH-relevant matrix contribution lacked direct activation burden or explicit D/K factors; using neutral scaling.",
+                field="upstream_activation_burden_ratio",
+            )
+        )
+    return scale, source, details
 
 
 def _compute_matrix_gsh_redox_status(
@@ -2111,6 +2082,7 @@ def _compute_live_mechanism_attribution(
             "unresolved_inhibition_state_keys": unresolved_states,
         },
     ).to_dict()
+    attribution["decomposition_basis"] = MODULE5_SYNERGY_DECOMPOSITION_BASIS
     attribution["live_engine_integration"] = True
     attribution["state_calculation_source"] = "interaction_engine.compute_interaction_matrix"
     attribution["mechanism_state_distinctions"] = {
@@ -2460,30 +2432,14 @@ def _compute_gsh_detox_components(
     *,
     redox_detox_penalty: float | None = None,
 ) -> tuple[float, float, float]:
-    if CARCINOGEN_GSH_DETOX.get(carcinogen) is None:
-        return 1.0, 1.0, 1.0
-
-    genotype_factor = 1.0
-    gstm1 = str(genotypes.get("GSTM1", "active")).lower()
-    gstp1 = genotypes.get("GSTP1", "Ile105Ile")
-
-    if carcinogen == "PAH" and gstm1 in {"null", "null/null", "deletion", "0"}:
-        genotype_factor = 2.5
-    elif carcinogen == "PAH" and gstp1 == "Val105Val":
-        genotype_factor = 1.5
-
-    if redox_detox_penalty is not None:
-        gsh_penalty = max(1.0, float(redox_detox_penalty))
-    else:
-        if gsh_fraction >= 0.30:
-            gsh_penalty = 1.0
-        elif gsh_fraction >= 0.20:
-            gsh_penalty = 1.0 + (0.30 - gsh_fraction) / 0.10 * 0.5
-        else:
-            gsh_penalty = 1.5 + (0.20 - gsh_fraction) / 0.20 * 3.0
-
-    return genotype_factor, _round(gsh_penalty, 3), _round(genotype_factor * gsh_penalty, 3)
-
+    return _gsh_detox_components(
+        carcinogen,
+        gsh_fraction,
+        genotypes,
+        CARCINOGEN_GSH_DETOX,
+        redox_detox_penalty=redox_detox_penalty,
+        round_fn=_round,
+    )
 
 def _selected_competitive_effect(
     carcinogen: str,
@@ -2841,11 +2797,13 @@ def compute_interaction_matrix(
             gsh_pool_penalty = 1.0
             gsh_penalty = 1.0
 
-        final_multiplier = _round(
-            induction_multiplier * inhibition_burden.burden_multiplier * gsh_penalty,
-            6,
+        final_multiplier = _final_mechanism_multiplier(
+            induction_multiplier,
+            inhibition_burden.burden_multiplier,
+            gsh_penalty,
+            round_fn=_round,
         )
-        adjusted_risk = _round(base_risk * final_multiplier, 3)
+        adjusted_risk = _adjusted_relative_risk(base_risk, final_multiplier, round_fn=_round)
         resolved = MechanismResolvedRisk(
             carcinogen=carcinogen,
             baseline_relative_risk=base_risk,
@@ -2886,11 +2844,12 @@ def compute_interaction_matrix(
     synergy_matrix: dict[str, float] = {}
     for index, left in enumerate(present_carcinogens):
         for right in present_carcinogens[index + 1 :]:
-            independent_total = individual_risks[left] + individual_risks[right]
-            adjusted_total = interaction_adjusted_risks[left] + interaction_adjusted_risks[right]
-            synergy_matrix[f"{left}_x_{right}"] = _round(
-                adjusted_total / independent_total if independent_total > 0 else 1.0,
-                3,
+            synergy_matrix[f"{left}_x_{right}"] = _pairwise_synergy_factor(
+                individual_risks[left],
+                individual_risks[right],
+                interaction_adjusted_risks[left],
+                interaction_adjusted_risks[right],
+                round_fn=_round,
             )
 
     total_independent = _round(sum(individual_risks.values()), 3)
@@ -3431,6 +3390,97 @@ def _competitive_effects_to_compat_dict(
     }
 
 
+def _module5_model_card_from_interaction_result(result: InteractionMatrixResult) -> dict[str, Any]:
+    blocks: list[Any] = [
+        result.gsh_status,
+        result.mechanism_attribution,
+        list(result.mechanism_resolved_risks.values()),
+    ]
+    ki_statuses: set[str] = set()
+    role_review_statuses: set[str] = set()
+    for enzyme_result in result.competitive_effects.values():
+        for flux in enzyme_result.substrates.values():
+            if flux.kinetic_resolution_status:
+                ki_statuses.add(str(flux.kinetic_resolution_status))
+            if flux.biological_output is not None:
+                blocks.append(flux.biological_output)
+                _collect_review_status_values(
+                    flux.biological_output.get("reaction_role_interpretation"),
+                    role_review_statuses,
+                )
+    for resolved in result.mechanism_resolved_risks.values():
+        _collect_review_status_values(resolved.provenance, role_review_statuses)
+
+    plain_blocks = [_json_sanitize(block) for block in blocks]
+    return build_module5_model_card_summary(
+        gsh_model_version=result.gsh_status.model_version,
+        review_required_count=sum(_count_key_value(block, "review_required", True) for block in plain_blocks),
+        warning_count=sum(_count_warning_entries(block) for block in plain_blocks),
+        unresolved_or_deferred_count=sum(_count_unresolved_or_deferred(block) for block in plain_blocks),
+        detailed_records_location={
+            "gsh_status": "gsh_status",
+            "biological_output": "competitive_effects.<enzyme>.<substrate>.biological_output",
+            "mechanism_resolved_risks": "mechanism_resolved_risks",
+            "mechanism_attribution": "mechanism_attribution",
+            "ki_details": "competitive_effects.<enzyme>.<substrate>.biological_output.kinetic_effect",
+        },
+        ki_resolver_statuses=ki_statuses,
+        reaction_role_review_statuses=role_review_statuses,
+        model_boundary_warnings_present=bool(result.gsh_status.warnings),
+    )
+
+
+def _count_key_value(value: Any, key: str, expected: Any) -> int:
+    if isinstance(value, Mapping):
+        count = 1 if value.get(key) == expected else 0
+        return count + sum(_count_key_value(item, key, expected) for item in value.values())
+    if isinstance(value, list):
+        return sum(_count_key_value(item, key, expected) for item in value)
+    return 0
+
+
+def _count_warning_entries(value: Any) -> int:
+    if isinstance(value, Mapping):
+        count = 0
+        warnings = value.get("warnings")
+        if isinstance(warnings, list):
+            count += len(warnings)
+        return count + sum(_count_warning_entries(item) for item in value.values())
+    if isinstance(value, list):
+        return sum(_count_warning_entries(item) for item in value)
+    return 0
+
+
+def _count_unresolved_or_deferred(value: Any) -> int:
+    targets = {
+        "unknown",
+        "pending_team_agreement",
+        "deferred_3_0",
+        "candidate",
+        "review_required",
+        "mechanism_unresolved",
+    }
+    if isinstance(value, Mapping):
+        return sum(_count_unresolved_or_deferred(item) for item in value.values())
+    if isinstance(value, list):
+        return sum(_count_unresolved_or_deferred(item) for item in value)
+    if isinstance(value, str):
+        return 1 if value in targets else 0
+    return 0
+
+
+def _collect_review_status_values(value: Any, statuses: set[str]) -> None:
+    if isinstance(value, Mapping):
+        review_status = value.get("review_status")
+        if review_status:
+            statuses.add(str(review_status))
+        for item in value.values():
+            _collect_review_status_values(item, statuses)
+    elif isinstance(value, list):
+        for item in value:
+            _collect_review_status_values(item, statuses)
+
+
 def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[str, Any]:
     """Convert an interaction result into a source-style JSON-serializable dict."""
     payload = {
@@ -3467,13 +3517,14 @@ def _interaction_matrix_to_compat_dict(result: InteractionMatrixResult) -> dict[
         "lifestyle": deepcopy(result.lifestyle),
         "summary": result.summary,
         "mechanism_attribution": deepcopy(result.mechanism_attribution),
+        "module5_model_card": _module5_model_card_from_interaction_result(result),
     }
     if result.mechanism_attribution is not None:
         payload["mechanism_resolved_risks"] = {
             carcinogen: resolved.to_dict()
             for carcinogen, resolved in result.mechanism_resolved_risks.items()
         }
-    return payload
+    return _json_sanitize(payload)
 
 
 def _critical_interactions_to_compat_list(
@@ -3565,9 +3616,9 @@ def run_validation_case_1() -> tuple[InteractionMatrixResult, InteractionMatrixR
 
 
 def run_validation_case_2() -> InteractionMatrixResult:
-    """Case 2: GSH depletion tipping point in the industrial-worker scenario."""
+    """Case 2: GSH depletion tipping point in the industrial exposure scenario."""
     print("\n" + "=" * 70)
-    print("VALIDATION CASE 2: GSH Depletion Tipping Point (Industrial Worker)")
+    print("VALIDATION CASE 2: GSH Depletion Tipping Point (Industrial Exposure)")
     print("=" * 70)
 
     print("\n--- GSH consumption vs synthesis rate at escalating Cr(VI) exposure ---")
@@ -3621,7 +3672,7 @@ def run_validation_case_2() -> InteractionMatrixResult:
         lifestyle=industrial_profile["lifestyle"],
     )
     synth_rate = result.gsh_status.synthesis_rate_umol_h_g
-    print("\n  Smoker + Industrial Worker (GSTM1-null) full profile:")
+    print("\n  Smoker + High Occupational Exposure (GSTM1-null) full profile:")
     print(
         f"    GSH: {result.gsh_status.steady_state_gsh_mM:.2f} mM "
         f"({result.gsh_status.fraction_normal:.1%} normal)"

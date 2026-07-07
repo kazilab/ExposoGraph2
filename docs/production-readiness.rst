@@ -65,8 +65,8 @@ are called out here so reviewers can challenge them explicitly:
   data-literal modules (reference panels, IARC tables, allele frequencies),
   scientific-formula modules (``interaction_engine``, ``exposure_engine``,
   ``flux_engine``), and orchestration / embedded-content modules
-  (``unified_api``, ``exporter`` for HTML/CSS/JS, ``llm_extractor`` for prompt
-  literals, ``batch_runner`` for argparse epilogs), plus the existing figure
+  (``unified_api``, ``exporter`` for HTML/CSS/JS, and ``batch_runner`` for
+  argparse epilogs), plus the existing figure
   and UI modules. Wrapping those lines obscures the underlying equations,
   payloads, notebook figure geometry, or example commands.
   ``ExposoGraph/app.py`` keeps its ``E402`` exemption for the Streamlit

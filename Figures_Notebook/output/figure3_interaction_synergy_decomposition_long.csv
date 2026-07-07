@@ -1,0 +1,92 @@
+row_class,column_class,score,source_canonical_pair,support,dominant_mechanism,main_effect_induction,main_effect_competition,main_effect_gsh,interaction_induction_competition,interaction_induction_gsh,interaction_competition_gsh,interaction_three_way,reconstruction_residual
+PAHs,Heterocyclic amines,2.506,PAH_x_HCA,computed,enzyme induction,1.594,-0.2655,0.1775,-0.115,0.177,0.0,-0.0,0.0
+PAHs,Arylamines,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+PAHs,Aflatoxins,1.0,,not_modeled,,,,,,,,,
+PAHs,Nitrosamines,2.674,PAH_x_NDMA,computed,enzyme induction,1.711167,-0.213333,0.176167,-0.142,0.177,0.0,-0.001,0.0
+PAHs,Benzene,2.644,PAH_x_benzene,computed,enzyme induction,1.461833,0.084833,0.097333,0.056,0.097,-0.001,0.001,0.0
+PAHs,Vinyl chloride,1.0,,not_modeled,,,,,,,,,
+PAHs,Alcohol(Acetaldehyde),2.832,PAH_x_acetaldehyde,computed,enzyme induction,1.636,0.0,0.196,0.0,0.196,0.0,-0.0,0.0
+PAHs,Formaldehyde,2.88,PAH_x_formaldehyde,computed,enzyme induction,1.6795,0.0,0.2005,0.0,0.201,0.0,0.0,0.0
+PAHs,Heavy metals,2.65,PAH_x_cadmium,computed,enzyme induction,1.437,0.0,0.213,0.0,0.172,0.0,0.0,0.0
+PAHs,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+PAHs,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+PAHs,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+PAHs,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Heterocyclic amines,Arylamines,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Heterocyclic amines,Aflatoxins,1.0,,not_modeled,,,,,,,,,
+Heterocyclic amines,Nitrosamines,1.677,NNK_x_HCA,computed,enzyme induction,0.864,-0.187,0.0,-0.08,0.0,0.0,0.0,0.0
+Heterocyclic amines,Benzene,1.822,HCA_x_benzene,computed,enzyme induction,0.9,-0.078,0.0,-0.008,0.0,0.0,-0.0,0.0
+Heterocyclic amines,Vinyl chloride,1.0,,not_modeled,,,,,,,,,
+Heterocyclic amines,Alcohol(Acetaldehyde),1.0,,not_modeled,,,,,,,,,
+Heterocyclic amines,Formaldehyde,1.0,,not_modeled,,,,,,,,,
+Heterocyclic amines,Heavy metals,1.0,,not_modeled,,,,,,,,,
+Heterocyclic amines,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Heterocyclic amines,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Heterocyclic amines,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Heterocyclic amines,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Aflatoxins,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Nitrosamines,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Benzene,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Vinyl chloride,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Alcohol(Acetaldehyde),1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Formaldehyde,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Heavy metals,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Dioxins/PCBs,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Chlorinated solvents,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Arylamines,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Aflatoxins,Nitrosamines,1.0,,not_modeled,,,,,,,,,
+Aflatoxins,Benzene,1.0,,not_modeled,,,,,,,,,
+Aflatoxins,Vinyl chloride,1.0,,not_modeled,,,,,,,,,
+Aflatoxins,Alcohol(Acetaldehyde),1.0,,not_modeled,,,,,,,,,
+Aflatoxins,Formaldehyde,1.0,,not_modeled,,,,,,,,,
+Aflatoxins,Heavy metals,1.0,,not_modeled,,,,,,,,,
+Aflatoxins,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Aflatoxins,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Aflatoxins,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Aflatoxins,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Nitrosamines,Benzene,2.092,NNK_x_benzene,computed,enzyme induction,1.023,0.069,0.0,0.046,0.0,0.0,-0.0,0.0
+Nitrosamines,Vinyl chloride,1.0,,not_modeled,,,,,,,,,
+Nitrosamines,Alcohol(Acetaldehyde),1.842,NNK_x_acetaldehyde,computed,enzyme induction,0.842,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Nitrosamines,Formaldehyde,1.857,NNK_x_formaldehyde,computed,enzyme induction,0.857,0.0,0.0,0.0,0.0,0.0,-0.0,0.0
+Nitrosamines,Heavy metals,1.799,NNK_x_cadmium,computed,enzyme induction,0.7695,0.0,0.0295,0.0,0.001,0.0,-0.0,0.0
+Nitrosamines,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Nitrosamines,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Nitrosamines,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Nitrosamines,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Benzene,Vinyl chloride,1.0,,not_modeled,,,,,,,,,
+Benzene,Alcohol(Acetaldehyde),1.997,benzene_x_acetaldehyde,computed,enzyme induction,0.881,0.116,0.0,0.078,0.0,0.0,0.0,0.0
+Benzene,Formaldehyde,2.015,benzene_x_formaldehyde,computed,enzyme induction,0.8965,0.1185,0.0,0.079,0.0,0.0,0.0,0.0
+Benzene,Heavy metals,1.94,benzene_x_cadmium,computed,enzyme induction,0.804667,0.106167,0.029167,0.071,0.001,0.0,-0.001,0.0
+Benzene,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Benzene,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Benzene,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Benzene,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Vinyl chloride,Alcohol(Acetaldehyde),1.0,,not_modeled,,,,,,,,,
+Vinyl chloride,Formaldehyde,1.0,,not_modeled,,,,,,,,,
+Vinyl chloride,Heavy metals,1.0,,not_modeled,,,,,,,,,
+Vinyl chloride,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Vinyl chloride,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Vinyl chloride,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Vinyl chloride,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Alcohol(Acetaldehyde),Formaldehyde,1.0,,not_modeled,,,,,,,,,
+Alcohol(Acetaldehyde),Heavy metals,1.078,cadmium_x_acetaldehyde,computed,GSH depletion,0.0,0.0,0.078,0.0,0.0,0.0,-0.0,0.0
+Alcohol(Acetaldehyde),Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Alcohol(Acetaldehyde),Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Alcohol(Acetaldehyde),Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Alcohol(Acetaldehyde),Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Formaldehyde,Heavy metals,1.082,formaldehyde_x_cadmium,computed,GSH depletion,0.0,0.0,0.082,0.0,0.0,0.0,0.0,0.0
+Formaldehyde,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Formaldehyde,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Formaldehyde,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Formaldehyde,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Heavy metals,Dioxins/PCBs,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Heavy metals,Chlorinated solvents,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Heavy metals,Estrogens,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Heavy metals,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,
+Dioxins/PCBs,Chlorinated solvents,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Dioxins/PCBs,Estrogens,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Dioxins/PCBs,Aristolochic acid,1.0,,"Modeled as TCDD/dioxin enzyme induction, not pairwise risk.",,,,,,,,,
+Chlorinated solvents,Estrogens,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Chlorinated solvents,Aristolochic acid,1.0,,TCE is not mapped as present carcinogen; vinyl chloride is separate.,,,,,,,,,
+Estrogens,Aristolochic acid,1.0,,No direct pairwise baseline-risk key in interaction_engine.,,,,,,,,,

@@ -1,14 +1,12 @@
 """ExposoGraph.
 
 Build, curate, and export carcinogen metabolism knowledge graphs with
-LLM-powered extraction, manual curation, and a quantitative risk stack
+literature extraction, manual curation, and a quantitative risk stack
 (Michaelis-Menten flux, tissue-specific subgraphs, multi-carcinogen
 interaction, exposure integration, and population-scale simulation) for
 14 IARC carcinogen classes including heavy metals, alcohol/acetaldehyde,
 dioxins/PCBs, dietary nitrosamines, and chlorinated solvents.
 
-Parts of this documentation and code were created with assistance
-from ChatGPT Codex and Claude Code.
 """
 
 from ._version import __version__
@@ -55,7 +53,6 @@ from .config import (
     AppMode,
     GraphMode,
     GraphVisibility,
-    LLMProvider,
     get_app_mode,
     normalize_app_mode,
     normalize_graph_mode,
@@ -182,9 +179,13 @@ from .graph_analysis import (
     variant_impact_score,
 )
 from .graph_filters import (
+    GraphFilterCriteria,
+    filter_graph_by_criteria,
     filter_knowledge_graph,
     filtered_engine,
+    graph_filter_to_json_safe,
     graph_visibility_label,
+    heavy_metal_node_ids,
 )
 from .grounding import (
     GroundingMatch,
@@ -262,6 +263,7 @@ from .pharmacogenomic_risk_figure import (
     pharmacogenomic_risk_gene_rows,
     render_pharmacogenomic_risk_figure,
 )
+from .provider_interface import LocalV2DataProvider, get_default_v2_provider
 from .reference_data import (
     ACTIVITY_SCORE_METADATA,
     ACTIVITY_SCORES,
@@ -269,6 +271,8 @@ from .reference_data import (
     REFERENCE_KEGG_PATHWAYS,
     WAVE2_GENES,
     build_full_panel,
+    build_reference_engine,
+    build_reference_graph,
     build_tier1_panel,
     build_tier2_panel,
     build_wave2_panel,
@@ -382,14 +386,11 @@ __all__ = [
     "HAPLOTYPE_BLOCKS",
     "KEGGClient",
     "KnowledgeGraph",
-    "LLMBackend",
-    "LLMProvider",
     "MatchStatus",
     "MetabolismChain",
     "Node",
     "NodeType",
     "OllamaBackend",
-    "OpenAIBackend",
     "PharmacogenomicRiskClassProfile",
     "PharmacogenomicRiskGeneProfile",
     "ProvenanceRecord",
@@ -421,10 +422,13 @@ __all__ = [
     "build_pharmacogenomic_risk_gene_profiles",
     "centrality",
     "UsageRecord",
+    "GraphFilterCriteria",
+    "LocalV2DataProvider",
     "compute_viewer_positions",
     "create_dash_viewer_app",
     "extract_graph",
     "extract_graph_with_usage",
+    "filter_graph_by_criteria",
     "filter_knowledge_graph",
     "filtered_engine",
     "build_default_grounding_index",
@@ -434,9 +438,12 @@ __all__ = [
     "get_activity_score_references",
     "get_activity_scores",
     "get_app_mode",
+    "get_default_v2_provider",
     "ground_knowledge_graph",
     "ground_node",
     "graph_visibility_label",
+    "graph_filter_to_json_safe",
+    "heavy_metal_node_ids",
     "prepare_knowledge_graph",
     "launch_dash_viewer",
     "load_cytoscape_bundle",

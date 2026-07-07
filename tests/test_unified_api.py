@@ -20,6 +20,11 @@ def test_patient_risk_query_returns_profile_for_tier1_genotype():
     assert isinstance(profile, PatientRiskProfile)
     assert profile.tissue == "Liver"
     assert profile.genotypes.get("CYP1A1") == "NM"
+    card = profile.biological_output_integration["module5_model_card"]
+    assert card["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert card["gsh_model_version"] == "phase7_quasi_steady_relative_capacity"
+    assert card["synergy_decomposition_basis"] == "eight_state_shapley"
+    assert card["detailed_records_location"]["biological_output"]
 
 
 def test_patient_risk_query_exposes_flux_model_evidence_and_summary_labels():

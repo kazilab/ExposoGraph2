@@ -9,40 +9,40 @@ from ExposoGraph.interaction_schema import (
 from ExposoGraph.reaction_role_semantics import (
     ReactionRoleAnnotation,
     get_default_reaction_role_registry,
-    get_spyros_sme_reaction_role_records,
+    get_reaction_role_sme_records,
     interpret_competitive_flux_ratio,
 )
 
 
-def test_required_spyros_records_are_present_with_statuses():
-    records = {record.record_id: record for record in get_spyros_sme_reaction_role_records()}
+def test_required_reaction_role_records_are_present_with_statuses():
+    records = {record.record_id: record for record in get_reaction_role_sme_records()}
 
     required = {
-        "spyros_benzene_cyp2e1_v2_flip",
-        "spyros_benzene_cyp2f1_bone_marrow_flip",
-        "spyros_benzene_cyp2a13_bone_marrow_flip",
-        "spyros_benzene_cyp1a1_no_default_flip",
-        "spyros_ndma_cyp2e1_no_flip",
-        "spyros_vinyl_chloride_cyp2e1_no_flip",
-        "spyros_hca_cyp1a1_no_flip",
-        "spyros_hca_cyp1a2_no_flip",
-        "spyros_tce_cyp2e1_candidate_pending",
+        "reaction_role_benzene_cyp2e1_v2_direction_adjustment",
+        "reaction_role_benzene_cyp2f1_bone_marrow_direction_adjustment",
+        "reaction_role_benzene_cyp2a13_bone_marrow_direction_adjustment",
+        "reaction_role_benzene_cyp1a1_default_direction",
+        "reaction_role_ndma_cyp2e1_default_direction",
+        "reaction_role_vinyl_chloride_cyp2e1_default_direction",
+        "reaction_role_hca_cyp1a1_default_direction",
+        "reaction_role_hca_cyp1a2_default_direction",
+        "reaction_role_tce_cyp2e1_candidate_pending",
     }
 
     assert required.issubset(records)
-    assert records["spyros_benzene_cyp2e1_v2_flip"].release_target is ReleaseTarget.V2_0
-    assert records["spyros_tce_cyp2e1_candidate_pending"].active is False
+    assert records["reaction_role_benzene_cyp2e1_v2_direction_adjustment"].release_target is ReleaseTarget.V2_0
+    assert records["reaction_role_tce_cyp2e1_candidate_pending"].active is False
     assert (
-        records["spyros_tce_cyp2e1_candidate_pending"].review_status
+        records["reaction_role_tce_cyp2e1_candidate_pending"].review_status
         is SMEReviewStatus.PENDING_TEAM_AGREEMENT
     )
 
 
-def test_benzene_cyp2e1_record_expresses_sign_flip():
+def test_benzene_cyp2e1_record_expresses_direction_adjustment():
     registry = get_default_reaction_role_registry()
     record = registry.lookup("cyp2e1", "BENZENE")
 
-    assert record.record_id == "spyros_benzene_cyp2e1_v2_flip"
+    assert record.record_id == "reaction_role_benzene_cyp2e1_v2_direction_adjustment"
     assert record.reaction_role is ReactionRole.DETOXIFICATION
     assert record.risk_direction_if_flux_decreases is RiskDirectionIfFluxDecreases.INCREASE
 
@@ -50,7 +50,7 @@ def test_benzene_cyp2e1_record_expresses_sign_flip():
     assert interpretation.burden_multiplier == pytest.approx(2.0)
 
 
-def test_benzene_cyp2f1_and_cyp2a13_flip_only_in_bone_marrow_context():
+def test_benzene_cyp2f1_and_cyp2a13_adjustment_only_in_bone_marrow_context():
     registry = get_default_reaction_role_registry()
 
     for enzyme in ("CYP2F1", "CYP2A13"):
@@ -65,14 +65,14 @@ def test_benzene_cyp2f1_and_cyp2a13_flip_only_in_bone_marrow_context():
         assert interpret_competitive_flux_ratio(0.5, marrow_record).burden_multiplier == pytest.approx(2.0)
 
 
-def test_no_flip_records_map_flux_decrease_to_lower_burden():
+def test_default_direction_records_map_flux_decrease_to_lower_burden():
     registry = get_default_reaction_role_registry()
     cases = [
-        ("CYP1A1", "benzene", "spyros_benzene_cyp1a1_no_default_flip"),
-        ("CYP2E1", "NDMA", "spyros_ndma_cyp2e1_no_flip"),
-        ("CYP2E1", "vinyl chloride", "spyros_vinyl_chloride_cyp2e1_no_flip"),
-        ("CYP1A1", "HCA", "spyros_hca_cyp1a1_no_flip"),
-        ("CYP1A2", "heterocyclic amine", "spyros_hca_cyp1a2_no_flip"),
+        ("CYP1A1", "benzene", "reaction_role_benzene_cyp1a1_default_direction"),
+        ("CYP2E1", "NDMA", "reaction_role_ndma_cyp2e1_default_direction"),
+        ("CYP2E1", "vinyl chloride", "reaction_role_vinyl_chloride_cyp2e1_default_direction"),
+        ("CYP1A1", "HCA", "reaction_role_hca_cyp1a1_default_direction"),
+        ("CYP1A2", "heterocyclic amine", "reaction_role_hca_cyp1a2_default_direction"),
     ]
 
     for enzyme, substrate, record_id in cases:
@@ -89,7 +89,7 @@ def test_tce_cyp2e1_is_pending_candidate_not_active_curated_behavior():
     record = registry.lookup("CYP2E1", "TCE")
     interpretation = interpret_competitive_flux_ratio(0.5, record)
 
-    assert record.record_id == "spyros_tce_cyp2e1_candidate_pending"
+    assert record.record_id == "reaction_role_tce_cyp2e1_candidate_pending"
     assert record.review_status is SMEReviewStatus.PENDING_TEAM_AGREEMENT
     assert record.active is False
     assert interpretation.burden_multiplier == pytest.approx(1.0)
@@ -165,7 +165,7 @@ def test_registry_lookup_is_deterministic_and_case_insensitive():
     registry = get_default_reaction_role_registry()
     ids = [registry.lookup("cyp2e1", "benzene").record_id for _ in range(3)]
 
-    assert ids == ["spyros_benzene_cyp2e1_v2_flip"] * 3
+    assert ids == ["reaction_role_benzene_cyp2e1_v2_direction_adjustment"] * 3
     assert registry.lookup("CYP2E1", "benzene").record_id == registry.lookup("cyp2e1", "BENZENE").record_id
     assert registry.lookup("CYP2E1", "vinyl_chloride").record_id == registry.lookup(
         "cyp2e1",

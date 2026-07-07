@@ -26,7 +26,7 @@ from .interaction_schema import (
 )
 
 
-SPYROS_SME_SOURCE = "Spyros SME amendment captured for Phase 4 reaction-role semantics"
+REACTION_ROLE_SME_SOURCE = "SME amendment captured for Phase 4 reaction-role semantics"
 
 
 @dataclass
@@ -166,28 +166,28 @@ def interpret_competitive_flux_ratio(
 def get_default_reaction_role_registry() -> ReactionRoleRegistry:
     """Build the default explicit Phase 4 registry."""
 
-    return ReactionRoleRegistry(get_spyros_sme_reaction_role_records())
+    return ReactionRoleRegistry(get_reaction_role_sme_records())
 
 
-def get_spyros_sme_reaction_role_records() -> list[ReactionRoleAnnotation]:
-    """Return Spyros-derived SME records encoded as explicit annotations."""
+def get_reaction_role_sme_records() -> list[ReactionRoleAnnotation]:
+    """Return SME-derived reaction-role records encoded as explicit annotations."""
 
     records = [
         _record(
-            record_id="spyros_benzene_cyp2e1_v2_flip",
+            record_id="reaction_role_benzene_cyp2e1_v2_direction_adjustment",
             enzyme="CYP2E1",
             substrate="benzene",
             role=ReactionRole.DETOXIFICATION,
             direction=RiskDirectionIfFluxDecreases.INCREASE,
             status=SMEReviewStatus.CURATED,
             release=ReleaseTarget.V2_0,
-            notes="Phase 4 encodes the SME sign flip relative to prior K-factor behavior.",
-            warning_code="spyros_sign_flip",
+            notes="Phase 4 encodes reaction-role-based direction interpretation relative to prior K-factor behavior.",
+            warning_code="reaction_role_direction_adjustment",
             warning_message="Benzene CYP2E1 flux decrease is interpreted as higher burden in the scoped 2.0 SME record.",
-            metadata={"prior_k_factor_sign_flip": True, "product_carcinogenic": False},
+            metadata={"prior_k_factor_direction_adjustment": True, "product_carcinogenic": False},
         ),
         _record(
-            record_id="spyros_benzene_cyp2f1_bone_marrow_flip",
+            record_id="reaction_role_benzene_cyp2f1_bone_marrow_direction_adjustment",
             enzyme="CYP2F1",
             substrate="benzene",
             role=ReactionRole.DETOXIFICATION,
@@ -197,13 +197,13 @@ def get_spyros_sme_reaction_role_records() -> list[ReactionRoleAnnotation]:
             tissue="bone marrow",
             endpoint=RiskEndpoint.DNA_ADDUCT,
             endpoint_context="hematopoietic benzene toxicity",
-            notes="Flip applies only in hematopoietic or bone-marrow benzene context.",
-            warning_code="context_specific_flip",
+            notes="Direction adjustment applies only in hematopoietic or bone-marrow benzene context.",
+            warning_code="context_specific_direction_adjustment",
             warning_message="CYP2F1 benzene interpretation is context specific, not global.",
             metadata={"context_required": "hematopoietic_or_bone_marrow"},
         ),
         _record(
-            record_id="spyros_benzene_cyp2f1_outside_context_unknown",
+            record_id="reaction_role_benzene_cyp2f1_outside_context_unknown",
             enzyme="CYP2F1",
             substrate="benzene",
             role=ReactionRole.UNKNOWN,
@@ -212,10 +212,10 @@ def get_spyros_sme_reaction_role_records() -> list[ReactionRoleAnnotation]:
             release=ReleaseTarget.V2_0,
             notes="Outside hematopoietic or bone-marrow benzene context the role remains unresolved.",
             warning_code="context_missing",
-            warning_message="No global CYP2F1 benzene flip is inferred outside the approved context.",
+            warning_message="No global CYP2F1 benzene direction adjustment is inferred outside the approved context.",
         ),
         _record(
-            record_id="spyros_benzene_cyp2a13_bone_marrow_flip",
+            record_id="reaction_role_benzene_cyp2a13_bone_marrow_direction_adjustment",
             enzyme="CYP2A13",
             substrate="benzene",
             role=ReactionRole.DETOXIFICATION,
@@ -225,13 +225,13 @@ def get_spyros_sme_reaction_role_records() -> list[ReactionRoleAnnotation]:
             tissue="bone marrow",
             endpoint=RiskEndpoint.DNA_ADDUCT,
             endpoint_context="hematopoietic benzene toxicity",
-            notes="Flip applies only in hematopoietic or bone-marrow benzene context.",
-            warning_code="context_specific_flip",
+            notes="Direction adjustment applies only in hematopoietic or bone-marrow benzene context.",
+            warning_code="context_specific_direction_adjustment",
             warning_message="CYP2A13 benzene interpretation is context specific, not global.",
             metadata={"context_required": "hematopoietic_or_bone_marrow"},
         ),
         _record(
-            record_id="spyros_benzene_cyp2a13_outside_context_unknown",
+            record_id="reaction_role_benzene_cyp2a13_outside_context_unknown",
             enzyme="CYP2A13",
             substrate="benzene",
             role=ReactionRole.UNKNOWN,
@@ -240,65 +240,65 @@ def get_spyros_sme_reaction_role_records() -> list[ReactionRoleAnnotation]:
             release=ReleaseTarget.V2_0,
             notes="Outside hematopoietic or bone-marrow benzene context the role remains unresolved.",
             warning_code="context_missing",
-            warning_message="No global CYP2A13 benzene flip is inferred outside the approved context.",
+            warning_message="No global CYP2A13 benzene direction adjustment is inferred outside the approved context.",
         ),
         _record(
-            record_id="spyros_benzene_cyp1a1_no_default_flip",
+            record_id="reaction_role_benzene_cyp1a1_default_direction",
             enzyme="CYP1A1",
             substrate="benzene",
             role=ReactionRole.BIOACTIVATION,
             direction=RiskDirectionIfFluxDecreases.DECREASE,
             status=SMEReviewStatus.CURATED,
             release=ReleaseTarget.V2_0,
-            notes="Explicit no-default-flip benzene CYP1A1 record.",
-            metadata={"no_default_flip": True},
+            notes="Explicit default-direction benzene CYP1A1 record.",
+            metadata={"default_direction_preserved": True},
         ),
         _record(
-            record_id="spyros_ndma_cyp2e1_no_flip",
+            record_id="reaction_role_ndma_cyp2e1_default_direction",
             enzyme="CYP2E1",
             substrate="NDMA",
             role=ReactionRole.BIOACTIVATION,
             direction=RiskDirectionIfFluxDecreases.DECREASE,
             status=SMEReviewStatus.CURATED,
             release=ReleaseTarget.V2_0,
-            notes="Explicit no-flip NDMA CYP2E1 record.",
-            metadata={"no_default_flip": True},
+            notes="Explicit default-direction NDMA CYP2E1 record.",
+            metadata={"default_direction_preserved": True},
         ),
         _record(
-            record_id="spyros_vinyl_chloride_cyp2e1_no_flip",
+            record_id="reaction_role_vinyl_chloride_cyp2e1_default_direction",
             enzyme="CYP2E1",
             substrate="vinyl_chloride",
             role=ReactionRole.BIOACTIVATION,
             direction=RiskDirectionIfFluxDecreases.DECREASE,
             status=SMEReviewStatus.CURATED,
             release=ReleaseTarget.V2_0,
-            notes="Explicit no-flip vinyl chloride CYP2E1 record.",
-            metadata={"no_default_flip": True, "substrate_aliases": ["vinyl chloride"]},
+            notes="Explicit default-direction vinyl chloride CYP2E1 record.",
+            metadata={"default_direction_preserved": True, "substrate_aliases": ["vinyl chloride"]},
         ),
         _record(
-            record_id="spyros_hca_cyp1a1_no_flip",
+            record_id="reaction_role_hca_cyp1a1_default_direction",
             enzyme="CYP1A1",
             substrate="HCA",
             role=ReactionRole.BIOACTIVATION,
             direction=RiskDirectionIfFluxDecreases.DECREASE,
             status=SMEReviewStatus.CURATED,
             release=ReleaseTarget.V2_0,
-            notes="Explicit no-flip heterocyclic amine CYP1A1 class record.",
-            metadata={"no_default_flip": True, "substrate_aliases": ["heterocyclic amine"]},
+            notes="Explicit default-direction heterocyclic amine CYP1A1 class record.",
+            metadata={"default_direction_preserved": True, "substrate_aliases": ["heterocyclic amine"]},
         ),
         _record(
-            record_id="spyros_hca_cyp1a2_no_flip",
+            record_id="reaction_role_hca_cyp1a2_default_direction",
             enzyme="CYP1A2",
             substrate="HCA",
             role=ReactionRole.BIOACTIVATION,
             direction=RiskDirectionIfFluxDecreases.DECREASE,
             status=SMEReviewStatus.CURATED,
             release=ReleaseTarget.V2_0,
-            notes="Explicit no-flip heterocyclic amine CYP1A2 class record.",
-            metadata={"no_default_flip": True, "substrate_aliases": ["heterocyclic amine"]},
+            notes="Explicit default-direction heterocyclic amine CYP1A2 class record.",
+            metadata={"default_direction_preserved": True, "substrate_aliases": ["heterocyclic amine"]},
         ),
         _record(
-            record_id="spyros_tce_cyp2e1_candidate_pending",
+            record_id="reaction_role_tce_cyp2e1_candidate_pending",
             enzyme="CYP2E1",
             substrate="trichloroethylene",
             role=ReactionRole.UNKNOWN,
@@ -389,7 +389,7 @@ def _record(
         ),
         endpoint_context=endpoint_context,
         evidence=EvidenceRecord(
-            source=SPYROS_SME_SOURCE,
+            source=REACTION_ROLE_SME_SOURCE,
             grade=EvidenceGrade.CURATED if status is SMEReviewStatus.CURATED else EvidenceGrade.PLACEHOLDER,
             confidence="SME_scoped" if status is SMEReviewStatus.CURATED else "pending",
             notes=notes,
@@ -399,7 +399,7 @@ def _record(
         sme_notes=[
             SMEReviewNote(
                 status=status,
-                source=SPYROS_SME_SOURCE,
+                source=REACTION_ROLE_SME_SOURCE,
                 release_target=release,
                 tissue_context=tissue,
                 endpoint_context=endpoint_context,
@@ -421,7 +421,7 @@ def _deferred_detox_arm_records() -> list[ReactionRoleAnnotation]:
     for enzyme in ("NAT2", "ALDH", "GST", "EPHX1"):
         deferred.append(
             _record(
-                record_id=f"spyros_{_normalize_key(enzyme)}_detox_arm_deferred_v3",
+                record_id=f"reaction_role_{_normalize_key(enzyme)}_detox_arm_deferred_v3",
                 enzyme=enzyme,
                 substrate="broader_detox_arm_cases",
                 role=ReactionRole.UNKNOWN,

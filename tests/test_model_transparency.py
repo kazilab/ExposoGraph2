@@ -1,3 +1,5 @@
+import json
+
 from ExposoGraph.interaction_schema import (
     AssumptionWarning,
     EvidenceGrade,
@@ -10,6 +12,7 @@ from ExposoGraph.model_transparency import (
     AssumptionCategory,
     ReviewSeverity,
     TransparencyRecord,
+    build_module5_model_card_summary,
     build_deferral_records,
     build_model_card_summary,
     build_sme_review_queue,
@@ -84,7 +87,7 @@ def test_sme_review_queue_includes_unknown_reaction_role_warning():
 def test_sme_review_queue_includes_tce_cyp2e1_pending_candidate_item():
     queue = build_sme_review_queue()
 
-    tce = [item for item in queue if item.code == "spyros_tce_cyp2e1_candidate_pending"]
+    tce = [item for item in queue if item.code == "reaction_role_tce_cyp2e1_candidate_pending"]
 
     assert len(tce) == 1
     assert tce[0].review_status is SMEReviewStatus.PENDING_TEAM_AGREEMENT
@@ -172,6 +175,31 @@ def test_model_card_includes_context_limitations_assumptions_review_queue_and_de
     assert card.sme_review_items
     assert card.deferred_items
     assert card.validation_summary["targeted_tests"] == "not run in unit fixture"
+
+
+def test_module5_model_card_summary_is_compact_and_json_safe():
+    summary = build_module5_model_card_summary(
+        gsh_model_version="phase7_quasi_steady_relative_capacity",
+        review_required_count=2,
+        warning_count=3,
+        unresolved_or_deferred_count=1,
+        detailed_records_location={"biological_output": "competitive_effects.<enzyme>.<substrate>.biological_output"},
+        ki_resolver_statuses=["resolved_direct", "review_required", "resolved_direct"],
+        reaction_role_review_statuses=["curated", "pending_team_agreement"],
+        model_boundary_warnings_present=True,
+    )
+
+    assert summary["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert summary["gsh_model_version"] == "phase7_quasi_steady_relative_capacity"
+    assert summary["synergy_decomposition_basis"] == "eight_state_shapley"
+    assert summary["review_required_count"] == 2
+    assert summary["warning_count"] == 3
+    assert summary["unresolved_or_deferred_count"] == 1
+    assert summary["evidence_summary_available"] is True
+    assert summary["ki_resolver_statuses"] == ["resolved_direct", "review_required"]
+    assert summary["reaction_role_review_statuses"] == ["curated", "pending_team_agreement"]
+    assert summary["model_boundary_warnings_present"] is True
+    json.dumps(summary, allow_nan=False)
 
 
 def test_product_carcinogenic_guardrail_appears_in_model_boundary_statements():

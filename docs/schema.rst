@@ -123,7 +123,7 @@ Grounding and Match Metadata
 
 Nodes and edges also support a lightweight grounding layer:
 
-- ``origin`` — where the record came from: ``imported``, ``seeded``, ``user``, or ``llm``
+- ``origin`` — where the record came from: ``imported``, ``seeded``, ``user``, or ``external``
 - ``match_status`` — grounding state: ``unknown``, ``canonical``, ``alias``, ``unmatched``, or ``custom``
 - ``canonical_id`` / ``canonical_label`` / ``canonical_namespace`` — canonical mapping for grounded nodes
 - ``canonical_predicate`` / ``canonical_namespace`` — canonical mapping for grounded edges
