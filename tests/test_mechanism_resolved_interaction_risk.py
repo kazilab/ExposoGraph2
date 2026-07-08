@@ -489,7 +489,7 @@ def test_selected_mechanism_absent_output_is_neutral_selected_and_exclusive(monk
     assert resolved.provenance["inhibition"]["flux_substrate"] == "PhIP"
     assert resolved.provenance["inhibition"]["interpretation_substrate"] == "HCA"
     assert resolved.provenance["inhibition"]["reaction_role"] == "bioactivation"
-    assert resolved.provenance["inhibition"]["annotation_record_id"] == "spyros_hca_cyp1a1_no_flip"
+    assert resolved.provenance["inhibition"]["annotation_record_id"] == "reaction_role_hca_cyp1a1_default_direction"
     assert selected["diagnostic_role"] == "selected_authoritative_inhibition_effect"
     assert selected["interpretation_substrate"] == "HCA"
     assert selected["reaction_role_interpretation"]["role"] == "bioactivation"
@@ -499,7 +499,7 @@ def test_selected_mechanism_absent_output_is_neutral_selected_and_exclusive(monk
     )
     assert (
         selected["reaction_role_interpretation"]["annotation_record_id"]
-        == "spyros_hca_cyp1a1_no_flip"
+        == "reaction_role_hca_cyp1a1_default_direction"
     )
     assert selected["kinetic_effect"]["mechanism_state"] == "mechanism_absent"
     assert selected["endpoint_toxic_flux"]["selected_authoritative_effect"] is True
@@ -509,7 +509,7 @@ def test_selected_mechanism_absent_output_is_neutral_selected_and_exclusive(monk
     assert selected["endpoint_toxic_flux"]["risk_direction_if_flux_decreases"] == "decrease"
     assert (
         selected["endpoint_toxic_flux"]["annotation_record_id"]
-        == "spyros_hca_cyp1a1_no_flip"
+        == "reaction_role_hca_cyp1a1_default_direction"
     )
     assert selected["endpoint_toxic_flux"]["endpoint_toxic_flux_ratio"] == pytest.approx(1.0)
     assert selected["effective_burden"]["selected_authoritative_effect"] is True
@@ -517,7 +517,7 @@ def test_selected_mechanism_absent_output_is_neutral_selected_and_exclusive(monk
     assert selected["effective_burden"]["reaction_role"] == "bioactivation"
     assert (
         selected["effective_burden"]["annotation_record_id"]
-        == "spyros_hca_cyp1a1_no_flip"
+        == "reaction_role_hca_cyp1a1_default_direction"
     )
     assert selected["effective_burden"]["effective_carcinogenic_burden_ratio"] == pytest.approx(1.0)
     assert selected["effective_burden"]["includes_diagnostic_gsh_capacity"] is False
@@ -573,11 +573,11 @@ def test_review_required_role_is_preserved_in_neutral_selected_state(monkeypatch
     assert resolved.inhibition_burden_multiplier == pytest.approx(1.0)
     assert resolved.review_required is True
     assert resolved.provenance["inhibition"]["annotation_record_id"] == (
-        "spyros_benzene_cyp2a13_outside_context_unknown"
+        "reaction_role_benzene_cyp2a13_outside_context_unknown"
     )
     assert role["role"] == "unknown"
     assert role["review_required"] is True
-    assert role["annotation_record_id"] == "spyros_benzene_cyp2a13_outside_context_unknown"
+    assert role["annotation_record_id"] == "reaction_role_benzene_cyp2a13_outside_context_unknown"
     assert role["warnings"] or role["sme_notes"]
     assert selected["endpoint_toxic_flux"]["reaction_role"] == "unknown"
     assert selected["endpoint_toxic_flux"]["annotation_record_id"] == role["annotation_record_id"]
@@ -628,12 +628,12 @@ def test_hca_selected_phip_flux_uses_hca_role_mapping_in_output():
     assert selected["endpoint_toxic_flux"]["reaction_role"] == "bioactivation"
     assert (
         selected["endpoint_toxic_flux"]["annotation_record_id"]
-        == "spyros_hca_cyp1a1_no_flip"
+        == "reaction_role_hca_cyp1a1_default_direction"
     )
     assert selected["reaction_role_interpretation"]["role"] == "bioactivation"
     assert (
         selected["reaction_role_interpretation"]["annotation_record_id"]
-        == "spyros_hca_cyp1a1_no_flip"
+        == "reaction_role_hca_cyp1a1_default_direction"
     )
     assert selected["effective_burden"]["effective_carcinogenic_burden_ratio"] == pytest.approx(
         resolved.inhibition_burden_multiplier
@@ -1000,6 +1000,10 @@ def test_public_serializers_keep_existing_fields_and_finite_values():
         "mechanism_attribution",
     }.issubset(payload)
     assert "mechanism_resolved_risks" in payload
+    for resolved in payload["mechanism_resolved_risks"].values():
+        assert resolved["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert payload["module5_model_card"]["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert payload["module5_model_card"]["gsh_model_version"] == "phase7_quasi_steady_relative_capacity"
     json.dumps(payload, allow_nan=False)
     _finite_walk(payload)
 
@@ -1008,5 +1012,9 @@ def test_public_serializers_keep_existing_fields_and_finite_values():
         include_tissue_report=False,
     )
     assert "mechanism_resolved_risks" in profile.biological_output_integration
+    assert (
+        profile.biological_output_integration["module5_model_card"]["mechanism_model_version"]
+        == "module5_mechanism_resolved_v2"
+    )
     json.dumps(profile.biological_output_integration, allow_nan=False)
     _finite_walk(profile.biological_output_integration)

@@ -2,7 +2,7 @@ ExposoGraph
 ===========
 
 **ExposoGraph** is a Python toolkit for building, curating, and exporting
-carcinogen metabolism knowledge graphs using LLM-powered extraction and
+carcinogen metabolism knowledge graphs using literature extraction and
 manual entry.
 
 Part of the **CarcinoGenomic Platform** — a 5-layer computational pipeline
@@ -22,11 +22,6 @@ The current release separates two control layers:
 
    This project is under active development.
 
-.. note::
-
-   Parts of this documentation and code were created with assistance from
-   ChatGPT Codex and Claude Code.
-
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started
@@ -41,6 +36,8 @@ The current release separates two control layers:
    schema
    biomarker-registry
    gene-panels
+   module3_module5_user_paths
+   module5_mechanism_resolved_model
 
 .. toctree::
    :maxdepth: 2
@@ -51,15 +48,11 @@ The current release separates two control layers:
    api/engine
    api/graph_analysis
    api/exporter
-   api/cytoscape_adapter
-   api/viewer_dash
    api/graph_filters
    api/grounding
-   api/llm_extractor
    api/db_clients
    api/seeder
    api/interaction_engine
-   api/example_graphs
    api/reference_data
    api/storage
 

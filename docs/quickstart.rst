@@ -41,12 +41,6 @@ App mode defaults to ``stateless``. To set it explicitly:
 
    export ExposoGraph_MODE=stateless
 
-Set your OpenAI API key in the sidebar, or via environment variable:
-
-.. code-block:: bash
-
-   export OPENAI_API_KEY="sk-..."
-
 For local persistence and revision history, switch to local mode:
 
 .. code-block:: bash
@@ -150,18 +144,12 @@ Python Library
 
    from ExposoGraph import (
        GraphEngine,
-       GraphMode,
        GraphVisibility,
-       extract_graph,
+       build_full_panel,
        to_json,
    )
 
-   # LLM-powered extraction
-   # exploratory keeps provisional nodes and edges
-   kg = extract_graph(
-       "Benzo[a]pyrene is activated by CYP1A1...",
-       mode=GraphMode.EXPLORATORY,
-   )
+   kg = build_full_panel()
    engine = GraphEngine()
    engine.merge(kg, mode=GraphMode.EXPLORATORY)
 
@@ -204,15 +192,12 @@ ExposoGraph uses two ingestion modes:
 
 .. code-block:: python
 
-   from ExposoGraph import GraphEngine, GraphMode, extract_graph
+   from ExposoGraph import GraphEngine, build_full_panel
 
-   strict_kg = extract_graph(
-       "BaP activates CYP1A1 and forms BPDE adducts",
-       mode=GraphMode.STRICT,
-   )
+   kg = build_full_panel()
 
    engine = GraphEngine()
-   warnings = engine.merge(strict_kg, mode=GraphMode.STRICT)
+   warnings = engine.merge(kg, mode="strict")
    print(warnings)
 
 Loading Reference Gene Panels
@@ -326,7 +311,7 @@ or the current visibility slice.
            note="Validated subset only",
        )
 
-See also ``examples/mode_visibility_demo.py`` for a runnable no-API-key
+See also ``examples/mode_visibility_demo.py`` for a runnable local
 example that demonstrates strict vs exploratory merge behavior and
 visibility-aware export.
 

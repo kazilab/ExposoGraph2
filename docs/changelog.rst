@@ -64,7 +64,7 @@ Current development release.
 - Added visibility-aware JSON, HTML, JS, and GEXF export helpers
 - Added revision visibility tracking and SQLite schema migration support
 - Added clean repository shutdown via context-manager support and fixed prior SQLite resource warnings
-- Added Ollama/OpenAI backend abstraction and mode-aware seeded graph preparation
+- Added external extraction backend abstraction and mode-aware seeded graph preparation
 
 0.0.1 (2026-03-17)
 ------------------
@@ -73,8 +73,8 @@ Initial release.
 
 - Pydantic v2 data models for 7 node types and 10 edge types
 - NetworkX MultiDiGraph engine with load/merge/validate
-- LLM-powered extraction via OpenAI structured outputs
-- Streamlit app with manual entry, LLM extraction, and gene panel loading
+- Literature extraction workflow with structured-output validation
+- Streamlit app with manual entry, text extraction, and gene panel loading
 - D3.js force-directed graph viewer with dark theme
 - Export to JSON, ``graph-data.js`` (D3 viewer), and GEXF (Gephi)
 - Curated Tier 1 (13 genes) and Tier 2 (23 genes) reference panels

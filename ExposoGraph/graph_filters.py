@@ -5,6 +5,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .config import GraphVisibility, normalize_graph_visibility
+from .graph_filtering import (
+    GraphFilterCriteria,
+    filter_graph_by_criteria,
+    graph_filter_to_json_safe,
+    heavy_metal_node_ids,
+)
 from .models import Edge, KnowledgeGraph, MatchStatus, Node
 
 _VALIDATED_MATCH_STATUSES = frozenset({MatchStatus.CANONICAL, MatchStatus.ALIAS})

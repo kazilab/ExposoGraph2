@@ -68,6 +68,28 @@ _BIOMARKER_TO_FLUX_CLASS = {
     "HeavyMetals": "HeavyMetal",
 }
 
+_V2_USER_WORKFLOW_LABELS = {
+    "module3_simple": {
+        "module": "Module 3",
+        "label": "Module 3 simple individual-carcinogen Flux Engine workflow",
+        "entry_point": "compute_pathway_flux",
+        "status": "active",
+        "deprecated": False,
+    },
+    "module5_advanced": {
+        "module": "Module 5",
+        "label": "Module 5 advanced multi-carcinogen interaction workflow",
+        "entry_point": "compute_interaction_matrix",
+        "status": "active",
+        "deprecated": False,
+    },
+}
+
+
+def get_v2_user_workflow_labels() -> dict[str, dict[str, Any]]:
+    """Return stable user-facing labels for the v2 analysis pathways."""
+    return deepcopy(_V2_USER_WORKFLOW_LABELS)
+
 
 @dataclass
 class FluxClassEvidence:
@@ -110,6 +132,7 @@ class PatientRiskProfile:
     methylation_status: MethylationStatus | None = None
     methylation_effect: EpigeneticEffect | None = None
     methylation_adjusted_risks: dict[str, float] = field(default_factory=dict)
+    workflow_labels: dict[str, Any] = field(default_factory=dict)
     biological_output_integration: dict[str, Any] = field(default_factory=dict)
     summary: str = ""
 
@@ -1053,6 +1076,7 @@ def patient_risk_query(
         methylation_status=resolved_methylation_status,
         methylation_effect=methylation_effect,
         methylation_adjusted_risks=methylation_adjusted_risks,
+        workflow_labels=get_v2_user_workflow_labels(),
         biological_output_integration=_build_biological_output_integration(interactions),
     )
     profile.summary = summarize_risk_profile(profile)
@@ -1062,15 +1086,29 @@ def patient_risk_query(
 def _build_biological_output_integration(interactions: InteractionMatrixResult | None) -> dict[str, Any]:
     if interactions is None:
         return {}
+    from .interaction_engine import _module5_model_card_from_interaction_result
+
     substrate_outputs: dict[str, Any] = {}
     for enzyme, enzyme_result in interactions.competitive_effects.items():
         for substrate, flux in enzyme_result.substrates.items():
             if flux.biological_output is not None:
                 substrate_outputs[f"{enzyme}:{substrate}"] = deepcopy(flux.biological_output)
     payload = {
+        "workflow_kind": "module5_advanced",
+        "workflow_label": _V2_USER_WORKFLOW_LABELS["module5_advanced"]["label"],
         "substrate_outputs": substrate_outputs,
+        "synergy_matrix": deepcopy(interactions.synergy_matrix),
+        "interaction_factor": interactions.interaction_factor,
+        "total_independent_risk": interactions.total_independent_risk,
+        "total_interaction_risk": interactions.total_interaction_risk,
         "mechanism_attribution": deepcopy(interactions.mechanism_attribution),
         "source": "interaction_engine.live_biological_output",
+        "synergy_reporting": {
+            "authoritative_attribution": "mechanism_attribution",
+            "pairwise_heatmap": "synergy_matrix_descriptive",
+            "residual_policy": "numerical_reconstruction_check_only",
+        },
+        "module5_model_card": _module5_model_card_from_interaction_result(interactions),
     }
     if interactions.mechanism_attribution is not None:
         payload["mechanism_resolved_risks"] = {

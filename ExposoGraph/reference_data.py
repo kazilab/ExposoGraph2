@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from .models import KnowledgeGraph, Node, NodeType
@@ -1089,6 +1090,26 @@ def build_full_panel(*, include_wave2: bool = False) -> KnowledgeGraph:
     if include_wave2:
         nodes = nodes + build_wave2_panel().nodes
     return KnowledgeGraph(nodes=nodes, edges=[])
+
+
+def _reference_graph_data_path() -> Path:
+    return Path(__file__).resolve().parent / "map" / "graph-data.js"
+
+
+def build_reference_graph() -> KnowledgeGraph:
+    """Return the bundled full reference graph as a package-native model."""
+    from .exporter import parse_graph_data_js
+
+    return parse_graph_data_js(_reference_graph_data_path())
+
+
+def build_reference_engine() -> "GraphEngine":
+    """Return a GraphEngine loaded with the bundled full reference graph."""
+    from .engine import GraphEngine
+
+    engine = GraphEngine()
+    engine.load(build_reference_graph())
+    return engine
 
 
 def get_activity_scores(gene: str) -> list[dict[str, Any]] | None:

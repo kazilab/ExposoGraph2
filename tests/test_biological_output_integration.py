@@ -142,6 +142,7 @@ def test_mechanism_attribution_uses_live_engine_generated_eight_states():
         == "interaction_engine.compute_interaction_matrix"
     )
     assert len(attribution["state_values"]) == 8
+    assert attribution["decomposition_basis"] == "eight_state_shapley"
     assert attribution["metadata"]["caller_metadata"]["engine_generated_states"] is True
     assert attribution["metadata"]["caller_metadata"][
         "disabled_inhibition_modifier"
@@ -206,10 +207,24 @@ def test_unified_api_and_cli_outputs_are_additive_and_backward_compatible(tmp_pa
     payload = profile.biological_output_integration
     assert "substrate_outputs" in payload
     assert "mechanism_attribution" in payload
+    assert payload["module5_model_card"]["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert payload["module5_model_card"]["gsh_model_version"] == "phase7_quasi_steady_relative_capacity"
+    assert payload["module5_model_card"]["synergy_decomposition_basis"] == "eight_state_shapley"
+    assert payload["module5_model_card"]["diagnostic_output_policy"]
+    assert payload["module5_model_card"]["detailed_records_location"]["ki_details"]
     json.dumps(payload, allow_nan=False)
 
     result = compute_interaction_matrix({"benzene": 1.0, "ethanol": 1.0})
     compat = _interaction_matrix_to_compat_dict(result)
+    card = compat["module5_model_card"]
+    assert card["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert card["gsh_model_version"] == "phase7_quasi_steady_relative_capacity"
+    assert card["synergy_decomposition_basis"] == "eight_state_shapley"
+    assert card["warning_count"] >= 0
+    assert card["review_required_count"] >= 0
+    assert card["unresolved_or_deferred_count"] >= 0
+    assert "resolved_direct" in card["ki_resolver_statuses"]
+    assert card["detailed_records_location"]["mechanism_resolved_risks"] == "mechanism_resolved_risks"
     benzene = compat["competitive_effects"]["CYP2E1"]["benzene"]
     assert {
         "single_flux",
@@ -229,4 +244,6 @@ def test_unified_api_and_cli_outputs_are_additive_and_backward_compatible(tmp_pa
     cli_payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert "individual_risks" in cli_payload
     assert "mechanism_attribution" in cli_payload
+    assert cli_payload["module5_model_card"]["mechanism_model_version"] == "module5_mechanism_resolved_v2"
+    assert cli_payload["module5_model_card"]["synergy_decomposition_basis"] == "eight_state_shapley"
     json.dumps(cli_payload, allow_nan=False)
