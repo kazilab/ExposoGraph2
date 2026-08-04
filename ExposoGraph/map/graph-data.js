@@ -11110,6 +11110,69 @@ const GRAPH_DATA = {
                 "url": "https://www.kegg.jp/entry/hsa05204"
             }
         ]
+    },
+    {
+        "source": "BaP",
+        "target": "BaP_epoxide",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to 7,8-epoxide",
+        "carcinogen": "BaP",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to 7,8-epoxide (CYP1A1/CYP1B1-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "BaP->BaP_epoxide",
+                "evidence": "Procarcinogen to 7,8-epoxide (CYP1A1/CYP1B1-mediated)",
+                "citation": "Procarcinogen to 7,8-epoxide (CYP1A1/CYP1B1-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "BaP_epoxide",
+        "target": "BaP_diol",
+        "type": "ACTIVATES",
+        "label": "Epoxide hydration to 7,8-diol",
+        "carcinogen": "BaP",
+        "source_db": "Curated showcase",
+        "evidence": "BaP-7,8-epoxide hydrated to BaP-7,8-diol (EPHX1-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "BaP_epoxide->BaP_diol",
+                "evidence": "BaP-7,8-epoxide hydrated to BaP-7,8-diol (EPHX1-mediated)",
+                "citation": "BaP-7,8-epoxide hydrated to BaP-7,8-diol (EPHX1-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "BaP_diol",
+        "target": "BPDE",
+        "type": "ACTIVATES",
+        "label": "Second epoxidation to BPDE",
+        "carcinogen": "BaP",
+        "source_db": "Curated showcase",
+        "evidence": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "BaP_diol->BPDE",
+                "evidence": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)",
+                "citation": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)"
+            }
+        ]
     }
   ]
 };
