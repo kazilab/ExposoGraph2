@@ -5136,6 +5136,85 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
+        },
+        {
+            "id": "PFOA",
+            "label": "Perfluorooctanoic acid (PFOA)",
+            "type": "Carcinogen",
+            "detail": "Perfluoroalkyl substance; potent PPARα agonist. Acts through receptor-mediated tumor promotion, oxidative stress, and epigenetic alteration rather than direct genotoxicity. Group 1 based on sufficient animal evidence and strong mechanistic evidence in exposed humans.",
+            "group": "PFAS",
+            "iarc": "Group 1",
+            "source_db": "IARC Monographs Vol. 135",
+            "exposure": "Contaminated drinking water, food packaging, textiles, firefighting foam, fluoropolymer manufacture",
+            "evidence": "Perfluoroalkyl substance; potent PPARα agonist. Acts through receptor-mediated tumor promotion, oxidative stress, and epigenetic alteration rather than direct genotoxicity.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "335-67-1",
+            "canonical_label": "Perfluorooctanoic acid",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 135",
+                    "record_id": "PFOA",
+                    "evidence": "Perfluoroalkyl substance; potent PPARα agonist. Group 1 based on sufficient animal evidence and strong mechanistic evidence in exposed humans.",
+                    "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                }
+            ]
+        },
+        {
+            "id": "PFOS",
+            "label": "Perfluorooctanesulfonic acid (PFOS)",
+            "type": "Carcinogen",
+            "detail": "Perfluoroalkyl substance; PPARα agonist and AHR cross-talk. Group 2B based on strong mechanistic evidence and limited animal evidence.",
+            "group": "PFAS",
+            "iarc": "Group 2B",
+            "source_db": "IARC Monographs Vol. 135",
+            "exposure": "Firefighting foam (AFFF), semiconductor fabrication, food packaging, contaminated water",
+            "evidence": "Perfluoroalkyl substance; PPARα agonist and AHR cross-talk. Group 2B based on strong mechanistic evidence and limited animal evidence.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "1763-23-1",
+            "canonical_label": "Perfluorooctanesulfonic acid",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 135",
+                    "record_id": "PFOS",
+                    "evidence": "Perfluoroalkyl substance; PPARα agonist. Group 2B based on strong mechanistic evidence and limited animal evidence.",
+                    "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                }
+            ]
+        },
+        {
+            "id": "PPARA",
+            "label": "PPARα",
+            "type": "Enzyme",
+            "detail": "Peroxisome proliferator-activated receptor alpha; ligand-activated nuclear receptor. Key mediator of PFOA/PFOS carcinogenicity via peroxisome proliferation, oxidative stress, and cell proliferation.",
+            "role": "Transcription Factor",
+            "tissue": "liver, kidney, heart, intestine",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "PPARA",
+            "canonical_label": "PPARα",
+            "canonical_namespace": "reference_panel",
+            "provenance": [
+                {
+                    "source_db": "NCBI Gene",
+                    "record_id": "5465",
+                    "evidence": "Canonical human gene identifier and nomenclature.",
+                    "citation": "NCBI Gene record for PPARA (Homo sapiens)",
+                    "url": "https://www.ncbi.nlm.nih.gov/gene/5465"
+                }
+            ]
+        },
+        {
+            "id": "pfas_pathway",
+            "label": "PFAS Receptor-Mediated Carcinogenesis",
+            "type": "Pathway",
+            "detail": "Composite pathway covering PPARα activation, peroxisome proliferation, oxidative stress, epigenetic alteration, and immunosuppression. Non-genotoxic mechanism distinct from CYP-mediated activation pathways.",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         }
   ],
   "edges": [
@@ -9982,6 +10061,135 @@ const GRAPH_DATA = {
         "canonical_predicate": "REPAIRS",
         "canonical_namespace": "schema",
         "provenance": []
+    },
+    {
+        "source": "PFOA",
+        "target": "PPARA",
+        "type": "ACTIVATES",
+        "label": "PPARα agonism",
+        "carcinogen": "PFOA",
+        "source_db": "IARC Monographs Vol. 135",
+        "evidence": "PFOA is a potent PPARα agonist; receptor activation drives peroxisome proliferation and oxidative stress",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 135",
+                "record_id": "PFOA->PPARA",
+                "evidence": "PFOA is a potent PPARα agonist; receptor activation drives peroxisome proliferation and oxidative stress",
+                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+            }
+        ]
+    },
+    {
+        "source": "PFOA",
+        "target": "pfas_pathway",
+        "type": "PATHWAY",
+        "label": "Composite pathway membership",
+        "carcinogen": "PFOA",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "PFOA",
+        "target": "hsa05208",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - reactive oxygen species",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05208",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - reactive oxygen species",
+                "url": "https://www.kegg.jp/entry/hsa05208"
+            }
+        ]
+    },
+    {
+        "source": "PFOA",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via PPARα-independent ROS",
+        "carcinogen": "PFOA",
+        "source_db": "IARC Monographs Vol. 135",
+        "evidence": "PFOA induces oxidative stress leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 135",
+                "record_id": "PFOA->Oxo_dG",
+                "evidence": "PFOA induces oxidative stress leading to 8-oxo-dG formation",
+                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+            }
+        ]
+    },
+    {
+        "source": "PFOS",
+        "target": "PPARA",
+        "type": "ACTIVATES",
+        "label": "PPARα agonism (weaker)",
+        "carcinogen": "PFOS",
+        "source_db": "IARC Monographs Vol. 135",
+        "evidence": "PFOS activates PPARα with lower potency than PFOA",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 135",
+                "record_id": "PFOS->PPARA",
+                "evidence": "PFOS activates PPARα with lower potency than PFOA",
+                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+            }
+        ]
+    },
+    {
+        "source": "PFOS",
+        "target": "pfas_pathway",
+        "type": "PATHWAY",
+        "label": "Composite pathway membership",
+        "carcinogen": "PFOS",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "PFOS",
+        "target": "hsa05208",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - reactive oxygen species",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05208",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - reactive oxygen species",
+                "url": "https://www.kegg.jp/entry/hsa05208"
+            }
+        ]
     }
   ]
 };
