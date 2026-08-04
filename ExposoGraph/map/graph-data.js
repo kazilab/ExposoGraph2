@@ -5433,6 +5433,90 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
+        },
+        {
+            "id": "ESR1",
+            "label": "Estrogen receptor alpha",
+            "type": "Enzyme",
+            "detail": "Nuclear hormone receptor mediating estrogen signaling. Ligand-dependent transcription factor. DDT and DDE act as xenoestrogen agonists, promoting hormonal carcinogenesis in estrogen-responsive tissues.",
+            "source_db": "Curated showcase",
+            "evidence": "Nuclear hormone receptor mediating estrogen signaling. DDT/DDE act as xenoestrogen agonists.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "2099",
+            "canonical_label": "ESR1",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "ESR1",
+                    "evidence": "Estrogen receptor alpha; NCBI Gene 2099. Mediates hormonal carcinogenesis via xenoestrogen agonism.",
+                    "citation": "Curated receptor entry for ESR1"
+                }
+            ]
+        },
+        {
+            "id": "AR",
+            "label": "Androgen receptor",
+            "type": "Enzyme",
+            "detail": "Nuclear hormone receptor mediating androgen signaling. Ligand-dependent transcription factor. DHT is the high-affinity ligand; androgen signaling promotes prostate carcinogenesis.",
+            "source_db": "Curated showcase",
+            "evidence": "Nuclear hormone receptor mediating androgen signaling. DHT is the high-affinity ligand.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "367",
+            "canonical_label": "AR",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "AR",
+                    "evidence": "Androgen receptor; NCBI Gene 367. Mediates androgen-driven prostate carcinogenesis.",
+                    "citation": "Curated receptor entry for AR"
+                }
+            ]
+        },
+        {
+            "id": "RyR",
+            "label": "Ryanodine receptor",
+            "type": "Enzyme",
+            "detail": "Intracellular calcium release channel. Non-dioxin-like PCBs (PCB_138, PCB_153) sensitize RyR, disrupting calcium homeostasis and promoting tumor promotion via aberrant Ca2+ signaling.",
+            "source_db": "Curated showcase",
+            "evidence": "Intracellular calcium release channel. Non-dioxin-like PCBs sensitize RyR, disrupting calcium homeostasis.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "RyR",
+            "canonical_label": "Ryanodine receptor",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "RyR",
+                    "evidence": "Ryanodine receptor; non-dioxin-like PCBs sensitize RyR, disrupting calcium homeostasis and promoting tumor promotion.",
+                    "citation": "Curated receptor entry for RyR"
+                }
+            ]
+        },
+        {
+            "id": "N7_HEG",
+            "label": "N7-(2-hydroxyethyl)guanine",
+            "type": "DNA_Adduct",
+            "detail": "DNA adduct formed by direct alkylation of guanine N7 by ethylene oxide. Major hydroxyethyl adduct; marker of direct-acting alkylating agent exposure.",
+            "source_db": "Curated showcase",
+            "evidence": "DNA adduct formed by direct alkylation of guanine N7 by ethylene oxide. Major hydroxyethyl adduct.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "N7_HEG",
+            "canonical_label": "N7-(2-hydroxyethyl)guanine",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "N7_HEG",
+                    "evidence": "N7-(2-hydroxyethyl)guanine; major DNA adduct of ethylene oxide direct alkylation.",
+                    "citation": "Curated DNA adduct entry for N7-HEG"
+                }
+            ]
         }
   ],
   "edges": [
@@ -11171,6 +11255,354 @@ const GRAPH_DATA = {
                 "record_id": "BaP_diol->BPDE",
                 "evidence": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)",
                 "citation": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "PCB_138",
+        "target": "RyR",
+        "type": "ACTIVATES",
+        "label": "RyR sensitization (Ca2+ dysregulation)",
+        "carcinogen": "PCB_138",
+        "source_db": "Curated showcase",
+        "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "PCB_138->RyR",
+                "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
+                "citation": "Non-dioxin-like PCB RyR sensitization"
+            }
+        ]
+    },
+    {
+        "source": "PCB_153",
+        "target": "RyR",
+        "type": "ACTIVATES",
+        "label": "RyR sensitization (Ca2+ dysregulation)",
+        "carcinogen": "PCB_153",
+        "source_db": "Curated showcase",
+        "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "PCB_153->RyR",
+                "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
+                "citation": "Non-dioxin-like PCB RyR sensitization"
+            }
+        ]
+    },
+    {
+        "source": "PCB_138",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via PCB metabolism",
+        "carcinogen": "PCB_138",
+        "source_db": "Curated showcase",
+        "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "PCB_138->Oxo_dG",
+                "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "Non-dioxin-like PCB oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "PCB_153",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via PCB metabolism",
+        "carcinogen": "PCB_153",
+        "source_db": "Curated showcase",
+        "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "PCB_153->Oxo_dG",
+                "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "Non-dioxin-like PCB oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "DDT",
+        "target": "ESR1",
+        "type": "ACTIVATES",
+        "label": "Estrogen receptor agonism (xenoestrogen)",
+        "carcinogen": "DDT",
+        "source_db": "Curated showcase",
+        "evidence": "DDT acts as xenoestrogen agonist at estrogen receptor alpha, promoting hormonal carcinogenesis",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "DDT->ESR1",
+                "evidence": "DDT acts as xenoestrogen agonist at estrogen receptor alpha",
+                "citation": "DDT xenoestrogen agonism at ESR1"
+            }
+        ]
+    },
+    {
+        "source": "DDE",
+        "target": "ESR1",
+        "type": "ACTIVATES",
+        "label": "Estrogen receptor agonism (xenoestrogen)",
+        "carcinogen": "DDE",
+        "source_db": "Curated showcase",
+        "evidence": "DDE acts as xenoestrogen agonist at estrogen receptor alpha, promoting hormonal carcinogenesis",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "DDE->ESR1",
+                "evidence": "DDE acts as xenoestrogen agonist at estrogen receptor alpha",
+                "citation": "DDE xenoestrogen agonism at ESR1"
+            }
+        ]
+    },
+    {
+        "source": "DDT",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via DDT metabolism",
+        "carcinogen": "DDT",
+        "source_db": "Curated showcase",
+        "evidence": "DDT metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "DDT->Oxo_dG",
+                "evidence": "DDT metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "DDT oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "DDE",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via DDE metabolism",
+        "carcinogen": "DDE",
+        "source_db": "Curated showcase",
+        "evidence": "DDE metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "DDE->Oxo_dG",
+                "evidence": "DDE metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "DDE oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "Chlordane",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via chlordane metabolism",
+        "carcinogen": "Chlordane",
+        "source_db": "Curated showcase",
+        "evidence": "Chlordane metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Chlordane->Oxo_dG",
+                "evidence": "Chlordane metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "Chlordane oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "Heptachlor",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via heptachlor metabolism",
+        "carcinogen": "Heptachlor",
+        "source_db": "Curated showcase",
+        "evidence": "Heptachlor metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Heptachlor->Oxo_dG",
+                "evidence": "Heptachlor metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "Heptachlor oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "Lindane",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via lindane metabolism",
+        "carcinogen": "Lindane",
+        "source_db": "Curated showcase",
+        "evidence": "Lindane metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Lindane->Oxo_dG",
+                "evidence": "Lindane metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "Lindane oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "Toxaphene",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via toxaphene metabolism",
+        "carcinogen": "Toxaphene",
+        "source_db": "Curated showcase",
+        "evidence": "Toxaphene metabolism generates ROS leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Toxaphene->Oxo_dG",
+                "evidence": "Toxaphene metabolism generates ROS leading to 8-oxo-dG formation",
+                "citation": "Toxaphene oxidative DNA damage"
+            }
+        ]
+    },
+    {
+        "source": "DHT",
+        "target": "AR",
+        "type": "ACTIVATES",
+        "label": "Androgen receptor agonism (high-affinity ligand)",
+        "carcinogen": "DHT",
+        "source_db": "Curated showcase",
+        "evidence": "DHT is the high-affinity ligand for androgen receptor, promoting androgen-driven prostate carcinogenesis",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "DHT->AR",
+                "evidence": "DHT is the high-affinity ligand for androgen receptor",
+                "citation": "DHT androgen receptor agonism"
+            }
+        ]
+    },
+    {
+        "source": "DHT",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "ROS via AR signaling",
+        "carcinogen": "DHT",
+        "source_db": "Curated showcase",
+        "evidence": "Androgen receptor signaling generates ROS leading to 8-oxo-dG formation in prostate cells",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "DHT->Oxo_dG",
+                "evidence": "Androgen receptor signaling generates ROS leading to 8-oxo-dG formation",
+                "citation": "DHT oxidative DNA damage via AR signaling"
+            }
+        ]
+    },
+    {
+        "source": "EthyleneOxide",
+        "target": "N7_HEG",
+        "type": "FORMS_ADDUCT",
+        "label": "Direct N7-guanine alkylation",
+        "carcinogen": "EthyleneOxide",
+        "source_db": "Curated showcase",
+        "evidence": "Ethylene oxide directly alkylates guanine N7 to form N7-(2-hydroxyethyl)guanine; no metabolic activation required",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "EthyleneOxide->N7_HEG",
+                "evidence": "Ethylene oxide directly alkylates guanine N7 to form N7-(2-hydroxyethyl)guanine",
+                "citation": "Ethylene oxide direct N7-guanine alkylation"
+            }
+        ]
+    },
+    {
+        "source": "EthyleneOxide",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "DNA adduct pathway",
+        "carcinogen": "EthyleneOxide",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "N7_HEG",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
             }
         ]
     }
