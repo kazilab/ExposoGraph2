@@ -5221,7 +5221,7 @@ const GRAPH_DATA = {
             "label": "Ultraviolet radiation (UVA, UVB, UVC)",
             "type": "Carcinogen",
             "detail": "Physical agent; directly damages DNA through photodimer formation (cyclobutane pyrimidine dimers and 6-4 photoproducts) and oxidative stress. No metabolic activation required. Group 1 for skin cancers (melanoma, squamous cell, basal cell) and ocular melanoma.",
-            "group": "Physical_Agent",
+            "group": "Radiation",
             "iarc": "Group 1",
             "source_db": "IARC Monographs Vol. 100D",
             "exposure": "Solar radiation, tanning devices, welding arcs",
@@ -5287,6 +5287,149 @@ const GRAPH_DATA = {
             "label": "UV Radiation Photodamage and NER Repair",
             "type": "Pathway",
             "detail": "Composite pathway covering direct photodimer formation (CPD and 6-4 photoproduct), oxidative DNA damage via UV-generated ROS, and nucleotide excision repair.",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "IonizingRadiation",
+            "label": "Ionizing radiation (all types)",
+            "type": "Carcinogen",
+            "detail": "Physical agent covering X- and gamma-radiation, neutron radiation, and internally deposited alpha- and beta-particle-emitting radionuclides. Damages DNA directly through double-strand breaks, single-strand breaks, and oxidative base damage via radiolysis of water. No metabolic activation required. Group 1 for at least 15 cancer sites.",
+            "group": "Radiation",
+            "iarc": "Group 1",
+            "source_db": "IARC Monographs Vol. 100D",
+            "exposure": "Medical imaging and radiotherapy, occupational (nuclear, mining, aerospace), environmental background, nuclear accidents",
+            "evidence": "Physical agent covering all ionizing radiation types. Damages DNA directly through double-strand breaks and oxidative stress. No metabolic activation required.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "Ionizing_radiation",
+            "canonical_label": "Ionizing radiation (all types)",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 100D",
+                    "record_id": "IonizingRadiation",
+                    "evidence": "Ionizing radiation (all types) classified as Group 1. Covers X/gamma, neutrons, alpha- and beta-emitting radionuclides.",
+                    "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+                }
+            ]
+        },
+        {
+            "id": "Radon",
+            "label": "Radon-222 and its decay products",
+            "type": "Carcinogen",
+            "detail": "Naturally occurring radioactive gas from uranium-238 decay chain. Alpha-emitting decay products (Po-218, Po-214) deliver localized high-LET dose to bronchial epithelium. Second leading cause of lung cancer after tobacco smoking. Group 1 for lung cancer.",
+            "group": "Radiation",
+            "iarc": "Group 1",
+            "source_db": "IARC Monographs Vol. 100D",
+            "exposure": "Residential indoor radon gas (geological uranium), occupational (uranium mining, underground work)",
+            "evidence": "Naturally occurring radioactive gas; alpha-emitting decay products deliver high-LET dose to bronchial epithelium. Second leading cause of lung cancer.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "10043-92-2",
+            "canonical_label": "Radon-222",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 100D",
+                    "record_id": "Radon",
+                    "evidence": "Radon-222 and its decay products classified as Group 1 for lung cancer. Sufficient evidence in humans.",
+                    "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+                }
+            ]
+        },
+        {
+            "id": "Radon_decay_products",
+            "label": "Po-218 and Po-214 (alpha-emitting)",
+            "type": "Metabolite",
+            "detail": "Short-lived alpha-emitting decay products of Radon-222 that deposit in the bronchial tree and deliver localized high-LET radiation dose to epithelial cells.",
+            "reactivity": "High",
+            "source_db": "Curated showcase",
+            "evidence": "Short-lived alpha-emitting decay products of Radon-222 that deposit in bronchial tree and deliver high-LET dose.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "Radon_decay_products",
+            "canonical_label": "Po-218 and Po-214",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "Radon_decay_products",
+                    "evidence": "Short-lived alpha-emitting decay products of Radon-222 that deposit in bronchial tree.",
+                    "citation": "Curated metabolite entry for Radon decay products"
+                }
+            ]
+        },
+        {
+            "id": "DSB",
+            "label": "Double-strand break (DSB)",
+            "type": "DNA_Adduct",
+            "detail": "DNA double-strand break; hallmark lesion of ionizing radiation. Both DNA strands severed within ~10 base pairs. Repaired primarily by NHEJ and homologous recombination. Misrepair leads to chromosomal translocations and deletions.",
+            "source_db": "Curated showcase",
+            "evidence": "DNA double-strand break; hallmark lesion of ionizing radiation. Repaired by NHEJ and homologous recombination.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "DSB",
+            "canonical_label": "Double-strand break",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "DSB",
+                    "evidence": "DNA double-strand break; hallmark lesion of ionizing radiation.",
+                    "citation": "Curated DNA adduct entry for double-strand break"
+                }
+            ]
+        },
+        {
+            "id": "SSB",
+            "label": "Single-strand break (SSB)",
+            "type": "DNA_Adduct",
+            "detail": "DNA single-strand break; common radiation-induced lesion. Less lethal than DSB but can convert to DSB if clustered. Repaired primarily by base excision repair and single-strand break repair pathways.",
+            "source_db": "Curated showcase",
+            "evidence": "DNA single-strand break; common radiation-induced lesion. Repaired by base excision repair.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "SSB",
+            "canonical_label": "Single-strand break",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "SSB",
+                    "evidence": "DNA single-strand break; common radiation-induced lesion.",
+                    "citation": "Curated DNA adduct entry for single-strand break"
+                }
+            ]
+        },
+        {
+            "id": "ROS_radiation",
+            "label": "ROS (radiation-induced)",
+            "type": "Metabolite",
+            "detail": "Reactive oxygen species generated by radiolysis of water and photosensitization. Hydroxyl radicals are the primary mediator of indirect radiation DNA damage.",
+            "reactivity": "High",
+            "source_db": "Curated showcase",
+            "evidence": "Reactive oxygen species generated by radiolysis of water. Hydroxyl radicals mediate indirect radiation DNA damage.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "ROS_radiation",
+            "canonical_label": "ROS (radiation-induced)",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "ROS_radiation",
+                    "evidence": "Reactive oxygen species generated by radiolysis of water.",
+                    "citation": "Curated metabolite entry for ROS (radiation-induced)"
+                }
+            ]
+        },
+        {
+            "id": "radiation_pathway",
+            "label": "Ionizing Radiation DNA Damage and Repair",
+            "type": "Pathway",
+            "detail": "Composite pathway covering direct DNA damage (DSB, SSB), oxidative damage via radiolysis of water, alpha-particle track structure, and DSB repair via NHEJ and homologous recombination.",
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
@@ -10459,6 +10602,295 @@ const GRAPH_DATA = {
         "canonical_predicate": "REPAIRS",
         "canonical_namespace": "schema",
         "provenance": []
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "DSB",
+        "type": "FORMS_ADDUCT",
+        "label": "Double-strand break induction",
+        "carcinogen": "IonizingRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "Ionizing radiation directly induces DNA double-strand breaks; the hallmark lesion",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "IonizingRadiation->DSB",
+                "evidence": "Ionizing radiation directly induces DNA double-strand breaks",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "SSB",
+        "type": "FORMS_ADDUCT",
+        "label": "Single-strand break induction",
+        "carcinogen": "IonizingRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "Ionizing radiation induces single-strand breaks; clustered damage can convert to DSBs",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "IonizingRadiation->SSB",
+                "evidence": "Ionizing radiation induces single-strand breaks; clustered damage can convert to DSBs",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "ROS_radiation",
+        "type": "ACTIVATES",
+        "label": "Radiolysis of water generates ROS",
+        "carcinogen": "IonizingRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "Ionizing radiation causes radiolysis of water generating hydroxyl radicals; indirect DNA damage pathway",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "IonizingRadiation->ROS_radiation",
+                "evidence": "Ionizing radiation causes radiolysis of water generating hydroxyl radicals",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via radiolysis",
+        "carcinogen": "IonizingRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "Hydroxyl radicals from water radiolysis generate 8-oxo-dG; major oxidative lesion in irradiated cells",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "IonizingRadiation->Oxo_dG",
+                "evidence": "Hydroxyl radicals from water radiolysis generate 8-oxo-dG",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "radiation_pathway",
+        "type": "PATHWAY",
+        "label": "Composite pathway membership",
+        "carcinogen": "IonizingRadiation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "DNA adduct pathway",
+        "carcinogen": "IonizingRadiation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "IonizingRadiation",
+        "target": "hsa05208",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - reactive oxygen species",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05208",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - reactive oxygen species",
+                "url": "https://www.kegg.jp/entry/hsa05208"
+            }
+        ]
+    },
+    {
+        "source": "DSB",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "SSB",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "FANCD2",
+        "target": "DSB",
+        "type": "REPAIRS",
+        "label": "HR-mediated DSB repair (Fanconi anemia pathway)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "XRCC1",
+        "target": "SSB",
+        "type": "REPAIRS",
+        "label": "SSB repair scaffold (BER pathway)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "Radon",
+        "target": "Radon_decay_products",
+        "type": "ACTIVATES",
+        "label": "Alpha decay to Po-218 and Po-214",
+        "carcinogen": "Radon",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "Radon-222 decays through Po-218 and Po-214 which deliver high-LET alpha dose to bronchial epithelium",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "Radon->Radon_decay_products",
+                "evidence": "Radon-222 decays through Po-218 and Po-214 delivering high-LET alpha dose to bronchial epithelium",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "Radon",
+        "target": "DSB",
+        "type": "FORMS_ADDUCT",
+        "label": "High-LET alpha particle DSB induction",
+        "carcinogen": "Radon",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "High-LET alpha particles from radon decay products produce complex clustered DNA damage including DSBs in bronchial epithelium",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "Radon->DSB",
+                "evidence": "High-LET alpha particles from radon decay products produce complex clustered DNA damage including DSBs",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "Radon",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via alpha-induced ROS",
+        "carcinogen": "Radon",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "Alpha particle tracks generate ROS in bronchial epithelium leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "Radon->Oxo_dG",
+                "evidence": "Alpha particle tracks generate ROS leading to 8-oxo-dG formation",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "Radon",
+        "target": "radiation_pathway",
+        "type": "PATHWAY",
+        "label": "Composite pathway membership",
+        "carcinogen": "Radon",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "Radon",
+        "target": "hsa05208",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - reactive oxygen species",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05208",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - reactive oxygen species",
+                "url": "https://www.kegg.jp/entry/hsa05208"
+            }
+        ]
     }
   ]
 };
