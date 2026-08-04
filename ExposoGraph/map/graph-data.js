@@ -5215,6 +5215,81 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
+        },
+        {
+            "id": "UVRadiation",
+            "label": "Ultraviolet radiation (UVA, UVB, UVC)",
+            "type": "Carcinogen",
+            "detail": "Physical agent; directly damages DNA through photodimer formation (cyclobutane pyrimidine dimers and 6-4 photoproducts) and oxidative stress. No metabolic activation required. Group 1 for skin cancers (melanoma, squamous cell, basal cell) and ocular melanoma.",
+            "group": "Physical_Agent",
+            "iarc": "Group 1",
+            "source_db": "IARC Monographs Vol. 100D",
+            "exposure": "Solar radiation, tanning devices, welding arcs",
+            "evidence": "Physical agent; directly damages DNA through photodimer formation and oxidative stress. No metabolic activation required.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "UV_radiation",
+            "canonical_label": "Ultraviolet radiation",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 100D",
+                    "record_id": "UVRadiation",
+                    "evidence": "Ultraviolet radiation (wavelengths 100-400 nm) classified as Group 1 based on sufficient evidence for skin cancer and mechanistic data.",
+                    "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+                }
+            ]
+        },
+        {
+            "id": "CPD",
+            "label": "Cyclobutane pyrimidine dimer (CPD)",
+            "type": "DNA_Adduct",
+            "detail": "Most common UV-induced DNA lesion; forms covalent bonds between adjacent pyrimidines on the same DNA strand. Causes C to T and CC to TT signature mutations.",
+            "source_db": "Curated showcase",
+            "evidence": "Most common UV-induced DNA lesion; forms covalent bonds between adjacent pyrimidines. Causes C to T and CC to TT signature mutations.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "CPD",
+            "canonical_label": "Cyclobutane pyrimidine dimer",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "CPD",
+                    "evidence": "Most common UV-induced DNA lesion; forms covalent bonds between adjacent pyrimidines.",
+                    "citation": "Curated DNA adduct entry for cyclobutane pyrimidine dimer"
+                }
+            ]
+        },
+        {
+            "id": "SixFour_PP",
+            "label": "6-4 photoproduct",
+            "type": "DNA_Adduct",
+            "detail": "Second most common UV-induced DNA lesion; covalent linkage between positions 6 and 4 of adjacent pyrimidines. Less frequent than CPD but more mutagenic.",
+            "source_db": "Curated showcase",
+            "evidence": "Second most common UV-induced DNA lesion; covalent linkage between positions 6 and 4 of adjacent pyrimidines.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "SixFour_PP",
+            "canonical_label": "6-4 photoproduct",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "SixFour_PP",
+                    "evidence": "Second most common UV-induced DNA lesion; covalent linkage between positions 6 and 4 of adjacent pyrimidines.",
+                    "citation": "Curated DNA adduct entry for 6-4 photoproduct"
+                }
+            ]
+        },
+        {
+            "id": "uv_radiation_pathway",
+            "label": "UV Radiation Photodamage and NER Repair",
+            "type": "Pathway",
+            "detail": "Composite pathway covering direct photodimer formation (CPD and 6-4 photoproduct), oxidative DNA damage via UV-generated ROS, and nucleotide excision repair.",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         }
   ],
   "edges": [
@@ -10190,6 +10265,200 @@ const GRAPH_DATA = {
                 "url": "https://www.kegg.jp/entry/hsa05208"
             }
         ]
+    },
+    {
+        "source": "UVRadiation",
+        "target": "CPD",
+        "type": "FORMS_ADDUCT",
+        "label": "Cyclobutane pyrimidine dimer formation",
+        "carcinogen": "UVRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "UVB directly induces covalent bonds between adjacent pyrimidines forming CPDs, the most abundant photoproduct",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "UVRadiation->CPD",
+                "evidence": "UVB directly induces covalent bonds between adjacent pyrimidines forming CPDs",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "UVRadiation",
+        "target": "SixFour_PP",
+        "type": "FORMS_ADDUCT",
+        "label": "6-4 photoproduct formation",
+        "carcinogen": "UVRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "UV induces covalent linkage between positions 6 and 4 of adjacent pyrimidines; less frequent than CPD but more mutagenic",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "UVRadiation->SixFour_PP",
+                "evidence": "UV induces covalent linkage between positions 6 and 4 of adjacent pyrimidines",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "UVRadiation",
+        "target": "Oxo_dG",
+        "type": "FORMS_ADDUCT",
+        "label": "Oxidative DNA damage via UV-generated ROS",
+        "carcinogen": "UVRadiation",
+        "source_db": "IARC Monographs Vol. 100D",
+        "evidence": "UVA generates ROS via photosensitization leading to 8-oxo-dG formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100D",
+                "record_id": "UVRadiation->Oxo_dG",
+                "evidence": "UVA generates ROS via photosensitization leading to 8-oxo-dG formation",
+                "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
+            }
+        ]
+    },
+    {
+        "source": "UVRadiation",
+        "target": "uv_radiation_pathway",
+        "type": "PATHWAY",
+        "label": "Composite pathway membership",
+        "carcinogen": "UVRadiation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "UVRadiation",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "DNA adduct pathway",
+        "carcinogen": "UVRadiation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "UVRadiation",
+        "target": "hsa05208",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - reactive oxygen species",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05208",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - reactive oxygen species",
+                "url": "https://www.kegg.jp/entry/hsa05208"
+            }
+        ]
+    },
+    {
+        "source": "CPD",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "SixFour_PP",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "XPC",
+        "target": "CPD",
+        "type": "REPAIRS",
+        "label": "NER recognition",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "XPC",
+        "target": "SixFour_PP",
+        "type": "REPAIRS",
+        "label": "NER recognition",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "ERCC2",
+        "target": "CPD",
+        "type": "REPAIRS",
+        "label": "NER excision",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "ERCC2",
+        "target": "SixFour_PP",
+        "type": "REPAIRS",
+        "label": "NER excision",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
     }
   ]
 };
