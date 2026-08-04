@@ -10891,6 +10891,225 @@ const GRAPH_DATA = {
                 "url": "https://www.kegg.jp/entry/hsa05208"
             }
         ]
+    },
+    {
+        "source": "AFB1",
+        "target": "AFB1_epoxide",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to 8,9-epoxide",
+        "carcinogen": "AFB1",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to 8,9-epoxide (CYP3A4/CYP1A2-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "AFB1->AFB1_epoxide",
+                "evidence": "Procarcinogen to 8,9-epoxide (CYP3A4/CYP1A2-mediated)",
+                "citation": "Procarcinogen to 8,9-epoxide (CYP3A4/CYP1A2-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "Benzene",
+        "target": "Benzene_oxide",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to epoxidation",
+        "carcinogen": "Benzene",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to benzene oxide (CYP2E1-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Benzene->Benzene_oxide",
+                "evidence": "Procarcinogen to benzene oxide (CYP2E1-mediated)",
+                "citation": "Procarcinogen to benzene oxide (CYP2E1-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "4ABP",
+        "target": "NOH_4ABP",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to N-hydroxylation",
+        "carcinogen": "4ABP",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "4ABP->NOH_4ABP",
+                "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
+                "citation": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "PhIP",
+        "target": "NOH_PhIP",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to N-hydroxylation",
+        "carcinogen": "PhIP",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "PhIP->NOH_PhIP",
+                "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
+                "citation": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "NNK",
+        "target": "NNK_hydroxyl",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to alpha-hydroxylation",
+        "carcinogen": "NNK",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to alpha-hydroxylation (CYP2A6/CYP2A13-mediated)",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "NNK->NNK_hydroxyl",
+                "evidence": "Procarcinogen to alpha-hydroxylation (CYP2A6/CYP2A13-mediated)",
+                "citation": "Procarcinogen to alpha-hydroxylation (CYP2A6/CYP2A13-mediated)"
+            }
+        ]
+    },
+    {
+        "source": "Acetaldehyde",
+        "target": "N2_ethylidene_dG",
+        "type": "FORMS_ADDUCT",
+        "carcinogen": "Acetaldehyde",
+        "evidence": "Acetaldehyde forms N2-ethylidene-dG DNA adduct directly",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Acetaldehyde->N2_ethylidene_dG",
+                "evidence": "Acetaldehyde forms N2-ethylidene-dG DNA adduct directly",
+                "citation": "Acetaldehyde forms N2-ethylidene-dG DNA adduct directly"
+            }
+        ]
+    },
+    {
+        "source": "ERCC2",
+        "target": "AFB1_Gua",
+        "type": "REPAIRS",
+        "label": "NER excision",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "ABP_dG",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "POB_dG",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "BQ_dG",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "N2_ethylidene_dG",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
     }
   ]
 };
