@@ -5060,6 +5060,82 @@ const GRAPH_DATA = {
             "detail": "Major cellular antioxidant; depleted by lead and mercury binding.",
             "origin": "imported",
             "match_status": "canonical",
+        },
+        {
+            "id": "AristolochicAcid",
+            "label": "Aristolochic acid",
+            "type": "Carcinogen",
+            "detail": "Plant alkaloid represented through nitroreduction to a reactive N-acylnitrenium ion and deoxyadenosine adduct formation.",
+            "group": "Plant_Alkaloid",
+            "iarc": "Group 1",
+            "source_db": "IARC Monographs Vol. 100A",
+            "evidence": "Plant alkaloid represented through nitroreduction to a reactive N-acylnitrenium ion and deoxyadenosine adduct formation.",
+            "exposure": "Traditional herbal medicines (Aristolochia species), contaminated food crops (Balkan endemic nephropathy)",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "313-67-7",
+            "canonical_label": "Aristolochic acid",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 100A",
+                    "record_id": "AristolochicAcid",
+                    "evidence": "Plant alkaloid represented through nitroreduction to a reactive N-acylnitrenium ion and deoxyadenosine adduct formation.",
+                    "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
+                }
+            ]
+        },
+        {
+            "id": "AL_nitrenium",
+            "label": "N-acylnitrenium ion (aristolochic)",
+            "type": "Metabolite",
+            "detail": "Reactive cyclic N-acylnitrenium ion formed by nitroreduction of aristolochic acid.",
+            "reactivity": "High",
+            "source_db": "Curated showcase",
+            "evidence": "Reactive cyclic N-acylnitrenium ion formed by nitroreduction of aristolochic acid.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "AL_nitrenium",
+            "canonical_label": "N-acylnitrenium ion (aristolochic)",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "AL_nitrenium",
+                    "evidence": "Reactive cyclic N-acylnitrenium ion formed by nitroreduction of aristolochic acid.",
+                    "citation": "Curated metabolite entry for N-acylnitrenium ion (aristolochic)"
+                }
+            ]
+        },
+        {
+            "id": "dA_AL_I",
+            "label": "dA-AL-I (7-[deoxyadenosin-N6-yl]aristolactam I)",
+            "type": "DNA_Adduct",
+            "detail": "Canonical aristolochic acid-derived deoxyadenosine adduct; associated with A:T to T:A transversion mutations.",
+            "source_db": "Curated showcase",
+            "evidence": "Canonical aristolochic acid-derived deoxyadenosine adduct; associated with A:T to T:A transversion mutations.",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "dA_AL_I",
+            "canonical_label": "dA-AL-I",
+            "canonical_namespace": "curated_showcase",
+            "provenance": [
+                {
+                    "source_db": "Curated showcase",
+                    "record_id": "dA_AL_I",
+                    "evidence": "Canonical aristolochic acid-derived deoxyadenosine adduct; associated with A:T to T:A transversion mutations.",
+                    "citation": "Curated DNA adduct entry for dA-AL-I"
+                }
+            ]
+        },
+        {
+            "id": "aristolochic_pathway",
+            "label": "Aristolochic Acid Nitroreduction and Adduct Formation",
+            "type": "Pathway",
+            "detail": "Composite pathway covering CYP1A1/2 and NQO1-mediated nitroreduction, N-acylnitrenium ion formation, and deoxyadenosine adduct generation.",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         }
   ],
   "edges": [
@@ -9746,6 +9822,166 @@ const GRAPH_DATA = {
           "citation": "MMR"
         }
       ]
+    },
+    {
+        "source": "AristolochicAcid",
+        "target": "AL_nitrenium",
+        "type": "ACTIVATES",
+        "label": "Procarcinogen to N-acylnitrenium ion",
+        "carcinogen": "AristolochicAcid",
+        "source_db": "Curated showcase",
+        "evidence": "Procarcinogen to N-acylnitrenium ion via nitroreduction",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "AristolochicAcid->AL_nitrenium",
+                "evidence": "Procarcinogen to N-acylnitrenium ion via nitroreduction",
+                "citation": "Procarcinogen to N-acylnitrenium ion via nitroreduction"
+            }
+        ]
+    },
+    {
+        "source": "CYP1A1",
+        "target": "AL_nitrenium",
+        "type": "ACTIVATES",
+        "label": "Nitroreduction (CYP1A1)",
+        "carcinogen": "AristolochicAcid",
+        "source_db": "Curated showcase",
+        "evidence": "CYP1A1-mediated nitroreduction of aristolochic acid",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "CYP1A1->AL_nitrenium",
+                "evidence": "CYP1A1-mediated nitroreduction of aristolochic acid",
+                "citation": "CYP1A1-mediated nitroreduction of aristolochic acid"
+            }
+        ]
+    },
+    {
+        "source": "NQO1",
+        "target": "AL_nitrenium",
+        "type": "ACTIVATES",
+        "label": "Nitroreduction (NQO1)",
+        "carcinogen": "AristolochicAcid",
+        "source_db": "Curated showcase",
+        "evidence": "NQO1-mediated nitroreduction of aristolochic acid",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "NQO1->AL_nitrenium",
+                "evidence": "NQO1-mediated nitroreduction of aristolochic acid",
+                "citation": "NQO1-mediated nitroreduction of aristolochic acid"
+            }
+        ]
+    },
+    {
+        "source": "AL_nitrenium",
+        "target": "dA_AL_I",
+        "type": "FORMS_ADDUCT",
+        "label": "N6-dA adduct formation",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "FORMS_ADDUCT",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "AristolochicAcid",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "DNA adduct pathway",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "AristolochicAcid",
+        "target": "hsa00980",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Xenobiotic metabolism by cytochrome P450",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa00980",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Xenobiotic metabolism by cytochrome P450",
+                "url": "https://www.kegg.jp/entry/hsa00980"
+            }
+        ]
+    },
+    {
+        "source": "AristolochicAcid",
+        "target": "aristolochic_pathway",
+        "type": "PATHWAY",
+        "label": "Composite pathway membership",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "dA_AL_I",
+        "target": "hsa05204",
+        "type": "PATHWAY",
+        "label": "Pathway membership: Chemical carcinogenesis - DNA adducts",
+        "source_db": "KEGG",
+        "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "PATHWAY",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "KEGG",
+                "record_id": "hsa05204",
+                "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
+                "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
+                "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "XPC",
+        "target": "dA_AL_I",
+        "type": "REPAIRS",
+        "label": "NER recognition",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
+    },
+    {
+        "source": "ERCC2",
+        "target": "dA_AL_I",
+        "type": "REPAIRS",
+        "label": "NER excision",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "REPAIRS",
+        "canonical_namespace": "schema",
+        "provenance": []
     }
   ]
 };
