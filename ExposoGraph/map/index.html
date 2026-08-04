@@ -1299,30 +1299,73 @@ function applyTissueFilter(tissue, threshold) {
       .map(n => n.id)
   );
 
-  const relevantEdgeIds = new Set();
-  const connectedIds = new Set([...activeIds, ...matchingTissueNodes]);
+  // Step 0: The absolute starting point
+  const step0Ids = new Set([...activeIds, ...matchingTissueNodes]);
 
+  const relevantEdgeIds = new Set();
+
+  // Step 1 Pool: Will hold Step 0 + their direct neighbors
+  const step1Ids = new Set(step0Ids); 
+
+  // PASS 1: Move from Step 0 to Step 1 (Direct Neighbors)
+  // We read strictly from 'step0Ids' so new additions don't cascade mid-loop
   edges.forEach((e, i) => {
     const sid = typeof e.source === "object" ? e.source.id : e.source;
     const tid = typeof e.target === "object" ? e.target.id : e.target;
-    if (activeIds.has(sid) || activeIds.has(tid) || matchingTissueNodes.has(sid) || matchingTissueNodes.has(tid)) {
+    
+    if (step0Ids.has(sid) || step0Ids.has(tid)) {
       relevantEdgeIds.add(i);
-      connectedIds.add(sid);
-      connectedIds.add(tid);
+      step1Ids.add(sid); // Add to the next pool, safe from current loop checks
+      step1Ids.add(tid);
     }
   });
 
+  // Step 2 Pool: Will hold Step 1 + their whitelisted neighbors
+  const step2Ids = new Set(step1Ids);
+  const validEdgeTypes = ["ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "REPAIRS", "TRANSPORTS", "EXPRESSED_IN"];
+
+  // PASS 2: Move from Step 1 to Step 2 (Neighbors of Neighbors)
+  // We read strictly from 'step1Ids' to prevent a multi-step ripple effect
   edges.forEach((e, i) => {
     const sid = typeof e.source === "object" ? e.source.id : e.source;
     const tid = typeof e.target === "object" ? e.target.id : e.target;
-    if (connectedIds.has(sid) || connectedIds.has(tid)) {
-      if (["ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "REPAIRS", "TRANSPORTS", "EXPRESSED_IN"].includes(e.type)) {
+    
+    if (step1Ids.has(sid) || step1Ids.has(tid)) {
+      if (validEdgeTypes.includes(e.type)) {
         relevantEdgeIds.add(i);
-        connectedIds.add(sid);
-        connectedIds.add(tid);
+        step2Ids.add(sid); // Safe addition, loop won't look at this node again
+        step2Ids.add(tid);
       }
     }
   });
+
+  // Rename for the rest of your existing visual code below
+  const connectedIds = step2Ids; 
+
+  // const relevantEdgeIds = new Set();
+  // const connectedIds = new Set([...activeIds, ...matchingTissueNodes]);
+
+  // edges.forEach((e, i) => {
+  //   const sid = typeof e.source === "object" ? e.source.id : e.source;
+  //   const tid = typeof e.target === "object" ? e.target.id : e.target;
+  //   if (activeIds.has(sid) || activeIds.has(tid) || matchingTissueNodes.has(sid) || matchingTissueNodes.has(tid)) {
+  //     relevantEdgeIds.add(i);
+  //     connectedIds.add(sid);
+  //     connectedIds.add(tid);
+  //   }
+  // });
+
+  // edges.forEach((e, i) => {
+  //   const sid = typeof e.source === "object" ? e.source.id : e.source;
+  //   const tid = typeof e.target === "object" ? e.target.id : e.target;
+  //   if (connectedIds.has(sid) || connectedIds.has(tid)) {
+  //     if (["ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "REPAIRS", "TRANSPORTS", "EXPRESSED_IN"].includes(e.type)) {
+  //       relevantEdgeIds.add(i);
+  //       connectedIds.add(sid);
+  //       connectedIds.add(tid);
+  //     }
+  //   }
+  // });
 
   tissueSummary.textContent = `${tissue}: ${activeIds.size} GTEx/HPA-supported enzyme/gene nodes with nTPM weight >= ${threshold.toFixed(2)}. ${tissueSourceNote}`;
   node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
