@@ -181,6 +181,72 @@ class TestQueries:
     def test_get_missing_node(self, engine):
         assert engine.get_node("X") is None
 
+    def test_get_node_nested_key_dot_path(self, engine):
+        engine.add_node(
+            Node(
+                id="CYP1A1",
+                label="CYP1A1",
+                type=NodeType.ENZYME,
+                tissue_weights={"Liver": 1.0, "Lung": 0.25},
+            )
+        )
+        assert engine.get_node("CYP1A1", "tissue_weights.Liver") == 1.0
+        assert engine.get_node("CYP1A1", ("tissue_weights", "Lung")) == 0.25
+
+    def test_get_node_nested_key_missing_segment_returns_default(self, engine):
+        engine.add_node(
+            Node(id="CYP1A1", label="CYP1A1", type=NodeType.ENZYME, tissue_weights={"Liver": 1.0})
+        )
+        assert engine.get_node("CYP1A1", "tissue_weights.Kidney") is None
+        assert engine.get_node("CYP1A1", "tissue_weights.Kidney", default=0.0) == 0.0
+        assert engine.get_node("CYP1A1", "does_not_exist") is None
+
+    def test_get_node_with_key_on_missing_node_returns_default(self, engine):
+        assert engine.get_node("X", "tissue_weights.Liver") is None
+        assert engine.get_node("X", "tissue_weights.Liver", default="n/a") == "n/a"
+
+    def test_get_edge_full_dict(self, engine, sample_kg):
+        engine.load(sample_kg)
+        data = engine.get_edge("CYP1A1", "BPDE")
+        assert data is not None
+        assert data["type"] == "ACTIVATES"
+
+    def test_get_missing_edge(self, engine):
+        assert engine.get_edge("X", "Y") is None
+
+    def test_get_edge_nested_key(self, engine):
+        engine.add_node(Node(id="NDMA", label="NDMA", type=NodeType.CARCINOGEN))
+        engine.add_node(Node(id="CYP2E1", label="CYP2E1", type=NodeType.ENZYME))
+        engine.add_edge(
+            Edge(
+                source="NDMA",
+                target="CYP2E1",
+                type=EdgeType.ACTIVATES,
+                kinetics={"Km_uM": 12.5, "Ki": {"acetaldehyde": 3.1, "ethanol": 8.4}},
+            )
+        )
+        assert engine.get_edge("NDMA", "CYP2E1", "kinetics.Km_uM") == 12.5
+        assert engine.get_edge("NDMA", "CYP2E1", ("kinetics", "Ki", "ethanol")) == 8.4
+        assert engine.get_edge("NDMA", "CYP2E1", "kinetics.Ki.missing") is None
+        assert engine.get_edge("NDMA", "CYP2E1", "kinetics.Ki.missing", default=0.0) == 0.0
+
+    def test_get_edge_with_key_on_missing_edge_returns_default(self, engine):
+        assert engine.get_edge("X", "Y", "kinetics.Km_uM") is None
+        assert engine.get_edge("X", "Y", "kinetics.Km_uM", default=-1) == -1
+
+    def test_get_edge_keys_and_edge_key_disambiguation(self, engine):
+        engine.add_node(Node(id="A", label="A", type=NodeType.ENZYME))
+        engine.add_node(Node(id="B", label="B", type=NodeType.METABOLITE))
+        engine.add_edge(Edge(source="A", target="B", type=EdgeType.ACTIVATES, pmid="1"))
+        engine.add_edge(Edge(source="A", target="B", type=EdgeType.ACTIVATES, pmid="2"))
+
+        keys = engine.get_edge_keys("A", "B")
+        assert len(keys) == 2
+        assert {engine.get_edge("A", "B", edge_key=k)["pmid"] for k in keys} == {"1", "2"}
+
+    def test_get_edge_keys_empty_when_no_edge(self, engine):
+        assert engine.get_edge_keys("X", "Y") == []
+
     def test_neighbors(self, engine, sample_kg):
         engine.load(sample_kg)
         nbrs = engine.neighbors("CYP1A1")

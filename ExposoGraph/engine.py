@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import networkx as nx
@@ -13,6 +14,33 @@ from .grounding import prepare_knowledge_graph
 from .models import Edge, KnowledgeGraph, Node
 
 logger = logging.getLogger(__name__)
+
+_MISSING = object()
+"""Sentinel distinguishing "path segment absent" from a stored ``None`` value."""
+
+
+def _resolve_path(data: Mapping[str, Any], key: str | Sequence[str]) -> Any:
+    """Drill into a node/edge attribute mapping along *key*.
+
+    ``key`` may be:
+
+    - a plain attribute name, e.g. ``"tissue_weights"``
+    - a dot-delimited path into nested attributes, e.g.
+      ``"tissue_weights.Liver"`` or ``"kinetics.Km_uM"``
+    - an explicit sequence of path segments, e.g. ``("Ki", "NDMA")`` --
+      useful when a segment name might itself contain a literal ``"."``
+
+    Returns the sentinel :data:`_MISSING` if any segment along the path is
+    absent, so callers can distinguish "not found" from a stored ``None``.
+    """
+    segments = key.split(".") if isinstance(key, str) else list(key)
+    current: Any = data
+    for segment in segments:
+        if isinstance(current, Mapping) and segment in current:
+            current = current[segment]
+        else:
+            return _MISSING
+    return current
 
 
 class GraphEngine:
@@ -123,10 +151,84 @@ class GraphEngine:
     def edge_count(self) -> int:
         return int(self.G.number_of_edges())
 
-    def get_node(self, node_id: str) -> dict[str, Any] | None:
-        if node_id in self.G:
-            return dict(self.G.nodes[node_id])
-        return None
+    def get_node(
+        self,
+        node_id: str,
+        key: str | Sequence[str] | None = None,
+        *,
+        default: Any = None,
+    ) -> Any:
+        """Return a node's attributes, or one (possibly nested) value.
+
+        With no *key*, returns the node's full attribute dict, or ``None``
+        if *node_id* isn't in the graph -- unchanged from prior behavior.
+
+        With *key* set, drills into the node's attributes the same way
+        :meth:`get_edge` drills into an edge's, e.g.::
+
+            engine.get_node("CYP1A1", "tissue_weights.Liver")
+            engine.get_node("CYP1A1", ("tissue_weights", "Liver"))
+
+        Returns *default* (``None`` unless overridden) if the node is
+        missing or any segment of *key* isn't present.
+        """
+        if node_id not in self.G:
+            return None if key is None else default
+        data = dict(self.G.nodes[node_id])
+        if key is None:
+            return data
+        resolved = _resolve_path(data, key)
+        return default if resolved is _MISSING else resolved
+
+    def get_edge_keys(self, source: str, target: str) -> list[Any]:
+        """Return the parallel-edge keys between *source* and *target*.
+
+        Empty if the two nodes have no edge. Most edges in this graph are
+        singular, in which case this returns a single-item list.
+        """
+        if not self.G.has_edge(source, target):
+            return []
+        return list(self.G[source][target].keys())
+
+    def get_edge(
+        self,
+        source: str,
+        target: str,
+        key: str | Sequence[str] | None = None,
+        *,
+        edge_key: Any | None = None,
+        default: Any = None,
+    ) -> Any:
+        """Return an edge's attributes, or one (possibly nested) value.
+
+        Mirrors :meth:`get_node`'s syntax. With no *key*, returns the
+        edge's full attribute dict, or ``None`` if *source*/*target*
+        aren't connected. With *key* set, drills into that dict the same
+        way -- e.g. an enzyme-substrate-specific inhibition constant::
+
+            engine.get_edge("NDMA", "CYP2E1", "Ki.acetaldehyde")
+            engine.get_edge("NDMA", "CYP2E1", ("Ki", "acetaldehyde"))
+
+        If *source*/*target* have more than one parallel edge, pass
+        *edge_key* to pick a specific one (see :meth:`get_edge_keys`);
+        otherwise the first parallel edge is used. Returns *default*
+        (``None`` unless overridden) if the edge is missing, *edge_key*
+        doesn't match an existing parallel edge, or any segment of *key*
+        isn't present.
+        """
+        if not self.G.has_edge(source, target):
+            return None if key is None else default
+        edge_view = self.G[source][target]
+        if edge_key is not None:
+            if edge_key not in edge_view:
+                return None if key is None else default
+            data = dict(edge_view[edge_key])
+        else:
+            data = dict(next(iter(edge_view.values())))
+        if key is None:
+            return data
+        resolved = _resolve_path(data, key)
+        return default if resolved is _MISSING else resolved
 
     def neighbors(self, node_id: str) -> list[str]:
         if node_id not in self.G:
