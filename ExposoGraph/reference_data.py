@@ -1093,14 +1093,21 @@ def build_full_panel(*, include_wave2: bool = False) -> KnowledgeGraph:
 
 
 def _reference_graph_data_path() -> Path:
-    return Path(__file__).resolve().parent / "map" / "graph-data.js"
+    """Return the canonical JSON source of the bundled reference graph.
+
+    ``graph-data.js`` remains checked in alongside this file purely as the
+    asset consumed by the bundled Streamlit/D3 viewer (see ``ui_map_viewer``
+    and ``exporter.to_graph_data_js``); all Python-side reference graph
+    loading now reads the JSON duplicate instead.
+    """
+    return Path(__file__).resolve().parent / "map" / "graph-data.json"
 
 
 def build_reference_graph() -> KnowledgeGraph:
     """Return the bundled full reference graph as a package-native model."""
-    from .exporter import parse_graph_data_js
+    from .exporter import parse_graph_artifact
 
-    return parse_graph_data_js(_reference_graph_data_path())
+    return parse_graph_artifact(_reference_graph_data_path())
 
 
 def build_reference_engine() -> "GraphEngine":

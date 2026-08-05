@@ -508,10 +508,10 @@ def load_core_metallo_reference_graph() -> KnowledgeGraph:
     :func:`merge_expanded_metals_into` or :func:`build_expanded_metal_graph`.
     """
     from .example_graphs import _normalize_reference_graph_ids
-    from .exporter import parse_graph_data_js
+    from .exporter import parse_graph_artifact
 
-    path = Path(__file__).resolve().parent / "map" / "graph-data.js"
-    return _normalize_reference_graph_ids(parse_graph_data_js(path))
+    path = Path(__file__).resolve().parent / "map" / "graph-data.json"
+    return _normalize_reference_graph_ids(parse_graph_artifact(path))
 
 
 def load_heavy_metal_reference_graph() -> KnowledgeGraph:

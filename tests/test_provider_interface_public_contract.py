@@ -26,7 +26,7 @@ def test_provider_facade_exposes_required_v2_accessors() -> None:
     assert provider.package_root == PACKAGE_ROOT
     assert provider.data_dir == PACKAGE_ROOT / "data"
     assert provider.map_dir == PACKAGE_ROOT / "map"
-    assert provider.reference_graph_path == PACKAGE_ROOT / "map" / "graph-data.js"
+    assert provider.reference_graph_path == PACKAGE_ROOT / "map" / "graph-data.json"
     assert {
         "kinetic_parameters",
         "interaction_parameters",

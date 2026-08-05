@@ -50,7 +50,13 @@ class LocalV2DataProvider:
 
     @property
     def reference_graph_path(self) -> Path:
-        return self.map_dir / "graph-data.js"
+        """Canonical JSON source for the bundled reference graph.
+
+        The Streamlit/D3 viewer keeps consuming ``map/graph-data.js``
+        directly; this facade only exposes the JSON path used by v2
+        Python workflows.
+        """
+        return self.map_dir / "graph-data.json"
 
     def runtime_paths(self) -> dict[str, Path]:
         """Return packaged local runtime paths used by v2 workflows."""
