@@ -5141,12 +5141,12 @@ const GRAPH_DATA = {
             "id": "PFOA",
             "label": "Perfluorooctanoic acid (PFOA)",
             "type": "Carcinogen",
-            "detail": "Perfluoroalkyl substance; potent PPARα agonist. Acts through receptor-mediated tumor promotion, oxidative stress, and epigenetic alteration rather than direct genotoxicity. Group 1 based on sufficient animal evidence and strong mechanistic evidence in exposed humans.",
+            "detail": "Perfluoroalkyl substance; activator of multiple nuclear receptors including PPARα, CAR, and PXR (with suggestive PPARγ activation in human primary cells). IARC could not identify a common specific mechanism; multiple mechanisms are possible or likely. Five Key Characteristics cited: KC4 (epigenetic alterations), KC5 (oxidative stress), KC7 (immunosuppression), KC8 (receptor-mediated effects), KC10 (alters cell proliferation, cell death, or nutrient supply). The primary in-human basis for Group 1 was KC4 and KC7 — IARC reached Group 1 particularly in the absence of strong evidence in exposed humans for genotoxicity (KC2) or receptor-mediated effects (KC8). Group 1 based on limited evidence in humans (renal cell carcinoma, cancer of the testis), sufficient evidence in experimental animals (one GLP rat study, both sexes), and strong mechanistic evidence in exposed humans, human primary cells, and experimental systems.",
             "group": "PFAS",
             "iarc": "Group 1",
             "source_db": "IARC Monographs Vol. 135",
             "exposure": "Contaminated drinking water, food packaging, textiles, firefighting foam, fluoropolymer manufacture",
-            "evidence": "Perfluoroalkyl substance; potent PPARα agonist. Acts through receptor-mediated tumor promotion, oxidative stress, and epigenetic alteration rather than direct genotoxicity.",
+            "evidence": "Perfluoroalkyl substance; activator of multiple nuclear receptors (PPARα, CAR, PXR, suggestive PPARγ). IARC cited five KCs (KC4, KC5, KC7, KC8, KC10); primary in-human basis was KC4 (epigenetic) and KC7 (immunosuppression), not receptor-mediated effects.",
             "origin": "imported",
             "match_status": "canonical",
             "canonical_id": "335-67-1",
@@ -5156,8 +5156,8 @@ const GRAPH_DATA = {
                 {
                     "source_db": "IARC Monographs Vol. 135",
                     "record_id": "PFOA",
-                    "evidence": "Perfluoroalkyl substance; potent PPARα agonist. Group 1 based on sufficient animal evidence and strong mechanistic evidence in exposed humans.",
-                    "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                    "evidence": "Perfluoroalkyl substance; activator of multiple nuclear receptors. Group 1 based on limited human evidence (renal cell carcinoma, testicular cancer), sufficient animal evidence (one GLP rat study, both sexes), and strong mechanistic evidence (KC4/KC7 in exposed humans).",
+                    "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2025)"
                 }
             ]
         },
@@ -5165,12 +5165,12 @@ const GRAPH_DATA = {
             "id": "PFOS",
             "label": "Perfluorooctanesulfonic acid (PFOS)",
             "type": "Carcinogen",
-            "detail": "Perfluoroalkyl substance; PPARα agonist and AHR cross-talk. Group 2B based on strong mechanistic evidence and limited animal evidence.",
+            "detail": "Perfluoroalkyl substance; activator of multiple nuclear receptors including PPARα, CAR, and PXR. IARC could not identify a common specific mechanism. Five Key Characteristics cited (same framework as PFOA): KC4, KC5, KC7, KC8, KC10. Group 2B based on inadequate evidence in humans, limited evidence in experimental animals (one GLP rat study, female sex), and strong mechanistic evidence including in exposed humans.",
             "group": "PFAS",
             "iarc": "Group 2B",
             "source_db": "IARC Monographs Vol. 135",
             "exposure": "Firefighting foam (AFFF), semiconductor fabrication, food packaging, contaminated water",
-            "evidence": "Perfluoroalkyl substance; PPARα agonist and AHR cross-talk. Group 2B based on strong mechanistic evidence and limited animal evidence.",
+            "evidence": "Perfluoroalkyl substance; activator of multiple nuclear receptors (PPARα, CAR, PXR). IARC cited five KCs (KC4, KC5, KC7, KC8, KC10). Group 2B based on inadequate human evidence, limited animal evidence (one GLP rat study, female sex), and strong mechanistic evidence.",
             "origin": "imported",
             "match_status": "canonical",
             "canonical_id": "1763-23-1",
@@ -5180,8 +5180,8 @@ const GRAPH_DATA = {
                 {
                     "source_db": "IARC Monographs Vol. 135",
                     "record_id": "PFOS",
-                    "evidence": "Perfluoroalkyl substance; PPARα agonist. Group 2B based on strong mechanistic evidence and limited animal evidence.",
-                    "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                    "evidence": "Perfluoroalkyl substance; activator of multiple nuclear receptors. Group 2B based on inadequate human evidence, limited animal evidence (one GLP rat study, female sex), and strong mechanistic evidence.",
+                    "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2025)"
                 }
             ]
         },
@@ -5189,7 +5189,7 @@ const GRAPH_DATA = {
             "id": "PPARA",
             "label": "PPARα",
             "type": "Enzyme",
-            "detail": "Peroxisome proliferator-activated receptor alpha; ligand-activated nuclear receptor. Key mediator of PFOA/PFOS carcinogenicity via peroxisome proliferation, oxidative stress, and cell proliferation.",
+            "detail": "Peroxisome proliferator-activated receptor alpha; ligand-activated nuclear receptor. One of multiple receptors activated by PFOA/PFOS (alongside CAR, PXR, suggestive PPARγ). IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents but did not identify it as the primary carcinogenic driver.",
             "role": "Transcription Factor",
             "tissue": "liver, kidney, heart, intestine",
             "origin": "imported",
@@ -10368,10 +10368,10 @@ const GRAPH_DATA = {
         "source": "PFOA",
         "target": "PPARA",
         "type": "ACTIVATES",
-        "label": "PPARα agonism",
+        "label": "Nuclear receptor activation (PPARα, CAR, PXR)",
         "carcinogen": "PFOA",
         "source_db": "IARC Monographs Vol. 135",
-        "evidence": "PFOA is a potent PPARα agonist; receptor activation drives peroxisome proliferation and oxidative stress",
+        "evidence": "PFOA activates multiple nuclear receptors (PPARα, CAR, PXR, suggestive PPARγ). IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents; Group 1 was reached in the absence of strong human evidence for receptor-mediated effects (KC8). Primary in-human basis was KC4 (epigenetic) and KC7 (immunosuppression).",
         "origin": "imported",
         "match_status": "canonical",
         "canonical_predicate": "ACTIVATES",
@@ -10380,8 +10380,8 @@ const GRAPH_DATA = {
             {
                 "source_db": "IARC Monographs Vol. 135",
                 "record_id": "PFOA->PPARA",
-                "evidence": "PFOA is a potent PPARα agonist; receptor activation drives peroxisome proliferation and oxidative stress",
-                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                "evidence": "PFOA activates multiple nuclear receptors (PPARα, CAR, PXR, suggestive PPARγ). IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents; Group 1 was reached in the absence of strong human evidence for receptor-mediated effects (KC8).",
+                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2025)"
             }
         ]
     },
@@ -10435,7 +10435,7 @@ const GRAPH_DATA = {
                 "source_db": "IARC Monographs Vol. 135",
                 "record_id": "PFOA->Oxo_dG",
                 "evidence": "PFOA induces oxidative stress leading to 8-oxo-dG formation",
-                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2025)"
             }
         ]
     },
@@ -10443,10 +10443,10 @@ const GRAPH_DATA = {
         "source": "PFOS",
         "target": "PPARA",
         "type": "ACTIVATES",
-        "label": "PPARα agonism (weaker)",
+        "label": "Nuclear receptor activation (PPARα, CAR, PXR; weaker)",
         "carcinogen": "PFOS",
         "source_db": "IARC Monographs Vol. 135",
-        "evidence": "PFOS activates PPARα with lower potency than PFOA",
+        "evidence": "PFOS activates multiple nuclear receptors (PPARα, CAR, PXR) with lower potency than PFOA. IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents; Group 2B was supported by strong mechanistic evidence including in exposed humans (KC4, KC7).",
         "origin": "imported",
         "match_status": "canonical",
         "canonical_predicate": "ACTIVATES",
@@ -10455,8 +10455,8 @@ const GRAPH_DATA = {
             {
                 "source_db": "IARC Monographs Vol. 135",
                 "record_id": "PFOS->PPARA",
-                "evidence": "PFOS activates PPARα with lower potency than PFOA",
-                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2024)"
+                "evidence": "PFOS activates multiple nuclear receptors (PPARα, CAR, PXR) with lower potency than PFOA. IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents; Group 2B was supported by strong mechanistic evidence including in exposed humans (KC4, KC7).",
+                "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2025)"
             }
         ]
     },
