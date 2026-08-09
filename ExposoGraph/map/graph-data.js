@@ -213,11 +213,10 @@ const GRAPH_DATA = {
         {
             "id": "E2",
             "label": "17beta-Estradiol",
-            "type": "Carcinogen",
-            "detail": "Endogenous estrogen represented in the hormone-metabolism reference layer.",
-            "group": "Estrogen",
+            "type": "Metabolite",
+            "detail": "Endogenous estrogen and intracellular metabolite of estrogen-progestogen therapy. Activates ESR1 and undergoes CYP1B1-mediated hydroxylation to 4-hydroxyestradiol (catechol estrogen pathway). Not separately IARC-evaluated; Group 1 applies to the exposure (estrogen-progestogen therapy), not the endogenous hormone.",
             "source_db": "Curated showcase",
-            "evidence": "Endogenous estrogen represented in the hormone-metabolism reference layer.",
+            "evidence": "Endogenous estrogen and intracellular metabolite of estrogen-progestogen therapy. Not IARC-listed as an agent.",
             "origin": "imported",
             "match_status": "canonical",
             "canonical_id": "E2",
@@ -235,11 +234,10 @@ const GRAPH_DATA = {
         {
             "id": "Testosterone",
             "label": "Testosterone",
-            "type": "Carcinogen",
-            "detail": "Androgen precursor node used to anchor the steroid-hormone metabolism branch.",
-            "group": "Androgen",
+            "type": "Metabolite",
+            "detail": "Endogenous androgen and intracellular metabolite of androgenic (anabolic) steroid use. Precursor to DHT via 5α-reductase. Not separately IARC-evaluated; Group 2A applies to the pharmaceutical exposure class, not the endogenous hormone.",
             "source_db": "Curated showcase",
-            "evidence": "Androgen precursor node used to anchor the steroid-hormone metabolism branch.",
+            "evidence": "Endogenous androgen and intracellular metabolite of androgenic (anabolic) steroid use. Not IARC-listed as an agent.",
             "origin": "imported",
             "match_status": "canonical",
             "canonical_id": "Testosterone",
@@ -257,11 +255,10 @@ const GRAPH_DATA = {
         {
             "id": "DHT",
             "label": "5a-DHT",
-            "type": "Carcinogen",
-            "detail": "Dihydrotestosterone node.",
-            "group": "Androgen",
+            "type": "Metabolite",
+            "detail": "5α-Dihydrotestosterone; active intracellular androgen metabolite formed by 5α-reductase reduction of testosterone. High-affinity AR ligand. Not separately IARC-evaluated.",
             "source_db": "Curated showcase",
-            "evidence": "Dihydrotestosterone node.",
+            "evidence": "Active androgen metabolite; high-affinity AR ligand. Not IARC-listed as an agent.",
             "origin": "imported",
             "match_status": "canonical",
             "canonical_id": "DHT",
@@ -273,6 +270,52 @@ const GRAPH_DATA = {
                     "record_id": "DHT",
                     "evidence": "Dihydrotestosterone node.",
                     "citation": "Curated carcinogen entry for 5a-DHT"
+                }
+            ]
+        },
+        {
+            "id": "EstrogenProgestogenTherapy",
+            "label": "Estrogen-progestogen therapy",
+            "type": "Carcinogen",
+            "detail": "IARC Group 1 pharmaceutical exposure. Combined estrogen-progestogen therapy and combined oral contraceptives are Group 1; estrogen-only therapy is also Group 1. The endogenous hormones (E2, 4-OHE2) are modeled as intracellular metabolites without IARC classification. Mirrors the alcohol pattern: 'Ethanol in alcoholic beverages' is the Group 1 exposure, acetaldehyde is the metabolite.",
+            "group": "Estrogen",
+            "iarc": "Group 1",
+            "source_db": "IARC Monographs Vol. 100A (2012)",
+            "exposure": "hormone replacement therapy, combined oral contraceptives",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "EstrogenProgestogenTherapy",
+            "canonical_label": "Estrogen-progestogen therapy",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 100A",
+                    "record_id": "EstrogenProgestogenTherapy",
+                    "evidence": "Combined estrogen-progestogen therapy: Group 1. Estrogen-only therapy: Group 1. Combined oral contraceptives: Group 1. Endogenous hormones (estradiol, 4-hydroxyestradiol) are not separately evaluated.",
+                    "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
+                }
+            ]
+        },
+        {
+            "id": "AndrogenicAnabolicSteroids",
+            "label": "Androgenic (anabolic) steroids",
+            "type": "Carcinogen",
+            "detail": "IARC Group 2A pharmaceutical exposure class. The IARC evaluation covers anabolic-androgenic steroid use as a pharmaceutical exposure, not the endogenous hormones testosterone and DHT, which are modeled as intracellular metabolites without IARC classification. Mirrors the alcohol/estrogen pattern: the exposure anchor carries the IARC group, the pathway metabolites do not.",
+            "group": "Androgen",
+            "iarc": "Group 2A",
+            "source_db": "IARC Monographs Vol. 100A (2012)",
+            "exposure": "anabolic steroid use (bodybuilding, athletic performance, hypogonadism treatment)",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "AndrogenicAnabolicSteroids",
+            "canonical_label": "Androgenic (anabolic) steroids",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs Vol. 100A",
+                    "record_id": "AndrogenicAnabolicSteroids",
+                    "evidence": "Androgenic (anabolic) steroids: Group 2A. The evaluation covers the pharmaceutical exposure, not endogenous testosterone or DHT.",
+                    "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
                 }
             ]
         },
@@ -3708,10 +3751,9 @@ const GRAPH_DATA = {
         {
             "id": "Acetaldehyde",
             "label": "Acetaldehyde",
-            "type": "Carcinogen",
-            "detail": "Primary metabolite of ethanol (ADH1B oxidation); also found in tobacco smoke and fruit ripening. IARC Group 1 carcinogen associated with esophageal squamous cell carcinoma.",
-            "group": "Aldehyde",
-            "iarc": "Group 1",
+            "type": "Metabolite",
+            "detail": "Primary intracellular metabolite of ethanol (ADH1B oxidation); also found in tobacco smoke and fermented foods. Forms N2-ethylidene-dG DNA adduct. Plain acetaldehyde is IARC Group 2B; the Group 1 classification applies to 'acetaldehyde associated with consumption of alcoholic beverages', which is modeled here as the downstream metabolite of the Ethanol in alcoholic beverages exposure node.",
+            "iarc": "Not IARC-listed (intracellular metabolite; Group 2B for plain acetaldehyde, Group 1 for acetaldehyde in alcoholic beverages)",
             "exposure": "ethanol metabolism, tobacco smoke, fermented foods",
             "origin": "imported",
             "match_status": "canonical",
@@ -4201,7 +4243,7 @@ const GRAPH_DATA = {
         },
         {
             "id": "Ethanol",
-            "label": "Ethanol",
+            "label": "Ethanol in alcoholic beverages",
             "type": "Carcinogen",
             "detail": "Upstream alcohol substrate represented to connect ADH-mediated oxidation to intracellular acetaldehyde formation. Included as a package bridge so the aldehyde pathway resolves in standalone and merged graphs.",
             "group": "Alcohol",
@@ -11603,6 +11645,130 @@ const GRAPH_DATA = {
                 "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
                 "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
                 "url": "https://www.kegg.jp/entry/hsa05204"
+            }
+        ]
+    },
+    {
+        "source": "EstrogenProgestogenTherapy",
+        "target": "ESR1",
+        "type": "ACTIVATES",
+        "label": "Estrogen receptor agonism",
+        "carcinogen": "EstrogenProgestogenTherapy",
+        "source_db": "IARC Monographs Vol. 100A",
+        "evidence": "Estrogen-progestogen therapy activates estrogen receptor alpha, driving hormonal carcinogenesis in estrogen-responsive tissues.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100A",
+                "record_id": "EstrogenProgestogenTherapy->ESR1",
+                "evidence": "Estrogen therapy activates ERα in breast and endometrial tissue.",
+                "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
+            }
+        ]
+    },
+    {
+        "source": "EstrogenProgestogenTherapy",
+        "target": "E2",
+        "type": "ACTIVATES",
+        "label": "Endogenous estrogen release",
+        "carcinogen": "EstrogenProgestogenTherapy",
+        "source_db": "IARC Monographs Vol. 100A",
+        "evidence": "Exogenous estrogen-progestogen therapy elevates circulating 17β-estradiol, connecting the pharmaceutical exposure to the intracellular hormone pathway.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100A",
+                "record_id": "EstrogenProgestogenTherapy->E2",
+                "evidence": "Estrogen therapy increases systemic estradiol levels.",
+                "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
+            }
+        ]
+    },
+    {
+        "source": "E2",
+        "target": "ESR1",
+        "type": "ACTIVATES",
+        "label": "Estrogen receptor agonism",
+        "source_db": "Curated showcase",
+        "evidence": "17β-Estradiol is the endogenous high-affinity ligand for ERα. Intracellular metabolite activates receptor as part of the estrogen pathway.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "E2->ESR1",
+                "evidence": "E2 is the primary endogenous ERα ligand.",
+                "citation": "Curated pathway edge for estradiol-ERα binding"
+            }
+        ]
+    },
+    {
+        "source": "AndrogenicAnabolicSteroids",
+        "target": "AR",
+        "type": "ACTIVATES",
+        "label": "Androgen receptor agonism",
+        "carcinogen": "AndrogenicAnabolicSteroids",
+        "source_db": "IARC Monographs Vol. 100A",
+        "evidence": "Anabolic-androgenic steroids activate the androgen receptor, driving hormonal carcinogenesis in prostate and other androgen-responsive tissues.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100A",
+                "record_id": "AndrogenicAnabolicSteroids->AR",
+                "evidence": "Anabolic steroids activate AR in prostate tissue.",
+                "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
+            }
+        ]
+    },
+    {
+        "source": "AndrogenicAnabolicSteroids",
+        "target": "Testosterone",
+        "type": "ACTIVATES",
+        "label": "Endogenous androgen elevation",
+        "carcinogen": "AndrogenicAnabolicSteroids",
+        "source_db": "IARC Monographs Vol. 100A",
+        "evidence": "Anabolic steroid use elevates circulating testosterone, connecting the pharmaceutical exposure to the intracellular androgen pathway.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "IARC Monographs Vol. 100A",
+                "record_id": "AndrogenicAnabolicSteroids->Testosterone",
+                "evidence": "Anabolic steroid use increases systemic testosterone levels.",
+                "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
+            }
+        ]
+    },
+    {
+        "source": "Testosterone",
+        "target": "AR",
+        "type": "ACTIVATES",
+        "label": "Androgen receptor agonism (lower affinity than DHT)",
+        "source_db": "Curated showcase",
+        "evidence": "Testosterone activates AR with lower affinity than DHT. Intracellular metabolite activates receptor as part of the androgen pathway.",
+        "origin": "imported",
+        "match_status": "canonical",
+        "canonical_predicate": "ACTIVATES",
+        "canonical_namespace": "schema",
+        "provenance": [
+            {
+                "source_db": "Curated showcase",
+                "record_id": "Testosterone->AR",
+                "evidence": "Testosterone is a lower-affinity AR ligand compared to DHT.",
+                "citation": "Curated pathway edge for testosterone-AR binding"
             }
         ]
     }
