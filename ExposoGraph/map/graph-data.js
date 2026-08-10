@@ -5693,9 +5693,9 @@ const GRAPH_DATA = {
       {
           "source": "LeadInorganicCompounds",
           "target": "ALAD",
-          "type": "ACTIVATES",
+          "type": "INHIBITS",
           "carcinogen": "LeadInorganicCompounds",
-          "evidence": "Lead binds to sulfhydryl groups in ALAD",
+          "evidence": "Lead binds to sulfhydryl groups in ALAD, inhibiting its activity (IARC Vol 87, 2006)",
           "origin": "imported",
           "match_status": "canonical",
       },
@@ -5756,7 +5756,7 @@ const GRAPH_DATA = {
       {
           "source": "MercuryInorganicCompounds",
           "target": "GPx",
-          "type": "ACTIVATES",
+          "type": "INHIBITS",
           "carcinogen": "MercuryInorganicCompounds",
           "evidence": "Selenol group binding",
           "origin": "imported",
@@ -5774,7 +5774,7 @@ const GRAPH_DATA = {
       {
           "source": "MercuryInorganicCompounds",
           "target": "MT1A",
-          "type": "ACTIVATES",
+          "type": "INDUCES",
           "carcinogen": "MercuryInorganicCompounds",
           "evidence": "Mercury induces MT expression",
           "origin": "imported",
@@ -5783,9 +5783,9 @@ const GRAPH_DATA = {
       {
           "source": "CobaltMetal",
           "target": "EGLN1",
-          "type": "ACTIVATES",
+          "type": "INHIBITS",
           "carcinogen": "CobaltMetal",
-          "evidence": "PHD2 inhibition by Co(II)",
+          "evidence": "PHD2 inhibition by Co(II) (IARC Vol 131, 2023)",
           "origin": "imported",
           "match_status": "canonical",
       },
@@ -5808,11 +5808,11 @@ const GRAPH_DATA = {
           "match_status": "canonical",
       },
       {
-          "source": "AntimonyTrivalent",
-          "target": "GSTO1",
+          "source": "GSTO1",
+          "target": "AntimonyTrivalent",
           "type": "ACTIVATES",
           "carcinogen": "AntimonyTrivalent",
-          "evidence": "Similar to arsenic metabolism",
+          "evidence": "GSTO1 catalyzes reduction of Sb(V) to toxic Sb(III), analogous to arsenic biotransformation (IARC Vol 131, 2023)",
           "origin": "imported",
           "match_status": "canonical",
       },
@@ -8052,10 +8052,10 @@ const GRAPH_DATA = {
     },
     {
       "source": "MGMT",
-      "target": "NickelCompounds",
+      "target": "Ni_DPC",
       "type": "REPAIRS",
       "carcinogen": "NickelCompounds",
-      "evidence": "PMC6802009",
+      "evidence": "MGMT repairs O6-methylguanine and related alkyl adducts; nickel-mediated DNA-protein crosslinks are repaired by the proteasomal/SPRTN pathway, not MGMT — redirected to Ni_DPC adduct per structural consistency (PMC6802009)",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -12028,7 +12028,7 @@ const GRAPH_DATA = {
     {
       "source": "CobaltOxide",
       "target": "EGLN1",
-      "type": "ACTIVATES",
+      "type": "INHIBITS",
       "carcinogen": "CobaltOxide",
       "evidence": "Co(II) oxide releases Co2+ ions in vivo, inhibiting EGLN1 prolyl hydroxylase; same mechanism as cobalt metal but lower bioavailability (IARC Vol 131, 2023)",
       "origin": "imported",
@@ -12065,7 +12065,7 @@ const GRAPH_DATA = {
     {
       "source": "LeadMetallic",
       "target": "ALAD",
-      "type": "ACTIVATES",
+      "type": "INHIBITS",
       "carcinogen": "LeadMetallic",
       "evidence": "Metallic lead inhibits ALAD; same bone accumulation and ALAD inhibition mechanism as inorganic lead compounds (IARC Vol 23/Suppl.7, 1987)",
       "origin": "imported",
@@ -12088,7 +12088,7 @@ const GRAPH_DATA = {
     {
       "source": "LeadOrganicCompounds",
       "target": "ALAD",
-      "type": "ACTIVATES",
+      "type": "INHIBITS",
       "carcinogen": "LeadOrganicCompounds",
       "evidence": "Organolead compounds metabolized to ionic lead (Pb2+), which inhibits ALAD; same downstream toxicity as inorganic lead (IARC Vol 87, 2006)",
       "origin": "imported",
