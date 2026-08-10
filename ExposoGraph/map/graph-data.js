@@ -2718,7 +2718,16 @@ const GRAPH_DATA = {
                     "citation": "Curated metabolite entry for DMBA-3,4-epoxide"
                 }
             ]
+        },        {
+            "id": "DMBA_diol",
+            "label": "DMBA-3,4-diol",
+            "type": "Metabolite",
+            "detail": "Trans-3,4-dihydroxy-3,4-dihydro-7,12-dimethylbenz[a]anthracene; hydrolysis product of DMBA-3,4-epoxide by epoxide hydrolase (EPHX1). Further epoxidized by CYP1A1/1B1 to DMBA-3,4-diol-1,2-epoxide, the ultimate carcinogenic species. Parallels the BaP→BaP_epoxide→BaP_diol→BPDE metabolic activation chain.",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         },
+
         {
             "id": "DMBA_diol",
             "label": "DMBA-3,4-diol",
@@ -2942,7 +2951,17 @@ const GRAPH_DATA = {
                     "citation": "Curated DNA adduct entry for PhIP-C8-dG"
                 }
             ]
+        },        {
+            "id": "MeIQx_dG",
+            "label": "N-(deoxyguanosin-8-yl)-MeIQx",
+            "type": "DNA_Adduct",
+            "detail": "Major DNA adduct from N-hydroxy-MeIQx via nitrenium ion formation; detected in liver and colon of HCA-exposed animals. Miscoding lesion causing G→T transversions. Repaired by NER.",
+            "reactivity": "High",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         },
+
         {
             "id": "ABP_dG",
             "label": "dG-C8-4-ABP",
@@ -3584,7 +3603,16 @@ const GRAPH_DATA = {
                     "source_db": "PMID:34959192"
                 }
             ]
+        },        {
+            "id": "MMA_III",
+            "label": "MMA(III)",
+            "type": "Metabolite",
+            "detail": "Monomethylarsonous acid; trivalent methylated arsenic species. Produced by GSTO1-catalyzed reduction of MMA(V). More toxic than inorganic arsenic; generates ROS, inhibits DNA repair via PARP1, and induces oxidative DNA damage. The rate-limiting toxic metabolite in arsenic methylation pathway.",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         },
+
         {
             "id": "DMA_V",
             "label": "DMA(V)",
@@ -4606,7 +4634,17 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
+        },        {
+            "id": "Benzidine_dG",
+            "label": "N-(deoxyguanosin-8-yl)-benzidine",
+            "type": "DNA_Adduct",
+            "detail": "Major DNA adduct formed from N-hydroxy-benzidine via nitrenium ion; detected in bladder urothelium of aromatic amine-exposed workers. Miscoding lesion causing G→T transversions. Repaired by NER.",
+            "reactivity": "High",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         },
+
         {
             "id": "Cr_dG",
             "label": "Cr-1,N2-PdG (Cr-dG)",
@@ -4626,7 +4664,17 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
+        },        {
+            "id": "SMF_dA",
+            "label": "SMF-deoxyadenosine adduct",
+            "type": "DNA_Adduct",
+            "detail": "N6-(2-furoylmethyl)-deoxyadenosine; DNA adduct formed by 5-sulfoxymethylfurfural (SMF) alkylation at N6 of deoxyadenosine. Also forms dG adducts. Detected in liver of HMF/SMF-exposed animals. Biomarker of Maillard reaction product genotoxicity.",
+            "reactivity": "Moderate",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
         },
+
         {
             "id": "HNE_dG",
             "label": "HNE-1,N2-PdG (HNE-dG)",
@@ -12094,6 +12142,104 @@ const GRAPH_DATA = {
       "provenance": [
         {
           "evidence": "PCE activates PPARα via trichloroacetic acid metabolite; peroxisome proliferation and oxidative stress in liver (IARC Vol 106, 2017)"
+        }
+      ]
+    },
+    {
+      "source": "NOH_Benzidine",
+      "target": "Benzidine_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Benzidine",
+      "evidence": "N-hydroxy-benzidine esterified by NAT/OAT to reactive nitrenium ion; forms N-(deoxyguanosin-8-yl)-benzidine in bladder urothelium (IARC Vol 99, 2010)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "N-hydroxy-benzidine esterified by NAT/OAT to reactive nitrenium ion; forms N-(deoxyguanosin-8-yl)-benzidine in bladder urothelium (IARC Vol 99, 2010)"
+        }
+      ]
+    },
+    {
+      "source": "NOH_MeIQx",
+      "target": "MeIQx_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "MeIQx",
+      "evidence": "N-hydroxy-MeIQx esterified to nitrenium ion; forms N-(deoxyguanosin-8-yl)-MeIQx in liver and colon (IARC Vol 56, 1993)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "N-hydroxy-MeIQx esterified to nitrenium ion; forms N-(deoxyguanosin-8-yl)-MeIQx in liver and colon (IARC Vol 56, 1993)"
+        }
+      ]
+    },
+    {
+      "source": "SMF",
+      "target": "SMF_dA",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Furfural",
+      "evidence": "SMF alkylates deoxyadenosine at N6 and deoxyguanosine; detected in liver of SMF-exposed animals (PMID:22563731; PMID:26454887)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "SMF alkylates deoxyadenosine at N6 and deoxyguanosine; detected in liver of SMF-exposed animals (PMID:22563731; PMID:26454887)"
+        }
+      ]
+    },
+    {
+      "source": "DMBA_epoxide",
+      "target": "DMBA_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "DMBA",
+      "evidence": "Epoxide hydrolase (EPHX1) hydrolyzes DMBA-3,4-epoxide to trans-DMBA-3,4-diol; parallels BaP epoxide→diol step (PMID:2987890)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Epoxide hydrolase (EPHX1) hydrolyzes DMBA-3,4-epoxide to trans-DMBA-3,4-diol; parallels BaP epoxide→diol step (PMID:2987890)"
+        }
+      ]
+    },
+    {
+      "source": "DMBA_diol",
+      "target": "DMBA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "DMBA",
+      "evidence": "CYP1A1/1B1 epoxidizes DMBA-3,4-diol to DMBA-3,4-diol-1,2-epoxide (DMBA-DE); the ultimate carcinogenic metabolite (PMID:2987890)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "CYP1A1/1B1 epoxidizes DMBA-3,4-diol to DMBA-3,4-diol-1,2-epoxide (DMBA-DE); the ultimate carcinogenic metabolite (PMID:2987890)"
+        }
+      ]
+    },
+    {
+      "source": "MMA_V",
+      "target": "MMA_III",
+      "type": "ACTIVATES",
+      "carcinogen": "ArsenicInorganic",
+      "evidence": "GSTO1 catalyzes reduction of MMA(V) to MMA(III); rate-limiting step in arsenic methylation producing the most toxic trivalent species (IARC Vol 100C, 2012)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "GSTO1 catalyzes reduction of MMA(V) to MMA(III); rate-limiting step in arsenic methylation producing the most toxic trivalent species (IARC Vol 100C, 2012)"
+        }
+      ]
+    },
+    {
+      "source": "MMA_III",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "ArsenicInorganic",
+      "evidence": "MMA(III) generates ROS via mitochondrial disruption and inhibits DNA repair via PARP1; 8-OHdG elevated in arsenic-exposed cells (IARC Vol 100C, 2012)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "MMA(III) generates ROS via mitochondrial disruption and inhibits DNA repair via PARP1; 8-OHdG elevated in arsenic-exposed cells (IARC Vol 100C, 2012)"
         }
       ]
     }
