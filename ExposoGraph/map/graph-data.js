@@ -11902,6 +11902,200 @@ const GRAPH_DATA = {
                 "citation": "Curated pathway edge for testosterone-AR binding"
             }
         ]
+    },
+    {
+      "source": "PFOS",
+      "target": "Oxo_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "PFOS",
+      "evidence": "PFOS induces oxidative DNA damage via PPARα-mediated peroxisome proliferation; 8-oxo-dG elevated in liver of exposed rodents (IARC Vol 135, 2024)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "PFOS induces oxidative DNA damage via PPARα-mediated peroxisome proliferation; 8-oxo-dG elevated in liver of exposed rodents (IARC Vol 135, 2024)"
+        }
+      ]
+    },
+    {
+      "source": "CobaltMetal",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "CobaltMetal",
+      "evidence": "Co2+ ion release inhibits EGLN1 prolyl hydroxylase, stabilizing HIF-1α and generating ROS; 8-OHdG elevated in cobalt-exposed human lung cells (IARC Vol 131, 2023)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Co2+ ion release inhibits EGLN1 prolyl hydroxylase, stabilizing HIF-1α and generating ROS; 8-OHdG elevated in cobalt-exposed human lung cells (IARC Vol 131, 2023)"
+        }
+      ]
+    },
+    {
+      "source": "CobaltMetal",
+      "target": "metal_carcinogenesis",
+      "type": "PATHWAY",
+      "carcinogen": "CobaltMetal",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "MethylmercuryCompounds",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "MethylmercuryCompounds",
+      "evidence": "Methylmercury causes mitochondrial ROS and oxidative DNA damage; 8-OHdG elevated in brain and kidney of MeHg-exposed animals (IARC Vol 58, 1993)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Methylmercury causes mitochondrial ROS and oxidative DNA damage; 8-OHdG elevated in brain and kidney of MeHg-exposed animals (IARC Vol 58, 1993)"
+        }
+      ]
+    },
+    {
+      "source": "MethylmercuryCompounds",
+      "target": "metal_carcinogenesis",
+      "type": "PATHWAY",
+      "carcinogen": "MethylmercuryCompounds",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Be",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Be",
+      "evidence": "Beryllium-induced chronic inflammation (berylliosis) generates ROS via activated macrophages; 8-OHdG elevated in beryllium-exposed lung tissue (IARC Vol 100C, 2012)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Beryllium-induced chronic inflammation (berylliosis) generates ROS via activated macrophages; 8-OHdG elevated in beryllium-exposed lung tissue (IARC Vol 100C, 2012)"
+        }
+      ]
+    },
+    {
+      "source": "CobaltOxide",
+      "target": "EGLN1",
+      "type": "ACTIVATES",
+      "carcinogen": "CobaltOxide",
+      "evidence": "Co(II) oxide releases Co2+ ions in vivo, inhibiting EGLN1 prolyl hydroxylase; same mechanism as cobalt metal but lower bioavailability (IARC Vol 131, 2023)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Co(II) oxide releases Co2+ ions in vivo, inhibiting EGLN1 prolyl hydroxylase; same mechanism as cobalt metal but lower bioavailability (IARC Vol 131, 2023)"
+        }
+      ]
+    },
+    {
+      "source": "CobaltOxide",
+      "target": "metal_carcinogenesis",
+      "type": "PATHWAY",
+      "carcinogen": "CobaltOxide",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CobaltOxide",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "CobaltOxide",
+      "evidence": "Co2+ release from CoO generates ROS via HIF-1α stabilization; oxidative DNA damage in CoO-exposed cells (IARC Vol 131, 2023)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Co2+ release from CoO generates ROS via HIF-1α stabilization; oxidative DNA damage in CoO-exposed cells (IARC Vol 131, 2023)"
+        }
+      ]
+    },
+    {
+      "source": "LeadMetallic",
+      "target": "ALAD",
+      "type": "ACTIVATES",
+      "carcinogen": "LeadMetallic",
+      "evidence": "Metallic lead inhibits ALAD; same bone accumulation and ALAD inhibition mechanism as inorganic lead compounds (IARC Vol 23/Suppl.7, 1987)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Metallic lead inhibits ALAD; same bone accumulation and ALAD inhibition mechanism as inorganic lead compounds (IARC Vol 23/Suppl.7, 1987)"
+        }
+      ]
+    },
+    {
+      "source": "LeadMetallic",
+      "target": "metal_carcinogenesis",
+      "type": "PATHWAY",
+      "carcinogen": "LeadMetallic",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "LeadOrganicCompounds",
+      "target": "ALAD",
+      "type": "ACTIVATES",
+      "carcinogen": "LeadOrganicCompounds",
+      "evidence": "Organolead compounds metabolized to ionic lead (Pb2+), which inhibits ALAD; same downstream toxicity as inorganic lead (IARC Vol 87, 2006)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Organolead compounds metabolized to ionic lead (Pb2+), which inhibits ALAD; same downstream toxicity as inorganic lead (IARC Vol 87, 2006)"
+        }
+      ]
+    },
+    {
+      "source": "LeadOrganicCompounds",
+      "target": "metal_carcinogenesis",
+      "type": "PATHWAY",
+      "carcinogen": "LeadOrganicCompounds",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "NickelMetallic",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "NickelMetallic",
+      "evidence": "Metallic nickel induces oxidative DNA damage via chronic inflammation and epigenetic alterations; 8-OHdG elevated in metallic Ni-exposed lung tissue (IARC Vol 49, 1990)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Metallic nickel induces oxidative DNA damage via chronic inflammation and epigenetic alterations; 8-OHdG elevated in metallic Ni-exposed lung tissue (IARC Vol 49, 1990)"
+        }
+      ]
+    },
+    {
+      "source": "NickelMetallic",
+      "target": "metal_carcinogenesis",
+      "type": "PATHWAY",
+      "carcinogen": "NickelMetallic",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "PCE",
+      "target": "PPARA",
+      "type": "ACTIVATES",
+      "carcinogen": "PCE",
+      "evidence": "PCE activates PPARα via trichloroacetic acid metabolite; peroxisome proliferation and oxidative stress in liver (IARC Vol 106, 2017)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "PCE activates PPARα via trichloroacetic acid metabolite; peroxisome proliferation and oxidative stress in liver (IARC Vol 106, 2017)"
+        }
+      ]
     }
   ]
 };
