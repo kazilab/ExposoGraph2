@@ -4502,10 +4502,20 @@ const GRAPH_DATA = {
             "id": "Acrolein",
             "label": "Acrolein",
             "type": "Carcinogen",
-            "detail": "2-Propenal; smallest alpha,beta-unsaturated aldehyde and potent Michael acceptor. Major constituents of cigarette smoke, heated cooking oils, and automobile exhaust; also generated in vivo as the obligate byproduct of cyclophosphamide activation (4-hydroxycyclophosphamide fragmentation). Forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) exocyclic adducts, which are mispairing, bulky lesions repaired by NER/BER. Detoxified by GSTP1 (GS-HPMA) and ALDH2 oxidation to acrylic acid. References: IARC Monograph Vol 128 (2021); Chem Res Toxicol 2009 (PMID:19397281).",
+            "detail": "2-Propenal; smallest alpha,beta-unsaturated aldehyde and potent Michael acceptor. Major constituent of cigarette smoke, heated cooking oils, and automobile exhaust. Forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) exocyclic adducts, which are mispairing, bulky lesions repaired by NER/BER. Detoxified by GSTP1 (GS-HPMA) and ALDH2 oxidation to acrylic acid. Also generated endogenously as a metabolite of cyclophosphamide (see Acrolein_CP node). References: IARC Monograph Vol 128 (2021); Chem Res Toxicol 2009 (PMID:19397281).",
             "group": "Aldehyde",
             "iarc": "Group 2A",
-            "exposure": "tobacco smoke, heated cooking oils, wildfire/vehicle exhaust, cyclophosphamide metabolism",
+            "exposure": "tobacco smoke, heated cooking oils, wildfire/vehicle exhaust",
+            "origin": "imported",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "Acrolein_CP",
+            "label": "Acrolein (cyclophosphamide metabolite)",
+            "type": "Metabolite",
+            "detail": "Acrolein generated endogenously as the obligate byproduct of 4-hydroxycyclophosphamide/aldophosphamide beta-elimination during cyclophosphamide bioactivation. Not separately IARC-evaluated; parent cyclophosphamide is Group 1. Same chemical species as exogenous acrolein (Acrolein node) but sourced from chemotherapy metabolism. Drives hemorrhagic cystitis and contributes to secondary bladder cancer risk. Forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) adducts. Detoxified by GSTP1 and ALDH2. References: PMID:10348794; IARC Monograph Vol 100A (2012).",
+            "iarc": "Not IARC-evaluated (intracellular metabolite of cyclophosphamide)",
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
@@ -9515,7 +9525,7 @@ const GRAPH_DATA = {
     },
     {
       "source": "Cyclophosphamide",
-      "target": "Acrolein",
+      "target": "Acrolein_CP",
       "type": "ACTIVATES",
       "carcinogen": "Cyclophosphamide",
       "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10348794)",
@@ -9771,6 +9781,57 @@ const GRAPH_DATA = {
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "source": "Acrolein_CP",
+      "target": "Acr_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Cyclophosphamide",
+      "evidence": "Same chemical species as exogenous acrolein; forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) adducts via Michael addition (PMID:10348794; PMID:19397281)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Same chemical species as exogenous acrolein; forms alpha/gamma-OH-1,N2-propano-dG (Acr-dG) adducts via Michael addition (PMID:10348794; PMID:19397281)"
+        }
+      ]
+    },
+    {
+      "source": "Acrolein_CP",
+      "target": "aldehyde_pathway",
+      "type": "PATHWAY",
+      "carcinogen": "Cyclophosphamide",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "GSTP1",
+      "target": "Acrolein_CP",
+      "type": "DETOXIFIES",
+      "carcinogen": "Cyclophosphamide",
+      "evidence": "GSH conjugation yields 3-hydroxypropylmercapturic acid (HPMA), same detox pathway as exogenous acrolein (IARC Monograph 128)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "GSH conjugation yields 3-hydroxypropylmercapturic acid (HPMA), same detox pathway as exogenous acrolein (IARC Monograph 128)"
+        }
+      ]
+    },
+    {
+      "source": "ALDH2",
+      "target": "Acrolein_CP",
+      "type": "DETOXIFIES",
+      "carcinogen": "Cyclophosphamide",
+      "evidence": "ALDH2 oxidation of acrolein to acrylic acid; same detox pathway as exogenous acrolein (IARC Monograph 128)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "ALDH2 oxidation of acrolein to acrylic acid; same detox pathway as exogenous acrolein (IARC Monograph 128)"
+        }
+      ]
     },
     {
       "source": "Crotonaldehyde",
