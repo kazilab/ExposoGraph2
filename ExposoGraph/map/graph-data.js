@@ -4909,18 +4909,7 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "canonical",
         },
-        {
-            "id": "ALAS1",
-            "label": "ALAS1",
-            "type": "Enzyme",
-            "phase": "I",
-            "role": "Activation",
-            "detail": "Aminolevulinic acid synthase 1. Rate-limiting in heme synthesis.",
-            "tissue": "liver, erythroid",
-            "group": "Heme_Synthesis",
-            "origin": "imported",
-            "match_status": "canonical",
-        },
+        
         {
             "id": "SEPP1",
             "label": "SEPP1",
@@ -5021,16 +5010,7 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "canonical",
         },
-        {
-            "id": "ALA_portporphyria",
-            "label": "ALA Porphyria",
-            "type": "Metabolite",
-            "reactivity": "High",
-            "detail": "Acquired porphyria from lead-induced ALAD inhibition.",
-            "associated_metal": "LeadInorganicCompounds",
-            "origin": "imported",
-            "match_status": "canonical",
-        },
+        
         {
             "id": "MeHg_GSH",
             "label": "Methylmercury-GSH",
@@ -12471,6 +12451,36 @@ const GRAPH_DATA = {
       "source": "Naphthalene",
       "target": "hsa05204",
       "type": "PATHWAY",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "MethylmercuryCompounds",
+      "target": "MeHg_GSH",
+      "type": "ACTIVATES",
+      "carcinogen": "MethylmercuryCompounds",
+      "evidence": "Methylmercury conjugates with GSH via thiol group to form MeHg-GSH complex; PMC6635095",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "GSH",
+      "target": "MeHg_GSH",
+      "type": "ACTIVATES",
+      "carcinogen": "MethylmercuryCompounds",
+      "evidence": "GSH thiol group conjugates with MeHg forming MeHg-GSH complex; PMC6635095",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "MeHg_GSH",
+      "target": "MethylmercuryCompounds",
+      "type": "DETOXIFIES",
+      "carcinogen": "MethylmercuryCompounds",
+      "evidence": "MeHg-GSH complex exported from cells via MRP transporters and excreted via bile; major detoxification route; PMC6635095",
       "origin": "curated",
       "match_status": "unmatched",
       "provenance": []
