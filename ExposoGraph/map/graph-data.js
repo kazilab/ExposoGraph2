@@ -4893,18 +4893,7 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "canonical",
         },
-        {
-            "id": "AntimonyPentavalent",
-            "label": "Pentavalent antimony compounds",
-            "type": "Carcinogen",
-            "detail": "IARC Group 3 (Vol 131, 2023). Pentavalent antimony (SbV) is not classifiable. Used in antimonial drugs (leishmaniasis treatment). Lower toxicity than trivalent form.",
-            "group": "Heavy_Metal",
-            "iarc": "Group 3",
-            "source_db": "IARC Monographs Vol. 131 (2023)",
-            "exposure": "Antimonial drugs (leishmaniasis treatment), flame retardants",
-            "origin": "imported",
-            "match_status": "canonical",
-        },
+        
         {
             "id": "ALAD",
             "label": "ALAD",
