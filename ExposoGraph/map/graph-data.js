@@ -12242,6 +12242,20 @@ const GRAPH_DATA = {
           "evidence": "MMA(III) generates ROS via mitochondrial disruption and inhibits DNA repair via PARP1; 8-OHdG elevated in arsenic-exposed cells (IARC Vol 100C, 2012)"
         }
       ]
+    },
+    {
+      "source": "MercuryInorganicCompounds",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "MercuryInorganicCompounds",
+      "evidence": "Inorganic mercury depletes GSH and inhibits GPx/SEPP1, causing ROS accumulation and oxidative DNA damage; 8-OHdG elevated in kidney and brain of Hg-exposed animals (IARC Vol 58, 1993)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Inorganic mercury depletes GSH and inhibits GPx/SEPP1, causing ROS accumulation and oxidative DNA damage; 8-OHdG elevated in kidney and brain of Hg-exposed animals (IARC Vol 58, 1993)"
+        }
+      ]
     }
   ]
 };
