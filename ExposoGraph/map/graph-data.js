@@ -28,28 +28,6 @@ const GRAPH_DATA = {
             ]
         },
         {
-            "id": "DMBA",
-            "label": "DMBA",
-            "type": "Carcinogen",
-            "detail": "Reference PAH-like polycyclic carcinogen.",
-            "group": "PAH",
-            "source_db": "Curated showcase",
-            "evidence": "Reference PAH-like polycyclic carcinogen.",
-            "origin": "imported",
-            "match_status": "canonical",
-            "canonical_id": "DMBA",
-            "canonical_label": "DMBA",
-            "canonical_namespace": "curated_showcase",
-            "provenance": [
-                {
-                    "source_db": "Curated showcase",
-                    "record_id": "DMBA",
-                    "evidence": "Reference PAH-like polycyclic carcinogen.",
-                    "citation": "Curated carcinogen entry for DMBA"
-                }
-            ]
-        },
-        {
             "id": "PhIP",
             "label": "PhIP",
             "type": "Carcinogen",
@@ -2697,81 +2675,7 @@ const GRAPH_DATA = {
                 }
             ]
         },
-        {
-            "id": "DMBA_epoxide",
-            "label": "DMBA-3,4-epoxide",
-            "type": "Metabolite",
-            "detail": "Initial epoxide intermediate formed during DMBA activation.",
-            "reactivity": "Intermediate",
-            "source_db": "Curated showcase",
-            "evidence": "Initial epoxide intermediate formed during DMBA activation.",
-            "origin": "imported",
-            "match_status": "canonical",
-            "canonical_id": "DMBA_epoxide",
-            "canonical_label": "DMBA-3,4-epoxide",
-            "canonical_namespace": "curated_showcase",
-            "provenance": [
-                {
-                    "source_db": "Curated showcase",
-                    "record_id": "DMBA_epoxide",
-                    "evidence": "Initial epoxide intermediate formed during DMBA activation.",
-                    "citation": "Curated metabolite entry for DMBA-3,4-epoxide"
-                }
-            ]
-        },        {
-            "id": "DMBA_diol",
-            "label": "DMBA-3,4-diol",
-            "type": "Metabolite",
-            "detail": "Trans-3,4-dihydroxy-3,4-dihydro-7,12-dimethylbenz[a]anthracene; hydrolysis product of DMBA-3,4-epoxide by epoxide hydrolase (EPHX1). Further epoxidized by CYP1A1/1B1 to DMBA-3,4-diol-1,2-epoxide, the ultimate carcinogenic species. Parallels the BaP→BaP_epoxide→BaP_diol→BPDE metabolic activation chain.",
-            "origin": "imported",
-            "match_status": "unmatched",
-            "provenance": []
-        },
 
-        {
-            "id": "DMBA_diol",
-            "label": "DMBA-3,4-diol",
-            "type": "Metabolite",
-            "detail": "Hydrolyzed DMBA intermediate prior to diol-epoxide formation.",
-            "reactivity": "Intermediate",
-            "source_db": "Curated showcase",
-            "evidence": "Hydrolyzed DMBA intermediate prior to diol-epoxide formation.",
-            "origin": "imported",
-            "match_status": "canonical",
-            "canonical_id": "DMBA_diol",
-            "canonical_label": "DMBA-3,4-diol",
-            "canonical_namespace": "curated_showcase",
-            "provenance": [
-                {
-                    "source_db": "Curated showcase",
-                    "record_id": "DMBA_diol",
-                    "evidence": "Hydrolyzed DMBA intermediate prior to diol-epoxide formation.",
-                    "citation": "Curated metabolite entry for DMBA-3,4-diol"
-                }
-            ]
-        },
-        {
-            "id": "DMBA_diol_epoxide",
-            "label": "DMBA-diol-epoxide",
-            "type": "Metabolite",
-            "detail": "Ultimate DMBA metabolite used to anchor the PAH class expansion.",
-            "reactivity": "High",
-            "source_db": "Curated showcase",
-            "evidence": "Ultimate DMBA metabolite used to anchor the PAH class expansion.",
-            "origin": "imported",
-            "match_status": "canonical",
-            "canonical_id": "DMBA_diol_epoxide",
-            "canonical_label": "DMBA-diol-epoxide",
-            "canonical_namespace": "curated_showcase",
-            "provenance": [
-                {
-                    "source_db": "Curated showcase",
-                    "record_id": "DMBA_diol_epoxide",
-                    "evidence": "Ultimate DMBA metabolite used to anchor the PAH class expansion.",
-                    "citation": "Curated metabolite entry for DMBA-diol-epoxide"
-                }
-            ]
-        },
         {
             "id": "NOH_MeIQx",
             "label": "N-hydroxy-MeIQx",
@@ -3081,27 +2985,6 @@ const GRAPH_DATA = {
             "origin": "imported",
             "match_status": "unmatched",
             "provenance": []
-        },
-        {
-            "id": "DMBA_dA",
-            "label": "DMBA-dA adduct",
-            "type": "DNA_Adduct",
-            "detail": "Representative DMBA-derived DNA adduct.",
-            "source_db": "Curated showcase",
-            "evidence": "Representative DMBA-derived DNA adduct.",
-            "origin": "imported",
-            "match_status": "canonical",
-            "canonical_id": "DMBA_dA",
-            "canonical_label": "DMBA-dA adduct",
-            "canonical_namespace": "curated_showcase",
-            "provenance": [
-                {
-                    "source_db": "Curated showcase",
-                    "record_id": "DMBA_dA",
-                    "evidence": "Representative DMBA-derived DNA adduct.",
-                    "citation": "Curated DNA adduct entry for DMBA-dA adduct"
-                }
-            ]
         },
         {
             "id": "hsa00980",
@@ -5644,6 +5527,302 @@ const GRAPH_DATA = {
                     "citation": "Curated DNA adduct entry for N7-HEG"
                 }
             ]
+        },
+        {
+            "id": "Dibenz_ah_anthracene",
+            "label": "Dibenz[a,h]anthracene",
+            "type": "Carcinogen",
+            "detail": "Polycyclic aromatic hydrocarbon; IARC Group 2A. Environmental PAH found in tobacco smoke, vehicle exhaust, and grilled foods. Metabolically activated via CYP1A1/CYP1B1 to diol-epoxide intermediates forming DNA adducts.",
+            "group": "PAH",
+            "iarc": "Group 2A",
+            "source_db": "IARC Monographs Vol. 92, Suppl. 7",
+            "evidence": "IARC Group 2A; CAS 53-70-3. Upgraded to Group 2A with supporting evidence.",
+            "origin": "curated",
+            "match_status": "canonical",
+            "canonical_id": "53-70-3",
+            "canonical_label": "Dibenz[a,h]anthracene",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs",
+                    "record_id": "53-70-3",
+                    "evidence": "IARC Group 2A; Vol. 92, Suppl. 7",
+                    "citation": "IARC Monographs Vol. 92, Suppl. 7"
+                }
+            ]
+        },
+        {
+            "id": "DBA_3_4_diol",
+            "label": "Dibenz[a,h]anthracene-3,4-diol",
+            "type": "Metabolite",
+            "detail": "M-region dihydrodiol intermediate formed by CYP1A1/CYP1B1 epoxidation and EPHX1 hydration. Further activated to bis-diol-epoxide.",
+            "reactivity": "Intermediate",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "DBA_diol_epoxide",
+            "label": "Dibenz[a,h]anthracene bis-diol-epoxide",
+            "type": "Metabolite",
+            "detail": "Ultimate carcinogenic metabolite; 3,4,10,11-bis-diol-epoxide forming DNA adducts. PMID:8439967",
+            "reactivity": "High",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": [
+                {
+                    "source_db": "PubMed",
+                    "record_id": "8439967",
+                    "evidence": "Bis-diol-epoxide pathway; Cancer Res 1993"
+                }
+            ]
+        },
+        {
+            "id": "DBA_dG",
+            "label": "DBA-DNA adduct",
+            "type": "DNA_Adduct",
+            "detail": "DNA adduct formed by dibenz[a,h]anthracene bis-diol-epoxide; major adduct from bay-region activation.",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "Benz_a_anthracene",
+            "label": "Benz[a]anthracene",
+            "type": "Carcinogen",
+            "detail": "Polycyclic aromatic hydrocarbon; IARC Group 2B. Environmental PAH found in tobacco smoke, vehicle exhaust, and grilled foods. Metabolically activated via CYP1A1/CYP1B1 to diol-epoxide intermediates.",
+            "group": "PAH",
+            "iarc": "Group 2B",
+            "source_db": "IARC Monographs Vol. 92, Suppl. 7",
+            "evidence": "IARC Group 2B; CAS 56-55-3.",
+            "origin": "curated",
+            "match_status": "canonical",
+            "canonical_id": "56-55-3",
+            "canonical_label": "Benz[a]anthracene",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs",
+                    "record_id": "56-55-3",
+                    "evidence": "IARC Group 2B; Vol. 92, Suppl. 7",
+                    "citation": "IARC Monographs Vol. 92, Suppl. 7"
+                }
+            ]
+        },
+        {
+            "id": "BaA_3_4_diol",
+            "label": "Benz[a]anthracene-3,4-diol",
+            "type": "Metabolite",
+            "detail": "Dihydrodiol intermediate formed by CYP1A1/CYP1B1 epoxidation and EPHX1 hydration.",
+            "reactivity": "Intermediate",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "BaA_diol_epoxide",
+            "label": "Benz[a]anthracene diol-epoxide",
+            "type": "Metabolite",
+            "detail": "Ultimate carcinogenic diol-epoxide metabolite; activation via 8,9,10,11-ring non-bay-region pathway. PMID:22282977",
+            "reactivity": "High",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": [
+                {
+                    "source_db": "PubMed",
+                    "record_id": "22282977",
+                    "evidence": "Non-bay-region diol-epoxide; Carcinogenesis 1987"
+                }
+            ]
+        },
+        {
+            "id": "BaA_dG",
+            "label": "BaA-DNA adduct",
+            "type": "DNA_Adduct",
+            "detail": "DNA adduct formed by benz[a]anthracene diol-epoxide.",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "Chrysene",
+            "label": "Chrysene",
+            "type": "Carcinogen",
+            "detail": "Polycyclic aromatic hydrocarbon; IARC Group 2B. Environmental PAH found in tobacco smoke, vehicle exhaust, and grilled foods. Metabolically activated via CYP1A1/CYP1B1 to 1,2-diol-3,4-epoxide.",
+            "group": "PAH",
+            "iarc": "Group 2B",
+            "source_db": "IARC Monographs Vol. 92",
+            "evidence": "IARC Group 2B; CAS 218-01-9.",
+            "origin": "curated",
+            "match_status": "canonical",
+            "canonical_id": "218-01-9",
+            "canonical_label": "Chrysene",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs",
+                    "record_id": "218-01-9",
+                    "evidence": "IARC Group 2B; Vol. 92",
+                    "citation": "IARC Monographs Vol. 92"
+                }
+            ]
+        },
+        {
+            "id": "Chrysene_1_2_diol",
+            "label": "Chrysene-1,2-diol",
+            "type": "Metabolite",
+            "detail": "Dihydrodiol intermediate formed by CYP1A1/CYP1B1 epoxidation and EPHX1 hydration.",
+            "reactivity": "Intermediate",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "Chrysene_diol_epoxide",
+            "label": "Chrysene-1,2-diol-3,4-epoxide",
+            "type": "Metabolite",
+            "detail": "Ultimate carcinogenic diol-epoxide metabolite; also forms triol-epoxide pathway. PMID:6652874",
+            "reactivity": "High",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": [
+                {
+                    "source_db": "PubMed",
+                    "record_id": "6652874",
+                    "evidence": "Triol-epoxide pathway; Carcinogenesis 1983"
+                }
+            ]
+        },
+        {
+            "id": "Chrysene_dG",
+            "label": "Chrysene-DNA adduct",
+            "type": "DNA_Adduct",
+            "detail": "DNA adduct formed by chrysene diol-epoxide.",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "Benzo_b_fluoranthene",
+            "label": "Benzo[b]fluoranthene",
+            "type": "Carcinogen",
+            "detail": "Polycyclic aromatic hydrocarbon; IARC Group 2B. Environmental PAH found in tobacco smoke, vehicle exhaust, and biomass combustion. Metabolically activated via CYP1A1/CYP1B1 to diol-epoxide intermediates.",
+            "group": "PAH",
+            "iarc": "Group 2B",
+            "source_db": "IARC Monographs Vol. 92",
+            "evidence": "IARC Group 2B; CAS 205-99-2.",
+            "origin": "curated",
+            "match_status": "canonical",
+            "canonical_id": "205-99-2",
+            "canonical_label": "Benzo[b]fluoranthene",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs",
+                    "record_id": "205-99-2",
+                    "evidence": "IARC Group 2B; Vol. 92",
+                    "citation": "IARC Monographs Vol. 92"
+                }
+            ]
+        },
+        {
+            "id": "BbF_9_10_diol",
+            "label": "Benzo[b]fluoranthene-9,10-diol",
+            "type": "Metabolite",
+            "detail": "Dihydrodiol intermediate formed by CYP1A1/CYP1B1 epoxidation and EPHX1 hydration.",
+            "reactivity": "Intermediate",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "BbF_diol_epoxide",
+            "label": "Benzo[b]fluoranthene diol-epoxide",
+            "type": "Metabolite",
+            "detail": "Ultimate carcinogenic diol-epoxide metabolite; 9,10-diol-11,12-epoxide pathway. Polycyclic Aromatic Compounds 1994.",
+            "reactivity": "High",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": [
+                {
+                    "source_db": "Polycyclic Aromatic Compounds",
+                    "record_id": "BbF_epoxide",
+                    "evidence": "11,12-Epoxy-9,10,11,12-tetrahydro-5,9,10-trihydroxybenzo[b]fluoranthene; Vol 6, 1994"
+                }
+            ]
+        },
+        {
+            "id": "BbF_dG",
+            "label": "BbF-DNA adduct",
+            "type": "DNA_Adduct",
+            "detail": "DNA adduct formed by benzo[b]fluoranthene diol-epoxide; primarily guanine adducts.",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
+        },
+        {
+            "id": "Naphthalene",
+            "label": "Naphthalene",
+            "type": "Carcinogen",
+            "detail": "Polycyclic aromatic hydrocarbon; IARC Group 2B. Environmental PAH found in vehicle exhaust, tobacco smoke, and mothballs. Metabolically activated via CYP2E1/CYP2F1 to 1,2-oxide and 1,2-naphthoquinone forming DNA adducts.",
+            "group": "PAH",
+            "iarc": "Group 2B",
+            "source_db": "IARC Monographs Vol. 82",
+            "evidence": "IARC Group 2B; CAS 91-20-3.",
+            "origin": "curated",
+            "match_status": "canonical",
+            "canonical_id": "91-20-3",
+            "canonical_label": "Naphthalene",
+            "canonical_namespace": "iarc",
+            "provenance": [
+                {
+                    "source_db": "IARC Monographs",
+                    "record_id": "91-20-3",
+                    "evidence": "IARC Group 2B; Vol. 82",
+                    "citation": "IARC Monographs Vol. 82"
+                }
+            ]
+        },
+        {
+            "id": "Naphthalene_1_2_oxide",
+            "label": "Naphthalene-1,2-oxide",
+            "type": "Metabolite",
+            "detail": "Initial epoxide intermediate formed by CYP2E1/CYP2F1. Can form DNA adducts directly or undergo further metabolism to 1,2-naphthoquinone. PMC4030291",
+            "reactivity": "Intermediate",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": [
+                {
+                    "source_db": "PubMed Central",
+                    "record_id": "PMC4030291",
+                    "evidence": "Naphthalene 1,2-epoxide; metabolic activation by CYP2F2/CYP2E1"
+                }
+            ]
+        },
+        {
+            "id": "Naphthoquinone",
+            "label": "1,2-Naphthoquinone",
+            "type": "Metabolite",
+            "detail": "Reactive quinone metabolite forming depurinating DNA adducts. Formed via 1,2-dihydrodiol oxidation. PMC12997242",
+            "reactivity": "High",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": [
+                {
+                    "source_db": "PubMed Central",
+                    "record_id": "PMC12997242",
+                    "evidence": "1,2-Naphthoquinone DNA adduct formation in lung airway explants; 2026"
+                }
+            ]
+        },
+        {
+            "id": "Naphthalene_dG",
+            "label": "Naphthalene-DNA adduct",
+            "type": "DNA_Adduct",
+            "detail": "DNA adduct formed by naphthalene 1,2-oxide and 1,2-naphthoquinone; depurinating and stable adducts. PMC12997242",
+            "origin": "curated",
+            "match_status": "unmatched",
+            "provenance": []
         }
   ],
   "edges": [
@@ -5823,27 +6002,6 @@ const GRAPH_DATA = {
           "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
           "citation": "KEGG pathway record for Xenobiotic metabolism by cytochrome P450",
           "url": "https://www.kegg.jp/entry/hsa00980"
-        }
-      ]
-    },
-    {
-      "source": "DMBA",
-      "target": "DMBA_epoxide",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to 3,4-epoxide",
-      "carcinogen": "DMBA",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to 3,4-epoxide",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "DMBA->DMBA_epoxide",
-          "evidence": "Procarcinogen to 3,4-epoxide",
-          "citation": "Procarcinogen to 3,4-epoxide"
         }
       ]
     },
@@ -6241,48 +6399,6 @@ const GRAPH_DATA = {
     },
     {
       "source": "CYP1A1",
-      "target": "DMBA_epoxide",
-      "type": "ACTIVATES",
-      "label": "DMBA epoxidation",
-      "carcinogen": "DMBA",
-      "source_db": "Curated showcase",
-      "evidence": "DMBA epoxidation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "CYP1A1->DMBA_epoxide",
-          "evidence": "DMBA epoxidation",
-          "citation": "DMBA epoxidation"
-        }
-      ]
-    },
-    {
-      "source": "CYP1A1",
-      "target": "DMBA_diol_epoxide",
-      "type": "ACTIVATES",
-      "label": "Diol-epoxide formation",
-      "carcinogen": "DMBA",
-      "source_db": "Curated showcase",
-      "evidence": "Diol-epoxide formation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "CYP1A1->DMBA_diol_epoxide",
-          "evidence": "Diol-epoxide formation",
-          "citation": "Diol-epoxide formation"
-        }
-      ]
-    },
-    {
-      "source": "CYP1A1",
       "target": "hsa00980",
       "type": "PATHWAY",
       "label": "Pathway membership: Xenobiotic metabolism by cytochrome P450",
@@ -6376,48 +6492,6 @@ const GRAPH_DATA = {
           "record_id": "CYP1B1->HydroxyE2",
           "evidence": "Catechol estrogen formation",
           "citation": "Catechol estrogen formation"
-        }
-      ]
-    },
-    {
-      "source": "CYP1B1",
-      "target": "DMBA_epoxide",
-      "type": "ACTIVATES",
-      "label": "DMBA epoxidation",
-      "carcinogen": "DMBA",
-      "source_db": "Curated showcase",
-      "evidence": "DMBA epoxidation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "CYP1B1->DMBA_epoxide",
-          "evidence": "DMBA epoxidation",
-          "citation": "DMBA epoxidation"
-        }
-      ]
-    },
-    {
-      "source": "CYP1B1",
-      "target": "DMBA_diol_epoxide",
-      "type": "ACTIVATES",
-      "label": "Diol-epoxide formation",
-      "carcinogen": "DMBA",
-      "source_db": "Curated showcase",
-      "evidence": "Diol-epoxide formation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "CYP1B1->DMBA_diol_epoxide",
-          "evidence": "Diol-epoxide formation",
-          "citation": "Diol-epoxide formation"
         }
       ]
     },
@@ -6859,27 +6933,6 @@ const GRAPH_DATA = {
       "canonical_predicate": "DETOXIFIES",
       "canonical_namespace": "schema",
       "provenance": []
-    },
-    {
-      "source": "EPHX1",
-      "target": "DMBA_diol",
-      "type": "DETOXIFIES",
-      "label": "Epoxide hydrolysis",
-      "carcinogen": "DMBA",
-      "source_db": "Curated showcase",
-      "evidence": "Epoxide hydrolysis",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "EPHX1->DMBA_diol",
-          "evidence": "Epoxide hydrolysis",
-          "citation": "Epoxide hydrolysis"
-        }
-      ]
     },
     {
       "source": "CYP17A1",
@@ -7863,17 +7916,6 @@ const GRAPH_DATA = {
     },
     {
       "source": "XPC",
-      "target": "DMBA_dA",
-      "type": "REPAIRS",
-      "label": "NER recognition",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
-      "canonical_namespace": "schema",
-      "provenance": []
-    },
-    {
-      "source": "XPC",
       "target": "Cr_DNA_ternary",
       "type": "REPAIRS",
       "carcinogen": "CrVI",
@@ -7905,17 +7947,6 @@ const GRAPH_DATA = {
       "target": "BPDE_dG",
       "type": "REPAIRS",
       "label": "NER helicase",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
-      "canonical_namespace": "schema",
-      "provenance": []
-    },
-    {
-      "source": "ERCC2",
-      "target": "DMBA_dA",
-      "type": "REPAIRS",
-      "label": "NER excision",
       "origin": "imported",
       "match_status": "canonical",
       "canonical_predicate": "REPAIRS",
@@ -8335,17 +8366,6 @@ const GRAPH_DATA = {
       "target": "O6_methyl_dG",
       "type": "FORMS_ADDUCT",
       "label": "methylation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "FORMS_ADDUCT",
-      "canonical_namespace": "schema",
-      "provenance": []
-    },
-    {
-      "source": "DMBA_diol_epoxide",
-      "target": "DMBA_dA",
-      "type": "FORMS_ADDUCT",
-      "label": "bulky dA adduct",
       "origin": "imported",
       "match_status": "canonical",
       "canonical_predicate": "FORMS_ADDUCT",
@@ -12097,34 +12117,6 @@ const GRAPH_DATA = {
       ]
     },
     {
-      "source": "DMBA_epoxide",
-      "target": "DMBA_diol",
-      "type": "ACTIVATES",
-      "carcinogen": "DMBA",
-      "evidence": "Epoxide hydrolase (EPHX1) hydrolyzes DMBA-3,4-epoxide to trans-DMBA-3,4-diol; parallels BaP epoxide→diol step (PMID:2987890)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Epoxide hydrolase (EPHX1) hydrolyzes DMBA-3,4-epoxide to trans-DMBA-3,4-diol; parallels BaP epoxide→diol step (PMID:2987890)"
-        }
-      ]
-    },
-    {
-      "source": "DMBA_diol",
-      "target": "DMBA_diol_epoxide",
-      "type": "ACTIVATES",
-      "carcinogen": "DMBA",
-      "evidence": "CYP1A1/1B1 epoxidizes DMBA-3,4-diol to DMBA-3,4-diol-1,2-epoxide (DMBA-DE); the ultimate carcinogenic metabolite (PMID:2987890)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP1A1/1B1 epoxidizes DMBA-3,4-diol to DMBA-3,4-diol-1,2-epoxide (DMBA-DE); the ultimate carcinogenic metabolite (PMID:2987890)"
-        }
-      ]
-    },
-    {
       "source": "MMA_V",
       "target": "MMA_III",
       "type": "ACTIVATES",
@@ -12193,6 +12185,306 @@ const GRAPH_DATA = {
           "evidence": "PCE causes oxidative DNA damage via PPARα-mediated peroxisome proliferation and CYP2E1 metabolism; 8-oxo-dG elevated in PCE-exposed rodent liver and kidney (IARC Group 2A)"
         }
       ]
+    },
+    {
+      "source": "Dibenz_ah_anthracene",
+      "target": "DBA_3_4_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "CYP1A1/CYP1B1 epoxidation to 3,4-epoxide, EPHX1 hydration to diol",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "DBA_3_4_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "CYP1A1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "DBA_3_4_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "CYP1B1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "DBA_3_4_diol",
+      "target": "DBA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "DBA_diol_epoxide",
+      "target": "DBA_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "Bis-diol-epoxide forms DNA adducts; PMID:8439967",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Dibenz_ah_anthracene",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benz_a_anthracene",
+      "target": "BaA_3_4_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "CYP1A1/CYP1B1 epoxidation to 3,4-epoxide, EPHX1 hydration to diol",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BaA_3_4_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "CYP1A1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "BaA_3_4_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "CYP1B1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaA_3_4_diol",
+      "target": "BaA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaA_diol_epoxide",
+      "target": "BaA_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "Diol-epoxide forms DNA adducts; PMID:22282977",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benz_a_anthracene",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene",
+      "target": "Chrysene_1_2_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Chrysene",
+      "evidence": "CYP1A1/CYP1B1 epoxidation to 1,2-epoxide, EPHX1 hydration to diol",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "Chrysene_1_2_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Chrysene",
+      "evidence": "CYP1A1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "Chrysene_1_2_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Chrysene",
+      "evidence": "CYP1B1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene_1_2_diol",
+      "target": "Chrysene_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Chrysene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene_diol_epoxide",
+      "target": "Chrysene_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Chrysene",
+      "evidence": "Diol-epoxide and triol-epoxide form DNA adducts; PMID:6652874",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benzo_b_fluoranthene",
+      "target": "BbF_9_10_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "CYP1A1/CYP1B1 epoxidation to 9,10-epoxide, EPHX1 hydration to diol",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BbF_9_10_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "CYP1A1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP1B1",
+      "target": "BbF_9_10_diol",
+      "type": "ACTIVATES",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "CYP1B1 catalyzes initial epoxidation",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BbF_9_10_diol",
+      "target": "BbF_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BbF_diol_epoxide",
+      "target": "BbF_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "Diol-epoxide forms DNA adducts; Polycyclic Aromatic Compounds 1994",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benzo_b_fluoranthene",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthalene",
+      "target": "Naphthalene_1_2_oxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Naphthalene",
+      "evidence": "CYP2E1/CYP2F1 epoxidation to 1,2-oxide; PMC4030291",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP2E1",
+      "target": "Naphthalene_1_2_oxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Naphthalene",
+      "evidence": "CYP2E1 catalyzes naphthalene epoxidation; PMC4030291",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP2F1",
+      "target": "Naphthalene_1_2_oxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Naphthalene",
+      "evidence": "CYP2F1 catalyzes naphthalene bioactivation in lung; PMC4030291",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthalene_1_2_oxide",
+      "target": "Naphthoquinone",
+      "type": "ACTIVATES",
+      "carcinogen": "Naphthalene",
+      "evidence": "1,2-oxide metabolized to 1,2-naphthoquinone via dihydrodiol; PMC12997242",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthoquinone",
+      "target": "Naphthalene_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Naphthalene",
+      "evidence": "1,2-Naphthoquinone forms depurinating DNA adducts; PMC12997242",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthalene_1_2_oxide",
+      "target": "Naphthalene_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Naphthalene",
+      "evidence": "1,2-Oxide forms direct DNA adducts; PMC4030291",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthalene",
+      "target": "hsa05204",
+      "type": "PATHWAY",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
     }
   ]
 };
