@@ -12270,6 +12270,20 @@ const GRAPH_DATA = {
           "evidence": "Trivalent antimony [Sb(III)] generates ROS via mitochondrial disruption and inhibits DNA repair; 8-OHdG elevated in Sb(III)-exposed cells (IARC Vol 131, 2023, Group 2A)"
         }
       ]
+    },
+    {
+      "source": "PCE",
+      "target": "Oxo_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "PCE",
+      "evidence": "PCE causes oxidative DNA damage via PPARα-mediated peroxisome proliferation and CYP2E1 metabolism; 8-oxo-dG elevated in PCE-exposed rodent liver and kidney (IARC Group 2A)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "PCE causes oxidative DNA damage via PPARα-mediated peroxisome proliferation and CYP2E1 metabolism; 8-oxo-dG elevated in PCE-exposed rodent liver and kidney (IARC Group 2A)"
+        }
+      ]
     }
   ]
 };
