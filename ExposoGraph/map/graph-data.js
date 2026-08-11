@@ -3074,27 +3074,6 @@ const GRAPH_DATA = {
             "provenance": []
         },
         {
-            "id": "Oxo_dG",
-            "label": "8-oxo-dG",
-            "type": "DNA_Adduct",
-            "detail": "Representative oxidative DNA lesion linked to ROS pathway activity.",
-            "source_db": "Curated showcase",
-            "evidence": "Representative oxidative DNA lesion linked to ROS pathway activity.",
-            "origin": "imported",
-            "match_status": "canonical",
-            "canonical_id": "Oxo_dG",
-            "canonical_label": "8-oxo-dG",
-            "canonical_namespace": "curated_showcase",
-            "provenance": [
-                {
-                    "source_db": "Curated showcase",
-                    "record_id": "Oxo_dG",
-                    "evidence": "Representative oxidative DNA lesion linked to ROS pathway activity.",
-                    "citation": "Curated DNA adduct entry for 8-oxo-dG"
-                }
-            ]
-        },
-        {
             "id": "BQ_dG",
             "label": "BQ-DNA",
             "type": "DNA_Adduct",
@@ -3705,9 +3684,9 @@ const GRAPH_DATA = {
         },
         {
             "id": "8_OHdG",
-            "label": "8-OHdG",
+            "label": "8-oxo-dG (8-OHdG)",
             "type": "DNA_Adduct",
-            "detail": "8-Hydroxy-2'-deoxyguanosine; major oxidative DNA damage marker; causes G:C \u2192 T:A transversions; primary lesion from arsenic and nickel exposure; repaired by OGG1/BER",
+            "detail": "8-Hydroxy-2'-deoxyguanosine (8-oxo-7,8-dihydro-2'-deoxyguanosine); major oxidative DNA damage marker; causes G:C \u2192 T:A transversions; repaired by OGG1/BER. Unified node \u2014 formerly split as Oxo_dG (curated showcase) and 8_OHdG (PMID:10417614; PMC3606021).",
             "source_db": "PMID:10417614; PMC3606021",
             "origin": "imported",
             "match_status": "unmatched",
@@ -5818,7 +5797,7 @@ const GRAPH_DATA = {
       },
     {
       "source": "BaP",
-      "target": "Oxo_dG",
+      "target": "8_OHdG",
       "type": "FORMS_ADDUCT",
       "label": "ROS generation",
       "origin": "imported",
@@ -6105,7 +6084,7 @@ const GRAPH_DATA = {
     },
     {
       "source": "Testosterone",
-      "target": "Oxo_dG",
+      "target": "8_OHdG",
       "type": "FORMS_ADDUCT",
       "label": "ROS via AR signaling",
       "origin": "imported",
@@ -7995,17 +7974,6 @@ const GRAPH_DATA = {
     },
     {
       "source": "OGG1",
-      "target": "Oxo_dG",
-      "type": "REPAIRS",
-      "label": "8-oxoG excision",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
-      "canonical_namespace": "schema",
-      "provenance": []
-    },
-    {
-      "source": "OGG1",
       "target": "8_OHdG",
       "type": "REPAIRS",
       "carcinogen": "NickelCompounds",
@@ -8562,7 +8530,7 @@ const GRAPH_DATA = {
       ]
     },
     {
-      "source": "Oxo_dG",
+      "source": "8_OHdG",
       "target": "hsa05208",
       "type": "PATHWAY",
       "label": "Pathway membership: Chemical carcinogenesis - reactive oxygen species",
@@ -10327,7 +10295,7 @@ const GRAPH_DATA = {
     },
     {
       "source": "MLH1",
-      "target": "Oxo_dG",
+      "target": "8_OHdG",
       "type": "REPAIRS",
       "label": "MMR",
       "source_db": "Curated showcase",
@@ -10339,7 +10307,7 @@ const GRAPH_DATA = {
       "provenance": [
         {
           "source_db": "Curated showcase",
-          "record_id": "MLH1->Oxo_dG",
+          "record_id": "MLH1->8_OHdG",
           "evidence": "MMR",
           "citation": "MMR"
         }
@@ -10407,7 +10375,7 @@ const GRAPH_DATA = {
     },
     {
       "source": "MSH2",
-      "target": "Oxo_dG",
+      "target": "8_OHdG",
       "type": "REPAIRS",
       "label": "MMR",
       "source_db": "Curated showcase",
@@ -10419,7 +10387,7 @@ const GRAPH_DATA = {
       "provenance": [
         {
           "source_db": "Curated showcase",
-          "record_id": "MSH2->Oxo_dG",
+          "record_id": "MSH2->8_OHdG",
           "evidence": "MMR",
           "citation": "MMR"
         }
@@ -10641,7 +10609,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "PFOA",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via PPARα-independent ROS",
         "carcinogen": "PFOA",
@@ -10654,7 +10622,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "IARC Monographs Vol. 135",
-                "record_id": "PFOA->Oxo_dG",
+                "record_id": "PFOA->8_OHdG",
                 "evidence": "PFOA induces oxidative stress leading to 8-oxo-dG formation",
                 "citation": "IARC Monographs Vol. 135, PFOA and PFOS (2025)"
             }
@@ -10758,7 +10726,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "UVRadiation",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via UV-generated ROS",
         "carcinogen": "UVRadiation",
@@ -10771,7 +10739,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "IARC Monographs Vol. 100D",
-                "record_id": "UVRadiation->Oxo_dG",
+                "record_id": "UVRadiation->8_OHdG",
                 "evidence": "UVA generates ROS via photosensitization leading to 8-oxo-dG formation",
                 "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
             }
@@ -10973,7 +10941,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "IonizingRadiation",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via radiolysis",
         "carcinogen": "IonizingRadiation",
@@ -10986,7 +10954,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "IARC Monographs Vol. 100D",
-                "record_id": "IonizingRadiation->Oxo_dG",
+                "record_id": "IonizingRadiation->8_OHdG",
                 "evidence": "Hydroxyl radicals from water radiolysis generate 8-oxo-dG",
                 "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
             }
@@ -11145,7 +11113,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "Radon",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via alpha-induced ROS",
         "carcinogen": "Radon",
@@ -11158,7 +11126,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "IARC Monographs Vol. 100D",
-                "record_id": "Radon->Oxo_dG",
+                "record_id": "Radon->8_OHdG",
                 "evidence": "Alpha particle tracks generate ROS leading to 8-oxo-dG formation",
                 "citation": "IARC Monographs Vol. 100D, Radiation (2012)"
             }
@@ -11523,7 +11491,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "PCB_138",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via PCB metabolism",
         "carcinogen": "PCB_138",
@@ -11536,7 +11504,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "PCB_138->Oxo_dG",
+                "record_id": "PCB_138->8_OHdG",
                 "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Non-dioxin-like PCB oxidative DNA damage"
             }
@@ -11544,7 +11512,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "PCB_153",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via PCB metabolism",
         "carcinogen": "PCB_153",
@@ -11557,7 +11525,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "PCB_153->Oxo_dG",
+                "record_id": "PCB_153->8_OHdG",
                 "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Non-dioxin-like PCB oxidative DNA damage"
             }
@@ -11607,7 +11575,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "DDT",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via DDT metabolism",
         "carcinogen": "DDT",
@@ -11620,7 +11588,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "DDT->Oxo_dG",
+                "record_id": "DDT->8_OHdG",
                 "evidence": "DDT metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "DDT oxidative DNA damage"
             }
@@ -11628,7 +11596,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "DDE",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via DDE metabolism",
         "carcinogen": "DDE",
@@ -11641,7 +11609,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "DDE->Oxo_dG",
+                "record_id": "DDE->8_OHdG",
                 "evidence": "DDE metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "DDE oxidative DNA damage"
             }
@@ -11649,7 +11617,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "Chlordane",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via chlordane metabolism",
         "carcinogen": "Chlordane",
@@ -11662,7 +11630,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "Chlordane->Oxo_dG",
+                "record_id": "Chlordane->8_OHdG",
                 "evidence": "Chlordane metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Chlordane oxidative DNA damage"
             }
@@ -11670,7 +11638,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "Heptachlor",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via heptachlor metabolism",
         "carcinogen": "Heptachlor",
@@ -11683,7 +11651,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "Heptachlor->Oxo_dG",
+                "record_id": "Heptachlor->8_OHdG",
                 "evidence": "Heptachlor metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Heptachlor oxidative DNA damage"
             }
@@ -11691,7 +11659,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "Lindane",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via lindane metabolism",
         "carcinogen": "Lindane",
@@ -11704,7 +11672,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "Lindane->Oxo_dG",
+                "record_id": "Lindane->8_OHdG",
                 "evidence": "Lindane metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Lindane oxidative DNA damage"
             }
@@ -11712,7 +11680,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "Toxaphene",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via toxaphene metabolism",
         "carcinogen": "Toxaphene",
@@ -11725,7 +11693,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "Toxaphene->Oxo_dG",
+                "record_id": "Toxaphene->8_OHdG",
                 "evidence": "Toxaphene metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Toxaphene oxidative DNA damage"
             }
@@ -11754,7 +11722,7 @@ const GRAPH_DATA = {
     },
     {
         "source": "DHT",
-        "target": "Oxo_dG",
+        "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "ROS via AR signaling",
         "carcinogen": "DHT",
@@ -11767,7 +11735,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "DHT->Oxo_dG",
+                "record_id": "DHT->8_OHdG",
                 "evidence": "Androgen receptor signaling generates ROS leading to 8-oxo-dG formation",
                 "citation": "DHT oxidative DNA damage via AR signaling"
             }
@@ -11953,7 +11921,7 @@ const GRAPH_DATA = {
     },
     {
       "source": "PFOS",
-      "target": "Oxo_dG",
+      "target": "8_OHdG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "PFOS",
       "evidence": "PFOS induces oxidative DNA damage via PPARα-mediated peroxisome proliferation; 8-oxo-dG elevated in liver of exposed rodents (IARC Vol 135, 2024)",
@@ -12273,7 +12241,7 @@ const GRAPH_DATA = {
     },
     {
       "source": "PCE",
-      "target": "Oxo_dG",
+      "target": "8_OHdG",
       "type": "FORMS_ADDUCT",
       "carcinogen": "PCE",
       "evidence": "PCE causes oxidative DNA damage via PPARα-mediated peroxisome proliferation and CYP2E1 metabolism; 8-oxo-dG elevated in PCE-exposed rodent liver and kidney (IARC Group 2A)",
