@@ -12256,6 +12256,20 @@ const GRAPH_DATA = {
           "evidence": "Inorganic mercury depletes GSH and inhibits GPx/SEPP1, causing ROS accumulation and oxidative DNA damage; 8-OHdG elevated in kidney and brain of Hg-exposed animals (IARC Vol 58, 1993)"
         }
       ]
+    },
+    {
+      "source": "AntimonyTrivalent",
+      "target": "8_OHdG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "AntimonyTrivalent",
+      "evidence": "Trivalent antimony [Sb(III)] generates ROS via mitochondrial disruption and inhibits DNA repair; 8-OHdG elevated in Sb(III)-exposed cells (IARC Vol 131, 2023, Group 2A)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Trivalent antimony [Sb(III)] generates ROS via mitochondrial disruption and inhibits DNA repair; 8-OHdG elevated in Sb(III)-exposed cells (IARC Vol 131, 2023, Group 2A)"
+        }
+      ]
     }
   ]
 };
