@@ -4634,18 +4634,7 @@ const GRAPH_DATA = {
             "match_status": "unmatched",
             "provenance": []
         },
-        {
-            "id": "DDE",
-            "label": "p,p'-DDE",
-            "type": "Carcinogen",
-            "detail": "Principal DDT metabolite and dominant organochlorine in human adipose tissue. Evaluated within the DDT monograph (IARC Vol. 53, 1991) as an associated compound; DDT upgraded to Group 2A in Vol. 113 (2018) but DDE not separately re-evaluated. Antiandrogenic AR antagonist and CAR/PXR activator; persistent half-life of 10+ years. Biomarker of cumulative DDT exposure (IARC Monograph 113, 2015).",
-            "group": "Organochlorine",
-            "iarc": "Group 2B",
-            "exposure": "bioaccumulation from DDT residues, fatty fish, dairy, adipose storage, transplacental transfer",
-            "origin": "imported",
-            "match_status": "unmatched",
-            "provenance": []
-        },
+        
         {
             "id": "PCP",
             "label": "Pentachlorophenol (PCP)",
@@ -10073,20 +10062,6 @@ const GRAPH_DATA = {
       ]
     },
     {
-      "source": "DDE",
-      "target": "dioxin_pathway",
-      "type": "PATHWAY",
-      "carcinogen": "DDE",
-      "evidence": "Antiandrogenic AR antagonist and CAR/PXR activator; dominant DDT body-burden metabolite (IARC Monograph 113, 2015)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Antiandrogenic AR antagonist and CAR/PXR activator; dominant DDT body-burden metabolite (IARC Monograph 113, 2015)"
-        }
-      ]
-    },
-    {
       "source": "PCP",
       "target": "AHR",
       "type": "ACTIVATES",
@@ -11470,27 +11445,7 @@ const GRAPH_DATA = {
             }
         ]
     },
-    {
-        "source": "DDE",
-        "target": "ESR1",
-        "type": "ACTIVATES",
-        "label": "Estrogen receptor agonism (xenoestrogen)",
-        "carcinogen": "DDE",
-        "source_db": "Curated showcase",
-        "evidence": "DDE acts as xenoestrogen agonist at estrogen receptor alpha, promoting hormonal carcinogenesis",
-        "origin": "imported",
-        "match_status": "canonical",
-        "canonical_predicate": "ACTIVATES",
-        "canonical_namespace": "schema",
-        "provenance": [
-            {
-                "source_db": "Curated showcase",
-                "record_id": "DDE->ESR1",
-                "evidence": "DDE acts as xenoestrogen agonist at estrogen receptor alpha",
-                "citation": "DDE xenoestrogen agonism at ESR1"
-            }
-        ]
-    },
+    
     {
         "source": "DDT",
         "target": "8_OHdG",
@@ -11512,27 +11467,7 @@ const GRAPH_DATA = {
             }
         ]
     },
-    {
-        "source": "DDE",
-        "target": "8_OHdG",
-        "type": "FORMS_ADDUCT",
-        "label": "Oxidative DNA damage via DDE metabolism",
-        "carcinogen": "DDE",
-        "source_db": "Curated showcase",
-        "evidence": "DDE metabolism generates ROS leading to 8-oxo-dG formation",
-        "origin": "imported",
-        "match_status": "canonical",
-        "canonical_predicate": "FORMS_ADDUCT",
-        "canonical_namespace": "schema",
-        "provenance": [
-            {
-                "source_db": "Curated showcase",
-                "record_id": "DDE->8_OHdG",
-                "evidence": "DDE metabolism generates ROS leading to 8-oxo-dG formation",
-                "citation": "DDE oxidative DNA damage"
-            }
-        ]
-    },
+    
     {
         "source": "Chlordane",
         "target": "8_OHdG",
