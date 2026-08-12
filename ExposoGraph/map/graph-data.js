@@ -3653,10 +3653,11 @@ const GRAPH_DATA = {
         {
             "id": "Acetaldehyde",
             "label": "Acetaldehyde",
-            "type": "Metabolite",
-            "detail": "Primary intracellular metabolite of ethanol (ADH1B oxidation); also found in tobacco smoke and fermented foods. Forms N2-ethylidene-dG DNA adduct. Plain acetaldehyde is IARC Group 2B; the Group 1 classification applies to 'acetaldehyde associated with consumption of alcoholic beverages', which is modeled here as the downstream metabolite of the Ethanol in alcoholic beverages exposure node.",
-            "iarc": "Not IARC-listed (intracellular metabolite; Group 2B for plain acetaldehyde, Group 1 for acetaldehyde in alcoholic beverages)",
-            "exposure": "ethanol metabolism, tobacco smoke, fermented foods",
+            "type": "Carcinogen",
+            "detail": "Direct-acting aldehyde carcinogen (IARC Group 2B, CAS 75-07-0). Environmental exposure via tobacco smoke, fermented foods, and industrial sources. Forms N2-ethylidene-dG DNA adducts. Distinct from 'acetaldehyde associated with consumption of alcoholic beverages' (Group 1), which is modeled as the intracellular metabolite Acetaldehyde_int (product of ethanol oxidation via ADH1B/ADH1C).",
+            "group": "Aldehyde",
+            "iarc": "Group 2B",
+            "exposure": "tobacco smoke, fermented foods, industrial exposure",
             "origin": "imported",
             "match_status": "canonical",
             "canonical_id": "75-07-0",
@@ -9297,20 +9298,7 @@ const GRAPH_DATA = {
         }
       ]
     },
-    {
-      "source": "Acetaldehyde_int",
-      "target": "N2_ethylidene_dG",
-      "type": "FORMS_ADDUCT",
-      "carcinogen": "Acetaldehyde",
-      "evidence": "Acetaldehyde forms DNA interstrand crosslinks via N2-ethylidene-dG (PMC5324749)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Acetaldehyde forms DNA interstrand crosslinks via N2-ethylidene-dG (PMC5324749)"
-        }
-      ]
-    },
+
     {
       "source": "Hydroxymethylnitrosamine",
       "target": "Methyldiazonium",
@@ -12481,6 +12469,16 @@ const GRAPH_DATA = {
       "type": "DETOXIFIES",
       "carcinogen": "MethylmercuryCompounds",
       "evidence": "MeHg-GSH complex exported from cells via MRP transporters and excreted via bile; major detoxification route; PMC6635095",
+      "origin": "curated",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Acetaldehyde_int",
+      "target": "N2_ethylidene_dG",
+      "type": "FORMS_ADDUCT",
+      "carcinogen": "Ethanol",
+      "evidence": "Intracellular acetaldehyde (from ethanol oxidation) forms N2-ethylidene-dG DNA adducts; PMC5324749",
       "origin": "curated",
       "match_status": "unmatched",
       "provenance": []
