@@ -2131,6 +2131,66 @@ const GRAPH_DATA = {
             }
         },
         {
+            "id": "XPA",
+            "label": "XPA",
+            "type": "Enzyme",
+            "detail": "NER damage verification protein; binds to distorted DNA after XPC recognition to confirm damage and recruit XPF-ERCC1 endonuclease. Essential for CPD and 6-4 photoproduct repair.",
+            "group": "DNA Repair (NER)",
+            "role": "Repair",
+            "tissue": "ubiquitous",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "XPA",
+            "canonical_label": "XPA",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": []
+        },
+        {
+            "id": "ATM",
+            "label": "ATM",
+            "type": "Enzyme",
+            "detail": "Ataxia telangiectasia mutated kinase; primary DSB sensor. Phosphorylates H2AX, BRCA1, and downstream effectors to activate homologous recombination and cell cycle checkpoint arrest.",
+            "group": "DNA Repair (HR/DSB)",
+            "role": "Repair",
+            "tissue": "ubiquitous",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "ATM",
+            "canonical_label": "ATM",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": []
+        },
+        {
+            "id": "BRCA1",
+            "label": "BRCA1",
+            "type": "Enzyme",
+            "detail": "Breast cancer type 1 susceptibility protein; required for homologous recombination repair of DSBs. Phosphorylated by ATM; coordinates resection and RAD51 filament loading.",
+            "group": "DNA Repair (HR/DSB)",
+            "role": "Repair",
+            "tissue": "breast, ovary, prostate",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "BRCA1",
+            "canonical_label": "BRCA1",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": []
+        },
+        {
+            "id": "BRCA2",
+            "label": "BRCA2",
+            "type": "Enzyme",
+            "detail": "Breast cancer type 2 susceptibility protein; loads RAD51 onto resected DNA ends for homologous recombination repair of DSBs. Required for error-free repair of ionizing radiation-induced breaks.",
+            "group": "DNA Repair (HR/DSB)",
+            "role": "Repair",
+            "tissue": "breast, ovary, prostate",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "BRCA2",
+            "canonical_label": "BRCA2",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": []
+        },
+        {
             "id": "ERCC2",
             "label": "ERCC2/XPD",
             "type": "Enzyme",
@@ -7887,6 +7947,61 @@ const GRAPH_DATA = {
           "evidence": "PMC6802009"
         }
       ]
+    },
+    {
+      "source": "XPA",
+      "target": "CPD",
+      "type": "REPAIRS",
+      "label": "NER damage verification",
+      "carcinogen": "UVRadiation",
+      "evidence": "XPA verifies UV-induced CPD damage after XPC recognition; essential for NER of photodimers (IARC Vol. 100D)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": []
+    },
+    {
+      "source": "XPA",
+      "target": "SixFour_PP",
+      "type": "REPAIRS",
+      "label": "NER damage verification",
+      "carcinogen": "UVRadiation",
+      "evidence": "XPA verifies UV-induced 6-4 photoproducts after XPC recognition; essential for NER of photoproducts (IARC Vol. 100D)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": []
+    },
+    {
+      "source": "ATM",
+      "target": "DSB",
+      "type": "REPAIRS",
+      "label": "DSB sensing and HR activation",
+      "carcinogen": "IonizingRadiation",
+      "evidence": "ATM kinase is the primary DSB sensor; phosphorylates H2AX and BRCA1 to initiate homologous recombination repair (IARC Vol. 100D)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": []
+    },
+    {
+      "source": "BRCA1",
+      "target": "DSB",
+      "type": "REPAIRS",
+      "label": "Homologous recombination",
+      "carcinogen": "IonizingRadiation",
+      "evidence": "BRCA1 coordinates DSB resection and RAD51 loading for error-free HR repair of ionizing radiation-induced breaks (IARC Vol. 100D)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": []
+    },
+    {
+      "source": "BRCA2",
+      "target": "DSB",
+      "type": "REPAIRS",
+      "label": "Homologous recombination",
+      "carcinogen": "IonizingRadiation",
+      "evidence": "BRCA2 directly loads RAD51 onto resected DNA for HR repair of DSBs from ionizing radiation and radon alpha particles (IARC Vol. 100D)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": []
     },
     {
       "source": "ERCC2",
