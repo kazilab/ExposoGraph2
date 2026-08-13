@@ -3900,6 +3900,34 @@ const GRAPH_DATA = {
             ]
         },
         {
+            "id": "CAR",
+            "label": "CAR",
+            "type": "Enzyme",
+            "detail": "Constitutive androstane receptor (NR1I3); ligand-activated nuclear receptor. Activated by non-dioxin-like PCBs, inducing CYP2B/CYP3A and promoting tumor proliferation via xenobiotic metabolism and oxidative stress (IARC Monograph 107).",
+            "role": "Transcription Factor",
+            "tissue": "liver, intestine, kidney",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "NR1I3",
+            "canonical_label": "CAR",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": []
+        },
+        {
+            "id": "PXR",
+            "label": "PXR",
+            "type": "Enzyme",
+            "detail": "Pregnane X receptor (NR1I2); ligand-activated nuclear receptor. Activated by non-dioxin-like PCBs alongside CAR, inducing CYP3A4 and ABC transporters; promotes hepatocellular proliferation and tumor promotion (IARC Monograph 107).",
+            "role": "Transcription Factor",
+            "tissue": "liver, intestine, kidney",
+            "origin": "imported",
+            "match_status": "canonical",
+            "canonical_id": "NR1I2",
+            "canonical_label": "PXR",
+            "canonical_namespace": "ncbi_gene",
+            "provenance": []
+        },
+        {
             "id": "ARNT",
             "label": "ARNT",
             "type": "Enzyme",
@@ -9866,6 +9894,40 @@ const GRAPH_DATA = {
       "provenance": [
         {
           "evidence": "Non-dioxin-like PCB; CAR/PXR-mediated tumor promotion rather than AhR activation (IARC Monograph 107, 2016)"
+        }
+      ]
+    },
+    {
+      "source": "PCB_non_dioxin",
+      "target": "CAR",
+      "type": "ACTIVATES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate constitutive androstane receptor (CAR/NR1I3), inducing CYP2B/CYP3A and promoting hepatocellular proliferation (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": [
+        {
+          "source_db": "IARC Monograph 107",
+          "record_id": "PCB_non_dioxin->CAR",
+          "evidence": "Non-dioxin-like PCBs activate CAR, a nuclear receptor mediating xenobiotic-induced tumor promotion",
+          "citation": "IARC Monograph Vol. 107 (2016), PCBs"
+        }
+      ]
+    },
+    {
+      "source": "PCB_non_dioxin",
+      "target": "PXR",
+      "type": "ACTIVATES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate pregnane X receptor (PXR/NR1I2), inducing CYP3A4 and ABC transporters; promotes hepatocellular proliferation (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "canonical",
+      "provenance": [
+        {
+          "source_db": "IARC Monograph 107",
+          "record_id": "PCB_non_dioxin->PXR",
+          "evidence": "Non-dioxin-like PCBs activate PXR, a nuclear receptor mediating xenobiotic metabolism and tumor promotion",
+          "citation": "IARC Monograph Vol. 107 (2016), PCBs"
         }
       ]
     },
