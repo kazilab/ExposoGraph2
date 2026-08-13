@@ -3681,17 +3681,17 @@ const GRAPH_DATA = {
             "provenance": []
         },
         {
-            "id": "PCB_126",
-            "label": "PCB 126",
+            "id": "PCB_dioxin_like",
+            "label": "Polychlorinated biphenyls, dioxin-like",
             "type": "Carcinogen",
-            "detail": "3,3',4,4',5-Pentachlorobiphenyl; dioxin-like PCB with WHO-TEF 0.1 relative to TCDD. Persistent organic pollutant that activates AhR pathway.",
+            "detail": "Dioxin-like PCBs (non-ortho and mono-ortho congeners) evaluated as a class by IARC (Vol. 107). Includes PCB-126 (WHO-TEF 0.1), PCB-169 (TEF 0.03), PCB-77 (TEF 0.0001), PCB-118 (TEF 0.00003). Activate AhR pathway; carcinogenicity assessed via toxic equivalency factor (TEF) methodology relative to TCDD.",
             "group": "PCB",
             "iarc": "Group 1",
-            "exposure": "legacy industrial contamination, fish/seafood bioaccumulation",
+            "exposure": "legacy industrial contamination, fish/seafood bioaccumulation, transformer/capacitor oils, breast milk transfer",
             "origin": "imported",
             "match_status": "canonical",
-            "canonical_id": "57465-28-8",
-            "canonical_label": "PCB_126",
+            "canonical_id": "PCB-dioxin-like",
+            "canonical_label": "Polychlorinated biphenyls, dioxin-like",
             "canonical_namespace": "iarc",
             "provenance": []
         },
@@ -4526,66 +4526,25 @@ const GRAPH_DATA = {
             "match_status": "unmatched",
             "provenance": []
         },
+        
+        
+        
         {
-            "id": "PCB_169",
-            "label": "PCB 169",
+            "id": "PCB_non_dioxin",
+            "label": "Polychlorinated biphenyls, non-dioxin like",
             "type": "Carcinogen",
-            "detail": "3,3',4,4',5,5'-Hexachlorobiphenyl; non-ortho dioxin-like PCB with WHO-TEF 0.03. Potent AhR agonist contributing to total toxic equivalency (TEQ) in serum/food (IARC Monograph 107).",
+            "detail": "Non-dioxin-like (NDL) PCBs evaluated as a class by IARC (Vol. 107). Includes PCB-153 and PCB-138, the most abundant PCBs in human tissues. Activate CAR/PXR and RyR rather than AhR; tumor promoters via oxidative stress and gap-junction inhibition.",
             "group": "PCB",
             "iarc": "Group 1",
-            "exposure": "legacy transformer/capacitor oils, fatty fish, dairy, breast milk",
+            "exposure": "fatty fish, meat, dairy; breast milk transfer; highly persistent; adipose storage, transplacental transfer",
             "origin": "imported",
-            "match_status": "unmatched",
+            "match_status": "canonical",
+            "canonical_id": "PCB-non-dioxin-like",
+            "canonical_label": "Polychlorinated biphenyls, non-dioxin like",
+            "canonical_namespace": "iarc",
             "provenance": []
         },
-        {
-            "id": "PCB_77",
-            "label": "PCB 77",
-            "type": "Carcinogen",
-            "detail": "3,3',4,4'-Tetrachlorobiphenyl; coplanar dioxin-like PCB with WHO-TEF 0.0001. Short half-life relative to higher-chlorinated PCBs but remains a marker of recent exposure (IARC Monograph 107).",
-            "group": "PCB",
-            "iarc": "Group 1",
-            "exposure": "combustion byproduct, contaminated sediments, dietary",
-            "origin": "imported",
-            "match_status": "unmatched",
-            "provenance": []
-        },
-        {
-            "id": "PCB_118",
-            "label": "PCB 118",
-            "type": "Carcinogen",
-            "detail": "2,3',4,4',5-Pentachlorobiphenyl; mono-ortho dioxin-like PCB (WHO-TEF 0.00003). Most abundant dioxin-like PCB congener in human serum; used as a biomarker of cumulative PCB exposure (IARC Monograph 107).",
-            "group": "PCB",
-            "iarc": "Group 1",
-            "exposure": "fish consumption, occupational exposure in electrical industry, background dietary",
-            "origin": "imported",
-            "match_status": "unmatched",
-            "provenance": []
-        },
-        {
-            "id": "PCB_153",
-            "label": "PCB 153",
-            "type": "Carcinogen",
-            "detail": "2,2',4,4',5,5'-Hexachlorobiphenyl; non-dioxin-like (NDL) PCB, most abundant PCB in human tissues. Activates CAR/PXR rather than AhR; tumor promoter via oxidative stress and gap-junction inhibition (IARC Monograph 107).",
-            "group": "PCB",
-            "iarc": "Group 1",
-            "exposure": "fatty fish, meat, dairy; breast milk transfer; highly persistent",
-            "origin": "imported",
-            "match_status": "unmatched",
-            "provenance": []
-        },
-        {
-            "id": "PCB_138",
-            "label": "PCB 138",
-            "type": "Carcinogen",
-            "detail": "2,2',3,4,4',5'-Hexachlorobiphenyl; non-dioxin-like PCB co-dominant with PCB-153 in human serum. CAR/PXR activator; commonly reported in NHANES biomonitoring panels (IARC Monograph 107).",
-            "group": "PCB",
-            "iarc": "Group 1",
-            "exposure": "bioaccumulative dietary exposure, adipose storage, transplacental transfer",
-            "origin": "imported",
-            "match_status": "unmatched",
-            "provenance": []
-        },
+        
         {
             "id": "PeCDF_23478",
             "label": "2,3,4,7,8-PeCDF",
@@ -8930,10 +8889,10 @@ const GRAPH_DATA = {
       "provenance": []
     },
     {
-      "source": "PCB_126",
+      "source": "PCB_dioxin_like",
       "target": "AHR",
       "type": "ACTIVATES",
-      "carcinogen": "PCB_126",
+      "carcinogen": "PCB_dioxin_like",
       "evidence": "Dioxin-like PCB; WHO-TEF 0.1 relative to TCDD (PMC3748760)",
       "origin": "imported",
       "match_status": "unmatched",
@@ -8944,10 +8903,10 @@ const GRAPH_DATA = {
       ]
     },
     {
-      "source": "PCB_126",
+      "source": "PCB_dioxin_like",
       "target": "dioxin_pathway",
       "type": "PATHWAY",
-      "carcinogen": "PCB_126",
+      "carcinogen": "PCB_dioxin_like",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -9890,80 +9849,17 @@ const GRAPH_DATA = {
         }
       ]
     },
+
+
+
+
+
+
     {
-      "source": "PCB_169",
-      "target": "AHR",
-      "type": "ACTIVATES",
-      "carcinogen": "PCB_169",
-      "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (PMID:16829543; IARC Monograph 107, 2016)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Non-ortho dioxin-like PCB; WHO-TEF 0.03 relative to TCDD (PMID:16829543; IARC Monograph 107, 2016)"
-        }
-      ]
-    },
-    {
-      "source": "PCB_169",
+      "source": "PCB_non_dioxin",
       "target": "dioxin_pathway",
       "type": "PATHWAY",
-      "carcinogen": "PCB_169",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
-      "source": "PCB_77",
-      "target": "AHR",
-      "type": "ACTIVATES",
-      "carcinogen": "PCB_77",
-      "evidence": "Coplanar dioxin-like PCB; WHO-TEF 0.0001; CYP1A1 inducer in hepatocytes (IARC Monograph 107, 2016)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Coplanar dioxin-like PCB; WHO-TEF 0.0001; CYP1A1 inducer in hepatocytes (IARC Monograph 107, 2016)"
-        }
-      ]
-    },
-    {
-      "source": "PCB_77",
-      "target": "dioxin_pathway",
-      "type": "PATHWAY",
-      "carcinogen": "PCB_77",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
-      "source": "PCB_118",
-      "target": "AHR",
-      "type": "ACTIVATES",
-      "carcinogen": "PCB_118",
-      "evidence": "Mono-ortho dioxin-like PCB; WHO-TEF 0.00003; most abundant dioxin-like congener in human serum (IARC Monograph 107, 2016)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Mono-ortho dioxin-like PCB; WHO-TEF 0.00003; most abundant dioxin-like congener in human serum (IARC Monograph 107, 2016)"
-        }
-      ]
-    },
-    {
-      "source": "PCB_118",
-      "target": "dioxin_pathway",
-      "type": "PATHWAY",
-      "carcinogen": "PCB_118",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
-      "source": "PCB_153",
-      "target": "dioxin_pathway",
-      "type": "PATHWAY",
-      "carcinogen": "PCB_153",
+      "carcinogen": "PCB_non_dioxin",
       "evidence": "Non-dioxin-like PCB; CAR/PXR-mediated tumor promotion rather than AhR activation (IARC Monograph 107, 2016)",
       "origin": "imported",
       "match_status": "unmatched",
@@ -9973,20 +9869,7 @@ const GRAPH_DATA = {
         }
       ]
     },
-    {
-      "source": "PCB_138",
-      "target": "dioxin_pathway",
-      "type": "PATHWAY",
-      "carcinogen": "PCB_138",
-      "evidence": "Non-dioxin-like PCB co-dominant with PCB-153; CAR/PXR activator (IARC Monograph 107, 2016)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Non-dioxin-like PCB co-dominant with PCB-153; CAR/PXR activator (IARC Monograph 107, 2016)"
-        }
-      ]
-    },
+
     {
       "source": "PeCDF_23478",
       "target": "AHR",
@@ -11341,11 +11224,11 @@ const GRAPH_DATA = {
         ]
     },
     {
-        "source": "PCB_138",
+        "source": "PCB_non_dioxin",
         "target": "RyR",
         "type": "ACTIVATES",
         "label": "RyR sensitization (Ca2+ dysregulation)",
-        "carcinogen": "PCB_138",
+        "carcinogen": "PCB_non_dioxin",
         "source_db": "Curated showcase",
         "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
         "origin": "imported",
@@ -11355,39 +11238,18 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "PCB_138->RyR",
+                "record_id": "PCB_non_dioxin->RyR",
                 "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
                 "citation": "Non-dioxin-like PCB RyR sensitization"
             }
         ]
     },
     {
-        "source": "PCB_153",
-        "target": "RyR",
-        "type": "ACTIVATES",
-        "label": "RyR sensitization (Ca2+ dysregulation)",
-        "carcinogen": "PCB_153",
-        "source_db": "Curated showcase",
-        "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
-        "origin": "imported",
-        "match_status": "canonical",
-        "canonical_predicate": "ACTIVATES",
-        "canonical_namespace": "schema",
-        "provenance": [
-            {
-                "source_db": "Curated showcase",
-                "record_id": "PCB_153->RyR",
-                "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
-                "citation": "Non-dioxin-like PCB RyR sensitization"
-            }
-        ]
-    },
-    {
-        "source": "PCB_138",
+        "source": "PCB_non_dioxin",
         "target": "8_OHdG",
         "type": "FORMS_ADDUCT",
         "label": "Oxidative DNA damage via PCB metabolism",
-        "carcinogen": "PCB_138",
+        "carcinogen": "PCB_non_dioxin",
         "source_db": "Curated showcase",
         "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
         "origin": "imported",
@@ -11397,28 +11259,7 @@ const GRAPH_DATA = {
         "provenance": [
             {
                 "source_db": "Curated showcase",
-                "record_id": "PCB_138->8_OHdG",
-                "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
-                "citation": "Non-dioxin-like PCB oxidative DNA damage"
-            }
-        ]
-    },
-    {
-        "source": "PCB_153",
-        "target": "8_OHdG",
-        "type": "FORMS_ADDUCT",
-        "label": "Oxidative DNA damage via PCB metabolism",
-        "carcinogen": "PCB_153",
-        "source_db": "Curated showcase",
-        "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
-        "origin": "imported",
-        "match_status": "canonical",
-        "canonical_predicate": "FORMS_ADDUCT",
-        "canonical_namespace": "schema",
-        "provenance": [
-            {
-                "source_db": "Curated showcase",
-                "record_id": "PCB_153->8_OHdG",
+                "record_id": "PCB_non_dioxin->8_OHdG",
                 "evidence": "Non-dioxin-like PCB metabolism generates ROS leading to 8-oxo-dG formation",
                 "citation": "Non-dioxin-like PCB oxidative DNA damage"
             }
