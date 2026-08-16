@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 import networkx as nx
@@ -12,6 +13,10 @@ import networkx as nx
 from .config import GraphMode
 from .grounding import prepare_knowledge_graph
 from .models import Edge, KnowledgeGraph, Node
+
+_PACKAGE_DIR = Path(__file__).resolve().parent
+_DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
+_DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_data.json"
 
 logger = logging.getLogger(__name__)
 
@@ -140,6 +145,87 @@ class GraphEngine:
 
     def clear(self) -> None:
         self.G.clear()
+
+    def load_reference_graph(
+        self,
+        *,
+        graph_data_path: str | Path | None = None,
+        tissue_expression_path: str | Path | None = None,
+    ) -> list[str]:
+        """Load the bundled reference graph from ``map/graph-data.json``.
+
+        This is the canonical way to instantiate the reference knowledge
+        graph in Python (``graph-data.js`` remains the separate artifact
+        consumed by the Streamlit/D3 viewer -- see ``exporter.to_graph_data_js``).
+
+        After the base graph is loaded, tissue expression data from
+        ``data/tissue_expression_data.json`` is (re)applied to the
+        relevant enzyme nodes -- see :meth:`_apply_tissue_expression` for
+        details. This *overwrites* whatever ``tissue_weights`` the bundled
+        graph-data.json baked directly into those node attributes, so the
+        freshly-sourced values become the sole source of truth.
+
+        Returns the combined warning messages from both steps.
+        """
+        from .exporter import parse_graph_artifact  # local import avoids an import cycle
+
+        resolved_graph_path = Path(graph_data_path) if graph_data_path else _DEFAULT_GRAPH_DATA_PATH
+        kg = parse_graph_artifact(resolved_graph_path)
+        warnings = self.load(kg)
+        warnings.extend(self._apply_tissue_expression(tissue_expression_path))
+        return warnings
+
+    def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
+        """(Re)apply ``tissue_expression_data.json`` to the relevant enzyme nodes.
+
+        For every ``Enzyme`` node with an entry in the source file's
+        ``expression`` table, the node's attributes are set to:
+
+        - ``tissue_weights_raw``: the raw per-tissue expression values,
+          taken directly from the source file.
+        - ``tissue_weights``: the same values normalized by dividing by
+          the highest raw value across that enzyme's tissues (so the
+          most-expressing tissue is always ``1.0``). This overwrites
+          any ``tissue_weights`` the node already had (e.g. baked in by
+          the bundled graph-data.json), which is no longer trusted as a
+          data source once this method has run.
+
+        Enzyme nodes with no entry in the source file are left with
+        neither attribute (any pre-existing ``tissue_weights`` on them is
+        also cleared, since it can no longer be attributed to this
+        source of truth) and are reported as a warning.
+
+        Returns a list of warning messages for enzyme nodes present in
+        the graph but absent from the tissue expression source file.
+        """
+        resolved_path = Path(path) if path else _DEFAULT_TISSUE_EXPRESSION_PATH
+        expression: dict[str, dict[str, float]] = json.loads(
+            resolved_path.read_text(encoding="utf-8")
+        )["expression"]
+
+        warnings: list[str] = []
+        enzyme_ids = [
+            node_id for node_id, data in self.G.nodes(data=True) if data.get("type") == "Enzyme"
+        ]
+        for enzyme_id in enzyme_ids:
+            node_data = self.G.nodes[enzyme_id]
+            raw = expression.get(enzyme_id)
+            if raw is None:
+                node_data.pop("tissue_weights", None)
+                node_data.pop("tissue_weights_raw", None)
+                warnings.append(f"No tissue expression data for enzyme: {enzyme_id}")
+                continue
+
+            max_raw = max(raw.values()) if raw else 0.0
+            normalized = (
+                {tissue: value / max_raw for tissue, value in raw.items()}
+                if max_raw
+                else dict.fromkeys(raw, 0.0)
+            )
+            node_data["tissue_weights_raw"] = raw
+            node_data["tissue_weights"] = normalized
+
+        return warnings
 
     # ── Queries ──────────────────────────────────────────────────────────
 

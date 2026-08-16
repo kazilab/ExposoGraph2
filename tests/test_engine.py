@@ -351,3 +351,89 @@ class TestValidation:
         errors = engine.validate()
         assert len(errors) == 1
         assert "GONE" in errors[0]
+
+
+class TestLoadReferenceGraph:
+    @pytest.fixture
+    def graph_data_path(self, tmp_path):
+        kg = KnowledgeGraph(
+            nodes=[
+                Node(
+                    id="CYP1A1",
+                    label="CYP1A1",
+                    type=NodeType.ENZYME,
+                    # Stale node-level tissue weights, as if baked in by an
+                    # older export -- _apply_tissue_expression should overwrite this.
+                    tissue_weights={"Liver": 0.1, "Lung": 0.9},
+                ),
+                Node(id="NOEXPR", label="NOEXPR", type=NodeType.ENZYME),
+                Node(id="BPDE", label="BPDE", type=NodeType.METABOLITE),
+            ],
+            edges=[Edge(source="CYP1A1", target="BPDE", type=EdgeType.ACTIVATES)],
+        )
+        path = tmp_path / "graph-data.json"
+        path.write_text(json.dumps(kg.model_dump(mode="json")))
+        return path
+
+    @pytest.fixture
+    def tissue_expression_path(self, tmp_path):
+        data = {
+            "metadata": {"tissues": ["Liver", "Lung"]},
+            "expression": {"CYP1A1": {"Liver": 40.0, "Lung": 10.0}},
+        }
+        path = tmp_path / "tissue_expression_data.json"
+        path.write_text(json.dumps(data))
+        return path
+
+    def test_apply_tissue_expression_overwrites_stale_node_data(
+        self, engine, graph_data_path, tissue_expression_path
+    ):
+        from ExposoGraph.exporter import parse_graph_artifact
+
+        engine.load(parse_graph_artifact(graph_data_path))
+        assert engine.get_data("CYP1A1", key="tissue_weights.Lung") == 0.9  # stale, pre-overwrite
+
+        warnings = engine._apply_tissue_expression(tissue_expression_path)
+
+        assert engine.get_data("CYP1A1", key="tissue_weights_raw") == {"Liver": 40.0, "Lung": 10.0}
+        assert engine.get_data("CYP1A1", key="tissue_weights") == {"Liver": 1.0, "Lung": 0.25}
+        assert "No tissue expression data for enzyme: NOEXPR" in warnings
+
+    def test_apply_tissue_expression_clears_missing_enzyme_stale_data(self, engine):
+        engine.add_node(
+            Node(
+                id="NOEXPR",
+                label="NOEXPR",
+                type=NodeType.ENZYME,
+                tissue_weights={"Liver": 0.5},
+            )
+        )
+        engine._apply_tissue_expression()  # uses the bundled tissue_expression_data.json
+        assert engine.get_data("NOEXPR", key="tissue_weights") is None
+        assert engine.get_data("NOEXPR", key="tissue_weights_raw") is None
+
+    def test_load_reference_graph_with_custom_paths(
+        self, engine, graph_data_path, tissue_expression_path
+    ):
+        warnings = engine.load_reference_graph(
+            graph_data_path=graph_data_path,
+            tissue_expression_path=tissue_expression_path,
+        )
+        assert engine.node_count == 3
+        assert engine.edge_count == 1
+        assert engine.get_data("CYP1A1", key="tissue_weights") == {"Liver": 1.0, "Lung": 0.25}
+        # The edge itself carries no tissue-weight attributes -- they live on the node.
+        edge = engine.get_data("CYP1A1", "BPDE")
+        assert "tissue_weights" not in edge
+        assert "tissue_weights_raw" not in edge
+        assert "No tissue expression data for enzyme: NOEXPR" in warnings
+
+    def test_load_reference_graph_defaults_to_bundled_files(self, engine):
+        engine.load_reference_graph()
+        assert engine.node_count == 231
+        assert engine.edge_count == 335
+        raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
+        normalized = engine.get_data("CYP1A1", key="tissue_weights")
+        assert raw is not None and normalized is not None
+        assert max(normalized.values()) == 1.0
+        assert normalized["Liver"] == raw["Liver"] / max(raw.values())
