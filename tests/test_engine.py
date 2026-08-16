@@ -329,6 +329,13 @@ class TestSerialization:
         kg = engine.to_knowledge_graph()
         assert len(kg.nodes) == 3
 
+    def test_to_knowledge_graph_preserves_tissue_weights_raw(self, engine):
+        engine.load_reference_graph()
+        kg = engine.to_knowledge_graph()
+        cyp1a1 = next(n for n in kg.nodes if n.id == "CYP1A1")
+        assert cyp1a1.tissue_weights_raw is not None
+        assert cyp1a1.tissue_weights_raw == engine.get_data("CYP1A1", key="tissue_weights_raw")
+
     def test_clear(self, engine, sample_kg):
         engine.load(sample_kg)
         engine.clear()

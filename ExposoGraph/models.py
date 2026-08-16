@@ -170,6 +170,7 @@ class Node(BaseModel):
     phenotype: Optional[str] = None
     activity_score: Optional[float] = None
     tissue_weights: Optional[dict[str, float]] = None
+    tissue_weights_raw: Optional[dict[str, float]] = None
     exposure_scenarios: Optional[dict[str, Any]] = None
     tier: Optional[int] = None
     origin: RecordOrigin = RecordOrigin.IMPORTED

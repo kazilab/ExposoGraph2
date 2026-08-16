@@ -35,6 +35,35 @@ class TestNode:
         node = Node(id="", label="CYP1A1", type=NodeType.ENZYME)
         assert node.id == "CYP1A1"
 
+    def test_tissue_weights_raw_field(self):
+        node = Node(
+            id="CYP1A1",
+            label="CYP1A1",
+            type=NodeType.ENZYME,
+            tissue_weights={"Liver": 1.0},
+            tissue_weights_raw={"Liver": 40.0},
+        )
+        assert node.tissue_weights == {"Liver": 1.0}
+        assert node.tissue_weights_raw == {"Liver": 40.0}
+
+    def test_tissue_weights_raw_survives_dict_round_trip(self):
+        # Guards against the extra="ignore" pydantic default silently dropping
+        # this field when reconstructing a Node from a plain dict (e.g. via
+        # GraphEngine.to_knowledge_graph()).
+        raw = {
+            "id": "CYP1A1",
+            "label": "CYP1A1",
+            "type": "Enzyme",
+            "tissue_weights": {"Liver": 1.0},
+            "tissue_weights_raw": {"Liver": 40.0},
+        }
+        node = Node(**raw)
+        assert node.model_dump()["tissue_weights_raw"] == {"Liver": 40.0}
+
+    def test_tissue_weights_raw_defaults_to_none(self):
+        node = Node(id="CYP1A1", label="CYP1A1", type=NodeType.ENZYME)
+        assert node.tissue_weights_raw is None
+
     def test_auto_id_special_chars_get_hash(self):
         n1 = Node(id="", label="Benzo[a]pyrene", type=NodeType.CARCINOGEN)
         n2 = Node(id="", label="Benzo(a)pyrene", type=NodeType.CARCINOGEN)
