@@ -182,7 +182,7 @@ def build_pharmacogenomic_risk_gene_profiles(
 
     profiles: list[PharmacogenomicRiskGeneProfile] = []
     for gene_id in _scored_enzyme_ids(engine):
-        node_data = engine.get_node(gene_id) or {}
+        node_data = engine.get_data(gene_id) or {}
         impact = variant_impact_score(engine, gene_id)
         carcinogen_groups = tuple(
             group
@@ -238,7 +238,7 @@ def build_pharmacogenomic_risk_class_profiles(
         }
         genes: list[str] = []
         for gene_id in sorted(node_ids.intersection(scored_gene_ids)):
-            node_data = engine.get_node(gene_id) or {}
+            node_data = engine.get_data(gene_id) or {}
             bucket = _role_bucket(node_data)
             totals[bucket] += float(node_data["activity_score"])
             genes.append(gene_id)

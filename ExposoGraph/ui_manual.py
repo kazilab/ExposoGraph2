@@ -165,7 +165,7 @@ def _render_add_edge(engine: GraphEngine) -> None:
         with c5:
             carcinogen_ids = [
                 n for n in node_ids
-                if (nd := engine.get_node(n)) is not None and nd.get("type") == "Carcinogen"
+                if (nd := engine.get_data(n)) is not None and nd.get("type") == "Carcinogen"
             ]
             e_carcin = st.selectbox("Carcinogen (context)", [""] + carcinogen_ids)
 

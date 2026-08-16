@@ -1101,7 +1101,7 @@ def extract_tissue_subgraph(
 
     # Find all relevant nodes
     for node_id in engine.G.nodes:
-        node_data = engine.get_node(node_id)
+        node_data = engine.get_data(node_id)
         if node_data is None:
             continue
 
@@ -1164,7 +1164,7 @@ def extract_tissue_subgraph(
     # Build KnowledgeGraph
     nodes = []
     for node_id in final_nodes:
-        data = engine.get_node(node_id)
+        data = engine.get_data(node_id)
         if data:
             # Add tissue expression annotation to detail field
             if data.get("type") in ("Enzyme", "Gene"):
@@ -1219,7 +1219,7 @@ def build_cancer_site_subgraph(
     nodes_to_include = set()
 
     for node_id in engine.G.nodes:
-        node_data = engine.get_node(node_id)
+        node_data = engine.get_data(node_id)
         if node_data is None:
             continue
 
@@ -1253,7 +1253,7 @@ def build_cancer_site_subgraph(
     # Build graph
     nodes = []
     for node_id in final_nodes:
-        data = engine.get_node(node_id)
+        data = engine.get_data(node_id)
         if data:
             # Add cancer site annotation to detail field
             is_primary = node_id in key_genes or node_id in nodes_to_include
@@ -1316,7 +1316,7 @@ def tissue_metabolism_chain(
 
         # Include if source or target is tissue-expressed or not a gene
         source_in_tissue = source in tissue_genes or source == carcinogen_id
-        target_node = engine.get_node(target)
+        target_node = engine.get_data(target)
         target_is_not_gene = target_node is not None and target_node.get("type") != "Enzyme"
 
         if source_in_tissue or target_is_not_gene:
@@ -1378,7 +1378,7 @@ def calculate_tissue_metabolism_capacity(
             level = get_tissue_expression_level(gene, tissue)
             weight = expr_weights.get(level, 0.2)
 
-        node_data = engine.get_node(gene)
+        node_data = engine.get_data(gene)
         if not node_data:
             continue
 
@@ -1507,7 +1507,7 @@ def build_multi_tissue_pathway(
     # Identify transport routes (if any transporters in graph)
     transporters = []
     for node_id in engine.G.nodes:
-        node_data = engine.get_node(node_id)
+        node_data = engine.get_data(node_id)
         if node_data and node_data.get("role") == "Transport":
             transporters.append(node_id)
 

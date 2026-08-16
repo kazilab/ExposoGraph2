@@ -211,7 +211,7 @@ def variant_impact_score(
 
     Returns ``None`` if *gene_id* is not in the graph.
     """
-    node_data = engine.get_node(gene_id)
+    node_data = engine.get_data(gene_id)
     if node_data is None:
         return None
 
