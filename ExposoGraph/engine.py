@@ -230,6 +230,41 @@ class GraphEngine:
         resolved = _resolve_path(data, key)
         return default if resolved is _MISSING else resolved
 
+    def get_data(
+        self,
+        source: str,
+        target: str | None = None,
+        *,
+        key: str | Sequence[str] | None = None,
+        edge_key: Any | None = None,
+        default: Any = None,
+    ) -> Any:
+        """Generic node/edge lookup that routes to :meth:`get_node` or
+        :meth:`get_edge` based on whether *target* is given.
+
+        - ``target`` omitted (``None``) -> routes to :meth:`get_node`,
+          treating *source* as a node id::
+
+              engine.get_data("CYP1A1")                            # full node dict
+              engine.get_data("CYP1A1", key="tissue_weights.Liver")  # nested value
+
+        - ``target`` given -> routes to :meth:`get_edge`, treating
+          *source*/*target* as an edge's endpoints::
+
+              engine.get_data("NDMA", "CYP2E1")  # full edge dict
+              engine.get_data("NDMA", "CYP2E1", key="kinetics.Ki.ethanol")  # nested value
+              # disambiguate parallel edges:
+              engine.get_data("A", "B", key="pmid", edge_key=some_key)
+
+        *key* and *edge_key* are keyword-only here (unlike on
+        :meth:`get_node`/:meth:`get_edge`, where *key* is positional) so
+        that the second positional argument is never ambiguous between
+        "this is a nested key" and "this is the edge's target node".
+        """
+        if target is None:
+            return self.get_node(source, key, default=default)
+        return self.get_edge(source, target, key, edge_key=edge_key, default=default)
+
     def neighbors(self, node_id: str) -> list[str]:
         if node_id not in self.G:
             return []

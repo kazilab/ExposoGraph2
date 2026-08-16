@@ -247,6 +247,57 @@ class TestQueries:
     def test_get_edge_keys_empty_when_no_edge(self, engine):
         assert engine.get_edge_keys("X", "Y") == []
 
+    def test_get_data_routes_to_node_when_target_omitted(self, engine, sample_kg):
+        engine.load(sample_kg)
+        assert engine.get_data("BaP") == engine.get_node("BaP")
+
+    def test_get_data_routes_to_node_with_nested_key(self, engine):
+        engine.add_node(
+            Node(
+                id="CYP1A1",
+                label="CYP1A1",
+                type=NodeType.ENZYME,
+                tissue_weights={"Liver": 1.0, "Lung": 0.25},
+            )
+        )
+        assert engine.get_data("CYP1A1", key="tissue_weights.Liver") == 1.0
+        assert engine.get_data("CYP1A1", key=("tissue_weights", "Lung")) == 0.25
+        assert engine.get_data("CYP1A1", key="tissue_weights.Kidney", default=0.0) == 0.0
+
+    def test_get_data_routes_to_edge_when_target_given(self, engine, sample_kg):
+        engine.load(sample_kg)
+        assert engine.get_data("CYP1A1", "BPDE") == engine.get_edge("CYP1A1", "BPDE")
+
+    def test_get_data_routes_to_edge_with_nested_key(self, engine):
+        engine.add_node(Node(id="NDMA", label="NDMA", type=NodeType.CARCINOGEN))
+        engine.add_node(Node(id="CYP2E1", label="CYP2E1", type=NodeType.ENZYME))
+        engine.add_edge(
+            Edge(
+                source="NDMA",
+                target="CYP2E1",
+                type=EdgeType.ACTIVATES,
+                kinetics={"Km_uM": 12.5, "Ki": {"acetaldehyde": 3.1, "ethanol": 8.4}},
+            )
+        )
+        assert engine.get_data("NDMA", "CYP2E1", key="kinetics.Km_uM") == 12.5
+        assert engine.get_data("NDMA", "CYP2E1", key=("kinetics", "Ki", "ethanol")) == 8.4
+        assert engine.get_data("NDMA", "CYP2E1", key="kinetics.Ki.missing", default=0.0) == 0.0
+
+    def test_get_data_edge_key_disambiguation(self, engine):
+        engine.add_node(Node(id="A", label="A", type=NodeType.ENZYME))
+        engine.add_node(Node(id="B", label="B", type=NodeType.METABOLITE))
+        engine.add_edge(Edge(source="A", target="B", type=EdgeType.ACTIVATES, pmid="1"))
+        engine.add_edge(Edge(source="A", target="B", type=EdgeType.ACTIVATES, pmid="2"))
+
+        keys = engine.get_edge_keys("A", "B")
+        assert {engine.get_data("A", "B", edge_key=k)["pmid"] for k in keys} == {"1", "2"}
+
+    def test_get_data_missing_node_and_edge_defaults(self, engine):
+        assert engine.get_data("X") is None
+        assert engine.get_data("X", key="tissue_weights.Liver", default="n/a") == "n/a"
+        assert engine.get_data("X", "Y") is None
+        assert engine.get_data("X", "Y", key="kinetics.Km_uM", default=-1) == -1
+
     def test_neighbors(self, engine, sample_kg):
         engine.load(sample_kg)
         nbrs = engine.neighbors("CYP1A1")
