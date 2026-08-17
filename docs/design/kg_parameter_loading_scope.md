@@ -286,3 +286,135 @@ This resolves three things that were previously open questions:
    for the 10 (enzyme, carcinogen) pairs that already have a real edge
    and a real `Carcinogen` node backing them, keeping the edge schema's
    meaning unambiguous.
+
+## Addendum 3: substrate-node identity, visibility, and provider wiring
+
+### Identity: no new edge type, extend metadata instead
+
+`grounding.py` already has an established mechanism for "is this the same
+real-world entity as an existing node" — `Node.match_status`
+(`CANONICAL`/`ALIAS`/`CUSTOM`/`UNMATCHED`) plus `canonical_id`/
+`canonical_label` fields on the node itself. (Note: `match_status`'s exact
+semantics are narrower/more specific than a general equivalence flag —
+this doc treats it only as "the existing term-matching mechanism
+grounding.py already uses," without relying on a precise definition
+beyond that.) A new `IS_EQUAL_TO` edge type was considered and rejected:
+it would create a second, competing identity mechanism alongside the
+existing node-level one, and every consumer (`kinetic_resolver`,
+`interaction_engine`, `endpoint_toxic_flux`, `mechanism_attribution`)
+would need new hop-resolution logic before any lookup.
+
+Instead, substrates split into three identity buckets:
+
+- **Bucket A (13 of 54): substrate already equals an existing
+  `Carcinogen` node** (8 exact + 5 case/naming aliases from Addendum 1).
+  No new node. Per-mechanism data (Km/Vmax/product/`reaction_role`) is
+  enzyme- and tissue-specific, so it belongs on the **edge**
+  (`Edge.kinetics`, the same pattern already used for `Edge.carcinogen`
+  disambiguation), not on the node.
+- **Bucket B: no carcinogen counterpart exists at all** (21 CYP
+  phenotyping probe substrates + `bilirubin`). New nodes under a new
+  `NodeType.SUBSTRATE`, so the type itself signals "queryable kinetics
+  entity, not a toxicological classification."
+- **Bucket C: real carcinogens/toxicants with no node today**
+  (`naphthalene, styrene, chloroform, trichloroethylene, nicotine,
+  chrysene, benzo_a_anthracene, dibenz_ah_anthracene, 1_nitropyrene,
+  3_methylindole, 4_aminobiphenyl, 6_aminochrysene, AalphaC, IQ,
+  sterigmatocystin, methoxsalen, NNAL, cotinine`). Same `NodeType.SUBSTRATE`
+  as an interim placeholder, using `Node.generate_id()` the same way a
+  `Carcinogen` node would, so promoting one to `NodeType.CARCINOGEN`
+  later is a type/metadata edit on the same node id, not a re-key.
+
+### Visibility: filter by NodeType at the render boundary, not by match_status
+
+The existing `GraphVisibility` filter (`graph_filters.filter_knowledge_graph`,
+used by the D3 viewer tab) filters on `match_status`, which is a different
+concern from "should this render at all." Reusing it to hide
+`NodeType.SUBSTRATE` nodes would be fragile — a validated `SUBSTRATE`
+node would still leak into `VALIDATED_ONLY` view. Proposed instead: an
+explicit `NodeType` exclusion at the two rendering entry points
+(`ui_map_viewer.py`'s bundled D3 export and
+`exporter.to_interactive_html_string`), symmetric with the existing
+`filter_knowledge_graph` pattern but keyed on type. `GraphEngine` query
+methods (`get_data`/`get_node`) stay unaffected — the full graph remains
+queryable; only the two rendering paths filter.
+
+### Provider wiring: parameter_provider.py is the only required new implementation
+
+`InteractionParameterProvider` (in `parameter_provider.py`) is already an
+abstract base class; `JSONInteractionParameterProvider` is the only
+concrete implementation today. A new `GraphInteractionParameterProvider(engine)`
+implementing the same ABC — using `engine.get_data(enzyme, substrate,
+key="kinetics")` for parameters and enumeration over enzyme-node edges for
+listing — is a peer implementation, not a rewrite:
+
+- `kinetic_resolver.py`: no logic changes. `KineticParameterResolver` only
+  calls provider methods; the one touch point is that its constructor's
+  type hint is currently the *concrete* `JSONInteractionParameterProvider`
+  class rather than the ABC, so it needs widening — a one-line signature
+  change, called out for the audit trail even though it's trivial.
+- `interaction_equations.py`: no changes. It only operates on already-
+  resolved numeric values, never touches JSON or the graph.
+- `interaction_schema.py`: no changes. Its dataclasses are already
+  provider-agnostic; a graph-backed provider just populates the same
+  shapes.
+- **Latent inconsistency surfaced (not created) by this work:**
+  `reaction_role` is dual-sourced today. Verified 0 of 74
+  `competitive_inhibition` JSON entries carry a `reaction_role` key, so
+  `JSONInteractionParameterProvider._build_competitive_interaction`
+  always defaults `CompetitiveInteraction.reaction_role` to `UNKNOWN`.
+  The actual curated roles (the benzene/NDMA/vinyl_chloride/HCA/TCE
+  records from Addendum 2) live in a separate registry,
+  `reaction_role_semantics.get_default_reaction_role_registry()`, queried
+  directly by `interaction_engine.py`/`endpoint_toxic_flux.py`, bypassing
+  the provider layer entirely. **Open question to resolve before
+  implementation:** should the graph become the single source of truth
+  for `reaction_role` (provider surfaces it from a graph edge/node
+  attribute), or does `reaction_role_semantics.py` stay as a Python-code
+  overlay the graph-backed provider still consults?
+- **Small additive engine gap:** `GraphEngine` has no method to enumerate
+  all edges of a given type from a node (`neighbors()` returns bare node
+  ids only, no type filter). A new `edges_from(node_id, edge_type=None)`
+  getter is needed, in the same spirit as the existing `get_node`/
+  `get_edge`/`get_data` getters added earlier on this branch.
+
+## Implementation commit plan (scoping only — none of this has been started)
+
+Proposed discrete, independently auditable commits, in dependency order:
+
+1. **Add `NodeType.SUBSTRATE`** to `models.py` + tests. Schema-only, no
+   data population, no behavior change — mirrors the existing
+   `NodeType.TISSUE` precedent (added but zero-instance until used).
+2. **Add `GraphEngine.edges_from(node_id, edge_type=None)`** + tests.
+   Mirrors the symmetric-getters precedent from commit `c489766`. No
+   callers yet.
+3. **Add type-based rendering exclusion** for `NodeType.SUBSTRATE` at the
+   two render entry points + tests confirming the bundled reference
+   graph's render output is unchanged today (it has zero `SUBSTRATE`
+   nodes yet, so this should be a no-op until commit 5).
+4. **Populate Bucket A**: extend the 10 existing (enzyme, carcinogen)
+   edges with `Edge.kinetics` from `competitive_inhibition`, resolving
+   the 5 case/naming aliases from Addendum 1 to the right edge endpoints;
+   create the 11 missing (enzyme, carcinogen) edges for the remaining
+   matched pairs, with warnings for anything still unresolved (mirroring
+   the tissue-expression warning pattern from commit `d86ad99`).
+5. **Create `NodeType.SUBSTRATE` nodes for Buckets B and C** (21 probe
+   substrates + `bilirubin`, plus the real missing carcinogens as
+   placeholders) and their Enzyme→Substrate edges with kinetics. The
+   bulk data-population commit, kept separate from provider wiring.
+6. **Add explicit `ReactionRoleAnnotation` records** (or the graph-
+   sourced equivalent, depending on how the open `reaction_role`
+   single-source-of-truth question above is resolved) for the
+   newly-tagged substrates — SME-reviewed, per the follow-up scoped in
+   Addendum 2.
+7. **Add `GraphInteractionParameterProvider`** implementing
+   `InteractionParameterProvider`, backed by `GraphEngine` queries over
+   commits 4–6's data; widen `KineticParameterResolver`'s constructor
+   type hint to the ABC. Additive and independently tested — no
+   call-site swap yet.
+8. **Cut over `interaction_engine.py`** to construct its
+   `KineticParameterResolver` with `GraphInteractionParameterProvider`
+   instead of `JSONInteractionParameterProvider`. Parity tests confirming
+   identical output to the JSON-backed path are required before this
+   commit, since it's the actual behavior-affecting cutover the whole
+   plan has been building toward.
