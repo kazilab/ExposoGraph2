@@ -154,15 +154,17 @@ def test_reference_graph_builds_without_remote_access(tmp_path: Path) -> None:
     assert reference_node_ids - graph_node_ids == substrate_only_ids
     # graph-data.json also now carries the 58 enzyme->substrate topology
     # edges added for the competitive_inhibition pairs from
-    # interaction_parameters.json that had no prior qualifying edge --
-    # these are queryable via the engine but, like the Substrate nodes
-    # above, are not yet rendered in the static map bundle (a render-
-    # exclusion pass for both is a separate, later step). Edge counts
-    # diverge by exactly that many; all pre-existing edges still match.
+    # interaction_parameters.json that had no prior qualifying edge, plus
+    # 11 more added for the phase2_conjugation pairs that likewise had no
+    # prior qualifying edge -- these are queryable via the engine but, like
+    # the Substrate nodes above, are not yet rendered in the static map
+    # bundle (a render-exclusion pass for both is a separate, later step).
+    # Edge counts diverge by exactly that many; all pre-existing edges
+    # still match.
     graph_edge_pairs = {(edge.source, edge.target) for edge in graph.edges}
     reference_edge_pairs = {(edge.source, edge.target) for edge in reference_graph.edges}
     assert graph_edge_pairs.issubset(reference_edge_pairs)
-    assert len(reference_edge_pairs) - len(graph_edge_pairs) == 58
+    assert len(reference_edge_pairs) - len(graph_edge_pairs) == 69
 
     engine = build_reference_engine()
     assert engine.node_count == len(reference_graph.nodes)

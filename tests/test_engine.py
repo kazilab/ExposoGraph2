@@ -444,10 +444,12 @@ class TestLoadReferenceGraph:
         # Carcinogen counterpart (verified against id/label/canonical_label),
         # for 325 nodes total. 461 legacy edges plus 58 enzyme->substrate
         # edges added for the competitive_inhibition pairs that had no
-        # existing qualifying edge (topology baked into graph-data.json;
-        # kinetics populated below), for 519 edges total.
+        # existing qualifying edge, plus 11 more enzyme->substrate edges added
+        # for the phase2_conjugation pairs that likewise had no existing
+        # qualifying edge (topology baked into graph-data.json; kinetics
+        # populated below), for 530 edges total.
         assert engine.node_count == 325
-        assert engine.edge_count == 519
+        assert engine.edge_count == 530
         raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
         normalized = engine.get_data("CYP1A1", key="tissue_weights")
         assert raw is not None and normalized is not None

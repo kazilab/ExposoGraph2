@@ -169,7 +169,8 @@ class GraphEngine:
            whatever ``tissue_weights`` the bundled graph-data.json baked
            directly into those node attributes, so the freshly-sourced
            values become the sole source of truth.
-        2. Competitive-inhibition kinetics from
+        2. Interaction kinetics (both ``competitive_inhibition`` and
+           ``phase2_conjugation`` blocks) from
            ``data/interaction_parameters.json`` are applied to the matching
            enzyme/substrate edges -- see :meth:`_apply_interaction_parameters`
            for details. Same overwrite semantics: the JSON file is the
@@ -247,20 +248,36 @@ class GraphEngine:
 
         return warnings
 
-    def _apply_interaction_parameters(self, path: str | Path | None = None) -> list[str]:
-        """(Re)apply ``competitive_inhibition`` kinetics from
-        ``interaction_parameters.json`` onto the matching enzyme/substrate edges.
+    #: Sibling top-level blocks of ``interaction_parameters.json`` that share
+    #: the identical ``<enzyme>.substrates.<substrate>`` shape and are both
+    #: processed by :meth:`_apply_interaction_parameters`.
+    _INTERACTION_PARAMETER_BLOCKS: tuple[str, ...] = (
+        "competitive_inhibition",
+        "phase2_conjugation",
+    )
 
-        For every ``competitive_inhibition.<enzyme>.substrates.<substrate>`` entry
-        in the source file, the entry's own ``graph_node_id`` field -- not the
+    def _apply_interaction_parameters(self, path: str | Path | None = None) -> list[str]:
+        """(Re)apply enzyme/substrate kinetics from ``interaction_parameters.json``
+        onto the matching edges.
+
+        Two sibling top-level blocks share an identical shape and are both
+        processed here, in this order: ``competitive_inhibition`` (Phase I
+        bioactivation/detoxification competing for the same CYP active site)
+        and ``phase2_conjugation`` (Phase II conjugation enzymes competing
+        for the same transferase active site / co-substrate pool). See
+        ``_INTERACTION_PARAMETER_BLOCKS``.
+
+        For every ``<block>.<enzyme>.substrates.<substrate>`` entry in the
+        source file, the entry's own ``graph_node_id`` field -- not the
         ``<substrate>`` JSON key itself -- names the graph node id it
         corresponds to. Every entry carries this field explicitly, including
         the majority where it's simply equal to the JSON key (an exact-match
-        ``Carcinogen`` or ``Substrate`` node id); naming mismatches (case
-        differences, aliases such as ``trichloroethylene`` -> ``TCE``, etc.)
-        are therefore resolved in the JSON itself, where a human reviewing
-        the data can audit them, rather than through a runtime alias/
-        exclusion table in this module.
+        ``Carcinogen``, ``Metabolite``, or ``Substrate`` node id); naming
+        mismatches (case differences, aliases such as
+        ``trichloroethylene`` -> ``TCE``, or a substrate resolving to its
+        parent carcinogen such as ``BPDE`` -> ``BaP``) are therefore resolved
+        in the JSON itself, where a human reviewing the data can audit them,
+        rather than through a runtime alias/exclusion table in this module.
 
         The entry's remaining fields (Km_uM, Vmax_relative, Ki_uM, product,
         product_carcinogenic, ...) are set, unchanged, as ``kinetics`` on
@@ -269,7 +286,9 @@ class GraphEngine:
         any ``kinetics`` already present on those edges (e.g. baked in by the
         bundled graph-data.json), which is no longer trusted as a data source
         once this method has run -- the same overwrite semantics as
-        :meth:`_apply_tissue_expression`.
+        :meth:`_apply_tissue_expression`. The two blocks' enzyme keys are
+        disjoint (Phase I CYPs vs. Phase II transferases), so there is no
+        cross-block collision risk in this overwrite step.
 
         Entries with a missing ``graph_node_id``, a ``graph_node_id`` that is
         not a node in the graph, or no matching edge are reported as warnings
@@ -279,29 +298,32 @@ class GraphEngine:
         """
         resolved_path = Path(path) if path else _DEFAULT_INTERACTION_PARAMETERS_PATH
         source_data = json.loads(resolved_path.read_text(encoding="utf-8"))
-        competitive_inhibition = source_data.get("competitive_inhibition", {})
 
         warnings: list[str] = []
         pending: dict[tuple[str, str], dict[str, Any]] = {}
-        for enzyme_id, enzyme_block in competitive_inhibition.items():
-            if enzyme_id == "_description" or not isinstance(enzyme_block, dict):
-                continue
-            for substrate_key, params in enzyme_block.get("substrates", {}).items():
-                resolved = params.get("graph_node_id")
-                if not resolved:
-                    warnings.append(
-                        "No graph_node_id declared for competitive_inhibition "
-                        f"substrate: {enzyme_id}/{substrate_key}"
-                    )
+        pending_block: dict[tuple[str, str], str] = {}
+        for block_name in self._INTERACTION_PARAMETER_BLOCKS:
+            block = source_data.get(block_name, {})
+            for enzyme_id, enzyme_block in block.items():
+                if enzyme_id == "_description" or not isinstance(enzyme_block, dict):
                     continue
-                if resolved not in self.G:
-                    warnings.append(
-                        f"graph_node_id {resolved!r} for competitive_inhibition substrate "
-                        f"{enzyme_id}/{substrate_key} is not a node in the graph"
-                    )
-                    continue
-                kinetics = {k: v for k, v in params.items() if k != "graph_node_id"}
-                pending[(enzyme_id, resolved)] = kinetics
+                for substrate_key, params in enzyme_block.get("substrates", {}).items():
+                    resolved = params.get("graph_node_id")
+                    if not resolved:
+                        warnings.append(
+                            f"No graph_node_id declared for {block_name} "
+                            f"substrate: {enzyme_id}/{substrate_key}"
+                        )
+                        continue
+                    if resolved not in self.G:
+                        warnings.append(
+                            f"graph_node_id {resolved!r} for {block_name} substrate "
+                            f"{enzyme_id}/{substrate_key} is not a node in the graph"
+                        )
+                        continue
+                    kinetics = {k: v for k, v in params.items() if k != "graph_node_id"}
+                    pending[(enzyme_id, resolved)] = kinetics
+                    pending_block[(enzyme_id, resolved)] = block_name
 
         applied: set[tuple[str, str]] = set()
         for source_id, _target_id, edge_data in self.G.edges(data=True):
@@ -312,8 +334,9 @@ class GraphEngine:
 
         for enzyme_id, resolved in pending:
             if (enzyme_id, resolved) not in applied:
+                block_name = pending_block[(enzyme_id, resolved)]
                 warnings.append(
-                    f"No edge found for competitive_inhibition pair: {enzyme_id} -> {resolved}"
+                    f"No edge found for {block_name} pair: {enzyme_id} -> {resolved}"
                 )
 
         return warnings
