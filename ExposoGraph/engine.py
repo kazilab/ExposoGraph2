@@ -477,6 +477,222 @@ class GraphEngine:
             if data.get("type") == node_type
         ]
 
+    # ── Domain-specific filters ──────────────────────────────────────────
+    #
+    # These read whatever tissue/group vocabulary is actually present in
+    # the loaded graph (never a hardcoded list), and the subgraph-returning
+    # methods all share one output shape -- {"nodes": [...], "edges": [...]}
+    # of plain attribute dicts, matching :meth:`to_dict` -- so callers can
+    # compose/pass them around uniformly. This is also the intended
+    # foundation for eventually replacing the ad hoc per-filter JS in
+    # ExposoGraph/map/index.html (applyCarcinogenFilter/applyTissueFilter)
+    # with a single server/engine-side filtering path.
+
+    def get_tissues(self) -> list[str]:
+        """Return every tissue name present in any node's ``tissue_weights``.
+
+        Currently only Enzyme nodes carry ``tissue_weights`` (populated by
+        :meth:`_apply_tissue_expression` from ``tissue_expression_data_raw.json``
+        at load time), but this scans all node types so it stays correct if
+        that ever changes. Sorted, deduplicated; empty if no node has
+        ``tissue_weights`` set.
+        """
+        tissues: set[str] = set()
+        for _, data in self.G.nodes(data=True):
+            weights = data.get("tissue_weights")
+            if weights:
+                tissues.update(weights.keys())
+        return sorted(tissues)
+
+    def get_carcinogen_groups(self) -> list[str]:
+        """Return every distinct ``group`` label among Carcinogen nodes.
+
+        e.g. ``"Aldehyde"``, ``"UV_Radiation"``, ``"PFAS"``. Scoped to
+        ``type == "Carcinogen"`` specifically -- other node types (Enzyme,
+        Gene, ...) use the same ``group`` attribute for unrelated groupings
+        (e.g. DNA-repair pathway families), which this deliberately excludes.
+        Sorted, deduplicated; empty if no Carcinogen node has a ``group``.
+        """
+        groups: set[str] = set()
+        for _, data in self.G.nodes(data=True):
+            if data.get("type") == "Carcinogen" and data.get("group"):
+                groups.add(data["group"])
+        return sorted(groups)
+
+    def carcinogens_by_group(self, group: str) -> list[dict[str, Any]]:
+        """Return every Carcinogen node whose ``group`` equals *group*.
+
+        See :meth:`get_carcinogen_groups` for the available values. Empty
+        list if *group* matches no Carcinogen node.
+        """
+        return [
+            data
+            for _, data in self.G.nodes(data=True)
+            if data.get("type") == "Carcinogen" and data.get("group") == group
+        ]
+
+    def node_neighborhood(self, node_id: str) -> dict[str, list[Any]]:
+        """Return the 1-hop neighborhood subgraph of *node_id*.
+
+        Nodes: *node_id* itself plus every direct successor/predecessor
+        (see :meth:`neighbors`). Edges: every edge directly incident to
+        *node_id* (either direction, all parallel edges). Returns
+        ``{"nodes": [], "edges": []}`` if *node_id* isn't in the graph.
+        """
+        if node_id not in self.G:
+            return {"nodes": [], "edges": []}
+        neighbor_ids = {node_id, *self.neighbors(node_id)}
+        nodes = [dict(self.G.nodes[n]) for n in neighbor_ids]
+        edges = [
+            dict(data)
+            for u, v, data in self.G.edges(data=True)
+            if u == node_id or v == node_id
+        ]
+        return {"nodes": nodes, "edges": edges}
+
+    def subgraph_by_node_type(self, node_type: str) -> dict[str, list[Any]]:
+        """Return the node-only subgraph of every node with ``type == node_type``.
+
+        Equivalent to ``{"nodes": nodes_by_type(node_type), "edges": []}``
+        -- deliberately no edges, even if two matching nodes happen to be
+        directly connected. See :meth:`subgraph_by_edge_type` for the
+        edge-driven counterpart.
+        """
+        return {"nodes": self.nodes_by_type(node_type), "edges": []}
+
+    def subgraph_by_edge_type(self, edge_type: str) -> dict[str, list[Any]]:
+        """Return every edge with ``type == edge_type``, plus their adjacent nodes.
+
+        Nodes are deduplicated across all matching edges' endpoints.
+        """
+        edges: list[dict[str, Any]] = []
+        node_ids: set[str] = set()
+        for u, v, data in self.G.edges(data=True):
+            if data.get("type") == edge_type:
+                edges.append(dict(data))
+                node_ids.add(u)
+                node_ids.add(v)
+        nodes = [dict(self.G.nodes[n]) for n in node_ids]
+        return {"nodes": nodes, "edges": edges}
+
+    def enzymes_by_tissue_threshold(self, tissue: str, threshold: float) -> dict[str, list[Any]]:
+        """Return Enzyme nodes at/above *threshold* for *tissue*, plus their neighborhood.
+
+        Qualifying enzymes: ``type == "Enzyme"`` and
+        ``tissue_weights[tissue] >= threshold`` (enzymes missing that
+        tissue key never qualify, regardless of *threshold*'s sign).
+        The result also includes every node/edge directly adjacent to a
+        qualifying enzyme -- mirroring ExposoGraph/map/index.html's
+        ``applyTissueFilter`` expansion -- not just the enzymes themselves.
+        """
+        qualifying_ids = {
+            node_id
+            for node_id, data in self.G.nodes(data=True)
+            if data.get("type") == "Enzyme"
+            and data.get("tissue_weights")
+            and data["tissue_weights"].get(tissue, float("-inf")) >= threshold
+        }
+        node_ids = set(qualifying_ids)
+        edges: list[dict[str, Any]] = []
+        for u, v, data in self.G.edges(data=True):
+            if u in qualifying_ids or v in qualifying_ids:
+                edges.append(dict(data))
+                node_ids.add(u)
+                node_ids.add(v)
+        nodes = [dict(self.G.nodes[n]) for n in node_ids]
+        return {"nodes": nodes, "edges": edges}
+
+    def filtered_subgraph(
+        self,
+        *,
+        group: str | None = None,
+        tissue: str | None = None,
+        tissue_threshold: float | None = None,
+        edge_type: str | None = None,
+        node_type: str | None = None,
+    ) -> dict[str, list[Any]]:
+        """Return the subgraph at the intersection of up to four filter axes.
+
+        Each axis is optional and left-``None`` axes impose no restriction
+        (the identity element for the intersection); passing nothing
+        returns the full graph. The four axes:
+
+        - *group*: an edge must touch a Carcinogen node in this group,
+          either directly (source/target) or via its ``carcinogen``
+          field. See :meth:`get_carcinogen_groups`.
+        - *tissue* (+ optional *tissue_threshold*, default ``-inf`` i.e.
+          any value): an edge must touch an Enzyme node with
+          ``tissue_weights[tissue] >= tissue_threshold``. See
+          :meth:`get_tissues`. *tissue_threshold* without *tissue* raises
+          ``ValueError``.
+        - *edge_type*: the edge's own ``type`` must match.
+        - *node_type*: an edge must touch a node with this ``type``.
+
+        IMPORTANT -- this is a strict logical AND across whichever axes
+        are given: an edge survives only if it satisfies *every* given
+        axis simultaneously, evaluated per-edge. This is stricter than
+        (and not a drop-in replacement for) ExposoGraph/map/index.html's
+        current filter buttons, which apply each filter independently as
+        an OR-based highlight rather than intersecting them -- e.g.
+        requesting ``group="PAH"`` and ``node_type="Enzyme"`` here returns
+        only PAH-carcinogen edges that *also* touch an Enzyme node, not
+        "all PAH-related nodes" unioned with "all Enzyme nodes". The
+        returned node set is the union of the surviving edges' endpoints
+        only -- a carcinogen matching *group* with no edge satisfying the
+        other axes will not appear. If that per-edge-AND semantics isn't
+        what's wanted for a given caller, filter node lists from the other
+        methods above directly instead.
+        """
+        if tissue_threshold is not None and tissue is None:
+            raise ValueError("tissue_threshold requires tissue to also be given")
+
+        group_node_ids: set[str] | None = None
+        if group is not None:
+            group_node_ids = {
+                node_id
+                for node_id, data in self.G.nodes(data=True)
+                if data.get("type") == "Carcinogen" and data.get("group") == group
+            }
+
+        tissue_node_ids: set[str] | None = None
+        if tissue is not None:
+            threshold = tissue_threshold if tissue_threshold is not None else float("-inf")
+            tissue_node_ids = {
+                node_id
+                for node_id, data in self.G.nodes(data=True)
+                if data.get("type") == "Enzyme"
+                and data.get("tissue_weights")
+                and data["tissue_weights"].get(tissue, float("-inf")) >= threshold
+            }
+
+        type_node_ids: set[str] | None = None
+        if node_type is not None:
+            type_node_ids = {
+                node_id for node_id, data in self.G.nodes(data=True) if data.get("type") == node_type
+            }
+
+        def _touches(u: str, v: str, carcinogen: str | None, candidates: set[str]) -> bool:
+            return u in candidates or v in candidates or (carcinogen is not None and carcinogen in candidates)
+
+        surviving_edges: list[dict[str, Any]] = []
+        node_ids: set[str] = set()
+        for u, v, data in self.G.edges(data=True):
+            if edge_type is not None and data.get("type") != edge_type:
+                continue
+            carcinogen = data.get("carcinogen")
+            if group_node_ids is not None and not _touches(u, v, carcinogen, group_node_ids):
+                continue
+            if tissue_node_ids is not None and not _touches(u, v, None, tissue_node_ids):
+                continue
+            if type_node_ids is not None and not (u in type_node_ids or v in type_node_ids):
+                continue
+            surviving_edges.append(dict(data))
+            node_ids.add(u)
+            node_ids.add(v)
+
+        nodes = [dict(self.G.nodes[n]) for n in node_ids]
+        return {"nodes": nodes, "edges": surviving_edges}
+
     # ── Serialization ────────────────────────────────────────────────────
 
     def to_dict(self) -> dict[str, list[Any]]:
