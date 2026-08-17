@@ -221,3 +221,68 @@ that assumption holds for only a small minority of the data:
   bridge to become graph-driven too (`CARCINOGEN_ENZYME_MAP` is a fourth,
   separate hardcoded vocabulary covering the same ground) — out of scope
   for the initial ingestion commit, called out here so it isn't lost.
+
+## Addendum 2: correction — non-carcinogen substrates are a designed category, not a gap
+
+The "41 of 54 unmatched substrates" framing above is too pessimistic for a
+subset of that group. `interaction_schema.ReactionRole` already defines
+`PROBE_ONLY` alongside `BIOACTIVATION`/`DETOXIFICATION`/`CLEARANCE`, and
+`endpoint_toxic_flux._interpretation_channel()` already routes
+`PROBE_ONLY` (and `UNKNOWN`, `DUAL_ROLE`) substrates to a neutral outcome
+that contributes nothing to `activation_burden_ratio` or
+`detox_failure_ratio`. Separately, `kinetic_resolver.get_ki(enzyme,
+inhibitor, target_substrate, ...)` treats "inhibitor" and "target
+substrate" as distinct roles, and `product_carcinogenic` on every JSON
+substrate entry already zeroes `activated_product_flux` when the reaction
+product isn't carcinogenic. **The pipeline already has a mechanism for
+correctly excluding non-carcinogenic substrates from toxic burden that
+has nothing to do with graph-node identity.** A substrate does not need a
+`Carcinogen` node to be handled correctly.
+
+This resolves three things that were previously open questions:
+
+1. **Design principle: node identity and reaction-role gating are
+   decoupled.** Whether a substrate gets a graph node is a
+   provenance/queryability decision, not a correctness requirement. The
+   correctness requirement is that every substrate have an explicit
+   `reaction_role` (not fall through to `UNKNOWN` by omission). This
+   replaces the earlier framing that treated "no matching node" as
+   inherently a gap to close.
+
+2. **Concrete follow-up work item (schema-data only, not this ingestion
+   commit): tag the untagged substrates explicitly.** Checking
+   `reaction_role_semantics.get_reaction_role_sme_records()` today shows
+   curated records only for `benzene`, `NDMA`, `vinyl_chloride`, `HCA`
+   (x2 enzymes), and one pending `trichloroethylene` candidate — **zero**
+   of the 21 CYP-phenotyping probe substrates (`caffeine, midazolam,
+   dextromethorphan, debrisoquine, S_warfarin, S_mephenytoin, tolbutamide,
+   coumarin, bufuralol, bupropion, nifedipine, erythromycin, diclofenac,
+   cyclosporine, omeprazole, p_nitrophenol, 7_ethoxyresorufin, phenacetin,
+   theophylline, acetaminophen, resveratrol`) and none of the endogenous
+   substrates (`bilirubin`, `testosterone`) have any `ReactionRoleAnnotation`
+   record. They currently fall through to `ReactionRole.UNKNOWN` by
+   default, which is neutral by accident rather than by explicit design.
+   Proposed follow-up (separate commit, SME sign-off needed before
+   marking any record `SMEReviewStatus.CURATED`): add explicit
+   `ReactionRoleAnnotation` records with `role=PROBE_ONLY` for the 21
+   pharmacology probe substrates, and `role=CLEARANCE` for `bilirubin`
+   (matches its existing JSON note: "Endogenous UGT1A1 substrate ...
+   Gilbert syndrome") and `testosterone` (matches its role as an
+   androgen-clearance-pathway phenotype marker). This is a data/registry
+   change to `reaction_role_semantics.py`, not a knowledge-graph change,
+   and is independent of when interaction_parameters.json ingestion
+   happens.
+
+3. **Resolved: `Edge.carcinogen` stays carcinogen-only; probe/endogenous
+   kinetics stay off the edge model.** Generalizing `Edge.carcinogen` to a
+   broader `competing_substrate` field (so probe substrates could also
+   live in `Edge.kinetics`) was considered and rejected for the first
+   ingestion pass: probe/endogenous substrates never need graph
+   traversal — they are leaf inputs to a calculation, not entities any
+   query needs to reach relationships from. Their Km/Vmax/product data
+   stays sourced from a lightweight name + `reaction_role` keyed lookup
+   outside the graph (i.e., still JSON/registry-backed, not a graph
+   query). `Edge.kinetics` and `Edge.carcinogen` are reserved exclusively
+   for the 10 (enzyme, carcinogen) pairs that already have a real edge
+   and a real `Carcinogen` node backing them, keeping the edge schema's
+   meaning unambiguous.
