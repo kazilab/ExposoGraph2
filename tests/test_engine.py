@@ -437,15 +437,17 @@ class TestLoadReferenceGraph:
 
     def test_load_reference_graph_defaults_to_bundled_files(self, engine):
         engine.load_reference_graph()
-        # 231 legacy nodes (Carcinogen/Enzyme/Metabolite/DNA_Adduct/Pathway)
-        # plus 49 NodeType.SUBSTRATE nodes sourced from
+        # graph-data.json was consolidated from feature_extend_knowledge_graph
+        # (277 nodes / 461 edges, replacing the prior 231-node/335-edge legacy
+        # set) plus 49 NodeType.SUBSTRATE nodes sourced from
         # interaction_parameters.json's substrate keys that have no existing
-        # Carcinogen counterpart (verified against id/label/canonical_label).
-        # 335 legacy edges plus 58 enzyme->substrate edges added for the
-        # competitive_inhibition pairs that had no existing qualifying edge
-        # (topology baked into graph-data.json; kinetics populated below).
-        assert engine.node_count == 280
-        assert engine.edge_count == 393
+        # Carcinogen counterpart (verified against id/label/canonical_label),
+        # for 325 nodes total. 461 legacy edges plus 58 enzyme->substrate
+        # edges added for the competitive_inhibition pairs that had no
+        # existing qualifying edge (topology baked into graph-data.json;
+        # kinetics populated below), for 519 edges total.
+        assert engine.node_count == 325
+        assert engine.edge_count == 519
         raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
         normalized = engine.get_data("CYP1A1", key="tissue_weights")
         assert raw is not None and normalized is not None
