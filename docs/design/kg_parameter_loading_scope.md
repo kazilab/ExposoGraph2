@@ -143,3 +143,81 @@ JSON caches.
   or `NDMA` group at all (those are presumably specific carcinogens filed
   under a different group). A resolver/mapping table is a prerequisite for
   any class-level ingestion approach, not a nice-to-have.
+
+## Addendum: `interaction_parameters.json` substrate-key coverage (verified)
+
+The proposed mapping table above says `interaction_parameters.json`
+substrates can ride on existing edges "using `Edge.carcinogen` as the
+competing substrate context." That assumed the substrates already have
+graph representation. A full inventory of `competitive_inhibition` shows
+that assumption holds for only a small minority of the data:
+
+- `competitive_inhibition` has 74 `(enzyme, substrate)` entries across 12
+  enzymes, using 54 unique substrate keys.
+- **8 of 54** substrate keys exact-match an existing `Carcinogen` node:
+  `AFB1, BaP, DMBA, MeIQx, NDEA, NDMA, NNK, PhIP`.
+- **5 of 54** are pure case/naming-convention mismatches, safe to
+  auto-resolve via a small alias table: `benzene`→`Benzene`,
+  `ethanol`→`Ethanol`, `vinyl_chloride`→`VinylChloride`,
+  `cyclophosphamide`→`Cyclophosphamide`, `testosterone`→`Testosterone`.
+- **41 of 54** have no corresponding node under any casing. These are not
+  one problem:
+  - Real IARC-relevant carcinogens/toxicants simply absent as graph nodes
+    today: `naphthalene, styrene, chloroform, trichloroethylene (graph's
+    "TCE"), nicotine, chrysene, benzo_a_anthracene, dibenz_ah_anthracene,
+    1_nitropyrene, 3_methylindole, 4_aminobiphenyl (graph's "4ABP"),
+    6_aminochrysene, AalphaC, IQ, sterigmatocystin, methoxsalen, NNAL,
+    cotinine`. A content gap, not an aliasing problem — **deferred** to a
+    separate content-curation effort, not in scope for the ingestion
+    mechanism itself.
+  - Non-carcinogenic CYP "probe substrates" from the pharmacology
+    literature, used only to characterize enzyme kinetics, not carcinogens
+    by any classification: `caffeine, midazolam, dextromethorphan,
+    debrisoquine, S_warfarin, S_mephenytoin, tolbutamide, coumarin,
+    bufuralol, bupropion, nifedipine, erythromycin, diclofenac,
+    cyclosporine, omeprazole, p_nitrophenol, 7_ethoxyresorufin,
+    phenacetin, theophylline, acetaminophen, resveratrol`. These do not
+    obviously belong under `NodeType.CARCINOGEN`. **Deferred**: no new
+    node type introduced yet; the ingestion mechanism should skip these
+    (leave them JSON-only) rather than force-fit them, and
+    `interaction_engine` keeps a narrow non-graph fallback for exactly
+    these keys until/unless a `Xenobiotic`-style node type is deliberately
+    added.
+  - Two ambiguous cases needing SME confirmation, not string matching:
+    `estradiol_2_OH`/`estradiol_4_OH` plausibly correspond to the existing
+    Metabolite nodes `2OHE2`/`HydroxyE2` (the graph already has an
+    `E2`→`2OHE2` `ACTIVATES` edge), but the naming conventions are
+    unrelated enough that no mechanical rule should auto-resolve this.
+    **Left unresolved** pending confirmation.
+- The identical substrate-coverage problem exists in the sibling block
+  `phase2_conjugation`: its outer enzyme keys match `Enzyme` nodes exactly,
+  but its own nested `substrates` keys have the same gap (e.g.
+  `UGT1A1.substrates.bilirubin` — an endogenous compound, no graph node).
+- **Edge coverage gap, even for matched carcinogens.** Checking whether an
+  edge already exists tagged with the right `Edge.carcinogen` value for
+  each of the 21 `(enzyme, carcinogen)` pairs among the 8 exact matches:
+  only **10 of 21** have one. The other 11 — including `CYP1A1`/`PhIP` and
+  `NNK` against five separate enzymes — would need a brand-new edge
+  created before any Km/Vmax could attach to it. **Scope for the first
+  ingestion commit: only the 10 pairs with an existing edge**; the other
+  11 are reported as warnings (mirroring the tissue-expression warning
+  pattern) and deferred to a follow-up commit once product-node identity
+  (see below) is settled.
+- **`product` values are worse still.** Across all 74 substrate entries
+  there are 57 unique `product` values (what the reaction yields); only 1
+  (`BPDE`) matches an existing `Metabolite` node. For the first ingestion
+  pass, `product`/`product_carcinogenic` stay as plain string/bool fields
+  inside `Edge.kinetics` rather than becoming node references — minting
+  ~56 new `Metabolite` nodes is a separate, larger content decision.
+- **A third naming layer sits upstream of all of this.**
+  `interaction_engine.competitive_inhibition_flux()` takes an arbitrary
+  `substrates: dict[str, float]`, but that dict is normally built by
+  `_build_competitive_substrates()`, which hardcodes a small mapping from
+  exposure categories (`"PAH"`, `"HCA"`) to only a handful of the 54
+  substrate names. Most `competitive_inhibition` substrate entries are
+  never reached through the normal exposure-profile pathway today — only
+  through direct calls with an explicit substrate name (e.g. validation
+  code). Making `interaction_engine` graph-first eventually requires this
+  bridge to become graph-driven too (`CARCINOGEN_ENZYME_MAP` is a fourth,
+  separate hardcoded vocabulary covering the same ground) — out of scope
+  for the initial ingestion commit, called out here so it isn't lost.
