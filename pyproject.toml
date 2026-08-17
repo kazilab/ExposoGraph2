@@ -66,6 +66,7 @@ notebook = [
     "jupyter",
     "matplotlib>=3.8",
     "plotly>=6.0",
+    "seaborn>=0.13",
 ]
 dev = [
     "pytest",
