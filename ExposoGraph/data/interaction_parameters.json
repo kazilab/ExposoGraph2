@@ -782,16 +782,16 @@
           "assumed_ki": true,
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/chrysene"
         },
-        "DMBA": {
-          "graph_node_id": "DMBA",
+        "Dibenz_ah_anthracene": {
+          "graph_node_id": "Dibenz_ah_anthracene",
           "Km_uM": 0.3,
           "Vmax_relative": 1.8,
           "relative_priority": 1,
-          "product": "DMBA_3_4_diol_1_2_epoxide",
+          "product": "DBA_diol_epoxide",
           "product_carcinogenic": true,
-          "notes": "Experimental PAH carcinogen; very high affinity",
+          "notes": "Mapped from the legacy DMBA placeholder (removed from the graph; non-IARC-evaluated) to Dibenz[a,h]anthracene (IARC Group 2A). Km/Vmax carried over unchanged from the DMBA placeholder pending dedicated kinetic revalidation.",
           "assumed_ki": true,
-          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/DMBA"
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/Dibenz_ah_anthracene"
         },
         "7_ethoxyresorufin": {
           "graph_node_id": "7_ethoxyresorufin",
@@ -883,16 +883,16 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/BaP",
           "Ki_uM": 0.1
         },
-        "DMBA": {
-          "graph_node_id": "DMBA",
+        "Dibenz_ah_anthracene": {
+          "graph_node_id": "Dibenz_ah_anthracene",
           "Km_uM": 0.4,
           "Vmax_relative": 1.1,
           "relative_priority": 1,
-          "product": "DMBA_3_4_diol_1_2_epoxide",
+          "product": "DBA_diol_epoxide",
           "product_carcinogenic": true,
-          "notes": "Classical mammary carcinogen in rat bioassays",
+          "notes": "Mapped from the legacy DMBA placeholder (removed from the graph; non-IARC-evaluated) to Dibenz[a,h]anthracene (IARC Group 2A). Km/Vmax carried over unchanged from the DMBA placeholder pending dedicated kinetic revalidation.",
           "assumed_ki": true,
-          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/DMBA"
+          "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/Dibenz_ah_anthracene"
         },
         "4_aminobiphenyl": {
           "graph_node_id": "4ABP",
