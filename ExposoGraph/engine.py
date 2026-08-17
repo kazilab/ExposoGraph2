@@ -16,7 +16,7 @@ from .models import Edge, KnowledgeGraph, Node
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
-_DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_data.json"
+_DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_data_raw.json"
 _DEFAULT_INTERACTION_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "interaction_parameters.json"
 
 logger = logging.getLogger(__name__)
@@ -163,7 +163,7 @@ class GraphEngine:
         After the base graph is loaded, two sources are (re)applied on top of
         it, in order:
 
-        1. Tissue expression data from ``data/tissue_expression_data.json`` is
+        1. Tissue expression data from ``data/tissue_expression_data_raw.json`` is
            applied to the relevant enzyme nodes -- see
            :meth:`_apply_tissue_expression` for details. This *overwrites*
            whatever ``tissue_weights`` the bundled graph-data.json baked
@@ -187,7 +187,13 @@ class GraphEngine:
         return warnings
 
     def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
-        """(Re)apply ``tissue_expression_data.json`` to the relevant enzyme nodes.
+        """(Re)apply ``tissue_expression_data_raw.json`` to the relevant enzyme nodes.
+
+        The raw file covers 10 tissues (the original 8 plus
+        ``Skin_NotSunExposed``/``Skin_SunExposed``) and 76 genes -- a superset
+        of the older, pre-normalized ``tissue_expression_data.json`` (8
+        tissues, 59 genes), which remains bundled only for the separate
+        GTEx lookup helpers in ``tissue_subgraphs.py``, not for this method.
 
         For every ``Enzyme`` node with an entry in the source file's
         ``expression`` table, the node's attributes are set to:
@@ -210,6 +216,9 @@ class GraphEngine:
         the graph but absent from the tissue expression source file.
         """
         resolved_path = Path(path) if path else _DEFAULT_TISSUE_EXPRESSION_PATH
+        # This file's "expression" table is raw nTPM values with no
+        # normalization applied -- the divide-by-max step below is this
+        # method's own responsibility, unchanged regardless of source file.
         expression: dict[str, dict[str, float]] = json.loads(
             resolved_path.read_text(encoding="utf-8")
         )["expression"]
