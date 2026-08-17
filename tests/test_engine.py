@@ -438,10 +438,10 @@ class TestLoadReferenceGraph:
     def test_load_reference_graph_defaults_to_bundled_files(self, engine):
         engine.load_reference_graph()
         # 231 legacy nodes (Carcinogen/Enzyme/Metabolite/DNA_Adduct/Pathway)
-        # plus 50 NodeType.SUBSTRATE nodes sourced from
+        # plus 49 NodeType.SUBSTRATE nodes sourced from
         # interaction_parameters.json's substrate keys that have no existing
-        # Carcinogen counterpart.
-        assert engine.node_count == 281
+        # Carcinogen counterpart (verified against id/label/canonical_label).
+        assert engine.node_count == 280
         assert engine.edge_count == 335
         raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
         normalized = engine.get_data("CYP1A1", key="tissue_weights")
@@ -459,8 +459,12 @@ class TestLoadReferenceGraph:
         engine.load_reference_graph()
         substrate_nodes = engine.nodes_by_type(NodeType.SUBSTRATE)
         substrate_ids = [node["id"] for node in substrate_nodes]
-        assert len(substrate_nodes) == 50
-        assert len(set(substrate_ids)) == 50
+        assert len(substrate_nodes) == 49
+        assert len(set(substrate_ids)) == 49
+        # trichloroethylene aliases the existing TCE Carcinogen node
+        # (canonical_label="Trichloroethylene") and must NOT get its own
+        # Substrate node.
+        assert "trichloroethylene" not in substrate_ids
         assert "caffeine" in substrate_ids
         assert "naphthalene" in substrate_ids
         for node in substrate_nodes:

@@ -22,6 +22,20 @@ GRAPH_DATA_PATH = Path(__file__).resolve().parent.parent / "ExposoGraph" / "map"
 # on it without an alias layer. `detail` is general chemical/pharmacological
 # identity background (independent of, and not duplicating, the specific
 # enzyme-kinetics notes stored in interaction_parameters.json).
+#
+# NOTE on aliasing: this dict was built by comparing interaction_parameters.json
+# substrate keys against existing graph-data.json node *id*/*label* fields.
+# One additional key, "trichloroethylene", was initially included here but
+# was removed after a follow-up check against existing nodes' canonical_label
+# field (populated for nodes whose id/label is an abbreviation --
+# match_status="alias") found that it duplicates the existing Carcinogen node
+# "TCE" (canonical_label="Trichloroethylene"). No new node should be created
+# for it; a future GraphInteractionParameterProvider (Addendum 3 commit 7)
+# will need an explicit alias-resolution step mapping the
+# interaction_parameters.json key "trichloroethylene" -> node id "TCE", the
+# same category of join needed for the 19 previously-matched substrate keys
+# (e.g. "benzene" -> "Benzene", "vinyl_chloride" -> "VinylChloride") that were
+# never added here in the first place.
 NEW_SUBSTRATE_NODES: dict[str, tuple[str, str]] = {
     "1_nitropyrene": (
         "1-Nitropyrene",
@@ -324,10 +338,6 @@ NEW_SUBSTRATE_NODES: dict[str, tuple[str, str]] = {
             "Synthetic epoxide compound used as a laboratory probe substrate preferentially "
             "conjugated by GSTM1."
         ),
-    ),
-    "trichloroethylene": (
-        "Trichloroethylene",
-        ("Chlorinated industrial solvent oxidized primarily via CYP2E1 to reactive intermediates."),
     ),
 }
 
