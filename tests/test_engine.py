@@ -441,8 +441,11 @@ class TestLoadReferenceGraph:
         # plus 49 NodeType.SUBSTRATE nodes sourced from
         # interaction_parameters.json's substrate keys that have no existing
         # Carcinogen counterpart (verified against id/label/canonical_label).
+        # 335 legacy edges plus 58 enzyme->substrate edges added for the
+        # competitive_inhibition pairs that had no existing qualifying edge
+        # (topology baked into graph-data.json; kinetics populated below).
         assert engine.node_count == 280
-        assert engine.edge_count == 335
+        assert engine.edge_count == 393
         raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
         normalized = engine.get_data("CYP1A1", key="tissue_weights")
         assert raw is not None and normalized is not None
@@ -454,6 +457,12 @@ class TestLoadReferenceGraph:
         activated = engine.get_edge("CYP2E1", "Benzene_oxide")
         assert activated["kinetics"]["product"] == "benzene_oxide"
         assert activated["kinetics"]["product_carcinogenic"] is True
+        # New topology edge added this commit (no prior qualifying edge
+        # existed for this pair) whose kinetics also come from
+        # interaction_parameters.json via the same overlay method.
+        new_edge = engine.get_edge("CYP2E1", "Ethanol")
+        assert new_edge["type"] == "ACTIVATES"
+        assert new_edge["kinetics"]["product"] == "acetaldehyde"
 
     def test_load_reference_graph_substrate_nodes(self, engine):
         # Substrate identity nodes only -- no Km/Vmax/kinetics data is baked
