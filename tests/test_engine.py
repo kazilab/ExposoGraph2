@@ -448,6 +448,12 @@ class TestLoadReferenceGraph:
         assert raw is not None and normalized is not None
         assert max(normalized.values()) == 1.0
         assert normalized["Liver"] == raw["Liver"] / max(raw.values())
+        # Interaction-parameter kinetics are applied dynamically, not baked
+        # into graph-data.json -- see _apply_interaction_parameters. This
+        # pair already has a qualifying edge, so this is pure enrichment.
+        activated = engine.get_edge("CYP2E1", "Benzene_oxide")
+        assert activated["kinetics"]["product"] == "benzene_oxide"
+        assert activated["kinetics"]["product_carcinogenic"] is True
 
     def test_load_reference_graph_substrate_nodes(self, engine):
         # Substrate identity nodes only -- no Km/Vmax/kinetics data is baked

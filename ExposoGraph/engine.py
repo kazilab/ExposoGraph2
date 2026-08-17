@@ -17,6 +17,7 @@ from .models import Edge, KnowledgeGraph, Node
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
 _DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_data.json"
+_DEFAULT_INTERACTION_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "interaction_parameters.json"
 
 logger = logging.getLogger(__name__)
 
@@ -151,6 +152,7 @@ class GraphEngine:
         *,
         graph_data_path: str | Path | None = None,
         tissue_expression_path: str | Path | None = None,
+        interaction_parameters_path: str | Path | None = None,
     ) -> list[str]:
         """Load the bundled reference graph from ``map/graph-data.json``.
 
@@ -158,14 +160,22 @@ class GraphEngine:
         graph in Python (``graph-data.js`` remains the separate artifact
         consumed by the Streamlit/D3 viewer -- see ``exporter.to_graph_data_js``).
 
-        After the base graph is loaded, tissue expression data from
-        ``data/tissue_expression_data.json`` is (re)applied to the
-        relevant enzyme nodes -- see :meth:`_apply_tissue_expression` for
-        details. This *overwrites* whatever ``tissue_weights`` the bundled
-        graph-data.json baked directly into those node attributes, so the
-        freshly-sourced values become the sole source of truth.
+        After the base graph is loaded, two sources are (re)applied on top of
+        it, in order:
 
-        Returns the combined warning messages from both steps.
+        1. Tissue expression data from ``data/tissue_expression_data.json`` is
+           applied to the relevant enzyme nodes -- see
+           :meth:`_apply_tissue_expression` for details. This *overwrites*
+           whatever ``tissue_weights`` the bundled graph-data.json baked
+           directly into those node attributes, so the freshly-sourced
+           values become the sole source of truth.
+        2. Competitive-inhibition kinetics from
+           ``data/interaction_parameters.json`` are applied to the matching
+           enzyme/substrate edges -- see :meth:`_apply_interaction_parameters`
+           for details. Same overwrite semantics: the JSON file is the
+           trusted source for ``Edge.kinetics``, not graph-data.json.
+
+        Returns the combined warning messages from all three steps.
         """
         from .exporter import parse_graph_artifact  # local import avoids an import cycle
 
@@ -173,6 +183,7 @@ class GraphEngine:
         kg = parse_graph_artifact(resolved_graph_path)
         warnings = self.load(kg)
         warnings.extend(self._apply_tissue_expression(tissue_expression_path))
+        warnings.extend(self._apply_interaction_parameters(interaction_parameters_path))
         return warnings
 
     def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
@@ -224,6 +235,84 @@ class GraphEngine:
             )
             node_data["tissue_weights_raw"] = raw
             node_data["tissue_weights"] = normalized
+
+        return warnings
+
+    # Substrate keys in interaction_parameters.json that use different
+    # casing/naming than the corresponding graph node id.
+    _COMPETITIVE_INHIBITION_SUBSTRATE_ALIASES: dict[str, str] = {
+        "benzene": "Benzene",
+        "ethanol": "Ethanol",
+        "vinyl_chloride": "VinylChloride",
+        "cyclophosphamide": "Cyclophosphamide",
+        "testosterone": "Testosterone",
+        "4_aminobiphenyl": "4ABP",
+    }
+
+    # Substrate keys with no corresponding graph node, deliberately excluded
+    # rather than duplicated. ``trichloroethylene`` aliases the existing
+    # ``TCE`` carcinogen node -- see commit 6510009.
+    _COMPETITIVE_INHIBITION_SUBSTRATE_EXCLUSIONS: frozenset[str] = frozenset({"trichloroethylene"})
+
+    def _apply_interaction_parameters(self, path: str | Path | None = None) -> list[str]:
+        """(Re)apply ``competitive_inhibition`` kinetics from
+        ``interaction_parameters.json`` onto the matching enzyme/substrate edges.
+
+        For every ``competitive_inhibition.<enzyme>.substrates.<substrate>`` entry
+        in the source file, ``<substrate>`` is resolved to a node id already
+        present in the graph -- either directly (an exact-match ``Carcinogen``
+        node, or one of the ``Substrate`` nodes, whose ids are exactly the JSON
+        substrate keys), or via the small fixed alias table above for the few
+        case/naming mismatches. The resolved entry's ``params`` dict (Km_uM,
+        Vmax_relative, Ki_uM, product, product_carcinogenic, ...) is then set,
+        unchanged, as ``kinetics`` on every existing edge whose ``source`` is
+        that enzyme and whose ``carcinogen`` attribute equals the resolved
+        substrate id. This *overwrites* any ``kinetics`` already present on
+        those edges (e.g. baked in by the bundled graph-data.json), which is
+        no longer trusted as a data source once this method has run -- the
+        same overwrite semantics as :meth:`_apply_tissue_expression`.
+
+        Substrate keys with no corresponding node
+        (``_COMPETITIVE_INHIBITION_SUBSTRATE_EXCLUSIONS``) and enzyme/substrate
+        pairs with no matching edge are reported as warnings rather than
+        raising, mirroring the tissue-expression warning pattern.
+
+        Returns a list of warning messages.
+        """
+        resolved_path = Path(path) if path else _DEFAULT_INTERACTION_PARAMETERS_PATH
+        source_data = json.loads(resolved_path.read_text(encoding="utf-8"))
+        competitive_inhibition = source_data.get("competitive_inhibition", {})
+
+        warnings: list[str] = []
+        pending: dict[tuple[str, str], dict[str, Any]] = {}
+        for enzyme_id, enzyme_block in competitive_inhibition.items():
+            if enzyme_id == "_description" or not isinstance(enzyme_block, dict):
+                continue
+            for substrate_key, params in enzyme_block.get("substrates", {}).items():
+                if substrate_key in self._COMPETITIVE_INHIBITION_SUBSTRATE_EXCLUSIONS:
+                    continue
+                resolved = self._COMPETITIVE_INHIBITION_SUBSTRATE_ALIASES.get(
+                    substrate_key, substrate_key
+                )
+                if resolved not in self.G:
+                    warnings.append(
+                        f"No node for competitive_inhibition substrate: {enzyme_id}/{substrate_key}"
+                    )
+                    continue
+                pending[(enzyme_id, resolved)] = dict(params)
+
+        applied: set[tuple[str, str]] = set()
+        for source_id, _target_id, edge_data in self.G.edges(data=True):
+            key = (source_id, edge_data.get("carcinogen"))
+            if key in pending:
+                edge_data["kinetics"] = dict(pending[key])
+                applied.add(key)
+
+        for enzyme_id, resolved in pending:
+            if (enzyme_id, resolved) not in applied:
+                warnings.append(
+                    f"No edge found for competitive_inhibition pair: {enzyme_id} -> {resolved}"
+                )
 
         return warnings
 
