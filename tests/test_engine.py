@@ -463,6 +463,18 @@ class TestLoadReferenceGraph:
         new_edge = engine.get_edge("CYP2E1", "Ethanol")
         assert new_edge["type"] == "ACTIVATES"
         assert new_edge["kinetics"]["product"] == "acetaldehyde"
+        # trichloroethylene's competitive_inhibition entry declares
+        # graph_node_id="TCE", resolving via that field (rather than a
+        # runtime alias/exclusion table) onto the pre-existing
+        # CYP2E1 -> Chloral_hydrate edge (carcinogen="TCE"). No new
+        # topology edge is needed for this pair since one already existed.
+        tce_edge = engine.get_edge("CYP2E1", "Chloral_hydrate")
+        assert tce_edge["kinetics"]["product"] == "TCE_oxide"
+        assert tce_edge["kinetics"]["product_carcinogenic"] is True
+        # graph_node_id is a resolution-mechanism field, not a kinetic
+        # parameter, and must not leak into the edge's kinetics blob.
+        assert "graph_node_id" not in tce_edge["kinetics"]
+        assert "graph_node_id" not in activated["kinetics"]
 
     def test_load_reference_graph_substrate_nodes(self, engine):
         # Substrate identity nodes only -- no Km/Vmax/kinetics data is baked
