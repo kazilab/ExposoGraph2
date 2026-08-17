@@ -26,6 +26,16 @@ class TestNode:
         assert node.origin == RecordOrigin.IMPORTED
         assert node.match_status == MatchStatus.UNKNOWN
 
+    def test_substrate_node_type(self):
+        # NodeType.SUBSTRATE identifies substrates that are queryable graph
+        # entities (e.g. interaction_parameters.json substrate keys with no
+        # existing Carcinogen counterpart) without being carcinogens
+        # themselves. See docs/design/kg_parameter_loading_scope.md,
+        # Addendum 3.
+        node = Node(id="caffeine", label="Caffeine", type=NodeType.SUBSTRATE)
+        assert node.type == NodeType.SUBSTRATE
+        assert node.id == "caffeine"
+
     def test_auto_id_from_label(self):
         node = Node(id="", label="Benzo a pyrene", type=NodeType.CARCINOGEN)
         assert node.id.startswith("Benzo_a_pyrene_")

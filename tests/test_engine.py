@@ -437,10 +437,36 @@ class TestLoadReferenceGraph:
 
     def test_load_reference_graph_defaults_to_bundled_files(self, engine):
         engine.load_reference_graph()
-        assert engine.node_count == 231
+        # 231 legacy nodes (Carcinogen/Enzyme/Metabolite/DNA_Adduct/Pathway)
+        # plus 50 NodeType.SUBSTRATE nodes sourced from
+        # interaction_parameters.json's substrate keys that have no existing
+        # Carcinogen counterpart.
+        assert engine.node_count == 281
         assert engine.edge_count == 335
         raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
         normalized = engine.get_data("CYP1A1", key="tissue_weights")
         assert raw is not None and normalized is not None
         assert max(normalized.values()) == 1.0
         assert normalized["Liver"] == raw["Liver"] / max(raw.values())
+
+    def test_load_reference_graph_substrate_nodes(self, engine):
+        # Substrate identity nodes only -- no Km/Vmax/kinetics data is baked
+        # into graph-data.json; that stays sourced from
+        # interaction_parameters.json at instantiation time (analogous to
+        # tissue expression weights being sourced from
+        # tissue_expression_data.json rather than baked in). See
+        # docs/design/kg_parameter_loading_scope.md, Addendum 3.
+        engine.load_reference_graph()
+        substrate_nodes = engine.nodes_by_type(NodeType.SUBSTRATE)
+        substrate_ids = [node["id"] for node in substrate_nodes]
+        assert len(substrate_nodes) == 50
+        assert len(set(substrate_ids)) == 50
+        assert "caffeine" in substrate_ids
+        assert "naphthalene" in substrate_ids
+        for node in substrate_nodes:
+            assert node["type"] == NodeType.SUBSTRATE.value
+            # No interaction-parameters data (Km/Vmax/product/etc.) was
+            # copied onto the node itself.
+            assert "tissue_weights" not in node
+            assert "Km" not in node
+            assert "Vmax" not in node

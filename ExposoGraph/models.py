@@ -19,6 +19,7 @@ class NodeType(str, Enum):
     DNA_ADDUCT = "DNA_Adduct"
     PATHWAY = "Pathway"
     TISSUE = "Tissue"
+    SUBSTRATE = "Substrate"
 
 
 class EdgeType(str, Enum):

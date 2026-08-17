@@ -20,11 +20,13 @@ from ExposoGraph import (
     build_reference_graph,
     compute_interaction_matrix,
     compute_pathway_flux,
+    exposure_engine,
+    flux_engine,
+    interaction_engine,
 )
-from ExposoGraph import exposure_engine, flux_engine, interaction_engine
 from ExposoGraph.exporter import parse_graph_data_js, to_graph_data_js
+from ExposoGraph.models import NodeType
 from ExposoGraph.parameter_provider import JSONInteractionParameterProvider
-
 
 PACKAGE_ROOT = Path(ExposoGraph.__file__).resolve().parent
 REPO_ROOT = PACKAGE_ROOT.parent
@@ -137,7 +139,19 @@ def test_reference_graph_builds_without_remote_access(tmp_path: Path) -> None:
     assert len(graph.edges) > 0
 
     reference_graph = build_reference_graph()
-    assert len(reference_graph.nodes) == len(graph.nodes)
+    # graph-data.json (the Python-side source of truth) now intentionally
+    # carries additional NodeType.SUBSTRATE nodes that graph-data.js (the
+    # bundled Streamlit/D3 viewer asset) does not -- these are queryable via
+    # the engine but are not meant to render in the static map bundle. Node
+    # counts diverge by exactly that many; edges are untouched and still
+    # match exactly.
+    graph_node_ids = {node.id for node in graph.nodes}
+    reference_node_ids = {node.id for node in reference_graph.nodes}
+    assert graph_node_ids.issubset(reference_node_ids)
+    substrate_only_ids = {
+        node.id for node in reference_graph.nodes if node.type == NodeType.SUBSTRATE
+    }
+    assert reference_node_ids - graph_node_ids == substrate_only_ids
     assert len(reference_graph.edges) == len(graph.edges)
 
     engine = build_reference_engine()
