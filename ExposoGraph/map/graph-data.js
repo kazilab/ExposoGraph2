@@ -8873,17 +8873,6 @@ const GRAPH_DATA = {
       ]
     },
     {
-      "source": "NOH_PhIP",
-      "target": "PhIP_dG",
-      "type": "FORMS_ADDUCT",
-      "label": "C8-dG adduct",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "FORMS_ADDUCT",
-      "canonical_namespace": "schema",
-      "provenance": []
-    },
-    {
       "source": "PhIP_OAc",
       "target": "PhIP_dG",
       "type": "FORMS_ADDUCT",
