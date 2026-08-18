@@ -15,8 +15,8 @@
       "Breast",
       "Kidney",
       "Esophagus",
-      "Skin_NotSunExposed",
-      "Skin_SunExposed"
+      "Skin (Not Sun Exposed)",
+      "Skin (Sun Exposed)"
     ],
     "source_tissue_map": {
       "Liver": [
@@ -44,10 +44,10 @@
       "Esophagus": [
         "Esophagus - Mucosa"
       ],
-      "Skin_NotSunExposed": [
+      "Skin (Not Sun Exposed)": [
         "Skin - Not Sun Exposed (Suprapubic)"
       ],
-      "Skin_SunExposed": [
+      "Skin (Sun Exposed)": [
         "Skin - Sun Exposed (Lower leg)"
       ]
     },
@@ -63,8 +63,6 @@
       "GPx": "GPX1",
       "RyR": "RYR1"
     },
-    "genes_total": 76,
-    "graph_enzymes_total": 77,
     "hpa_unavailable_graph_enzymes": [
       "GSTT1"
     ]
@@ -79,8 +77,8 @@
       "Breast": 3.6,
       "Kidney": 4.3,
       "Esophagus": 1.1,
-      "Skin_NotSunExposed": 0.5,
-      "Skin_SunExposed": 0.4
+      "Skin (Not Sun Exposed)": 0.5,
+      "Skin (Sun Exposed)": 0.4
     },
     "ABCC2": {
       "Liver": 88.0,
@@ -91,8 +89,8 @@
       "Breast": 0.7,
       "Kidney": 9.3,
       "Esophagus": 0.3,
-      "Skin_NotSunExposed": 0.8,
-      "Skin_SunExposed": 0.9
+      "Skin (Not Sun Exposed)": 0.8,
+      "Skin (Sun Exposed)": 0.9
     },
     "ABCG2": {
       "Liver": 7.9,
@@ -103,8 +101,8 @@
       "Breast": 2.6,
       "Kidney": 1.5,
       "Esophagus": 1.3,
-      "Skin_NotSunExposed": 0.4,
-      "Skin_SunExposed": 0.5
+      "Skin (Not Sun Exposed)": 0.4,
+      "Skin (Sun Exposed)": 0.5
     },
     "ADH1B": {
       "Liver": 1599.6,
@@ -115,8 +113,8 @@
       "Breast": 889.7,
       "Kidney": 59.2,
       "Esophagus": 97.0,
-      "Skin_NotSunExposed": 122.4,
-      "Skin_SunExposed": 152.4
+      "Skin (Not Sun Exposed)": 122.4,
+      "Skin (Sun Exposed)": 152.4
     },
     "ADH1C": {
       "Liver": 703.3,
@@ -127,8 +125,8 @@
       "Breast": 19.8,
       "Kidney": 7.3,
       "Esophagus": 4.4,
-      "Skin_NotSunExposed": 0.7,
-      "Skin_SunExposed": 0.7
+      "Skin (Not Sun Exposed)": 0.7,
+      "Skin (Sun Exposed)": 0.7
     },
     "ADH5": {
       "Liver": 164.5,
@@ -139,8 +137,8 @@
       "Breast": 106.0,
       "Kidney": 86.9,
       "Esophagus": 73.2,
-      "Skin_NotSunExposed": 43.6,
-      "Skin_SunExposed": 51.8
+      "Skin (Not Sun Exposed)": 43.6,
+      "Skin (Sun Exposed)": 51.8
     },
     "AHR": {
       "Liver": 14.3,
@@ -151,8 +149,8 @@
       "Breast": 18.4,
       "Kidney": 4.3,
       "Esophagus": 10.4,
-      "Skin_NotSunExposed": 17.2,
-      "Skin_SunExposed": 13.8
+      "Skin (Not Sun Exposed)": 17.2,
+      "Skin (Sun Exposed)": 13.8
     },
     "AHRR": {
       "Liver": 0.5,
@@ -163,8 +161,8 @@
       "Breast": 0.4,
       "Kidney": 0.5,
       "Esophagus": 1.1,
-      "Skin_NotSunExposed": 1.0,
-      "Skin_SunExposed": 1.0
+      "Skin (Not Sun Exposed)": 1.0,
+      "Skin (Sun Exposed)": 1.0
     },
     "AKR1C2": {
       "Liver": 448.7,
@@ -175,8 +173,8 @@
       "Breast": 196.2,
       "Kidney": 13.1,
       "Esophagus": 191.5,
-      "Skin_NotSunExposed": 32.6,
-      "Skin_SunExposed": 39.2
+      "Skin (Not Sun Exposed)": 32.6,
+      "Skin (Sun Exposed)": 39.2
     },
     "AKR1C3": {
       "Liver": 285.4,
@@ -187,8 +185,8 @@
       "Breast": 123.6,
       "Kidney": 114.2,
       "Esophagus": 56.5,
-      "Skin_NotSunExposed": 23.6,
-      "Skin_SunExposed": 28.7
+      "Skin (Not Sun Exposed)": 23.6,
+      "Skin (Sun Exposed)": 28.7
     },
     "ALAD": {
       "Liver": 96.4,
@@ -199,8 +197,8 @@
       "Breast": 19.6,
       "Kidney": 31.7,
       "Esophagus": 34.3,
-      "Skin_NotSunExposed": 28.2,
-      "Skin_SunExposed": 27.4
+      "Skin (Not Sun Exposed)": 28.2,
+      "Skin (Sun Exposed)": 27.4
     },
     "ALDH2": {
       "Liver": 454.8,
@@ -211,8 +209,8 @@
       "Breast": 76.6,
       "Kidney": 73.8,
       "Esophagus": 46.4,
-      "Skin_NotSunExposed": 56.7,
-      "Skin_SunExposed": 63.5
+      "Skin (Not Sun Exposed)": 56.7,
+      "Skin (Sun Exposed)": 63.5
     },
     "AR": {
       "Liver": 10.7,
@@ -223,8 +221,8 @@
       "Breast": 4.8,
       "Kidney": 1.0,
       "Esophagus": 0.6,
-      "Skin_NotSunExposed": 2.1,
-      "Skin_SunExposed": 1.6
+      "Skin (Not Sun Exposed)": 2.1,
+      "Skin (Sun Exposed)": 1.6
     },
     "ARNT": {
       "Liver": 24.1,
@@ -235,8 +233,8 @@
       "Breast": 22.2,
       "Kidney": 13.1,
       "Esophagus": 15.8,
-      "Skin_NotSunExposed": 22.0,
-      "Skin_SunExposed": 23.3
+      "Skin (Not Sun Exposed)": 22.0,
+      "Skin (Sun Exposed)": 23.3
     },
     "AS3MT": {
       "Liver": 34.4,
@@ -247,8 +245,8 @@
       "Breast": 3.5,
       "Kidney": 9.4,
       "Esophagus": 2.2,
-      "Skin_NotSunExposed": 3.5,
-      "Skin_SunExposed": 3.4
+      "Skin (Not Sun Exposed)": 3.5,
+      "Skin (Sun Exposed)": 3.4
     },
     "CAR": {
       "Liver": 158.3,
@@ -259,8 +257,8 @@
       "Breast": 0.0,
       "Kidney": 3.5,
       "Esophagus": 0.1,
-      "Skin_NotSunExposed": 0.7,
-      "Skin_SunExposed": 0.7
+      "Skin (Not Sun Exposed)": 0.7,
+      "Skin (Sun Exposed)": 0.7
     },
     "CCBL1": {
       "Liver": 11.8,
@@ -271,8 +269,8 @@
       "Breast": 3.1,
       "Kidney": 7.6,
       "Esophagus": 4.9,
-      "Skin_NotSunExposed": 5.1,
-      "Skin_SunExposed": 4.0
+      "Skin (Not Sun Exposed)": 5.1,
+      "Skin (Sun Exposed)": 4.0
     },
     "COMT": {
       "Liver": 268.0,
@@ -283,8 +281,8 @@
       "Breast": 77.5,
       "Kidney": 77.7,
       "Esophagus": 184.9,
-      "Skin_NotSunExposed": 110.7,
-      "Skin_SunExposed": 94.4
+      "Skin (Not Sun Exposed)": 110.7,
+      "Skin (Sun Exposed)": 94.4
     },
     "CYP17A1": {
       "Liver": 6.5,
@@ -295,8 +293,8 @@
       "Breast": 0.4,
       "Kidney": 13.9,
       "Esophagus": 0.9,
-      "Skin_NotSunExposed": 0.7,
-      "Skin_SunExposed": 0.5
+      "Skin (Not Sun Exposed)": 0.7,
+      "Skin (Sun Exposed)": 0.5
     },
     "CYP19A1": {
       "Liver": 0.0,
@@ -307,8 +305,8 @@
       "Breast": 2.0,
       "Kidney": 0.1,
       "Esophagus": 0.1,
-      "Skin_NotSunExposed": 1.1,
-      "Skin_SunExposed": 1.6
+      "Skin (Not Sun Exposed)": 1.1,
+      "Skin (Sun Exposed)": 1.6
     },
     "CYP1A1": {
       "Liver": 39.8,
@@ -319,8 +317,8 @@
       "Breast": 14.0,
       "Kidney": 1.2,
       "Esophagus": 1.8,
-      "Skin_NotSunExposed": 8.6,
-      "Skin_SunExposed": 13.2
+      "Skin (Not Sun Exposed)": 8.6,
+      "Skin (Sun Exposed)": 13.2
     },
     "CYP1A2": {
       "Liver": 248.8,
@@ -331,8 +329,8 @@
       "Breast": 0.0,
       "Kidney": 0.1,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.5,
-      "Skin_SunExposed": 0.5
+      "Skin (Not Sun Exposed)": 0.5,
+      "Skin (Sun Exposed)": 0.5
     },
     "CYP1B1": {
       "Liver": 5.0,
@@ -343,8 +341,8 @@
       "Breast": 16.7,
       "Kidney": 11.5,
       "Esophagus": 4.0,
-      "Skin_NotSunExposed": 5.7,
-      "Skin_SunExposed": 5.9
+      "Skin (Not Sun Exposed)": 5.7,
+      "Skin (Sun Exposed)": 5.9
     },
     "CYP2A13": {
       "Liver": 1.9,
@@ -355,8 +353,8 @@
       "Breast": 0.0,
       "Kidney": 0.0,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "CYP2A6": {
       "Liver": 906.0,
@@ -367,8 +365,8 @@
       "Breast": 0.4,
       "Kidney": 0.0,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "CYP2B6": {
       "Liver": 306.1,
@@ -379,8 +377,8 @@
       "Breast": 0.0,
       "Kidney": 8.2,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "CYP2C19": {
       "Liver": 58.9,
@@ -391,8 +389,8 @@
       "Breast": 0.0,
       "Kidney": 0.0,
       "Esophagus": 2.2,
-      "Skin_NotSunExposed": 0.2,
-      "Skin_SunExposed": 0.1
+      "Skin (Not Sun Exposed)": 0.2,
+      "Skin (Sun Exposed)": 0.1
     },
     "CYP2C9": {
       "Liver": 675.4,
@@ -403,8 +401,8 @@
       "Breast": 0.0,
       "Kidney": 2.1,
       "Esophagus": 3.5,
-      "Skin_NotSunExposed": 0.6,
-      "Skin_SunExposed": 0.3
+      "Skin (Not Sun Exposed)": 0.6,
+      "Skin (Sun Exposed)": 0.3
     },
     "CYP2D6": {
       "Liver": 386.2,
@@ -415,8 +413,8 @@
       "Breast": 0.1,
       "Kidney": 0.3,
       "Esophagus": 0.2,
-      "Skin_NotSunExposed": 0.2,
-      "Skin_SunExposed": 0.2
+      "Skin (Not Sun Exposed)": 0.2,
+      "Skin (Sun Exposed)": 0.2
     },
     "CYP2E1": {
       "Liver": 5442.1,
@@ -427,8 +425,8 @@
       "Breast": 2.8,
       "Kidney": 4.3,
       "Esophagus": 15.9,
-      "Skin_NotSunExposed": 9.9,
-      "Skin_SunExposed": 10.7
+      "Skin (Not Sun Exposed)": 9.9,
+      "Skin (Sun Exposed)": 10.7
     },
     "CYP2F1": {
       "Liver": 0.0,
@@ -439,8 +437,8 @@
       "Breast": 0.0,
       "Kidney": 0.0,
       "Esophagus": 0.7,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "CYP3A4": {
       "Liver": 521.7,
@@ -451,8 +449,8 @@
       "Breast": 0.2,
       "Kidney": 0.4,
       "Esophagus": 0.2,
-      "Skin_NotSunExposed": 1.1,
-      "Skin_SunExposed": 1.2
+      "Skin (Not Sun Exposed)": 1.1,
+      "Skin (Sun Exposed)": 1.2
     },
     "CYP3A5": {
       "Liver": 319.4,
@@ -463,8 +461,8 @@
       "Breast": 7.7,
       "Kidney": 12.1,
       "Esophagus": 22.9,
-      "Skin_NotSunExposed": 19.0,
-      "Skin_SunExposed": 15.9
+      "Skin (Not Sun Exposed)": 19.0,
+      "Skin (Sun Exposed)": 15.9
     },
     "DMT1_Pb": {
       "Liver": 12.3,
@@ -475,8 +473,8 @@
       "Breast": 11.1,
       "Kidney": 10.7,
       "Esophagus": 14.9,
-      "Skin_NotSunExposed": 14.7,
-      "Skin_SunExposed": 14.9
+      "Skin (Not Sun Exposed)": 14.7,
+      "Skin (Sun Exposed)": 14.9
     },
     "EGLN1": {
       "Liver": 40.1,
@@ -487,8 +485,8 @@
       "Breast": 35.3,
       "Kidney": 24.4,
       "Esophagus": 22.7,
-      "Skin_NotSunExposed": 34.7,
-      "Skin_SunExposed": 36.8
+      "Skin (Not Sun Exposed)": 34.7,
+      "Skin (Sun Exposed)": 36.8
     },
     "EPHX1": {
       "Liver": 1202.7,
@@ -499,8 +497,8 @@
       "Breast": 160.4,
       "Kidney": 89.2,
       "Esophagus": 156.8,
-      "Skin_NotSunExposed": 60.9,
-      "Skin_SunExposed": 70.6
+      "Skin (Not Sun Exposed)": 60.9,
+      "Skin (Sun Exposed)": 70.6
     },
     "ERCC2": {
       "Liver": 6.9,
@@ -511,8 +509,8 @@
       "Breast": 4.0,
       "Kidney": 6.3,
       "Esophagus": 5.2,
-      "Skin_NotSunExposed": 5.7,
-      "Skin_SunExposed": 5.9
+      "Skin (Not Sun Exposed)": 5.7,
+      "Skin (Sun Exposed)": 5.9
     },
     "ESR1": {
       "Liver": 10.5,
@@ -523,8 +521,8 @@
       "Breast": 12.6,
       "Kidney": 1.6,
       "Esophagus": 0.4,
-      "Skin_NotSunExposed": 1.1,
-      "Skin_SunExposed": 0.9
+      "Skin (Not Sun Exposed)": 1.1,
+      "Skin (Sun Exposed)": 0.9
     },
     "FANCD2": {
       "Liver": 0.3,
@@ -535,8 +533,8 @@
       "Breast": 1.0,
       "Kidney": 0.5,
       "Esophagus": 2.2,
-      "Skin_NotSunExposed": 1.6,
-      "Skin_SunExposed": 1.5
+      "Skin (Not Sun Exposed)": 1.6,
+      "Skin (Sun Exposed)": 1.5
     },
     "GPx": {
       "Liver": 621.9,
@@ -547,8 +545,8 @@
       "Breast": 345.6,
       "Kidney": 344.7,
       "Esophagus": 287.1,
-      "Skin_NotSunExposed": 142.8,
-      "Skin_SunExposed": 137.6
+      "Skin (Not Sun Exposed)": 142.8,
+      "Skin (Sun Exposed)": 137.6
     },
     "GSTM1": {
       "Liver": 532.3,
@@ -559,8 +557,8 @@
       "Breast": 54.8,
       "Kidney": 30.9,
       "Esophagus": 145.2,
-      "Skin_NotSunExposed": 68.8,
-      "Skin_SunExposed": 53.5
+      "Skin (Not Sun Exposed)": 68.8,
+      "Skin (Sun Exposed)": 53.5
     },
     "GSTO1": {
       "Liver": 490.0,
@@ -571,8 +569,8 @@
       "Breast": 104.3,
       "Kidney": 163.6,
       "Esophagus": 95.9,
-      "Skin_NotSunExposed": 73.7,
-      "Skin_SunExposed": 75.3
+      "Skin (Not Sun Exposed)": 73.7,
+      "Skin (Sun Exposed)": 75.3
     },
     "GSTO2": {
       "Liver": 1.4,
@@ -583,8 +581,8 @@
       "Breast": 1.9,
       "Kidney": 4.2,
       "Esophagus": 4.6,
-      "Skin_NotSunExposed": 7.1,
-      "Skin_SunExposed": 6.2
+      "Skin (Not Sun Exposed)": 7.1,
+      "Skin (Sun Exposed)": 6.2
     },
     "GSTP1": {
       "Liver": 62.2,
@@ -595,8 +593,8 @@
       "Breast": 395.3,
       "Kidney": 613.9,
       "Esophagus": 2859.0,
-      "Skin_NotSunExposed": 997.5,
-      "Skin_SunExposed": 934.5
+      "Skin (Not Sun Exposed)": 997.5,
+      "Skin (Sun Exposed)": 934.5
     },
     "HLA_DPB1": {
       "Liver": 36.5,
@@ -607,8 +605,8 @@
       "Breast": 105.5,
       "Kidney": 81.3,
       "Esophagus": 41.9,
-      "Skin_NotSunExposed": 67.0,
-      "Skin_SunExposed": 68.3
+      "Skin (Not Sun Exposed)": 67.0,
+      "Skin (Sun Exposed)": 68.3
     },
     "HSD3B2": {
       "Liver": 1.0,
@@ -619,8 +617,8 @@
       "Breast": 0.1,
       "Kidney": 0.9,
       "Esophagus": 0.2,
-      "Skin_NotSunExposed": 0.2,
-      "Skin_SunExposed": 0.1
+      "Skin (Not Sun Exposed)": 0.2,
+      "Skin (Sun Exposed)": 0.1
     },
     "LAT1_Hg": {
       "Liver": 24.8,
@@ -631,8 +629,8 @@
       "Breast": 5.5,
       "Kidney": 7.7,
       "Esophagus": 96.2,
-      "Skin_NotSunExposed": 24.4,
-      "Skin_SunExposed": 18.7
+      "Skin (Not Sun Exposed)": 24.4,
+      "Skin (Sun Exposed)": 18.7
     },
     "MGMT": {
       "Liver": 125.9,
@@ -643,8 +641,8 @@
       "Breast": 28.4,
       "Kidney": 31.7,
       "Esophagus": 19.6,
-      "Skin_NotSunExposed": 23.7,
-      "Skin_SunExposed": 23.3
+      "Skin (Not Sun Exposed)": 23.7,
+      "Skin (Sun Exposed)": 23.3
     },
     "MLH1": {
       "Liver": 10.7,
@@ -655,8 +653,8 @@
       "Breast": 10.1,
       "Kidney": 7.9,
       "Esophagus": 10.0,
-      "Skin_NotSunExposed": 8.4,
-      "Skin_SunExposed": 8.6
+      "Skin (Not Sun Exposed)": 8.4,
+      "Skin (Sun Exposed)": 8.6
     },
     "MSH2": {
       "Liver": 3.6,
@@ -667,8 +665,8 @@
       "Breast": 6.4,
       "Kidney": 4.3,
       "Esophagus": 8.2,
-      "Skin_NotSunExposed": 8.3,
-      "Skin_SunExposed": 8.4
+      "Skin (Not Sun Exposed)": 8.3,
+      "Skin (Sun Exposed)": 8.4
     },
     "MT1A": {
       "Liver": 400.5,
@@ -679,8 +677,8 @@
       "Breast": 200.7,
       "Kidney": 26.9,
       "Esophagus": 18.2,
-      "Skin_NotSunExposed": 23.0,
-      "Skin_SunExposed": 23.5
+      "Skin (Not Sun Exposed)": 23.0,
+      "Skin (Sun Exposed)": 23.5
     },
     "MT2A": {
       "Liver": 15847.5,
@@ -691,8 +689,8 @@
       "Breast": 2568.2,
       "Kidney": 2133.7,
       "Esophagus": 1075.1,
-      "Skin_NotSunExposed": 1547.5,
-      "Skin_SunExposed": 1519.6
+      "Skin (Not Sun Exposed)": 1547.5,
+      "Skin (Sun Exposed)": 1519.6
     },
     "NAT1": {
       "Liver": 9.8,
@@ -703,8 +701,8 @@
       "Breast": 2.0,
       "Kidney": 2.4,
       "Esophagus": 2.5,
-      "Skin_NotSunExposed": 0.7,
-      "Skin_SunExposed": 0.7
+      "Skin (Not Sun Exposed)": 0.7,
+      "Skin (Sun Exposed)": 0.7
     },
     "NAT2": {
       "Liver": 70.9,
@@ -715,8 +713,8 @@
       "Breast": 0.1,
       "Kidney": 0.4,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "NQO1": {
       "Liver": 4.9,
@@ -727,8 +725,8 @@
       "Breast": 63.8,
       "Kidney": 78.5,
       "Esophagus": 145.3,
-      "Skin_NotSunExposed": 9.2,
-      "Skin_SunExposed": 10.6
+      "Skin (Not Sun Exposed)": 9.2,
+      "Skin (Sun Exposed)": 10.6
     },
     "OGG1": {
       "Liver": 17.9,
@@ -739,8 +737,8 @@
       "Breast": 11.3,
       "Kidney": 25.5,
       "Esophagus": 8.6,
-      "Skin_NotSunExposed": 8.5,
-      "Skin_SunExposed": 8.4
+      "Skin (Not Sun Exposed)": 8.5,
+      "Skin (Sun Exposed)": 8.4
     },
     "PARP1": {
       "Liver": 26.7,
@@ -751,8 +749,8 @@
       "Breast": 21.1,
       "Kidney": 17.0,
       "Esophagus": 27.0,
-      "Skin_NotSunExposed": 18.3,
-      "Skin_SunExposed": 18.8
+      "Skin (Not Sun Exposed)": 18.3,
+      "Skin (Sun Exposed)": 18.8
     },
     "PPARA": {
       "Liver": 30.8,
@@ -763,8 +761,8 @@
       "Breast": 3.4,
       "Kidney": 11.1,
       "Esophagus": 3.9,
-      "Skin_NotSunExposed": 4.6,
-      "Skin_SunExposed": 4.8
+      "Skin (Not Sun Exposed)": 4.6,
+      "Skin (Sun Exposed)": 4.8
     },
     "PXR": {
       "Liver": 39.3,
@@ -775,8 +773,8 @@
       "Breast": 0.0,
       "Kidney": 0.0,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "RyR": {
       "Liver": 0.2,
@@ -787,8 +785,8 @@
       "Breast": 1.5,
       "Kidney": 0.4,
       "Esophagus": 6.0,
-      "Skin_NotSunExposed": 6.9,
-      "Skin_SunExposed": 5.8
+      "Skin (Not Sun Exposed)": 6.9,
+      "Skin (Sun Exposed)": 5.8
     },
     "SEPP1": {
       "Liver": 1782.0,
@@ -799,8 +797,8 @@
       "Breast": 280.6,
       "Kidney": 211.7,
       "Esophagus": 94.9,
-      "Skin_NotSunExposed": 126.9,
-      "Skin_SunExposed": 114.7
+      "Skin (Not Sun Exposed)": 126.9,
+      "Skin (Sun Exposed)": 114.7
     },
     "SLC11A1": {
       "Liver": 5.3,
@@ -811,8 +809,8 @@
       "Breast": 5.2,
       "Kidney": 3.6,
       "Esophagus": 2.1,
-      "Skin_NotSunExposed": 1.2,
-      "Skin_SunExposed": 1.5
+      "Skin (Not Sun Exposed)": 1.2,
+      "Skin (Sun Exposed)": 1.5
     },
     "SRD5A1": {
       "Liver": 16.7,
@@ -823,8 +821,8 @@
       "Breast": 1.2,
       "Kidney": 2.5,
       "Esophagus": 10.8,
-      "Skin_NotSunExposed": 10.3,
-      "Skin_SunExposed": 7.8
+      "Skin (Not Sun Exposed)": 10.3,
+      "Skin (Sun Exposed)": 7.8
     },
     "SRD5A2": {
       "Liver": 22.1,
@@ -835,8 +833,8 @@
       "Breast": 0.0,
       "Kidney": 0.1,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "SULT1A1": {
       "Liver": 179.8,
@@ -847,8 +845,8 @@
       "Breast": 11.3,
       "Kidney": 24.1,
       "Esophagus": 3.7,
-      "Skin_NotSunExposed": 2.1,
-      "Skin_SunExposed": 2.1
+      "Skin (Not Sun Exposed)": 2.1,
+      "Skin (Sun Exposed)": 2.1
     },
     "UGT1A1": {
       "Liver": 344.8,
@@ -859,8 +857,8 @@
       "Breast": 0.0,
       "Kidney": 3.6,
       "Esophagus": 3.3,
-      "Skin_NotSunExposed": 1.0,
-      "Skin_SunExposed": 0.9
+      "Skin (Not Sun Exposed)": 1.0,
+      "Skin (Sun Exposed)": 0.9
     },
     "UGT2B15": {
       "Liver": 124.3,
@@ -871,8 +869,8 @@
       "Breast": 0.2,
       "Kidney": 0.0,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "UGT2B17": {
       "Liver": 19.8,
@@ -883,8 +881,8 @@
       "Breast": 0.0,
       "Kidney": 0.0,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.0,
-      "Skin_SunExposed": 0.0
+      "Skin (Not Sun Exposed)": 0.0,
+      "Skin (Sun Exposed)": 0.0
     },
     "UGT2B7": {
       "Liver": 263.5,
@@ -895,8 +893,8 @@
       "Breast": 0.3,
       "Kidney": 213.9,
       "Esophagus": 0.0,
-      "Skin_NotSunExposed": 0.2,
-      "Skin_SunExposed": 0.3
+      "Skin (Not Sun Exposed)": 0.2,
+      "Skin (Sun Exposed)": 0.3
     },
     "XPC": {
       "Liver": 22.0,
@@ -907,8 +905,8 @@
       "Breast": 23.1,
       "Kidney": 20.8,
       "Esophagus": 16.1,
-      "Skin_NotSunExposed": 30.0,
-      "Skin_SunExposed": 31.1
+      "Skin (Not Sun Exposed)": 30.0,
+      "Skin (Sun Exposed)": 31.1
     },
     "XRCC1": {
       "Liver": 10.8,
@@ -919,8 +917,8 @@
       "Breast": 18.6,
       "Kidney": 16.1,
       "Esophagus": 16.6,
-      "Skin_NotSunExposed": 20.1,
-      "Skin_SunExposed": 21.8
+      "Skin (Not Sun Exposed)": 20.1,
+      "Skin (Sun Exposed)": 21.8
     },
     "ZIP14_Co": {
       "Liver": 515.9,
@@ -931,8 +929,8 @@
       "Breast": 38.5,
       "Kidney": 29.1,
       "Esophagus": 8.8,
-      "Skin_NotSunExposed": 16.6,
-      "Skin_SunExposed": 17.9
+      "Skin (Not Sun Exposed)": 16.6,
+      "Skin (Sun Exposed)": 17.9
     },
     "XPA": {
       "Liver": 13.9,
@@ -943,8 +941,8 @@
       "Breast": 13.1,
       "Kidney": 12.4,
       "Esophagus": 14.5,
-      "Skin_NotSunExposed": 11.9,
-      "Skin_SunExposed": 11.9
+      "Skin (Not Sun Exposed)": 11.9,
+      "Skin (Sun Exposed)": 11.9
     },
     "ATM": {
       "Liver": 1.0,
@@ -955,8 +953,8 @@
       "Breast": 1.0,
       "Kidney": 0.7,
       "Esophagus": 0.7,
-      "Skin_NotSunExposed": 0.8,
-      "Skin_SunExposed": 0.7
+      "Skin (Not Sun Exposed)": 0.8,
+      "Skin (Sun Exposed)": 0.7
     },
     "BRCA1": {
       "Liver": 4.1,
@@ -967,8 +965,8 @@
       "Breast": 1.4,
       "Kidney": 1.0,
       "Esophagus": 3.8,
-      "Skin_NotSunExposed": 2.3,
-      "Skin_SunExposed": 2.0
+      "Skin (Not Sun Exposed)": 2.3,
+      "Skin (Sun Exposed)": 2.0
     },
     "BRCA2": {
       "Liver": 0.1,
@@ -979,8 +977,8 @@
       "Breast": 0.1,
       "Kidney": 0.0,
       "Esophagus": 0.3,
-      "Skin_NotSunExposed": 0.1,
-      "Skin_SunExposed": 0.1
+      "Skin (Not Sun Exposed)": 0.1,
+      "Skin (Sun Exposed)": 0.1
     }
   }
 }
