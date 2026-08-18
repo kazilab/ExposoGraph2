@@ -10041,7 +10041,7 @@ const GRAPH_DATA = {
     {
       "source": "ALDH2",
       "target": "Formate",
-      "type": "ACTIVATES",
+      "type": "DETOXIFIES",
       "carcinogen": "Formaldehyde",
       "evidence": "Mitochondrial formaldehyde clearance producing formate",
       "origin": "imported",
