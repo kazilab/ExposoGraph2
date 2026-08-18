@@ -750,7 +750,7 @@ tissueSelect.innerHTML = '<option value="">All tissues</option>' +
 
 function updateBundleSubtitle() {
   const heavyMetalDetected = nodes.some(
-    n => n.group === "Heavy_Metal" || ["As", "Cr_V", "Ni2+", "Cd", "Be"].includes(n.id),
+    n => n.group === "Heavy Metals" || ["As", "Cr_V", "Ni2+", "Cd", "Be"].includes(n.id),
   );
   const subtitleBits = [
     `${nodes.length} nodes / ${edges.length} edges`,

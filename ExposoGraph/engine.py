@@ -507,7 +507,7 @@ class GraphEngine:
     def get_carcinogen_groups(self) -> list[str]:
         """Return every distinct ``group`` label among Carcinogen nodes.
 
-        e.g. ``"Aldehyde"``, ``"UV_Radiation"``, ``"PFAS"``. Scoped to
+        e.g. ``"Aldehydes"``, ``"UV Radiation"``, ``"PFAS"``. Scoped to
         ``type == "Carcinogen"`` specifically -- other node types (Enzyme,
         Gene, ...) use the same ``group`` attribute for unrelated groupings
         (e.g. DNA-repair pathway families), which this deliberately excludes.
@@ -634,7 +634,7 @@ class GraphEngine:
         (and not a drop-in replacement for) ExposoGraph/map/index.html's
         current filter buttons, which apply each filter independently as
         an OR-based highlight rather than intersecting them -- e.g.
-        requesting ``group="PAH"`` and ``node_type="Enzyme"`` here returns
+        requesting ``group="PAHs"`` and ``node_type="Enzyme"`` here returns
         only PAH-carcinogen edges that *also* touch an Enzyme node, not
         "all PAH-related nodes" unioned with "all Enzyme nodes". The
         returned node set is the union of the surviving edges' endpoints
