@@ -5931,6 +5931,38 @@ const GRAPH_DATA = {
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "id": "PhIP_OAc",
+      "label": "N-Acetoxy-PhIP",
+      "type": "Metabolite",
+      "detail": "Unstable O-acetyl ester of N-hydroxy-PhIP formed by NAT2 (and NAT1); spontaneously decomposes to the electrophilic PhIP nitrenium ion that binds DNA.",
+      "reactivity": "High",
+      "evidence": "Unstable O-acetyl ester of N-hydroxy-PhIP formed by NAT2; hydrolyzes to an arylnitrenium ion that reacts with DNA (PMID:11158715; PMID:12773763)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Unstable O-acetyl ester of N-hydroxy-PhIP formed by NAT2; hydrolyzes to an arylnitrenium ion that reacts with DNA",
+          "citation": "PMID:11158715"
+        }
+      ]
+    },
+    {
+      "id": "PhIP_OSO3",
+      "label": "N-Sulfonyloxy-PhIP",
+      "type": "Metabolite",
+      "detail": "Unstable O-sulfonate ester of N-hydroxy-PhIP formed by SULT1A1; spontaneously decomposes to the electrophilic PhIP nitrenium ion that binds DNA. Considered the dominant esterification route for PhIP in vivo.",
+      "reactivity": "High",
+      "evidence": "Unstable O-sulfonate ester of N-hydroxy-PhIP formed by SULT1A1; hydrolyzes to an arylnitrenium ion that reacts with DNA (PMID:11191883)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Unstable O-sulfonate ester of N-hydroxy-PhIP formed by SULT1A1; hydrolyzes to an arylnitrenium ion that reacts with DNA",
+          "citation": "PMID:11191883"
+        }
+      ]
     }
   ],
   "edges": [
@@ -7894,15 +7926,21 @@ const GRAPH_DATA = {
     },
     {
       "source": "NAT2",
-      "target": "NOH_PhIP",
+      "target": "PhIP_OAc",
       "type": "ACTIVATES",
       "label": "O-acetylation",
       "carcinogen": "PhIP",
+      "evidence": "NAT2 O-acetylates N-hydroxy-PhIP to the unstable N-acetoxy-PhIP ester, which decomposes to the arylnitrenium ion that binds DNA (PMID:11158715; PMID:12773763)",
       "origin": "imported",
       "match_status": "canonical",
       "canonical_predicate": "ACTIVATES",
       "canonical_namespace": "schema",
-      "provenance": []
+      "provenance": [
+        {
+          "evidence": "NAT2 O-acetylates N-hydroxy-PhIP to the unstable N-acetoxy-PhIP ester, which decomposes to the arylnitrenium ion that binds DNA",
+          "citation": "PMID:11158715"
+        }
+      ]
     },
     {
       "source": "NAT2",
@@ -7961,15 +7999,21 @@ const GRAPH_DATA = {
     },
     {
       "source": "SULT1A1",
-      "target": "NOH_PhIP",
+      "target": "PhIP_OSO3",
       "type": "ACTIVATES",
       "label": "O-sulfonation",
       "carcinogen": "PhIP",
+      "evidence": "SULT1A1 O-sulfonates N-hydroxy-PhIP to the unstable N-sulfonyloxy-PhIP ester, which decomposes to the arylnitrenium ion that binds DNA; the dominant PhIP esterification route in vivo (PMID:11191883)",
       "origin": "imported",
       "match_status": "canonical",
       "canonical_predicate": "ACTIVATES",
       "canonical_namespace": "schema",
-      "provenance": []
+      "provenance": [
+        {
+          "evidence": "SULT1A1 O-sulfonates N-hydroxy-PhIP to the unstable N-sulfonyloxy-PhIP ester, which decomposes to the arylnitrenium ion that binds DNA",
+          "citation": "PMID:11191883"
+        }
+      ]
     },
     {
       "source": "SULT1A1",
@@ -8838,6 +8882,40 @@ const GRAPH_DATA = {
       "canonical_predicate": "FORMS_ADDUCT",
       "canonical_namespace": "schema",
       "provenance": []
+    },
+    {
+      "source": "PhIP_OAc",
+      "target": "PhIP_dG",
+      "type": "FORMS_ADDUCT",
+      "label": "C8-dG adduct via N-acetoxy ester",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "FORMS_ADDUCT",
+      "canonical_namespace": "schema",
+      "evidence": "N-acetoxy-PhIP decomposes to a nitrenium ion that reacts with deoxyguanosine to form the dG-C8-PhIP adduct (PMID:11158715)",
+      "provenance": [
+        {
+          "evidence": "N-acetoxy-PhIP decomposes to a nitrenium ion that reacts with deoxyguanosine to form the dG-C8-PhIP adduct",
+          "citation": "PMID:11158715"
+        }
+      ]
+    },
+    {
+      "source": "PhIP_OSO3",
+      "target": "PhIP_dG",
+      "type": "FORMS_ADDUCT",
+      "label": "C8-dG adduct via N-sulfonyloxy ester",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_predicate": "FORMS_ADDUCT",
+      "canonical_namespace": "schema",
+      "evidence": "N-sulfonyloxy-PhIP decomposes to a nitrenium ion that reacts with deoxyguanosine to form the dG-C8-PhIP adduct (PMID:11191883)",
+      "provenance": [
+        {
+          "evidence": "N-sulfonyloxy-PhIP decomposes to a nitrenium ion that reacts with deoxyguanosine to form the dG-C8-PhIP adduct",
+          "citation": "PMID:11191883"
+        }
+      ]
     },
     {
       "source": "NOH_4ABP",
