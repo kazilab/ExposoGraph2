@@ -10153,7 +10153,7 @@ const GRAPH_DATA = {
     {
       "source": "ADH5",
       "target": "Formate",
-      "type": "ACTIVATES",
+      "type": "DETOXIFIES",
       "carcinogen": "Formaldehyde",
       "evidence": "Formaldehyde to S-hydroxymethylglutathione to formate",
       "origin": "imported",
