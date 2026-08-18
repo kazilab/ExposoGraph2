@@ -13172,20 +13172,6 @@
       ]
     },
     {
-      "source": "MeHg_GSH",
-      "target": "MethylmercuryCompounds",
-      "type": "DETOXIFIES",
-      "carcinogen": "MethylmercuryCompounds",
-      "evidence": "MeHg-GSH complex exported from cells via MRP transporters and excreted via bile; major detoxification route; PMC6635095",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "MeHg-GSH complex exported from cells via MRP transporters and excreted via bile; major detoxification route; PMC6635095"
-        }
-      ]
-    },
-    {
       "source": "Acetaldehyde_int",
       "target": "N2_ethylidene_dG",
       "type": "FORMS_ADDUCT",

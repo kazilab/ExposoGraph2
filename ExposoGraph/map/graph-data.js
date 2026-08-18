@@ -11789,22 +11789,6 @@ const GRAPH_DATA = {
       ]
     },
     {
-      "source": "MeHg_GSH",
-      "target": "MethylmercuryCompounds",
-      "type": "DETOXIFIES",
-      "carcinogen": "MethylmercuryCompounds",
-      "evidence": "MeHg-GSH complex exported from cells via MRP transporters and excreted via bile; major detoxification route; PMC6635095",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "evidence": "MeHg-GSH complex exported from cells via MRP transporters and excreted via bile; major detoxification route; PMC6635095"
-        }
-      ]
-    },
-    {
       "source": "Co_plus2",
       "target": "ROS_metal",
       "type": "ACTIVATES",
