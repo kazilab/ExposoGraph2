@@ -693,6 +693,146 @@ class GraphEngine:
         nodes = [dict(self.G.nodes[n]) for n in node_ids]
         return {"nodes": nodes, "edges": surviving_edges}
 
+    # ── Path traversal ───────────────────────────────────────────────────
+
+    def _maximal_simple_paths(
+        self,
+        start: str,
+        *,
+        forward: bool,
+        edge_types: Sequence[str] | None,
+    ) -> list[dict[str, list[Any]]]:
+        """Enumerate every *maximal* simple directed path touching *start*.
+
+        Shared DFS core for :meth:`paths_from_carcinogen` (``forward=True``,
+        walking successors) and :meth:`paths_to_carcinogen` (``forward=False``,
+        walking predecessors). A path is "simple" in the graph-theory sense
+        (no repeated node) and "maximal" in that it is extended greedily
+        until every next step would either revisit an already-visited node
+        in *this* path or there is no further edge to take -- at which point
+        the path is recorded and that branch stops. Simple-path semantics is
+        what makes this well-defined at all: this graph is not acyclic (e.g.
+        ``MeHg_GSH``/``MethylmercuryCompounds`` form a 2-cycle via paired
+        ``ACTIVATES``/``DETOXIFIES`` edges), so an unbounded walk could
+        otherwise recurse forever. A would-revisit step is treated as a dead
+        end for that branch, not an error.
+
+        *edge_types* optionally restricts which edges are walkable (e.g. to
+        exclude ``PATHWAY`` edges into generic KEGG pathway-annotation nodes
+        rather than genuine biochemical transformation steps); ``None``
+        (the default) walks every edge type.
+
+        Each returned path is ``{"nodes": [...], "edges": [...]}`` with
+        nodes/edges in traversal order from *start* onward -- ``edges[i]``
+        connects ``nodes[i]`` to ``nodes[i + 1]`` -- regardless of *forward*,
+        so callers never need to know which direction produced a given
+        path. Nodes/edges are full attribute dicts (matching :meth:`to_dict`),
+        not bare ids. A graph can easily have many branching maximal paths
+        from one node, and the same edge can legitimately appear in several
+        returned paths -- callers that want a deduplicated edge set across
+        many paths should union on each edge dict's ``(source, target)``.
+        Excludes the degenerate zero-edge "path" of *start* alone.
+        """
+        allowed_types = set(edge_types) if edge_types is not None else None
+        paths: list[dict[str, list[Any]]] = []
+
+        def _step(node: str) -> list[tuple[str, dict[str, Any]]]:
+            view = (
+                self.G.out_edges(node, data=True)
+                if forward
+                else self.G.in_edges(node, data=True)
+            )
+            steps = []
+            for u, v, data in view:
+                if allowed_types is not None and data.get("type") not in allowed_types:
+                    continue
+                neighbor = v if forward else u
+                steps.append((neighbor, data))
+            return steps
+
+        def _record(node_ids: list[str], edge_data: list[dict[str, Any]]) -> None:
+            if not edge_data:
+                return
+            ordered_nodes = node_ids if forward else list(reversed(node_ids))
+            ordered_edges = edge_data if forward else list(reversed(edge_data))
+            paths.append(
+                {
+                    "nodes": [dict(self.G.nodes[n]) for n in ordered_nodes],
+                    "edges": [dict(e) for e in ordered_edges],
+                }
+            )
+
+        def _dfs(node: str, visited: set[str], node_ids: list[str], edge_data: list[dict[str, Any]]) -> None:
+            extended = False
+            for neighbor, data in _step(node):
+                if neighbor in visited:
+                    continue
+                extended = True
+                visited.add(neighbor)
+                node_ids.append(neighbor)
+                edge_data.append(data)
+                _dfs(neighbor, visited, node_ids, edge_data)
+                edge_data.pop()
+                node_ids.pop()
+                visited.discard(neighbor)
+            if not extended:
+                _record(node_ids, edge_data)
+
+        _dfs(start, {start}, [start], [])
+        return paths
+
+    def paths_from_carcinogen(
+        self,
+        carcinogen_id: str,
+        *,
+        edge_types: Sequence[str] | None = None,
+    ) -> list[dict[str, list[Any]]]:
+        """Return every maximal simple directed path starting at *carcinogen_id*.
+
+        *carcinogen_id* must name an existing node with ``type == "Carcinogen"``
+        (raises ``ValueError`` otherwise, mirroring :meth:`add_edge`'s
+        validation style). Each path begins at *carcinogen_id* and walks
+        forward (successors) until it dead-ends -- see
+        :meth:`_maximal_simple_paths` for the exact semantics (simple-path
+        cycle handling, *edge_types* filtering, and the returned shape).
+
+        Complements :meth:`paths_to_carcinogen`. A path returned here can
+        itself end at a different Carcinogen node (e.g. a precursor chain
+        that resolves into another named carcinogen), which is expected,
+        not an error.
+        """
+        if carcinogen_id not in self.G:
+            raise ValueError(f"Unknown node: {carcinogen_id}")
+        if self.G.nodes[carcinogen_id].get("type") != "Carcinogen":
+            raise ValueError(f"Node {carcinogen_id!r} is not a Carcinogen node")
+        return self._maximal_simple_paths(carcinogen_id, forward=True, edge_types=edge_types)
+
+    def paths_to_carcinogen(
+        self,
+        carcinogen_id: str,
+        *,
+        edge_types: Sequence[str] | None = None,
+    ) -> list[dict[str, list[Any]]]:
+        """Return every maximal simple directed path ending at *carcinogen_id*.
+
+        *carcinogen_id* must name an existing node with ``type == "Carcinogen"``
+        (raises ``ValueError`` otherwise). Each path walks backward
+        (predecessors) from *carcinogen_id* and is then reversed so it reads
+        in natural source-to-target order, ending at *carcinogen_id* -- see
+        :meth:`_maximal_simple_paths` for the exact semantics.
+
+        This deliberately includes length-1 paths: an enzyme with a direct
+        ``DETOXIFIES`` (or any other) edge straight into *carcinogen_id* --
+        e.g. ``GSTM1 -> ArsenicInorganic`` -- is itself a complete, maximal
+        path here, not just a building block of a longer one. Complements
+        :meth:`paths_from_carcinogen`.
+        """
+        if carcinogen_id not in self.G:
+            raise ValueError(f"Unknown node: {carcinogen_id}")
+        if self.G.nodes[carcinogen_id].get("type") != "Carcinogen":
+            raise ValueError(f"Node {carcinogen_id!r} is not a Carcinogen node")
+        return self._maximal_simple_paths(carcinogen_id, forward=False, edge_types=edge_types)
+
     # ── Serialization ────────────────────────────────────────────────────
 
     def to_dict(self) -> dict[str, list[Any]]:
