@@ -14,6 +14,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 class NodeType(str, Enum):
     CARCINOGEN = "Carcinogen"
     ENZYME = "Enzyme"
+    RECEPTOR = "Receptor"
     GENE = "Gene"
     METABOLITE = "Metabolite"
     DNA_ADDUCT = "DNA_Adduct"
@@ -23,11 +24,15 @@ class NodeType(str, Enum):
 
 
 class EdgeType(str, Enum):
+    # Legacy edge types -- retained (not emitted into graph-data.json anymore, except
+    # where noted) so that seeder.py, unified_api.py, figure_architecture.py, and
+    # reaction_role_rules.py -- none of which were updated in this migration -- keep
+    # working unmodified. See docs/design/kg_parameter_loading_scope.md Addendum 5.
     ACTIVATES = "ACTIVATES"
     DETOXIFIES = "DETOXIFIES"
     TRANSPORTS = "TRANSPORTS"
-    FORMS_ADDUCT = "FORMS_ADDUCT"
     REPAIRS = "REPAIRS"
+    FORMS_ADDUCT = "FORMS_ADDUCT"
     PATHWAY = "PATHWAY"
     EXPRESSED_IN = "EXPRESSED_IN"
     INDUCES = "INDUCES"
@@ -35,6 +40,14 @@ class EdgeType(str, Enum):
     ENCODES = "ENCODES"
     SUBSTRATE_OF = "SUBSTRATE_OF"
     CUSTOM = "CUSTOM"
+    # New directional-schema edge types (Addendum 5 migration)
+    PRODUCES = "PRODUCES"
+    DETOXIFIED_BY = "DETOXIFIED_BY"
+    TRANSPORTED_BY = "TRANSPORTED_BY"
+    REPAIRED_BY = "REPAIRED_BY"
+    AGONIZES = "AGONIZES"
+    TRANSFORMS_SPONTANEOUSLY = "TRANSFORMS_SPONTANEOUSLY"
+    MECHANISM_UNCLEAR = "MECHANISM_UNCLEAR"
 
 
 class CurationStatus(str, Enum):

@@ -495,3 +495,183 @@ pass, since they'd otherwise silently regress existing functionality):
   `ui_preview.py` consumers) all use `.get(edge_type, <default color>)`, so
   `SUBSTRATE_OF` renders in the generic fallback color rather than crashing.
   Adding a dedicated color for it is a cosmetic follow-up, not yet done.
+
+## Addendum 5: directional-schema redesign — `ACTIVATES`/`DETOXIFIES`/`TRANSPORTS`/`REPAIRS` split into role-specific directional edge types
+
+Following on from Addendum 4, `ACTIVATES`, `DETOXIFIES`, `TRANSPORTS`, and
+`REPAIRS` were themselves overloaded: each mixed together several distinct
+reaction roles (Enzyme→product formation, receptor agonism, spontaneous
+non-enzymatic transformation, and biologically ambiguous/undetermined
+mechanism) under one label with an arbitrary direction convention. This pass
+splits every edge of these four legacy types into a new, direction- and
+role-explicit edge type, based on a fresh audit of all 327 nodes / 557 edges
+in `graph-data.json` (edge count unchanged — this is a pure retyping pass,
+not a data-scope change).
+
+### New edge types (added to `EdgeType` in `models.py`)
+
+| New type | Meaning | Direction |
+|---|---|---|
+| `PRODUCES` | Enzyme → product it forms | Enzyme → Metabolite/Substrate |
+| `DETOXIFIED_BY` | Compound is cleared by an enzyme (self-referential — target node IS the substrate) | Compound → Enzyme |
+| `AGONIZES` | Carcinogen/Metabolite activates a nuclear receptor | Carcinogen/Metabolite → Receptor |
+| `TRANSPORTED_BY` | Compound moved by a transporter | Compound → Transporter |
+| `REPAIRED_BY` | DNA adduct repaired by an enzyme | DNA_Adduct → Enzyme |
+| `TRANSFORMS_SPONTANEOUSLY` | Non-enzymatic, spontaneous chemical conversion | Compound → Compound |
+| `MECHANISM_UNCLEAR` | Compound→compound conversion whose mechanism is not yet resolved (superset of Addendum 4's deferred-18) | Compound → Compound |
+
+Also added `NodeType.RECEPTOR = "Receptor"`; 8 nodes previously typed
+`Enzyme` (`AHR, CAR, PXR, PPARA, ESR1, AR, RyR, HLA_DPB1`) were reclassified
+to `Receptor`, since they are the sole targets of the new `AGONIZES` edges
+and were never actually enzymes.
+
+**The old `ACTIVATES`, `DETOXIFIES`, `TRANSPORTS`, `REPAIRS` enum members
+were deliberately kept, not removed**, per explicit decision (see below) —
+`graph-data.json` itself no longer contains any edge of these four types
+after this migration, but the enum members remain load-bearing for code
+outside this migration's scope.
+
+### Reclassification breakdown
+
+- **`ACTIVATES` (151 edges)** →
+  - 104 Enzyme→X edges → `PRODUCES`
+  - 18 X→Receptor edges (15 Carcinogen + 3 Metabolite, to the 8 receptor
+    nodes) → `AGONIZES`
+  - 29 compound↔compound edges → 11 → `TRANSFORMS_SPONTANEOUSLY`
+    (non-enzymatic, mechanism understood), 18 → `MECHANISM_UNCLEAR`
+    (verbatim the same 18 pairs deferred as `UNCLEAR_NEEDS_SME_REVIEW` in
+    Addendum 4 — that backlog is still authoritative and unresolved, just
+    retyped)
+- **`DETOXIFIES` (87 edges, 100% Enzyme-sourced)**, split by whether the
+  target is self-referential (same substance being cleared) or a genuinely
+  distinct downstream product with its own, separately-modeled precursor
+  node:
+  - **72 edges → `DETOXIFIED_BY`** (`Compound -[DETOXIFIED_BY]-> Enzyme`):
+    52 fully self-referential (36 Enzyme→Substrate, 16 Enzyme→Carcinogen)
+    plus 20 of the 35 Enzyme→Metabolite edges confirmed self-referential
+    after individual biochemical verification (not name-heuristics —
+    e.g. `ALDH2 -> Acetaldehyde_int` looked like a distinct-product case at
+    first pass but `Acetaldehyde_int` already has its own formation edges
+    from `ADH1B`/`ADH1C`, so it is in fact self-referential).
+  - **15 edges → `PRODUCES`** (kept as `Enzyme -[PRODUCES]-> Product`,
+    direction unchanged from the reclassified-`ACTIVATES` convention above):
+    genuine, distinct downstream products whose true precursor node exists
+    in the graph but currently has **no edge to the producing enzyme** —
+    a backlog gap, not fixed in this pass. The 15, with their missing
+    precursor→enzyme entry edge:
+
+    | Enzyme | Product (kept) | Missing precursor edge |
+    |---|---|---|
+    | CYP3A4 | HydroxyTestosterone | `Testosterone -> CYP3A4` |
+    | CYP3A5 | HydroxyTestosterone | `Testosterone -> CYP3A5` |
+    | GSTM1 | BPDE_GSH | `BPDE -> GSTM1` |
+    | GSTP1 | BPDE_GSH | `BPDE -> GSTP1` |
+    | GSTM1 | AFB1_GSH | `AFB1_epoxide -> GSTM1` |
+    | GSTT1 | AFB1_GSH | `AFB1_epoxide -> GSTT1` |
+    | NAT2 | PhIP_NAc | `PhIP -> NAT2` |
+    | UGT1A1 | PhIP_gluc | `PhIP -> UGT1A1` |
+    | COMT | E2_methyl | `HydroxyE2 -> COMT` (precursor identity tentative) |
+    | UGT2B17 | Testosterone_gluc | `Testosterone -> UGT2B17` |
+    | UGT2B17 | DHT_gluc | `DHT -> UGT2B17` |
+    | UGT2B15 | DHT_gluc | `DHT -> UGT2B15` |
+    | AKR1C2 | 3aAdiol | `DHT -> AKR1C2` |
+    | ALDH2 | Formate | `Formaldehyde -> ALDH2` (node existence unchecked) |
+    | ADH5 | Formate | `Formaldehyde -> ADH5` (node existence unchecked) |
+
+    **This 15-row list supersedes an earlier, incorrect first-pass
+    Category-B list** that had been built from name-matching heuristics
+    alone (missed `BPDE_GSH`/`AFB1_GSH`, and would have mis-flipped them to
+    `DETOXIFIED_BY`, which is biochemically wrong — a glutathione conjugate
+    is a product, not the substrate being cleared). Fixed before the
+    migration script was applied to `graph-data.json`; the numbers above are
+    already the corrected, applied state.
+- **`TRANSPORTS` (13 edges, 100% Enzyme-sourced)** → `TRANSPORTED_BY`.
+- **`REPAIRS` (44 edges, 100% Enzyme→DNA_Adduct)** → `REPAIRED_BY`.
+- `FORMS_ADDUCT` (76), `PATHWAY` (120), `SUBSTRATE_OF` (56), `INHIBITS` (7),
+  `INDUCES` (3) — unchanged.
+
+Post-migration edge-type counts in `graph-data.json` (557 total, unchanged):
+`PATHWAY` 120, `PRODUCES` 119, `FORMS_ADDUCT` 76, `DETOXIFIED_BY` 72,
+`SUBSTRATE_OF` 56, `REPAIRED_BY` 44, `AGONIZES` 18, `MECHANISM_UNCLEAR` 18,
+`TRANSPORTED_BY` 13, `TRANSFORMS_SPONTANEOUSLY` 11, `INHIBITS` 7,
+`INDUCES` 3.
+
+The `canonical_predicate` field (present on 198/557 edges, always equal to
+`type` when present) was updated in lockstep with `type` on every edge this
+migration touched. The `carcinogen` field (informational — traces which
+top-level carcinogen an edge relates to) was left untouched.
+
+### Explicit decision: `figure_architecture.py`, `unified_api.py`, `seeder.py` are NOT updated
+
+A blast-radius check found the legacy edge types are load-bearing beyond
+`tissue_subgraphs.py`/`graph_analysis.py` (patched below):
+
+- `figure_architecture.py` — dedicated figure-generation module with
+  hardcoded per-edge-type colors/linestyles and hardcoded edge counts
+  (`ACTIVATES: 57, DETOXIFIES: 31, TRANSPORTS: 9, REPAIRS: 19`) for what
+  looks like a validated/published architecture diagram.
+- `unified_api.py` — kinetic parameter attachment gated on
+  `edge.type in {EdgeType.ACTIVATES, EdgeType.DETOXIFIES}`.
+- `seeder.py` — default edge-type inference logic returns the legacy types
+  for future data loads.
+
+**Decision (explicit, user-confirmed): migrate `graph-data.json` only, leave
+these three files untouched.** This is why the legacy `EdgeType` enum
+members were kept rather than removed — deleting them would break these
+three files' imports/references even though `graph-data.json` no longer
+contains any edge instantiating them. `reaction_role_rules.py` is separate,
+uncommitted, unrelated pending work and was not touched in this pass either.
+
+### Companion fixes required (regression prevention, same pattern as Addendum 4)
+
+- `ExposoGraph/tissue_subgraphs.py`: both edge-type allow-lists (tissue node
+  inclusion, ~line 1147 and ~line 1247) extended to include `PRODUCES`,
+  `DETOXIFIED_BY`, `TRANSPORTED_BY`, `REPAIRED_BY`, `AGONIZES`,
+  `TRANSFORMS_SPONTANEOUSLY`, `MECHANISM_UNCLEAR` alongside the existing
+  legacy/SUBSTRATE_OF entries — otherwise nodes connected to a tissue-
+  relevant enzyme only via a newly-retyped edge would silently drop out of
+  tissue subgraphs.
+- `ExposoGraph/graph_analysis.py`: `_METABOLISM_EDGE_TYPES` extended with
+  the same 7 new types, for the same reason (`metabolism_chain` would
+  otherwise treat every retyped edge as invisible).
+- `ExposoGraph/engine.py`'s `paths_from_carcinogen`/`paths_to_carcinogen`
+  needed no change (default `edge_types=None` walks every type).
+
+### Validation performed
+
+- Migration script (`audit/migrate_directional_schema.py`) dry-run then
+  `--apply`, editing `graph-data.json` via raw `json.load`/`json.dump`
+  (no pydantic `model_dump()` reserialization, per standing convention).
+  Confirmed zero duplicate `(source, target, type)` tuples introduced, and
+  total edge count unchanged (557 before/after).
+- Reloaded via `build_reference_engine()` (from
+  `ExposoGraph/reference_data.py`) — graph loads and validates cleanly:
+  327 nodes / 557 edges, node-type counts `Metabolite 80, Enzyme 69,
+  Carcinogen 66, Substrate 49, DNA_Adduct 39, Pathway 16, Receptor 8`.
+- `tools/graph_role_consistency_check.py` (standalone QA script, not
+  pytest) run post-migration: 4 PASS, 0 WARN, 0 FAIL.
+- `paths_from_carcinogen` sanity-checked for `BaP` (3,614 maximal paths),
+  `PhIP` (1,201 paths), and `Cyclophosphamide` (3,537 paths) — all traverse
+  the new edge types correctly (e.g. `Cyclophosphamide
+  -[TRANSFORMS_SPONTANEOUSLY]-> Acrolein_CP -[FORMS_ADDUCT]-> Acr_dG
+  -[REPAIRED_BY]-> XRCC1`).
+
+### Still outstanding (backlog, not fixed in this pass)
+
+1. The 18 `MECHANISM_UNCLEAR` edges — same list as Addendum 4's
+   deferred-18, now retyped but still unresolved; needs SME review to
+   determine enzymatic-vs-spontaneous mechanism.
+2. The 15-row Category B precursor-gap table above — each needs a new
+   precursor→enzyme entry edge added once curated/sourced. Note
+   `Formaldehyde` node existence for the `ALDH2`/`ADH5` → `Formate` rows was
+   not checked in this pass.
+3. `figure_architecture.py` (hardcoded legacy edge-type counts/colors),
+   `unified_api.py` (kinetic-parameter gating keyed on legacy types), and
+   `seeder.py` (legacy-type inference for future loads) still reference the
+   pre-migration schema and were explicitly left unmodified — any future
+   work that touches these should be aware `graph-data.json` no longer has
+   any edge of the legacy types they check for.
+4. Dedicated colors/linestyles for the 7 new edge types in exporter/UI code
+   (`exporter.py`, `_app_shared.py`, `ui_data.py`, `ui_preview.py`) are not
+   yet added — same fallback-color situation noted for `SUBSTRATE_OF` in
+   Addendum 4.

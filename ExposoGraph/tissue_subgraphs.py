@@ -1144,7 +1144,9 @@ def extract_tissue_subgraph(
     carcinogen_refs = set()
     for u, v, data in tissue_edges:
         etype = data.get("type", "")
-        if etype in ("ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "SUBSTRATE_OF"):
+        if etype in ("ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "SUBSTRATE_OF",
+                     "PRODUCES", "DETOXIFIED_BY", "AGONIZES",
+                     "TRANSFORMS_SPONTANEOUSLY", "MECHANISM_UNCLEAR"):
             if u not in tissue_nodes:
                 connected_nodes.add(u)
             if v not in tissue_nodes:
@@ -1244,7 +1246,9 @@ def build_cancer_site_subgraph(
     for u, v, data in engine.G.edges(data=True):
         etype = data.get("type", "")
         if u in nodes_to_include or v in nodes_to_include:
-            if etype in ("ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "REPAIRS", "PATHWAY", "SUBSTRATE_OF"):
+            if etype in ("ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "REPAIRS", "PATHWAY", "SUBSTRATE_OF",
+                         "PRODUCES", "DETOXIFIED_BY", "TRANSPORTED_BY", "REPAIRED_BY",
+                         "AGONIZES", "TRANSFORMS_SPONTANEOUSLY", "MECHANISM_UNCLEAR"):
                 connected.add(u)
                 connected.add(v)
 

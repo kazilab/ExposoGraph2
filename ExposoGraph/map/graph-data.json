@@ -3427,7 +3427,7 @@
     {
       "id": "HLA_DPB1",
       "label": "HLA-DPB1",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "HLA-DP Beta 1 chain; presents beryllium to CD4+ T cells; βGlu69 is primary genetic susceptibility determinant for chronic beryllium disease (CBD)",
       "phase": "Immune",
       "role": "Antigen_Presentation",
@@ -3947,7 +3947,7 @@
     {
       "id": "AHR",
       "label": "AHR",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Aryl hydrocarbon receptor; ligand-activated transcription factor. Binds TCDD/dioxin-like compounds and induces CYP1A1/CYP1B1 via XRE elements.",
       "role": "Transcription Factor",
       "tissue": "liver, lung, skin, immune cells",
@@ -3973,7 +3973,7 @@
     {
       "id": "CAR",
       "label": "CAR",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Constitutive androstane receptor (NR1I3); ligand-activated nuclear receptor. Activated by non-dioxin-like PCBs, inducing CYP2B/CYP3A and promoting tumor proliferation via xenobiotic metabolism and oxidative stress (IARC Monograph 107).",
       "role": "Transcription Factor",
       "tissue": "liver, intestine, kidney",
@@ -3991,7 +3991,7 @@
     {
       "id": "PXR",
       "label": "PXR",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Pregnane X receptor (NR1I2); ligand-activated nuclear receptor. Activated by non-dioxin-like PCBs alongside CAR, inducing CYP3A4 and ABC transporters; promotes hepatocellular proliferation and tumor promotion (IARC Monograph 107).",
       "role": "Transcription Factor",
       "tissue": "liver, intestine, kidney",
@@ -5288,7 +5288,7 @@
     {
       "id": "PPARA",
       "label": "PPARα",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Peroxisome proliferator-activated receptor alpha; ligand-activated nuclear receptor. One of multiple receptors activated by PFOA/PFOS (alongside CAR, PXR, suggestive PPARγ). IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents but did not identify it as the primary carcinogenic driver.",
       "role": "Transcription Factor",
       "source_db": "NCBI Gene",
@@ -5539,7 +5539,7 @@
     {
       "id": "ESR1",
       "label": "Estrogen receptor alpha",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Nuclear hormone receptor mediating estrogen signaling. Ligand-dependent transcription factor. DDT and DDE act as xenoestrogen agonists, promoting hormonal carcinogenesis in estrogen-responsive tissues.",
       "source_db": "Curated showcase",
       "evidence": "Nuclear hormone receptor mediating estrogen signaling. DDT/DDE act as xenoestrogen agonists.",
@@ -5560,7 +5560,7 @@
     {
       "id": "AR",
       "label": "Androgen receptor",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Nuclear hormone receptor mediating androgen signaling. Ligand-dependent transcription factor. DHT is the high-affinity ligand; androgen signaling promotes prostate carcinogenesis.",
       "source_db": "Curated showcase",
       "evidence": "Nuclear hormone receptor mediating androgen signaling. DHT is the high-affinity ligand.",
@@ -5581,7 +5581,7 @@
     {
       "id": "RyR",
       "label": "Ryanodine receptor",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "Intracellular calcium release channel. Non-dioxin-like PCBs (PCB_138, PCB_153) sensitize RyR, disrupting calcium homeostasis and promoting tumor promotion via aberrant Ca2+ signaling.",
       "source_db": "Curated showcase",
       "evidence": "Intracellular calcium release channel. Non-dioxin-like PCBs sensitize RyR, disrupting calcium homeostasis.",
@@ -6421,12 +6421,12 @@
     {
       "source": "ALAD",
       "target": "delta_ALA",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "LeadInorganicCompounds",
       "evidence": "Inhibition causes ALA accumulation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "provenance": [
         {
           "evidence": "Inhibition causes ALA accumulation"
@@ -6436,12 +6436,12 @@
     {
       "source": "delta_ALA",
       "target": "ROS_metal",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "LeadInorganicCompounds",
       "evidence": "Auto-oxidation of ALA generates ROS",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "TRANSFORMS_SPONTANEOUSLY",
       "provenance": [
         {
           "evidence": "Auto-oxidation of ALA generates ROS"
@@ -6449,14 +6449,14 @@
       ]
     },
     {
-      "source": "DMT1_Pb",
-      "target": "LeadInorganicCompounds",
-      "type": "TRANSPORTS",
+      "source": "LeadInorganicCompounds",
+      "target": "DMT1_Pb",
+      "type": "TRANSPORTED_BY",
       "carcinogen": "LeadInorganicCompounds",
       "evidence": "DMT1 mediates lead uptake",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "provenance": [
         {
           "evidence": "DMT1 mediates lead uptake"
@@ -6466,12 +6466,12 @@
     {
       "source": "LeadInorganicCompounds",
       "target": "GSH",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "LeadInorganicCompounds",
       "evidence": "Lead binds GSH",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "MECHANISM_UNCLEAR",
       "provenance": [
         {
           "evidence": "Lead binds GSH"
@@ -6479,14 +6479,14 @@
       ]
     },
     {
-      "source": "LAT1_Hg",
-      "target": "MethylmercuryCompounds",
-      "type": "TRANSPORTS",
+      "source": "MethylmercuryCompounds",
+      "target": "LAT1_Hg",
+      "type": "TRANSPORTED_BY",
       "carcinogen": "MethylmercuryCompounds",
       "evidence": "Methylmercury-cysteine mimicry",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "provenance": [
         {
           "evidence": "Methylmercury-cysteine mimicry"
@@ -6496,12 +6496,12 @@
     {
       "source": "MercuryInorganicCompounds",
       "target": "GSH",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "MercuryInorganicCompounds",
       "evidence": "High affinity thiol binding",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "TRANSFORMS_SPONTANEOUSLY",
       "provenance": [
         {
           "evidence": "High affinity thiol binding"
@@ -6524,14 +6524,14 @@
       ]
     },
     {
-      "source": "SEPP1",
-      "target": "MercuryInorganicCompounds",
-      "type": "TRANSPORTS",
+      "source": "MercuryInorganicCompounds",
+      "target": "SEPP1",
+      "type": "TRANSPORTED_BY",
       "carcinogen": "MercuryInorganicCompounds",
       "evidence": "Selenium antagonism",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "provenance": [
         {
           "evidence": "Selenium antagonism"
@@ -6569,14 +6569,14 @@
       ]
     },
     {
-      "source": "ZIP14_Co",
-      "target": "CobaltMetal",
-      "type": "TRANSPORTS",
+      "source": "CobaltMetal",
+      "target": "ZIP14_Co",
+      "type": "TRANSPORTED_BY",
       "carcinogen": "CobaltMetal",
       "evidence": "Non-transferrin bound uptake",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "provenance": [
         {
           "evidence": "Non-transferrin bound uptake"
@@ -6586,12 +6586,12 @@
     {
       "source": "Co_plus2",
       "target": "ROS_metal",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "CobaltMetal",
       "evidence": "Fenton-like chemistry",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "TRANSFORMS_SPONTANEOUSLY",
       "provenance": [
         {
           "evidence": "Fenton-like chemistry"
@@ -6601,12 +6601,12 @@
     {
       "source": "GSTO1",
       "target": "AntimonyTrivalent",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "AntimonyTrivalent",
       "evidence": "GSTO1 catalyzes reduction of Sb(V) to toxic Sb(III), analogous to arsenic biotransformation (IARC Vol 131, 2023)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "provenance": [
         {
           "evidence": "GSTO1 catalyzes reduction of Sb(V) to toxic Sb(III), analogous to arsenic biotransformation (IARC Vol 131, 2023)"
@@ -6890,14 +6890,14 @@
     {
       "source": "CYP1A1",
       "target": "BaP_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "BaP epoxidation",
       "carcinogen": "BaP",
       "source_db": "Curated showcase",
       "evidence": "BaP epoxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -6911,14 +6911,14 @@
     {
       "source": "CYP1A1",
       "target": "BPDE",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Second epoxidation to BPDE",
       "carcinogen": "BaP",
       "source_db": "Curated showcase",
       "evidence": "Second epoxidation to BPDE",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -6932,7 +6932,7 @@
     {
       "source": "CYP1A1",
       "target": "2OHE2",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "2-hydroxylation",
       "carcinogen": "E2",
       "origin": "imported",
@@ -6963,7 +6963,7 @@
     {
       "source": "CYP1A1",
       "target": "Cd",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Cd",
       "evidence": "Singh et al. Urol Oncol 2023",
       "origin": "imported",
@@ -6977,14 +6977,14 @@
     {
       "source": "CYP1B1",
       "target": "BaP_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Extrahepatic BaP epoxidation",
       "carcinogen": "BaP",
       "source_db": "Curated showcase",
       "evidence": "Extrahepatic BaP epoxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -6998,14 +6998,14 @@
     {
       "source": "CYP1B1",
       "target": "BPDE",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Second epoxidation to BPDE",
       "carcinogen": "BaP",
       "source_db": "Curated showcase",
       "evidence": "Second epoxidation to BPDE",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7019,14 +7019,14 @@
     {
       "source": "CYP1B1",
       "target": "HydroxyE2",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Catechol estrogen formation",
       "carcinogen": "E2",
       "source_db": "Curated showcase",
       "evidence": "Catechol estrogen formation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7040,14 +7040,14 @@
     {
       "source": "CYP1A2",
       "target": "NOH_PhIP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "N-hydroxylation",
       "carcinogen": "PhIP",
       "source_db": "Curated showcase",
       "evidence": "N-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7061,14 +7061,14 @@
     {
       "source": "CYP1A2",
       "target": "NOH_4ABP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "N-hydroxylation",
       "carcinogen": "4ABP",
       "source_db": "Curated showcase",
       "evidence": "N-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7082,14 +7082,14 @@
     {
       "source": "CYP1A2",
       "target": "NOH_Benzidine",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Benzidine N-hydroxylation",
       "carcinogen": "Benzidine",
       "source_db": "Curated showcase",
       "evidence": "Benzidine N-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7103,14 +7103,14 @@
     {
       "source": "CYP1A2",
       "target": "AFB1_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Secondary epoxidation",
       "carcinogen": "AFB1",
       "source_db": "Curated showcase",
       "evidence": "Secondary epoxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7124,14 +7124,14 @@
     {
       "source": "CYP1A2",
       "target": "NOH_MeIQx",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "N-hydroxylation",
       "carcinogen": "MeIQx",
       "source_db": "Curated showcase",
       "evidence": "N-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7154,14 +7154,14 @@
     {
       "source": "CYP2A6",
       "target": "NNK_hydroxyl",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Alpha-hydroxylation",
       "carcinogen": "NNK",
       "source_db": "Curated showcase",
       "evidence": "Alpha-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7175,12 +7175,12 @@
     {
       "source": "CYP2A6",
       "target": "NDMA",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "NDMA",
       "evidence": "Secondary activation at higher NDMA concentrations (ATSDR TP-141)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7191,14 +7191,14 @@
     {
       "source": "CYP2A13",
       "target": "NNK_hydroxyl",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Pulmonary alpha-hydroxylation",
       "carcinogen": "NNK",
       "source_db": "Curated showcase",
       "evidence": "Pulmonary alpha-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7221,7 +7221,7 @@
     {
       "source": "CYP2B6",
       "target": "4OH_cyclophosphamide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Cyclophosphamide",
       "evidence": "Major 4-hydroxylation activity in human liver microsomes (PMID:8242617; PMID:10348794)",
       "origin": "imported",
@@ -7262,14 +7262,14 @@
     {
       "source": "CYP2E1",
       "target": "NDMA_hydroxyl",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Alpha-hydroxylation",
       "carcinogen": "NDMA",
       "source_db": "Curated showcase",
       "evidence": "Alpha-hydroxylation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7283,14 +7283,14 @@
     {
       "source": "CYP2E1",
       "target": "Benzene_oxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Benzene oxidation",
       "carcinogen": "Benzene",
       "source_db": "Curated showcase",
       "evidence": "Benzene oxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7304,14 +7304,14 @@
     {
       "source": "CYP2E1",
       "target": "Chloroethylene_oxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Vinyl chloride oxidation",
       "carcinogen": "VinylChloride",
       "source_db": "Curated showcase",
       "evidence": "Vinyl chloride oxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7336,7 +7336,7 @@
     {
       "source": "CYP2E1",
       "target": "Hydroxymethylnitrosamine",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "NDMA",
       "evidence": "Primary P450; required for NDMA genotoxicity (PMID:40390554)",
       "origin": "imported",
@@ -7350,7 +7350,7 @@
     {
       "source": "CYP2E1",
       "target": "Chloral_hydrate",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "TCE",
       "evidence": "Primary CYP2E1 oxidation of TCE",
       "origin": "imported",
@@ -7364,7 +7364,7 @@
     {
       "source": "CYP2E1",
       "target": "Glycidamide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Acrylamide",
       "evidence": "Primary P450 for acrylamide epoxidation (PMID:16141435)",
       "origin": "imported",
@@ -7378,7 +7378,7 @@
     {
       "source": "CYP2E1",
       "target": "Vinyl_carbamate",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Urethane",
       "evidence": "Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12704224)",
       "origin": "imported",
@@ -7401,14 +7401,14 @@
     {
       "source": "CYP3A4",
       "target": "AFB1_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Aflatoxin epoxidation",
       "carcinogen": "AFB1",
       "source_db": "Curated showcase",
       "evidence": "Aflatoxin epoxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7422,7 +7422,7 @@
     {
       "source": "CYP3A4",
       "target": "HydroxyTestosterone",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "6β-hydroxylation",
       "carcinogen": "Testosterone",
       "origin": "imported",
@@ -7441,7 +7441,7 @@
     {
       "source": "CYP3A4",
       "target": "4OH_cyclophosphamide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Cyclophosphamide",
       "evidence": "Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:8242617)",
       "origin": "imported",
@@ -7455,31 +7455,31 @@
     {
       "source": "EPHX1",
       "target": "BaP_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "hydrolysis",
       "carcinogen": "BaP",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "EPHX1",
-      "target": "AFB1_epoxide",
-      "type": "DETOXIFIES",
+      "source": "AFB1_epoxide",
+      "target": "EPHX1",
+      "type": "DETOXIFIED_BY",
       "label": "hydrolysis",
       "carcinogen": "AFB1",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "CYP17A1",
       "target": "DHEA",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "17,20-lyase",
       "carcinogen": "Testosterone",
       "origin": "imported",
@@ -7510,12 +7510,12 @@
     {
       "source": "SRD5A2",
       "target": "DHT",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "5α-reduction (prostate)",
       "carcinogen": "Testosterone",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": []
     },
@@ -7543,19 +7543,19 @@
     {
       "source": "SRD5A1",
       "target": "DHT",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "5α-reduction (peripheral)",
       "carcinogen": "Testosterone",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "CYP19A1",
       "target": "E2_from_T",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "aromatization",
       "carcinogen": "Testosterone",
       "origin": "imported",
@@ -7586,7 +7586,7 @@
     {
       "source": "CYP3A5",
       "target": "HydroxyTestosterone",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "6β-hydroxylation",
       "carcinogen": "Testosterone",
       "origin": "imported",
@@ -7596,26 +7596,26 @@
     {
       "source": "AKR1C3",
       "target": "Testosterone",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "17β-reduction",
       "carcinogen": "Testosterone",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "GSTM1",
       "target": "BPDE_GSH",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "Glutathione conjugation",
       "carcinogen": "BaP",
       "source_db": "Curated showcase",
       "evidence": "Glutathione conjugation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7627,21 +7627,21 @@
       ]
     },
     {
-      "source": "GSTM1",
-      "target": "NOH_4ABP",
-      "type": "DETOXIFIES",
+      "source": "NOH_4ABP",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "label": "GSH conjugation",
       "carcinogen": "4ABP",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "GSTM1",
       "target": "AFB1_GSH",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "GSH conjugation",
       "carcinogen": "AFB1",
       "origin": "imported",
@@ -7658,9 +7658,9 @@
       "provenance": []
     },
     {
-      "source": "GSTM1",
-      "target": "ArsenicInorganic",
-      "type": "DETOXIFIES",
+      "source": "ArsenicInorganic",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMID:21798077; PMID:32650499",
       "origin": "imported",
@@ -7672,9 +7672,9 @@
       ]
     },
     {
-      "source": "GSTM1",
-      "target": "Cd",
-      "type": "DETOXIFIES",
+      "source": "Cd",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Cd",
       "evidence": "PMID:22291700",
       "origin": "imported",
@@ -7707,9 +7707,9 @@
       ]
     },
     {
-      "source": "GSTM1",
-      "target": "Glycidamide",
-      "type": "DETOXIFIES",
+      "source": "Glycidamide",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Acrylamide",
       "evidence": "Secondary GSH conjugation pathway within the broader glutathione transferase detoxification system (PMID:15668107)",
       "origin": "imported",
@@ -7721,9 +7721,9 @@
       ]
     },
     {
-      "source": "GSTM1",
-      "target": "Mustard_episulfonium",
-      "type": "DETOXIFIES",
+      "source": "Mustard_episulfonium",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Sulfur_mustard",
       "evidence": "GSH conjugation; GSTM1-null correlates with elevated mustard-adduct burden in exposed veterans (IARC Monograph 100F)",
       "origin": "imported",
@@ -7737,7 +7737,7 @@
     {
       "source": "GSTT1",
       "target": "AFB1_GSH",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "GSH conjugation",
       "carcinogen": "AFB1",
       "origin": "imported",
@@ -7745,26 +7745,26 @@
       "provenance": []
     },
     {
-      "source": "GSTT1",
-      "target": "Benzene_oxide",
-      "type": "DETOXIFIES",
+      "source": "Benzene_oxide",
+      "target": "GSTT1",
+      "type": "DETOXIFIED_BY",
       "label": "GSH conjugation",
       "carcinogen": "Benzene",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "GSTT1",
-      "target": "Chloroethylene_oxide",
-      "type": "DETOXIFIES",
+      "source": "Chloroethylene_oxide",
+      "target": "GSTT1",
+      "type": "DETOXIFIED_BY",
       "label": "GSH conjugation",
       "carcinogen": "VinylChloride",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
@@ -7778,9 +7778,9 @@
       "provenance": []
     },
     {
-      "source": "GSTT1",
-      "target": "ArsenicInorganic",
-      "type": "DETOXIFIES",
+      "source": "ArsenicInorganic",
+      "target": "GSTT1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMID:21798077; PMID:32650499",
       "origin": "imported",
@@ -7794,7 +7794,7 @@
     {
       "source": "GSTT1",
       "target": "DCVG",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "TCE",
       "evidence": "BIOACTIVATION for TCE (inverted role); GSTT1-active required for renal carcinogenesis. GSTT1-null is PROTECTIVE (OR 0.93) (PMID:20663906)",
       "origin": "imported",
@@ -7806,9 +7806,9 @@
       ]
     },
     {
-      "source": "GSTT1",
-      "target": "Vinyl_carbamate_epoxide",
-      "type": "DETOXIFIES",
+      "source": "Vinyl_carbamate_epoxide",
+      "target": "GSTT1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Urethane",
       "evidence": "GSH conjugation of vinyl-carbamate epoxide; GSTT1-null allele elevates etheno-adduct burden (IARC Monograph 96)",
       "origin": "imported",
@@ -7822,14 +7822,14 @@
     {
       "source": "GSTP1",
       "target": "BPDE_GSH",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "Glutathione conjugation",
       "carcinogen": "BaP",
       "source_db": "Curated showcase",
       "evidence": "Glutathione conjugation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7841,9 +7841,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "CrVI",
-      "type": "DETOXIFIES",
+      "source": "CrVI",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "CrVI",
       "evidence": "PMC390765",
       "origin": "imported",
@@ -7855,9 +7855,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "Glycidamide",
-      "type": "DETOXIFIES",
+      "source": "Glycidamide",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Acrylamide",
       "evidence": "GSH conjugation of the epoxide is supported by in vitro blood detoxification studies involving glutathione transferases (PMID:15668107)",
       "origin": "imported",
@@ -7869,9 +7869,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "Phosphoramide_mustard",
-      "type": "DETOXIFIES",
+      "source": "Phosphoramide_mustard",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Cyclophosphamide",
       "evidence": "GSH conjugation of aziridinium intermediates; GSTP1 Ile105Val (rs1695) influences cyclophosphamide and 4-hydroxycyclophosphamide pharmacokinetics (PMID:18496131)",
       "origin": "imported",
@@ -7883,9 +7883,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "Chlorambucil_aziridinium",
-      "type": "DETOXIFIES",
+      "source": "Chlorambucil_aziridinium",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Chlorambucil",
       "evidence": "GSH conjugation; GSTP1-1 catalyzes chlorambucil conjugation, with allelic variants showing substrate-dependent activity differences (PMID:18511072)",
       "origin": "imported",
@@ -7897,9 +7897,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "Busulfan",
-      "type": "DETOXIFIES",
+      "source": "Busulfan",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Busulfan",
       "evidence": "GSH-Bu conjugation; GSTA1/P1 polymorphisms alter busulfan clearance in pediatric HSCT (PMID:20672371)",
       "origin": "imported",
@@ -7911,9 +7911,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "Acrolein",
-      "type": "DETOXIFIES",
+      "source": "Acrolein",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Acrolein",
       "evidence": "GSH conjugation yields 3-hydroxypropylmercapturic acid (HPMA), the principal urinary biomarker (IARC Monograph 128)",
       "origin": "imported",
@@ -7925,9 +7925,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "Crotonaldehyde",
-      "type": "DETOXIFIES",
+      "source": "Crotonaldehyde",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Crotonaldehyde",
       "evidence": "GSH conjugation to 3-hydroxy-1-methylpropylmercapturic acid (HMPMA), a validated urinary biomarker for tobacco-smoke crotonaldehyde exposure",
       "origin": "imported",
@@ -7939,9 +7939,9 @@
       ]
     },
     {
-      "source": "GSTP1",
-      "target": "4_HNE",
-      "type": "DETOXIFIES",
+      "source": "4_HNE",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "4_HNE",
       "evidence": "GSH conjugation is the dominant detoxification route; GSTA4 is a preferred isoform but GSTP1 provides substantial activity in human tissue (PMID:1937131)",
       "origin": "imported",
@@ -7955,13 +7955,13 @@
     {
       "source": "NAT2",
       "target": "PhIP_OAc",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "O-acetylation",
       "carcinogen": "PhIP",
       "evidence": "NAT2 O-acetylates N-hydroxy-PhIP to the unstable N-acetoxy-PhIP ester, which decomposes to the arylnitrenium ion that binds DNA (PMID:11158715; PMID:12773763)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -7973,7 +7973,7 @@
     {
       "source": "NAT2",
       "target": "PhIP_NAc",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "N-acetylation",
       "carcinogen": "PhIP",
       "origin": "imported",
@@ -7981,40 +7981,40 @@
       "provenance": []
     },
     {
-      "source": "NAT2",
-      "target": "4ABP",
-      "type": "DETOXIFIES",
+      "source": "4ABP",
+      "target": "NAT2",
+      "type": "DETOXIFIED_BY",
       "label": "N-acetylation (deactivation)",
       "carcinogen": "4ABP",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "NAT1",
       "target": "NOH_4ABP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "O-acetylation (bladder)",
       "carcinogen": "4ABP",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "NAT1",
       "target": "MeIQx_acetoxy",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Reactive acetoxy ester formation",
       "carcinogen": "MeIQx",
       "source_db": "Curated showcase",
       "evidence": "Reactive acetoxy ester formation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -8028,13 +8028,13 @@
     {
       "source": "SULT1A1",
       "target": "PhIP_OSO3",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "O-sulfonation",
       "carcinogen": "PhIP",
       "evidence": "SULT1A1 O-sulfonates N-hydroxy-PhIP to the unstable N-sulfonyloxy-PhIP ester, which decomposes to the arylnitrenium ion that binds DNA; the dominant PhIP esterification route in vivo (PMID:11191883)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -8044,21 +8044,21 @@
       ]
     },
     {
-      "source": "SULT1A1",
-      "target": "HydroxyE2",
-      "type": "DETOXIFIES",
+      "source": "HydroxyE2",
+      "target": "SULT1A1",
+      "type": "DETOXIFIED_BY",
       "label": "sulfation",
       "carcinogen": "E2",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "SULT1A1",
       "target": "SMF",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Furfural",
       "evidence": "SULT1A1 is the principal sulfotransferase generating SMF in human systems (PMID:22563731; PMID:26454887; PMID:21462333)",
       "origin": "imported",
@@ -8072,7 +8072,7 @@
     {
       "source": "UGT1A1",
       "target": "PhIP_gluc",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "glucuronidation",
       "carcinogen": "PhIP",
       "origin": "imported",
@@ -8080,57 +8080,57 @@
       "provenance": []
     },
     {
-      "source": "UGT1A1",
-      "target": "HydroxyE2",
-      "type": "DETOXIFIES",
+      "source": "HydroxyE2",
+      "target": "UGT1A1",
+      "type": "DETOXIFIED_BY",
       "label": "glucuronidation",
       "carcinogen": "E2",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "UGT2B7",
-      "target": "NNK_hydroxyl",
-      "type": "DETOXIFIES",
+      "source": "NNK_hydroxyl",
+      "target": "UGT2B7",
+      "type": "DETOXIFIED_BY",
       "label": "glucuronidation",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "NQO1",
-      "target": "E2_quinone",
-      "type": "DETOXIFIES",
+      "source": "E2_quinone",
+      "target": "NQO1",
+      "type": "DETOXIFIED_BY",
       "label": "quinone reduction",
       "carcinogen": "E2",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "NQO1",
-      "target": "Benzoquinone",
-      "type": "DETOXIFIES",
+      "source": "Benzoquinone",
+      "target": "NQO1",
+      "type": "DETOXIFIED_BY",
       "label": "quinone reduction",
       "carcinogen": "Benzene",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "NQO1",
-      "target": "CrVI",
-      "type": "DETOXIFIES",
+      "source": "CrVI",
+      "target": "NQO1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "CrVI",
       "evidence": "PMC390765",
       "origin": "imported",
@@ -8144,7 +8144,7 @@
     {
       "source": "COMT",
       "target": "E2_methyl",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "O-methylation",
       "carcinogen": "E2",
       "origin": "imported",
@@ -8175,26 +8175,26 @@
     {
       "source": "UGT2B17",
       "target": "Testosterone_gluc",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "glucuronidation",
       "carcinogen": "Testosterone",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "UGT2B17",
       "target": "DHT_gluc",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "Glucuronidation",
       "carcinogen": "DHT",
       "source_db": "Curated showcase",
       "evidence": "Glucuronidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "DETOXIFIES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -8208,7 +8208,7 @@
     {
       "source": "UGT2B15",
       "target": "DHT_gluc",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "glucuronidation",
       "carcinogen": "DHT",
       "origin": "imported",
@@ -8218,7 +8218,7 @@
     {
       "source": "HSD3B2",
       "target": "Androstenedione",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "3β-oxidation",
       "carcinogen": "Testosterone",
       "origin": "imported",
@@ -8228,7 +8228,7 @@
     {
       "source": "AKR1C2",
       "target": "3aAdiol",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "label": "3α-reduction",
       "carcinogen": "DHT",
       "origin": "imported",
@@ -8236,62 +8236,62 @@
       "provenance": []
     },
     {
-      "source": "ABCB1",
-      "target": "BPDE_GSH",
-      "type": "TRANSPORTS",
+      "source": "BPDE_GSH",
+      "target": "ABCB1",
+      "type": "TRANSPORTED_BY",
       "label": "efflux",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ABCB1",
-      "target": "NNK_hydroxyl",
-      "type": "TRANSPORTS",
+      "source": "NNK_hydroxyl",
+      "target": "ABCB1",
+      "type": "TRANSPORTED_BY",
       "label": "efflux",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ABCB1",
-      "target": "DHT_gluc",
-      "type": "TRANSPORTS",
+      "source": "DHT_gluc",
+      "target": "ABCB1",
+      "type": "TRANSPORTED_BY",
       "label": "efflux",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ABCC2",
-      "target": "BPDE_GSH",
-      "type": "TRANSPORTS",
+      "source": "BPDE_GSH",
+      "target": "ABCC2",
+      "type": "TRANSPORTED_BY",
       "label": "biliary efflux",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ABCC2",
-      "target": "AFB1_GSH",
-      "type": "TRANSPORTS",
+      "source": "AFB1_GSH",
+      "target": "ABCC2",
+      "type": "TRANSPORTED_BY",
       "label": "biliary efflux",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "ABCC2",
-      "target": "DMA_V",
-      "type": "TRANSPORTS",
+      "source": "DMA_V",
+      "target": "ABCC2",
+      "type": "TRANSPORTED_BY",
       "carcinogen": "ArsenicInorganic",
       "evidence": "ScienceDirect 2016",
       "origin": "imported",
@@ -8303,69 +8303,69 @@
       ]
     },
     {
-      "source": "ABCG2",
-      "target": "PhIP_gluc",
-      "type": "TRANSPORTS",
+      "source": "PhIP_gluc",
+      "target": "ABCG2",
+      "type": "TRANSPORTED_BY",
       "label": "efflux",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "ABCG2",
-      "target": "Testosterone_gluc",
-      "type": "TRANSPORTS",
+      "source": "Testosterone_gluc",
+      "target": "ABCG2",
+      "type": "TRANSPORTED_BY",
       "label": "efflux",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "TRANSPORTS",
+      "canonical_predicate": "TRANSPORTED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XRCC1",
-      "target": "PhIP_dG",
-      "type": "REPAIRS",
+      "source": "PhIP_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "label": "BER",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XRCC1",
-      "target": "ABP_dG",
-      "type": "REPAIRS",
+      "source": "ABP_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "label": "BER",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XRCC1",
-      "target": "BQ_dG",
-      "type": "REPAIRS",
+      "source": "BQ_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "label": "BER",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "XRCC1",
-      "target": "etheno_dA",
-      "type": "REPAIRS",
+      "source": "etheno_dA",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "label": "BER",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "XRCC1",
-      "target": "8_OHdG",
-      "type": "REPAIRS",
+      "source": "8_OHdG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "carcinogen": "NickelCompounds",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -8377,9 +8377,9 @@
       ]
     },
     {
-      "source": "XRCC1",
-      "target": "N7_GA_dG",
-      "type": "REPAIRS",
+      "source": "N7_GA_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "carcinogen": "Acrylamide",
       "evidence": "Depurination of N7-glycidamide adducts yields abasic sites handled through BER (PMID:17234719)",
       "origin": "imported",
@@ -8391,9 +8391,9 @@
       ]
     },
     {
-      "source": "XRCC1",
-      "target": "N7_methyl_dG",
-      "type": "REPAIRS",
+      "source": "N7_methyl_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "carcinogen": "MNU",
       "evidence": "BER scaffold response to abasic sites generated by depurination of N7-methyl-dG",
       "origin": "imported",
@@ -8405,9 +8405,9 @@
       ]
     },
     {
-      "source": "XRCC1",
-      "target": "Acr_dG",
-      "type": "REPAIRS",
+      "source": "Acr_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "carcinogen": "Acrolein",
       "evidence": "BER scaffold response to ring-opened Acr-dG adducts with NER backup for bulky ring-closed forms (PMID:19397281)",
       "origin": "imported",
@@ -8419,9 +8419,9 @@
       ]
     },
     {
-      "source": "XRCC1",
-      "target": "Cr_dG",
-      "type": "REPAIRS",
+      "source": "Cr_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "carcinogen": "Crotonaldehyde",
       "evidence": "NER/BER handling of exocyclic propano-dG adducts (IARC Monograph 63)",
       "origin": "imported",
@@ -8433,9 +8433,9 @@
       ]
     },
     {
-      "source": "XRCC1",
-      "target": "M1_dG",
-      "type": "REPAIRS",
+      "source": "M1_dG",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "carcinogen": "MDA",
       "evidence": "M1-dG mutagenesis in human cells implicates nucleotide excision repair involvement, with BER cross-talk commonly invoked for lesion handling (PMID:12775726)",
       "origin": "imported",
@@ -8447,31 +8447,31 @@
       ]
     },
     {
-      "source": "XPC",
-      "target": "BPDE_dG",
-      "type": "REPAIRS",
+      "source": "BPDE_dG",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "label": "NER recognition",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XPC",
-      "target": "AFB1_Gua",
-      "type": "REPAIRS",
+      "source": "AFB1_Gua",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "label": "NER",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XPC",
-      "target": "Cr_DNA_ternary",
-      "type": "REPAIRS",
+      "source": "Cr_DNA_ternary",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023",
       "origin": "imported",
@@ -8483,9 +8483,9 @@
       ]
     },
     {
-      "source": "XPC",
-      "target": "Ni_DPC",
-      "type": "REPAIRS",
+      "source": "Ni_DPC",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "carcinogen": "NickelCompounds",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -8497,15 +8497,15 @@
       ]
     },
     {
-      "source": "XPA",
-      "target": "CPD",
-      "type": "REPAIRS",
+      "source": "CPD",
+      "target": "XPA",
+      "type": "REPAIRED_BY",
       "label": "NER damage verification",
       "carcinogen": "UVRadiation",
       "evidence": "XPA verifies UV-induced CPD damage after XPC recognition; essential for NER of photodimers (IARC Vol. 100D)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "provenance": [
         {
           "evidence": "XPA verifies UV-induced CPD damage after XPC recognition; essential for NER of photodimers (IARC Vol. 100D)"
@@ -8513,15 +8513,15 @@
       ]
     },
     {
-      "source": "XPA",
-      "target": "SixFour_PP",
-      "type": "REPAIRS",
+      "source": "SixFour_PP",
+      "target": "XPA",
+      "type": "REPAIRED_BY",
       "label": "NER damage verification",
       "carcinogen": "UVRadiation",
       "evidence": "XPA verifies UV-induced 6-4 photoproducts after XPC recognition; essential for NER of photoproducts (IARC Vol. 100D)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "provenance": [
         {
           "evidence": "XPA verifies UV-induced 6-4 photoproducts after XPC recognition; essential for NER of photoproducts (IARC Vol. 100D)"
@@ -8529,15 +8529,15 @@
       ]
     },
     {
-      "source": "ATM",
-      "target": "DSB",
-      "type": "REPAIRS",
+      "source": "DSB",
+      "target": "ATM",
+      "type": "REPAIRED_BY",
       "label": "DSB sensing and HR activation",
       "carcinogen": "IonizingRadiation",
       "evidence": "ATM kinase is the primary DSB sensor; phosphorylates H2AX and BRCA1 to initiate homologous recombination repair (IARC Vol. 100D)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "provenance": [
         {
           "evidence": "ATM kinase is the primary DSB sensor; phosphorylates H2AX and BRCA1 to initiate homologous recombination repair (IARC Vol. 100D)"
@@ -8545,15 +8545,15 @@
       ]
     },
     {
-      "source": "BRCA1",
-      "target": "DSB",
-      "type": "REPAIRS",
+      "source": "DSB",
+      "target": "BRCA1",
+      "type": "REPAIRED_BY",
       "label": "Homologous recombination",
       "carcinogen": "IonizingRadiation",
       "evidence": "BRCA1 coordinates DSB resection and RAD51 loading for error-free HR repair of ionizing radiation-induced breaks (IARC Vol. 100D)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "provenance": [
         {
           "evidence": "BRCA1 coordinates DSB resection and RAD51 loading for error-free HR repair of ionizing radiation-induced breaks (IARC Vol. 100D)"
@@ -8561,15 +8561,15 @@
       ]
     },
     {
-      "source": "BRCA2",
-      "target": "DSB",
-      "type": "REPAIRS",
+      "source": "DSB",
+      "target": "BRCA2",
+      "type": "REPAIRED_BY",
       "label": "Homologous recombination",
       "carcinogen": "IonizingRadiation",
       "evidence": "BRCA2 directly loads RAD51 onto resected DNA for HR repair of DSBs from ionizing radiation and radon alpha particles (IARC Vol. 100D)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "provenance": [
         {
           "evidence": "BRCA2 directly loads RAD51 onto resected DNA for HR repair of DSBs from ionizing radiation and radon alpha particles (IARC Vol. 100D)"
@@ -8577,20 +8577,20 @@
       ]
     },
     {
-      "source": "ERCC2",
-      "target": "BPDE_dG",
-      "type": "REPAIRS",
+      "source": "BPDE_dG",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "label": "NER helicase",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ERCC2",
-      "target": "Cr_DNA_binary",
-      "type": "REPAIRS",
+      "source": "Cr_DNA_binary",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023",
       "origin": "imported",
@@ -8602,9 +8602,9 @@
       ]
     },
     {
-      "source": "ERCC2",
-      "target": "Ni_DPC",
-      "type": "REPAIRS",
+      "source": "Ni_DPC",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "carcinogen": "NickelCompounds",
       "evidence": "PMC6802009; ACS Chem Res Toxicol 2007",
       "origin": "imported",
@@ -8616,9 +8616,9 @@
       ]
     },
     {
-      "source": "OGG1",
-      "target": "8_OHdG",
-      "type": "REPAIRS",
+      "source": "8_OHdG",
+      "target": "OGG1",
+      "type": "REPAIRED_BY",
       "carcinogen": "NickelCompounds",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -8651,20 +8651,20 @@
       ]
     },
     {
-      "source": "MGMT",
-      "target": "O6_methyl_dG",
-      "type": "REPAIRS",
+      "source": "O6_methyl_dG",
+      "target": "MGMT",
+      "type": "REPAIRED_BY",
       "label": "methyl transfer",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "MGMT",
-      "target": "Ni_DPC",
-      "type": "REPAIRS",
+      "source": "Ni_DPC",
+      "target": "MGMT",
+      "type": "REPAIRED_BY",
       "carcinogen": "NickelCompounds",
       "evidence": "MGMT repairs O6-methylguanine and related alkyl adducts; nickel-mediated DNA-protein crosslinks are repaired by the proteasomal/SPRTN pathway, not MGMT — redirected to Ni_DPC adduct per structural consistency (PMC6802009)",
       "origin": "imported",
@@ -8851,11 +8851,11 @@
     {
       "source": "HydroxyE2",
       "target": "E2_quinone",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "label": "auto-oxidation",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "MECHANISM_UNCLEAR",
       "canonical_namespace": "schema",
       "provenance": []
     },
@@ -8913,7 +8913,7 @@
     {
       "source": "Benzene_oxide",
       "target": "HQ",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "label": "rearrangement/hydroxylation",
       "origin": "imported",
       "match_status": "unmatched",
@@ -8922,7 +8922,7 @@
     {
       "source": "HQ",
       "target": "Benzoquinone",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "label": "auto-oxidation",
       "origin": "imported",
       "match_status": "unmatched",
@@ -9208,7 +9208,7 @@
     {
       "source": "Cd",
       "target": "Cd_MT",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "Cd",
       "evidence": "PMC8141308",
       "origin": "imported",
@@ -9222,7 +9222,7 @@
     {
       "source": "Cd",
       "target": "ROS_metal",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "Cd",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -9245,7 +9245,7 @@
     {
       "source": "CrVI",
       "target": "Cr_III",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023 mfad045",
       "origin": "imported",
@@ -9259,7 +9259,7 @@
     {
       "source": "CrVI",
       "target": "Cr_V",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023 mfad045",
       "origin": "imported",
@@ -9273,7 +9273,7 @@
     {
       "source": "CrVI",
       "target": "Asc_Cr_III",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "CrVI",
       "evidence": "Biochemistry 2003",
       "origin": "imported",
@@ -9296,7 +9296,7 @@
     {
       "source": "NickelCompounds",
       "target": "ROS_metal",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "NickelCompounds",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -9333,7 +9333,7 @@
     {
       "source": "Be",
       "target": "HLA_DPB1",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "Be",
       "evidence": "Science 1993; PMC4685955",
       "origin": "imported",
@@ -9356,7 +9356,7 @@
     {
       "source": "AS3MT",
       "target": "MMA_V",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMID:34730462",
       "origin": "imported",
@@ -9370,7 +9370,7 @@
     {
       "source": "AS3MT",
       "target": "DMA_V",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMID:34730462",
       "origin": "imported",
@@ -9384,7 +9384,7 @@
     {
       "source": "GSTO1",
       "target": "MMA_III",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMID:34959192",
       "origin": "imported",
@@ -9398,7 +9398,7 @@
     {
       "source": "GSTO2",
       "target": "MMA_III",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMID:32650499",
       "origin": "imported",
@@ -9410,9 +9410,9 @@
       ]
     },
     {
-      "source": "MT1A",
-      "target": "Cd",
-      "type": "DETOXIFIES",
+      "source": "Cd",
+      "target": "MT1A",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Cd",
       "evidence": "PMID:16827180",
       "origin": "imported",
@@ -9424,9 +9424,9 @@
       ]
     },
     {
-      "source": "MT2A",
-      "target": "Cd",
-      "type": "DETOXIFIES",
+      "source": "Cd",
+      "target": "MT2A",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Cd",
       "evidence": "PMID:21328412; PMID:26529669",
       "origin": "imported",
@@ -9452,9 +9452,9 @@
       ]
     },
     {
-      "source": "PARP1",
-      "target": "8_OHdG",
-      "type": "REPAIRS",
+      "source": "8_OHdG",
+      "target": "PARP1",
+      "type": "REPAIRED_BY",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMC3606021",
       "origin": "imported",
@@ -9466,9 +9466,9 @@
       ]
     },
     {
-      "source": "SLC11A1",
-      "target": "Cd",
-      "type": "TRANSPORTS",
+      "source": "Cd",
+      "target": "SLC11A1",
+      "type": "TRANSPORTED_BY",
       "carcinogen": "Cd",
       "evidence": "PMC2898853",
       "origin": "imported",
@@ -9482,7 +9482,7 @@
     {
       "source": "MMA_III",
       "target": "ROS_metal",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMC3606021",
       "origin": "imported",
@@ -9510,7 +9510,7 @@
     {
       "source": "Cr_V",
       "target": "ROS_metal",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023",
       "origin": "imported",
@@ -9584,7 +9584,7 @@
     {
       "source": "TCDD",
       "target": "AHR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "TCDD",
       "evidence": "TCDD binds AhR with picomolar Kd; displaces HSP90 (PMC3748760)",
       "origin": "imported",
@@ -9607,7 +9607,7 @@
     {
       "source": "PCB_dioxin_like",
       "target": "AHR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "PCB_dioxin_like",
       "evidence": "Dioxin-like PCB; WHO-TEF 0.1 relative to TCDD (PMC3748760)",
       "origin": "imported",
@@ -9655,9 +9655,9 @@
       "provenance": []
     },
     {
-      "source": "ALDH2",
-      "target": "Acetaldehyde_int",
-      "type": "DETOXIFIES",
+      "source": "Acetaldehyde_int",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Acetaldehyde",
       "evidence": "Primary clearance; rs671 ALDH2*2 causes 6-19x acetaldehyde accumulation (PMC4376259)",
       "origin": "imported",
@@ -9669,9 +9669,9 @@
       ]
     },
     {
-      "source": "ALDH2",
-      "target": "Formaldehyde",
-      "type": "DETOXIFIES",
+      "source": "Formaldehyde",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Formaldehyde",
       "evidence": "Mitochondrial formaldehyde oxidation to formate (PMC7758861)",
       "origin": "imported",
@@ -9685,7 +9685,7 @@
     {
       "source": "ALDH2",
       "target": "Formate",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "carcinogen": "Formaldehyde",
       "evidence": "Mitochondrial formaldehyde clearance producing formate",
       "origin": "imported",
@@ -9697,9 +9697,9 @@
       ]
     },
     {
-      "source": "ALDH2",
-      "target": "Acrolein",
-      "type": "DETOXIFIES",
+      "source": "Acrolein",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Acrolein",
       "evidence": "ALDH2 oxidation of acrolein to acrylic acid; ALDH2*2 carriers show elevated acrolein-protein adducts (IARC Monograph 128)",
       "origin": "imported",
@@ -9711,9 +9711,9 @@
       ]
     },
     {
-      "source": "ALDH2",
-      "target": "Crotonaldehyde",
-      "type": "DETOXIFIES",
+      "source": "Crotonaldehyde",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Crotonaldehyde",
       "evidence": "ALDH2 oxidation to crotonic acid; ALDH2*2 polymorphism amplifies Cr-dG burden (IARC Monograph 63)",
       "origin": "imported",
@@ -9725,9 +9725,9 @@
       ]
     },
     {
-      "source": "ALDH2",
-      "target": "4_HNE",
-      "type": "DETOXIFIES",
+      "source": "4_HNE",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "4_HNE",
       "evidence": "ALDH2 oxidation to 4-hydroxynon-2-enoic acid; ALDH2*2 carriers accumulate 4-HNE-protein adducts in alcoholic liver disease (PMID:1937131)",
       "origin": "imported",
@@ -9741,7 +9741,7 @@
     {
       "source": "ADH1B",
       "target": "Acetaldehyde_int",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Acetaldehyde",
       "evidence": "ADH1B oxidizes ethanol to acetaldehyde; *2 (rs1229984) fast allele ESCC OR 2.50 (PMC4122263)",
       "origin": "imported",
@@ -9755,7 +9755,7 @@
     {
       "source": "ADH1C",
       "target": "Acetaldehyde_int",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Acetaldehyde",
       "evidence": "ADH1C contributes to ethanol oxidation (rs698 Ile349Val)",
       "origin": "imported",
@@ -9767,9 +9767,9 @@
       ]
     },
     {
-      "source": "ADH5",
-      "target": "Formaldehyde",
-      "type": "DETOXIFIES",
+      "source": "Formaldehyde",
+      "target": "ADH5",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Formaldehyde",
       "evidence": "Cytosolic formaldehyde dehydrogenase; S-hydroxymethylglutathione pathway (PMC7758861)",
       "origin": "imported",
@@ -9783,7 +9783,7 @@
     {
       "source": "ADH5",
       "target": "Formate",
-      "type": "DETOXIFIES",
+      "type": "PRODUCES",
       "carcinogen": "Formaldehyde",
       "evidence": "Formaldehyde to S-hydroxymethylglutathione to formate",
       "origin": "imported",
@@ -9795,9 +9795,9 @@
       ]
     },
     {
-      "source": "FANCD2",
-      "target": "N2_ethylidene_dG",
-      "type": "REPAIRS",
+      "source": "N2_ethylidene_dG",
+      "target": "FANCD2",
+      "type": "REPAIRED_BY",
       "carcinogen": "Acetaldehyde",
       "evidence": "Fanconi anemia pathway repairs acetaldehyde-induced ICLs (PMC5324749)",
       "origin": "imported",
@@ -9811,7 +9811,7 @@
     {
       "source": "AHR",
       "target": "ARNT",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "TCDD",
       "evidence": "Nuclear translocation and dimerization with ARNT",
       "origin": "imported",
@@ -9825,7 +9825,7 @@
     {
       "source": "AHR",
       "target": "AhR_ARNT_complex",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "TCDD",
       "evidence": "AhR-ARNT heterodimerization forming active transcription factor",
       "origin": "imported",
@@ -9867,7 +9867,7 @@
     {
       "source": "ARNT",
       "target": "AhR_ARNT_complex",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "TCDD",
       "evidence": "Obligate co-factor for AhR transcriptional complex",
       "origin": "imported",
@@ -9895,7 +9895,7 @@
     {
       "source": "CCBL1",
       "target": "DCVC",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "TCE",
       "evidence": "Beta-lyase generates reactive DCVT thiol from DCVC (PMID:20663906)",
       "origin": "imported",
@@ -9909,7 +9909,7 @@
     {
       "source": "Hydroxymethylnitrosamine",
       "target": "Methyldiazonium",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "NDMA",
       "evidence": "Spontaneous decomposition to formaldehyde + methyldiazonium",
       "origin": "imported",
@@ -9972,7 +9972,7 @@
     {
       "source": "Chloral_hydrate",
       "target": "TCA",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "TCE",
       "evidence": "Oxidized to trichloroacetic acid; urinary biomarker",
       "origin": "imported",
@@ -10048,7 +10048,7 @@
     {
       "source": "Cyclophosphamide",
       "target": "Acrolein_CP",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "Cyclophosphamide",
       "evidence": "Acrolein is the obligate byproduct of aldophosphamide beta-elimination during cyclophosphamide activation; drives hemorrhagic cystitis and contributes to secondary bladder cancer (PMID:10348794)",
       "origin": "imported",
@@ -10062,7 +10062,7 @@
     {
       "source": "Chlorambucil",
       "target": "Chlorambucil_aziridinium",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "Chlorambucil",
       "evidence": "Intramolecular cyclization displaces chloride to form the cyclic aziridinium ultimate alkylator (PMID:7862715)",
       "origin": "imported",
@@ -10085,7 +10085,7 @@
     {
       "source": "Sulfur_mustard",
       "target": "Mustard_episulfonium",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "Sulfur_mustard",
       "evidence": "Intramolecular cyclization to cyclic episulfonium is the canonical alkylation step (IARC 100F)",
       "origin": "imported",
@@ -10108,7 +10108,7 @@
     {
       "source": "Busulfan",
       "target": "Busulfan_methanesulfonate",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "Busulfan",
       "evidence": "Non-enzymatic hydrolytic displacement of methanesulfonate leaving groups produces the reactive bifunctional alkylator (PMID:6892995)",
       "origin": "imported",
@@ -10131,7 +10131,7 @@
     {
       "source": "MNU",
       "target": "Methyldiazonium",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "MNU",
       "evidence": "Spontaneous pH-dependent decomposition to methyldiazohydroxide and methyldiazonium ion; no enzymatic activation required (PMID:1912317)",
       "origin": "imported",
@@ -10154,7 +10154,7 @@
     {
       "source": "4OH_cyclophosphamide",
       "target": "Phosphoramide_mustard",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "Cyclophosphamide",
       "evidence": "Spontaneous tautomerization to aldophosphamide then beta-elimination to phosphoramide mustard plus acrolein (PMID:10348794)",
       "origin": "imported",
@@ -10277,9 +10277,9 @@
       "provenance": []
     },
     {
-      "source": "GSTP1",
-      "target": "Acrolein_CP",
-      "type": "DETOXIFIES",
+      "source": "Acrolein_CP",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Cyclophosphamide",
       "evidence": "GSH conjugation yields 3-hydroxypropylmercapturic acid (HPMA), same detox pathway as exogenous acrolein (IARC Monograph 128)",
       "origin": "imported",
@@ -10291,9 +10291,9 @@
       ]
     },
     {
-      "source": "ALDH2",
-      "target": "Acrolein_CP",
-      "type": "DETOXIFIES",
+      "source": "Acrolein_CP",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
       "carcinogen": "Cyclophosphamide",
       "evidence": "ALDH2 oxidation of acrolein to acrylic acid; same detox pathway as exogenous acrolein (IARC Monograph 128)",
       "origin": "imported",
@@ -10427,13 +10427,13 @@
     {
       "source": "PCB_non_dioxin",
       "target": "CAR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "PCB_non_dioxin",
       "source_db": "IARC Monograph 107",
       "evidence": "Non-dioxin-like PCBs activate constitutive androstane receptor (CAR/NR1I3), inducing CYP2B/CYP3A and promoting hepatocellular proliferation (IARC Monograph 107)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "provenance": [
         {
           "source_db": "IARC Monograph 107",
@@ -10446,13 +10446,13 @@
     {
       "source": "PCB_non_dioxin",
       "target": "PXR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "PCB_non_dioxin",
       "source_db": "IARC Monograph 107",
       "evidence": "Non-dioxin-like PCBs activate pregnane X receptor (PXR/NR1I2), inducing CYP3A4 and ABC transporters; promotes hepatocellular proliferation (IARC Monograph 107)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "provenance": [
         {
           "source_db": "IARC Monograph 107",
@@ -10465,7 +10465,7 @@
     {
       "source": "PeCDF_23478",
       "target": "AHR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "PeCDF_23478",
       "evidence": "Most potent non-TCDD AhR ligand; WHO-TEF 0.3; dominant PCDF in Yusho/Yu-cheng cohorts (IARC Monograph 100F, 2012)",
       "origin": "imported",
@@ -10488,7 +10488,7 @@
     {
       "source": "HCB",
       "target": "AHR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "HCB",
       "evidence": "Weak AhR agonist; induces CYP1A1/CYP1A2/CYP1B1 in rodent liver; associated with hepatic porphyria (IARC Monograph 79, 2001)",
       "origin": "imported",
@@ -10539,7 +10539,7 @@
     {
       "source": "PCP",
       "target": "AHR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "PCP",
       "evidence": "Pentachlorophenol is a moderate AhR agonist; tetrachloro-p-benzoquinone metabolite contributes to redox cycling (IARC Monograph 117, 2019)",
       "origin": "imported",
@@ -10602,15 +10602,15 @@
       ]
     },
     {
-      "source": "MLH1",
-      "target": "BPDE_dG",
-      "type": "REPAIRS",
+      "source": "BPDE_dG",
+      "target": "MLH1",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10622,15 +10622,15 @@
       ]
     },
     {
-      "source": "MLH1",
-      "target": "PhIP_dG",
-      "type": "REPAIRS",
+      "source": "PhIP_dG",
+      "target": "MLH1",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10642,15 +10642,15 @@
       ]
     },
     {
-      "source": "MLH1",
-      "target": "ABP_dG",
-      "type": "REPAIRS",
+      "source": "ABP_dG",
+      "target": "MLH1",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10662,15 +10662,15 @@
       ]
     },
     {
-      "source": "MLH1",
-      "target": "8_OHdG",
-      "type": "REPAIRS",
+      "source": "8_OHdG",
+      "target": "MLH1",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10682,15 +10682,15 @@
       ]
     },
     {
-      "source": "MSH2",
-      "target": "BPDE_dG",
-      "type": "REPAIRS",
+      "source": "BPDE_dG",
+      "target": "MSH2",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10702,15 +10702,15 @@
       ]
     },
     {
-      "source": "MSH2",
-      "target": "PhIP_dG",
-      "type": "REPAIRS",
+      "source": "PhIP_dG",
+      "target": "MSH2",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10722,15 +10722,15 @@
       ]
     },
     {
-      "source": "MSH2",
-      "target": "ABP_dG",
-      "type": "REPAIRS",
+      "source": "ABP_dG",
+      "target": "MSH2",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10742,15 +10742,15 @@
       ]
     },
     {
-      "source": "MSH2",
-      "target": "8_OHdG",
-      "type": "REPAIRS",
+      "source": "8_OHdG",
+      "target": "MSH2",
+      "type": "REPAIRED_BY",
       "label": "MMR",
       "source_db": "Curated showcase",
       "evidence": "MMR",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10764,14 +10764,14 @@
     {
       "source": "CYP1A1",
       "target": "AL_nitrenium",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Nitroreduction (CYP1A1)",
       "carcinogen": "AristolochicAcid",
       "source_db": "Curated showcase",
       "evidence": "CYP1A1-mediated nitroreduction of aristolochic acid",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10785,14 +10785,14 @@
     {
       "source": "NQO1",
       "target": "AL_nitrenium",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "Nitroreduction (NQO1)",
       "carcinogen": "AristolochicAcid",
       "source_db": "Curated showcase",
       "evidence": "NQO1-mediated nitroreduction of aristolochic acid",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10879,38 +10879,38 @@
       ]
     },
     {
-      "source": "XPC",
-      "target": "dA_AL_I",
-      "type": "REPAIRS",
+      "source": "dA_AL_I",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "label": "NER recognition",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ERCC2",
-      "target": "dA_AL_I",
-      "type": "REPAIRS",
+      "source": "dA_AL_I",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "label": "NER excision",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "PFOA",
       "target": "PPARA",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Nuclear receptor activation (PPARα, CAR, PXR)",
       "carcinogen": "PFOA",
       "source_db": "IARC Monographs Vol. 135",
       "evidence": "PFOA activates multiple nuclear receptors (PPARα, CAR, PXR, suggestive PPARγ). IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents; Group 1 was reached in the absence of strong human evidence for receptor-mediated effects (KC8). Primary in-human basis was KC4 (epigenetic) and KC7 (immunosuppression).",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -10978,14 +10978,14 @@
     {
       "source": "PFOS",
       "target": "PPARA",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Nuclear receptor activation (PPARα, CAR, PXR; weaker)",
       "carcinogen": "PFOS",
       "source_db": "IARC Monographs Vol. 135",
       "evidence": "PFOS activates multiple nuclear receptors (PPARα, CAR, PXR) with lower potency than PFOA. IARC treats receptor activation as a mechanism that 'might contribute' to hepatocarcinogenicity in rodents; Group 2B was supported by strong mechanistic evidence including in exposed humans (KC4, KC7).",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11180,46 +11180,46 @@
       ]
     },
     {
-      "source": "XPC",
-      "target": "CPD",
-      "type": "REPAIRS",
+      "source": "CPD",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "label": "NER recognition",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XPC",
-      "target": "SixFour_PP",
-      "type": "REPAIRS",
+      "source": "SixFour_PP",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
       "label": "NER recognition",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ERCC2",
-      "target": "CPD",
-      "type": "REPAIRS",
+      "source": "CPD",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "label": "NER excision",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "ERCC2",
-      "target": "SixFour_PP",
-      "type": "REPAIRS",
+      "source": "SixFour_PP",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "label": "NER excision",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
@@ -11268,14 +11268,14 @@
     {
       "source": "IonizingRadiation",
       "target": "ROS_radiation",
-      "type": "ACTIVATES",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "label": "Radiolysis of water generates ROS",
       "carcinogen": "IonizingRadiation",
       "source_db": "IARC Monographs Vol. 100D",
       "evidence": "Ionizing radiation causes radiolysis of water generating hydroxyl radicals; indirect DNA damage pathway",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "TRANSFORMS_SPONTANEOUSLY",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11395,38 +11395,38 @@
       ]
     },
     {
-      "source": "FANCD2",
-      "target": "DSB",
-      "type": "REPAIRS",
+      "source": "DSB",
+      "target": "FANCD2",
+      "type": "REPAIRED_BY",
       "label": "HR-mediated DSB repair (Fanconi anemia pathway)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
-      "source": "XRCC1",
-      "target": "SSB",
-      "type": "REPAIRS",
+      "source": "SSB",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
       "label": "SSB repair scaffold (BER pathway)",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
     {
       "source": "Radon",
       "target": "Radon_decay_products",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "label": "Alpha decay to Po-218 and Po-214",
       "carcinogen": "Radon",
       "source_db": "IARC Monographs Vol. 100D",
       "evidence": "Radon-222 decays through Po-218 and Po-214 which deliver high-LET alpha dose to bronchial epithelium",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "MECHANISM_UNCLEAR",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11533,13 +11533,13 @@
       ]
     },
     {
-      "source": "ERCC2",
-      "target": "AFB1_Gua",
-      "type": "REPAIRS",
+      "source": "AFB1_Gua",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
       "label": "NER excision",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "REPAIRS",
+      "canonical_predicate": "REPAIRED_BY",
       "canonical_namespace": "schema",
       "provenance": []
     },
@@ -11630,14 +11630,14 @@
     {
       "source": "PCB_non_dioxin",
       "target": "RyR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "RyR sensitization (Ca2+ dysregulation)",
       "carcinogen": "PCB_non_dioxin",
       "source_db": "Curated showcase",
       "evidence": "Non-dioxin-like PCB sensitizes ryanodine receptor, disrupting calcium homeostasis",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11672,14 +11672,14 @@
     {
       "source": "DDT",
       "target": "ESR1",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Estrogen receptor agonism (xenoestrogen)",
       "carcinogen": "DDT",
       "source_db": "Curated showcase",
       "evidence": "DDT acts as xenoestrogen agonist at estrogen receptor alpha, promoting hormonal carcinogenesis",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11798,14 +11798,14 @@
     {
       "source": "DHT",
       "target": "AR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Androgen receptor agonism (high-affinity ligand)",
       "carcinogen": "DHT",
       "source_db": "Curated showcase",
       "evidence": "DHT is the high-affinity ligand for androgen receptor, promoting androgen-driven prostate carcinogenesis",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11894,14 +11894,14 @@
     {
       "source": "EstrogenProgestogenTherapy",
       "target": "ESR1",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Estrogen receptor agonism",
       "carcinogen": "EstrogenProgestogenTherapy",
       "source_db": "IARC Monographs Vol. 100A",
       "evidence": "Estrogen-progestogen therapy activates estrogen receptor alpha, driving hormonal carcinogenesis in estrogen-responsive tissues.",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11915,14 +11915,14 @@
     {
       "source": "EstrogenProgestogenTherapy",
       "target": "E2",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "label": "Endogenous estrogen release",
       "carcinogen": "EstrogenProgestogenTherapy",
       "source_db": "IARC Monographs Vol. 100A",
       "evidence": "Exogenous estrogen-progestogen therapy elevates circulating 17β-estradiol, connecting the pharmaceutical exposure to the intracellular hormone pathway.",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "MECHANISM_UNCLEAR",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11936,13 +11936,13 @@
     {
       "source": "E2",
       "target": "ESR1",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Estrogen receptor agonism",
       "source_db": "Curated showcase",
       "evidence": "17β-Estradiol is the endogenous high-affinity ligand for ERα. Intracellular metabolite activates receptor as part of the estrogen pathway.",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11956,14 +11956,14 @@
     {
       "source": "AndrogenicAnabolicSteroids",
       "target": "AR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Androgen receptor agonism",
       "carcinogen": "AndrogenicAnabolicSteroids",
       "source_db": "IARC Monographs Vol. 100A",
       "evidence": "Anabolic-androgenic steroids activate the androgen receptor, driving hormonal carcinogenesis in prostate and other androgen-responsive tissues.",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -11977,13 +11977,13 @@
     {
       "source": "Testosterone",
       "target": "AR",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "label": "Androgen receptor agonism (lower affinity than DHT)",
       "source_db": "Curated showcase",
       "evidence": "Testosterone activates AR with lower affinity than DHT. Intracellular metabolite activates receptor as part of the androgen pathway.",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
+      "canonical_predicate": "AGONIZES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -12177,7 +12177,7 @@
     {
       "source": "PCE",
       "target": "PPARA",
-      "type": "ACTIVATES",
+      "type": "AGONIZES",
       "carcinogen": "PCE",
       "evidence": "PCE activates PPARα via trichloroacetic acid metabolite; peroxisome proliferation and oxidative stress in liver (IARC Vol 106, 2017)",
       "origin": "imported",
@@ -12289,7 +12289,7 @@
     {
       "source": "CYP1A1",
       "target": "DBA_3_4_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Dibenz_ah_anthracene",
       "evidence": "CYP1A1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12303,7 +12303,7 @@
     {
       "source": "CYP1B1",
       "target": "DBA_3_4_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Dibenz_ah_anthracene",
       "evidence": "CYP1B1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12339,7 +12339,7 @@
     {
       "source": "CYP1A1",
       "target": "BaA_3_4_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benz_a_anthracene",
       "evidence": "CYP1A1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12353,7 +12353,7 @@
     {
       "source": "CYP1B1",
       "target": "BaA_3_4_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benz_a_anthracene",
       "evidence": "CYP1B1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12389,7 +12389,7 @@
     {
       "source": "CYP1A1",
       "target": "Chrysene_1_2_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Chrysene",
       "evidence": "CYP1A1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12403,7 +12403,7 @@
     {
       "source": "CYP1B1",
       "target": "Chrysene_1_2_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Chrysene",
       "evidence": "CYP1B1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12439,7 +12439,7 @@
     {
       "source": "CYP1A1",
       "target": "BbF_9_10_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benzo_b_fluoranthene",
       "evidence": "CYP1A1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12453,7 +12453,7 @@
     {
       "source": "CYP1B1",
       "target": "BbF_9_10_diol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benzo_b_fluoranthene",
       "evidence": "CYP1B1 catalyzes initial epoxidation",
       "origin": "imported",
@@ -12489,7 +12489,7 @@
     {
       "source": "CYP2E1",
       "target": "Naphthalene_1_2_oxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Naphthalene",
       "evidence": "CYP2E1 catalyzes naphthalene epoxidation; PMC4030291",
       "origin": "imported",
@@ -12503,7 +12503,7 @@
     {
       "source": "CYP2F1",
       "target": "Naphthalene_1_2_oxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Naphthalene",
       "evidence": "CYP2F1 catalyzes naphthalene bioactivation in lung; PMC4030291",
       "origin": "imported",
@@ -12517,7 +12517,7 @@
     {
       "source": "Naphthalene_1_2_oxide",
       "target": "Naphthoquinone",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "Naphthalene",
       "evidence": "1,2-oxide metabolized to 1,2-naphthoquinone via dihydrodiol; PMC12997242",
       "origin": "imported",
@@ -12567,7 +12567,7 @@
     {
       "source": "MethylmercuryCompounds",
       "target": "MeHg_GSH",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "MethylmercuryCompounds",
       "evidence": "Methylmercury conjugates with GSH via thiol group to form MeHg-GSH complex; PMC6635095",
       "origin": "imported",
@@ -12581,7 +12581,7 @@
     {
       "source": "GSH",
       "target": "MeHg_GSH",
-      "type": "ACTIVATES",
+      "type": "MECHANISM_UNCLEAR",
       "carcinogen": "MethylmercuryCompounds",
       "evidence": "GSH thiol group conjugates with MeHg forming MeHg-GSH complex; PMC6635095",
       "origin": "imported",
@@ -12609,7 +12609,7 @@
     {
       "source": "CYP2E1",
       "target": "Ethanol",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2E1 metabolism of Ethanol",
       "carcinogen": "Ethanol",
       "origin": "imported",
@@ -12617,9 +12617,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2E1",
-      "target": "acetaminophen",
-      "type": "DETOXIFIES",
+      "source": "acetaminophen",
+      "target": "CYP2E1",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2E1 metabolism of Acetaminophen",
       "carcinogen": "acetaminophen",
       "origin": "imported",
@@ -12629,7 +12629,7 @@
     {
       "source": "CYP2E1",
       "target": "chloroform",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2E1 metabolism of Chloroform",
       "carcinogen": "chloroform",
       "origin": "imported",
@@ -12639,7 +12639,7 @@
     {
       "source": "CYP2E1",
       "target": "styrene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2E1 metabolism of Styrene",
       "carcinogen": "styrene",
       "origin": "imported",
@@ -12649,7 +12649,7 @@
     {
       "source": "CYP2E1",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2E1 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -12657,9 +12657,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2E1",
-      "target": "p_nitrophenol",
-      "type": "DETOXIFIES",
+      "source": "p_nitrophenol",
+      "target": "CYP2E1",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2E1 metabolism of p-Nitrophenol",
       "carcinogen": "p_nitrophenol",
       "origin": "imported",
@@ -12669,7 +12669,7 @@
     {
       "source": "CYP1A2",
       "target": "IQ",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A2 metabolism of IQ",
       "carcinogen": "IQ",
       "origin": "imported",
@@ -12677,9 +12677,9 @@
       "provenance": []
     },
     {
-      "source": "CYP1A2",
-      "target": "caffeine",
-      "type": "DETOXIFIES",
+      "source": "caffeine",
+      "target": "CYP1A2",
+      "type": "DETOXIFIED_BY",
       "label": "CYP1A2 metabolism of Caffeine",
       "carcinogen": "caffeine",
       "origin": "imported",
@@ -12689,7 +12689,7 @@
     {
       "source": "CYP1A2",
       "target": "BaP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A2 metabolism of Benzo[a]pyrene",
       "carcinogen": "BaP",
       "origin": "imported",
@@ -12699,7 +12699,7 @@
     {
       "source": "CYP1A2",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A2 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -12709,7 +12709,7 @@
     {
       "source": "CYP1A2",
       "target": "AalphaC",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A2 metabolism of AαC",
       "carcinogen": "AalphaC",
       "origin": "imported",
@@ -12717,9 +12717,9 @@
       "provenance": []
     },
     {
-      "source": "CYP1A2",
-      "target": "phenacetin",
-      "type": "DETOXIFIES",
+      "source": "phenacetin",
+      "target": "CYP1A2",
+      "type": "DETOXIFIED_BY",
       "label": "CYP1A2 metabolism of Phenacetin",
       "carcinogen": "phenacetin",
       "origin": "imported",
@@ -12727,9 +12727,9 @@
       "provenance": []
     },
     {
-      "source": "CYP1A2",
-      "target": "theophylline",
-      "type": "DETOXIFIES",
+      "source": "theophylline",
+      "target": "CYP1A2",
+      "type": "DETOXIFIED_BY",
       "label": "CYP1A2 metabolism of Theophylline",
       "carcinogen": "theophylline",
       "origin": "imported",
@@ -12739,7 +12739,7 @@
     {
       "source": "CYP1A1",
       "target": "PhIP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A1 metabolism of PhIP",
       "carcinogen": "PhIP",
       "origin": "imported",
@@ -12749,7 +12749,7 @@
     {
       "source": "CYP1A1",
       "target": "chrysene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A1 metabolism of Chrysene",
       "carcinogen": "chrysene",
       "origin": "imported",
@@ -12757,9 +12757,9 @@
       "provenance": []
     },
     {
-      "source": "CYP1A1",
-      "target": "7_ethoxyresorufin",
-      "type": "DETOXIFIES",
+      "source": "7_ethoxyresorufin",
+      "target": "CYP1A1",
+      "type": "DETOXIFIED_BY",
       "label": "CYP1A1 metabolism of 7-Ethoxyresorufin",
       "carcinogen": "7_ethoxyresorufin",
       "origin": "imported",
@@ -12769,7 +12769,7 @@
     {
       "source": "CYP1A1",
       "target": "benzo_a_anthracene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A1 metabolism of Benzo[a]anthracene",
       "carcinogen": "benzo_a_anthracene",
       "origin": "imported",
@@ -12779,7 +12779,7 @@
     {
       "source": "CYP1A1",
       "target": "dibenz_ah_anthracene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1A1 metabolism of Dibenz[a,h]anthracene",
       "carcinogen": "dibenz_ah_anthracene",
       "origin": "imported",
@@ -12787,9 +12787,9 @@
       "provenance": []
     },
     {
-      "source": "CYP1A1",
-      "target": "estradiol_2_OH",
-      "type": "DETOXIFIES",
+      "source": "estradiol_2_OH",
+      "target": "CYP1A1",
+      "type": "DETOXIFIED_BY",
       "label": "CYP1A1 metabolism of Estradiol (2-hydroxylation substrate)",
       "carcinogen": "estradiol_2_OH",
       "origin": "imported",
@@ -12799,7 +12799,7 @@
     {
       "source": "CYP1B1",
       "target": "estradiol_4_OH",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1B1 metabolism of Estradiol (4-hydroxylation substrate)",
       "carcinogen": "estradiol_4_OH",
       "origin": "imported",
@@ -12809,7 +12809,7 @@
     {
       "source": "CYP1B1",
       "target": "4ABP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP1B1 metabolism of 4-Aminobiphenyl",
       "carcinogen": "4ABP",
       "origin": "imported",
@@ -12817,9 +12817,9 @@
       "provenance": []
     },
     {
-      "source": "CYP1B1",
-      "target": "resveratrol",
-      "type": "DETOXIFIES",
+      "source": "resveratrol",
+      "target": "CYP1B1",
+      "type": "DETOXIFIED_BY",
       "label": "CYP1B1 metabolism of Resveratrol",
       "carcinogen": "resveratrol",
       "origin": "imported",
@@ -12827,9 +12827,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2A6",
-      "target": "nicotine",
-      "type": "DETOXIFIES",
+      "source": "nicotine",
+      "target": "CYP2A6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2A6 metabolism of Nicotine",
       "carcinogen": "nicotine",
       "origin": "imported",
@@ -12837,9 +12837,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2A6",
-      "target": "cotinine",
-      "type": "DETOXIFIES",
+      "source": "cotinine",
+      "target": "CYP2A6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2A6 metabolism of Cotinine",
       "carcinogen": "cotinine",
       "origin": "imported",
@@ -12847,9 +12847,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2A6",
-      "target": "coumarin",
-      "type": "DETOXIFIES",
+      "source": "coumarin",
+      "target": "CYP2A6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2A6 metabolism of Coumarin",
       "carcinogen": "coumarin",
       "origin": "imported",
@@ -12859,7 +12859,7 @@
     {
       "source": "CYP2A6",
       "target": "NDEA",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2A6 metabolism of NDEA",
       "carcinogen": "NDEA",
       "origin": "imported",
@@ -12869,7 +12869,7 @@
     {
       "source": "CYP2A13",
       "target": "Benzene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2A13 metabolism of Benzene",
       "carcinogen": "Benzene",
       "origin": "imported",
@@ -12879,7 +12879,7 @@
     {
       "source": "CYP2A13",
       "target": "NDEA",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2A13 metabolism of NDEA",
       "carcinogen": "NDEA",
       "origin": "imported",
@@ -12889,7 +12889,7 @@
     {
       "source": "CYP2A13",
       "target": "NNAL",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2A13 metabolism of NNAL",
       "carcinogen": "NNAL",
       "origin": "imported",
@@ -12897,9 +12897,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2A13",
-      "target": "methoxsalen",
-      "type": "DETOXIFIES",
+      "source": "methoxsalen",
+      "target": "CYP2A13",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2A13 metabolism of Methoxsalen",
       "carcinogen": "methoxsalen",
       "origin": "imported",
@@ -12907,9 +12907,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2B6",
-      "target": "bupropion",
-      "type": "DETOXIFIES",
+      "source": "bupropion",
+      "target": "CYP2B6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2B6 metabolism of Bupropion",
       "carcinogen": "bupropion",
       "origin": "imported",
@@ -12917,9 +12917,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2B6",
-      "target": "nicotine",
-      "type": "DETOXIFIES",
+      "source": "nicotine",
+      "target": "CYP2B6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2B6 metabolism of Nicotine",
       "carcinogen": "nicotine",
       "origin": "imported",
@@ -12929,7 +12929,7 @@
     {
       "source": "CYP2B6",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2B6 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -12937,9 +12937,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2C9",
-      "target": "tolbutamide",
-      "type": "DETOXIFIES",
+      "source": "tolbutamide",
+      "target": "CYP2C9",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2C9 metabolism of Tolbutamide",
       "carcinogen": "tolbutamide",
       "origin": "imported",
@@ -12947,9 +12947,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2C9",
-      "target": "S_warfarin",
-      "type": "DETOXIFIES",
+      "source": "S_warfarin",
+      "target": "CYP2C9",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2C9 metabolism of S-Warfarin",
       "carcinogen": "S_warfarin",
       "origin": "imported",
@@ -12957,9 +12957,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2C9",
-      "target": "diclofenac",
-      "type": "DETOXIFIES",
+      "source": "diclofenac",
+      "target": "CYP2C9",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2C9 metabolism of Diclofenac",
       "carcinogen": "diclofenac",
       "origin": "imported",
@@ -12969,7 +12969,7 @@
     {
       "source": "CYP2C9",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2C9 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -12979,7 +12979,7 @@
     {
       "source": "CYP2C9",
       "target": "4ABP",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2C9 metabolism of 4-Aminobiphenyl",
       "carcinogen": "4ABP",
       "origin": "imported",
@@ -12987,9 +12987,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2C19",
-      "target": "S_mephenytoin",
-      "type": "DETOXIFIES",
+      "source": "S_mephenytoin",
+      "target": "CYP2C19",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2C19 metabolism of S-Mephenytoin",
       "carcinogen": "S_mephenytoin",
       "origin": "imported",
@@ -12997,9 +12997,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2C19",
-      "target": "omeprazole",
-      "type": "DETOXIFIES",
+      "source": "omeprazole",
+      "target": "CYP2C19",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2C19 metabolism of Omeprazole",
       "carcinogen": "omeprazole",
       "origin": "imported",
@@ -13007,9 +13007,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2C19",
-      "target": "nicotine",
-      "type": "DETOXIFIES",
+      "source": "nicotine",
+      "target": "CYP2C19",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2C19 metabolism of Nicotine",
       "carcinogen": "nicotine",
       "origin": "imported",
@@ -13019,7 +13019,7 @@
     {
       "source": "CYP2C19",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2C19 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -13027,9 +13027,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2D6",
-      "target": "dextromethorphan",
-      "type": "DETOXIFIES",
+      "source": "dextromethorphan",
+      "target": "CYP2D6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2D6 metabolism of Dextromethorphan",
       "carcinogen": "dextromethorphan",
       "origin": "imported",
@@ -13037,9 +13037,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2D6",
-      "target": "debrisoquine",
-      "type": "DETOXIFIES",
+      "source": "debrisoquine",
+      "target": "CYP2D6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2D6 metabolism of Debrisoquine",
       "carcinogen": "debrisoquine",
       "origin": "imported",
@@ -13047,9 +13047,9 @@
       "provenance": []
     },
     {
-      "source": "CYP2D6",
-      "target": "bufuralol",
-      "type": "DETOXIFIES",
+      "source": "bufuralol",
+      "target": "CYP2D6",
+      "type": "DETOXIFIED_BY",
       "label": "CYP2D6 metabolism of Bufuralol",
       "carcinogen": "bufuralol",
       "origin": "imported",
@@ -13059,7 +13059,7 @@
     {
       "source": "CYP2D6",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2D6 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -13069,7 +13069,7 @@
     {
       "source": "CYP3A4",
       "target": "sterigmatocystin",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP3A4 metabolism of Sterigmatocystin",
       "carcinogen": "sterigmatocystin",
       "origin": "imported",
@@ -13077,9 +13077,9 @@
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "midazolam",
-      "type": "DETOXIFIES",
+      "source": "midazolam",
+      "target": "CYP3A4",
+      "type": "DETOXIFIED_BY",
       "label": "CYP3A4 metabolism of Midazolam",
       "carcinogen": "midazolam",
       "origin": "imported",
@@ -13087,9 +13087,9 @@
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "nifedipine",
-      "type": "DETOXIFIES",
+      "source": "nifedipine",
+      "target": "CYP3A4",
+      "type": "DETOXIFIED_BY",
       "label": "CYP3A4 metabolism of Nifedipine",
       "carcinogen": "nifedipine",
       "origin": "imported",
@@ -13097,9 +13097,9 @@
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "erythromycin",
-      "type": "DETOXIFIES",
+      "source": "erythromycin",
+      "target": "CYP3A4",
+      "type": "DETOXIFIED_BY",
       "label": "CYP3A4 metabolism of Erythromycin",
       "carcinogen": "erythromycin",
       "origin": "imported",
@@ -13107,9 +13107,9 @@
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "cyclosporine",
-      "type": "DETOXIFIES",
+      "source": "cyclosporine",
+      "target": "CYP3A4",
+      "type": "DETOXIFIED_BY",
       "label": "CYP3A4 metabolism of Cyclosporine",
       "carcinogen": "cyclosporine",
       "origin": "imported",
@@ -13119,7 +13119,7 @@
     {
       "source": "CYP3A4",
       "target": "1_nitropyrene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP3A4 metabolism of 1-Nitropyrene",
       "carcinogen": "1_nitropyrene",
       "origin": "imported",
@@ -13129,7 +13129,7 @@
     {
       "source": "CYP3A4",
       "target": "6_aminochrysene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP3A4 metabolism of 6-Aminochrysene",
       "carcinogen": "6_aminochrysene",
       "origin": "imported",
@@ -13139,7 +13139,7 @@
     {
       "source": "CYP3A4",
       "target": "NNK",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP3A4 metabolism of NNK",
       "carcinogen": "NNK",
       "origin": "imported",
@@ -13149,7 +13149,7 @@
     {
       "source": "CYP2F1",
       "target": "Benzene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2F1 metabolism of Benzene",
       "carcinogen": "Benzene",
       "origin": "imported",
@@ -13159,7 +13159,7 @@
     {
       "source": "CYP2F1",
       "target": "naphthalene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2F1 metabolism of Naphthalene",
       "carcinogen": "naphthalene",
       "origin": "imported",
@@ -13169,7 +13169,7 @@
     {
       "source": "CYP2F1",
       "target": "3_methylindole",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2F1 metabolism of 3-Methylindole",
       "carcinogen": "3_methylindole",
       "origin": "imported",
@@ -13179,7 +13179,7 @@
     {
       "source": "CYP2F1",
       "target": "styrene",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "CYP2F1 metabolism of Styrene",
       "carcinogen": "styrene",
       "origin": "imported",
@@ -13187,9 +13187,9 @@
       "provenance": []
     },
     {
-      "source": "GSTM1",
-      "target": "trans_stilbene_oxide",
-      "type": "DETOXIFIES",
+      "source": "trans_stilbene_oxide",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "label": "GSTM1 glutathione conjugation of trans-Stilbene oxide",
       "carcinogen": "trans_stilbene_oxide",
       "origin": "imported",
@@ -13197,9 +13197,9 @@
       "provenance": []
     },
     {
-      "source": "GSTM1",
-      "target": "CDNB",
-      "type": "DETOXIFIES",
+      "source": "CDNB",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "label": "GSTM1 glutathione conjugation of CDNB",
       "carcinogen": "CDNB",
       "origin": "imported",
@@ -13207,9 +13207,9 @@
       "provenance": []
     },
     {
-      "source": "GSTM1",
-      "target": "styrene_oxide",
-      "type": "DETOXIFIES",
+      "source": "styrene_oxide",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
       "label": "GSTM1 glutathione conjugation of Styrene oxide",
       "carcinogen": "styrene_oxide",
       "origin": "imported",
@@ -13219,7 +13219,7 @@
     {
       "source": "GSTT1",
       "target": "methylene_chloride",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "label": "GSTT1 glutathione conjugation of Methylene chloride",
       "carcinogen": "methylene_chloride",
       "origin": "imported",
@@ -13227,9 +13227,9 @@
       "provenance": []
     },
     {
-      "source": "GSTT1",
-      "target": "EthyleneOxide",
-      "type": "DETOXIFIES",
+      "source": "EthyleneOxide",
+      "target": "GSTT1",
+      "type": "DETOXIFIED_BY",
       "label": "GSTT1 glutathione conjugation of Ethylene Oxide",
       "carcinogen": "EthyleneOxide",
       "origin": "imported",
@@ -13237,9 +13237,9 @@
       "provenance": []
     },
     {
-      "source": "GSTT1",
-      "target": "methyl_chloride",
-      "type": "DETOXIFIES",
+      "source": "methyl_chloride",
+      "target": "GSTT1",
+      "type": "DETOXIFIED_BY",
       "label": "GSTT1 glutathione conjugation of Methyl chloride",
       "carcinogen": "methyl_chloride",
       "origin": "imported",
@@ -13247,9 +13247,9 @@
       "provenance": []
     },
     {
-      "source": "GSTP1",
-      "target": "ethacrynic_acid",
-      "type": "DETOXIFIES",
+      "source": "ethacrynic_acid",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
       "label": "GSTP1 glutathione conjugation of Ethacrynic acid",
       "carcinogen": "ethacrynic_acid",
       "origin": "imported",
@@ -13257,9 +13257,9 @@
       "provenance": []
     },
     {
-      "source": "NAT1",
-      "target": "p_aminobenzoic_acid",
-      "type": "DETOXIFIES",
+      "source": "p_aminobenzoic_acid",
+      "target": "NAT1",
+      "type": "DETOXIFIED_BY",
       "label": "NAT1 N-acetylation of p-Aminobenzoic acid",
       "carcinogen": "p_aminobenzoic_acid",
       "origin": "imported",
@@ -13267,9 +13267,9 @@
       "provenance": []
     },
     {
-      "source": "NAT2",
-      "target": "isoniazid",
-      "type": "DETOXIFIES",
+      "source": "isoniazid",
+      "target": "NAT2",
+      "type": "DETOXIFIED_BY",
       "label": "NAT2 N-acetylation of Isoniazid",
       "carcinogen": "isoniazid",
       "origin": "imported",
@@ -13277,9 +13277,9 @@
       "provenance": []
     },
     {
-      "source": "NAT2",
-      "target": "sulfamethazine",
-      "type": "DETOXIFIES",
+      "source": "sulfamethazine",
+      "target": "NAT2",
+      "type": "DETOXIFIED_BY",
       "label": "NAT2 N-acetylation of Sulfamethazine",
       "carcinogen": "sulfamethazine",
       "origin": "imported",
@@ -13287,9 +13287,9 @@
       "provenance": []
     },
     {
-      "source": "UGT1A1",
-      "target": "bilirubin",
-      "type": "DETOXIFIES",
+      "source": "bilirubin",
+      "target": "UGT1A1",
+      "type": "DETOXIFIED_BY",
       "label": "UGT1A1 glucuronidation of Bilirubin",
       "carcinogen": "bilirubin",
       "origin": "imported",
@@ -13299,7 +13299,7 @@
     {
       "source": "CYP2E1",
       "target": "TCA",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "PCE",
       "evidence": "PCE CYP2E1 oxidation to trichloroacetic acid",
       "origin": "imported",
@@ -13313,7 +13313,7 @@
     {
       "source": "CYP2E1",
       "target": "Vinyl_carbamate_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Urethane",
       "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)",
       "origin": "imported",
@@ -13327,7 +13327,7 @@
     {
       "source": "CYP1A1",
       "target": "DBA_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Dibenz_ah_anthracene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967",
       "origin": "imported",
@@ -13341,7 +13341,7 @@
     {
       "source": "CYP1B1",
       "target": "DBA_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Dibenz_ah_anthracene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967",
       "origin": "imported",
@@ -13355,7 +13355,7 @@
     {
       "source": "CYP1A1",
       "target": "BaA_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benz_a_anthracene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977",
       "origin": "imported",
@@ -13369,7 +13369,7 @@
     {
       "source": "CYP1B1",
       "target": "BaA_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benz_a_anthracene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977",
       "origin": "imported",
@@ -13383,7 +13383,7 @@
     {
       "source": "CYP1A1",
       "target": "Chrysene_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Chrysene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874",
       "origin": "imported",
@@ -13397,7 +13397,7 @@
     {
       "source": "CYP1B1",
       "target": "Chrysene_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Chrysene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874",
       "origin": "imported",
@@ -13411,7 +13411,7 @@
     {
       "source": "CYP1A1",
       "target": "BbF_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benzo_b_fluoranthene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994",
       "origin": "imported",
@@ -13425,7 +13425,7 @@
     {
       "source": "CYP1B1",
       "target": "BbF_diol_epoxide",
-      "type": "ACTIVATES",
+      "type": "PRODUCES",
       "carcinogen": "Benzo_b_fluoranthene",
       "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994",
       "origin": "imported",

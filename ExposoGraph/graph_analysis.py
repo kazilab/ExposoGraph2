@@ -19,12 +19,22 @@ from .engine import GraphEngine
 
 # Edge types that form the core activation → adduct → repair chain.
 _METABOLISM_EDGE_TYPES = frozenset({
+    # Legacy types (no longer emitted into graph-data.json as of the directional-
+    # schema migration, kept here so this set stays a harmless superset).
     "ACTIVATES",
     "DETOXIFIES",
     "TRANSPORTS",
     "FORMS_ADDUCT",
     "REPAIRS",
     "SUBSTRATE_OF",
+    # New directional-schema edge types.
+    "PRODUCES",
+    "DETOXIFIED_BY",
+    "TRANSPORTED_BY",
+    "REPAIRED_BY",
+    "AGONIZES",
+    "TRANSFORMS_SPONTANEOUSLY",
+    "MECHANISM_UNCLEAR",
 })
 
 
