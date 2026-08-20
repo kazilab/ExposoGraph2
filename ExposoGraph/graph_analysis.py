@@ -24,6 +24,7 @@ _METABOLISM_EDGE_TYPES = frozenset({
     "TRANSPORTS",
     "FORMS_ADDUCT",
     "REPAIRS",
+    "SUBSTRATE_OF",
 })
 
 

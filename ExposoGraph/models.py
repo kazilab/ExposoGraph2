@@ -33,6 +33,7 @@ class EdgeType(str, Enum):
     INDUCES = "INDUCES"
     INHIBITS = "INHIBITS"
     ENCODES = "ENCODES"
+    SUBSTRATE_OF = "SUBSTRATE_OF"
     CUSTOM = "CUSTOM"
 
 

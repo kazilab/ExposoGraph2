@@ -6688,48 +6688,6 @@
       ]
     },
     {
-      "source": "MeIQx",
-      "target": "NOH_MeIQx",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to N-hydroxylation",
-      "carcinogen": "MeIQx",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to N-hydroxylation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "MeIQx->NOH_MeIQx",
-          "evidence": "Procarcinogen to N-hydroxylation",
-          "citation": "Procarcinogen to N-hydroxylation"
-        }
-      ]
-    },
-    {
-      "source": "Benzidine",
-      "target": "NOH_Benzidine",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to N-hydroxylation",
-      "carcinogen": "Benzidine",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to N-hydroxylation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Benzidine->NOH_Benzidine",
-          "evidence": "Procarcinogen to N-hydroxylation",
-          "citation": "Procarcinogen to N-hydroxylation"
-        }
-      ]
-    },
-    {
       "source": "NNK",
       "target": "hsa05204",
       "type": "PATHWAY",
@@ -6739,41 +6697,6 @@
       "canonical_predicate": "PATHWAY",
       "canonical_namespace": "schema",
       "provenance": []
-    },
-    {
-      "source": "NDMA",
-      "target": "NDMA_hydroxyl",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to alpha-hydroxylation",
-      "carcinogen": "NDMA",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to alpha-hydroxylation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "NDMA->NDMA_hydroxyl",
-          "evidence": "Procarcinogen to alpha-hydroxylation",
-          "citation": "Procarcinogen to alpha-hydroxylation"
-        }
-      ]
-    },
-    {
-      "source": "NDMA",
-      "target": "Hydroxymethylnitrosamine",
-      "type": "ACTIVATES",
-      "carcinogen": "NDMA",
-      "evidence": "CYP2E1 alpha-hydroxylation; confirmed in HepG2-CYP2E1 cells (PMID:40390554)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP2E1 alpha-hydroxylation; confirmed in HepG2-CYP2E1 cells (PMID:40390554)"
-        }
-      ]
     },
     {
       "source": "NDMA",
@@ -6813,27 +6736,6 @@
           "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
           "citation": "KEGG pathway record for Xenobiotic metabolism by cytochrome P450",
           "url": "https://www.kegg.jp/entry/hsa00980"
-        }
-      ]
-    },
-    {
-      "source": "E2",
-      "target": "HydroxyE2",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to catechol estrogen",
-      "carcinogen": "E2",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to catechol estrogen",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "E2->HydroxyE2",
-          "evidence": "Procarcinogen to catechol estrogen",
-          "citation": "Procarcinogen to catechol estrogen"
         }
       ]
     },
@@ -6982,27 +6884,6 @@
           "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
           "citation": "KEGG pathway record for Xenobiotic metabolism by cytochrome P450",
           "url": "https://www.kegg.jp/entry/hsa00980"
-        }
-      ]
-    },
-    {
-      "source": "VinylChloride",
-      "target": "Chloroethylene_oxide",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to epoxidation",
-      "carcinogen": "VinylChloride",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to epoxidation",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "VinylChloride->Chloroethylene_oxide",
-          "evidence": "Procarcinogen to epoxidation",
-          "citation": "Procarcinogen to epoxidation"
         }
       ]
     },
@@ -9203,15 +9084,6 @@
     },
     {
       "source": "E2_from_T",
-      "target": "HydroxyE2",
-      "type": "ACTIVATES",
-      "label": "CYP1B1 → catechol",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
-      "source": "E2_from_T",
       "target": "E2_depurin",
       "type": "FORMS_ADDUCT",
       "label": "via quinone pathway",
@@ -9321,20 +9193,6 @@
           "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
           "citation": "KEGG pathway record for Chemical carcinogenesis - reactive oxygen species",
           "url": "https://www.kegg.jp/entry/hsa05208"
-        }
-      ]
-    },
-    {
-      "source": "ArsenicInorganic",
-      "target": "MMA_V",
-      "type": "ACTIVATES",
-      "carcinogen": "ArsenicInorganic",
-      "evidence": "PMID:34730462",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "PMID:34730462"
         }
       ]
     },
@@ -9771,20 +9629,6 @@
     },
     {
       "source": "NDEA",
-      "target": "Hydroxymethylnitrosamine",
-      "type": "ACTIVATES",
-      "carcinogen": "NDEA",
-      "evidence": "Analogous CYP2E1 alpha-hydroxylation pathway as NDMA",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Analogous CYP2E1 alpha-hydroxylation pathway as NDMA"
-        }
-      ]
-    },
-    {
-      "source": "NDEA",
       "target": "nitrosamine_pathway",
       "type": "PATHWAY",
       "carcinogen": "NDEA",
@@ -9794,54 +9638,12 @@
     },
     {
       "source": "TCE",
-      "target": "Chloral_hydrate",
-      "type": "ACTIVATES",
-      "carcinogen": "TCE",
-      "evidence": "CYP2E1 oxidative pathway; hepatic metabolism",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP2E1 oxidative pathway; hepatic metabolism"
-        }
-      ]
-    },
-    {
-      "source": "TCE",
-      "target": "DCVG",
-      "type": "ACTIVATES",
-      "carcinogen": "TCE",
-      "evidence": "BIOACTIVATION (not detoxification); GSTT1-active genotype OR 1.88 for RCC (PMID:20663906)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "BIOACTIVATION (not detoxification); GSTT1-active genotype OR 1.88 for RCC (PMID:20663906)"
-        }
-      ]
-    },
-    {
-      "source": "TCE",
       "target": "chlorinated_pathway",
       "type": "PATHWAY",
       "carcinogen": "TCE",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
-    },
-    {
-      "source": "PCE",
-      "target": "TCA",
-      "type": "ACTIVATES",
-      "carcinogen": "PCE",
-      "evidence": "PCE CYP2E1 oxidation to trichloroacetic acid",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "PCE CYP2E1 oxidation to trichloroacetic acid"
-        }
-      ]
     },
     {
       "source": "PCE",
@@ -10154,20 +9956,6 @@
       ]
     },
     {
-      "source": "DCVG",
-      "target": "DCVC",
-      "type": "ACTIVATES",
-      "carcinogen": "TCE",
-      "evidence": "Renal brush-border processing of DCVG to DCVC",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Renal brush-border processing of DCVG to DCVC"
-        }
-      ]
-    },
-    {
       "source": "DCVC",
       "target": "Renal_DNA_damage",
       "type": "FORMS_ADDUCT",
@@ -10196,20 +9984,6 @@
       ]
     },
     {
-      "source": "Ethanol",
-      "target": "Acetaldehyde_int",
-      "type": "ACTIVATES",
-      "carcinogen": "Acetaldehyde",
-      "evidence": "ADH1B/ADH1C-mediated oxidation of ethanol produces intracellular acetaldehyde; represented explicitly in the source Wave 2 expansion.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "ADH1B/ADH1C-mediated oxidation of ethanol produces intracellular acetaldehyde; represented explicitly in the source Wave 2 expansion."
-        }
-      ]
-    },
-    {
       "source": "EthenoG",
       "target": "hsa05204",
       "type": "PATHWAY",
@@ -10227,20 +10001,6 @@
           "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
           "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
           "url": "https://www.kegg.jp/entry/hsa05204"
-        }
-      ]
-    },
-    {
-      "source": "Acrylamide",
-      "target": "Glycidamide",
-      "type": "ACTIVATES",
-      "carcinogen": "Acrylamide",
-      "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in knockout and microsomal systems (PMID:16141435)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP2E1-dependent epoxidation to glycidamide, the ultimate mutagen; demonstrated in knockout and microsomal systems (PMID:16141435)"
         }
       ]
     },
@@ -10275,20 +10035,6 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
-    },
-    {
-      "source": "Cyclophosphamide",
-      "target": "4OH_cyclophosphamide",
-      "type": "ACTIVATES",
-      "carcinogen": "Cyclophosphamide",
-      "evidence": "CYP-catalyzed 4-hydroxylation is the obligatory prodrug activation step (IARC Monograph 100A)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP-catalyzed 4-hydroxylation is the obligatory prodrug activation step (IARC Monograph 100A)"
-        }
-      ]
     },
     {
       "source": "Cyclophosphamide",
@@ -10477,20 +10223,6 @@
     },
     {
       "source": "Urethane",
-      "target": "Vinyl_carbamate",
-      "type": "ACTIVATES",
-      "carcinogen": "Urethane",
-      "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12704224; IARC Monograph 96)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP2E1 dehydrogenation of urethane to vinyl carbamate is the first obligatory activation step (PMID:12704224; IARC Monograph 96)"
-        }
-      ]
-    },
-    {
-      "source": "Urethane",
       "target": "aldehyde_pathway",
       "type": "PATHWAY",
       "carcinogen": "Urethane",
@@ -10597,20 +10329,6 @@
     },
     {
       "source": "Furfural",
-      "target": "SMF",
-      "type": "ACTIVATES",
-      "carcinogen": "Furfural",
-      "evidence": "The dietary furfural branch is represented through HMF-centered SULT1A1 bioactivation to the DNA-reactive metabolite SMF (PMID:22563731; PMID:26454887)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "The dietary furfural branch is represented through HMF-centered SULT1A1 bioactivation to the DNA-reactive metabolite SMF (PMID:22563731; PMID:26454887)"
-        }
-      ]
-    },
-    {
-      "source": "Furfural",
       "target": "aldehyde_pathway",
       "type": "PATHWAY",
       "carcinogen": "Furfural",
@@ -10663,20 +10381,6 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
-    },
-    {
-      "source": "Vinyl_carbamate",
-      "target": "Vinyl_carbamate_epoxide",
-      "type": "ACTIVATES",
-      "carcinogen": "Urethane",
-      "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)"
-        }
-      ]
     },
     {
       "source": "Vinyl_carbamate_epoxide",
@@ -11054,27 +10758,6 @@
           "record_id": "MSH2->8_OHdG",
           "evidence": "MMR",
           "citation": "MMR"
-        }
-      ]
-    },
-    {
-      "source": "AristolochicAcid",
-      "target": "AL_nitrenium",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to N-acylnitrenium ion",
-      "carcinogen": "AristolochicAcid",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to N-acylnitrenium ion via nitroreduction",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "AristolochicAcid->AL_nitrenium",
-          "evidence": "Procarcinogen to N-acylnitrenium ion via nitroreduction",
-          "citation": "Procarcinogen to N-acylnitrenium ion via nitroreduction"
         }
       ]
     },
@@ -11830,111 +11513,6 @@
       ]
     },
     {
-      "source": "AFB1",
-      "target": "AFB1_epoxide",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to 8,9-epoxide",
-      "carcinogen": "AFB1",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to 8,9-epoxide (CYP3A4/CYP1A2-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "AFB1->AFB1_epoxide",
-          "evidence": "Procarcinogen to 8,9-epoxide (CYP3A4/CYP1A2-mediated)",
-          "citation": "Procarcinogen to 8,9-epoxide (CYP3A4/CYP1A2-mediated)"
-        }
-      ]
-    },
-    {
-      "source": "Benzene",
-      "target": "Benzene_oxide",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to epoxidation",
-      "carcinogen": "Benzene",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to benzene oxide (CYP2E1-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Benzene->Benzene_oxide",
-          "evidence": "Procarcinogen to benzene oxide (CYP2E1-mediated)",
-          "citation": "Procarcinogen to benzene oxide (CYP2E1-mediated)"
-        }
-      ]
-    },
-    {
-      "source": "4ABP",
-      "target": "NOH_4ABP",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to N-hydroxylation",
-      "carcinogen": "4ABP",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "4ABP->NOH_4ABP",
-          "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
-          "citation": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)"
-        }
-      ]
-    },
-    {
-      "source": "PhIP",
-      "target": "NOH_PhIP",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to N-hydroxylation",
-      "carcinogen": "PhIP",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PhIP->NOH_PhIP",
-          "evidence": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)",
-          "citation": "Procarcinogen to N-hydroxylation (CYP1A2-mediated)"
-        }
-      ]
-    },
-    {
-      "source": "NNK",
-      "target": "NNK_hydroxyl",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to alpha-hydroxylation",
-      "carcinogen": "NNK",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to alpha-hydroxylation (CYP2A6/CYP2A13-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "NNK->NNK_hydroxyl",
-          "evidence": "Procarcinogen to alpha-hydroxylation (CYP2A6/CYP2A13-mediated)",
-          "citation": "Procarcinogen to alpha-hydroxylation (CYP2A6/CYP2A13-mediated)"
-        }
-      ]
-    },
-    {
       "source": "Acetaldehyde",
       "target": "N2_ethylidene_dG",
       "type": "FORMS_ADDUCT",
@@ -12046,69 +11624,6 @@
           "evidence": "Curated KEGG reference pathway tracked by ExposoGraph.",
           "citation": "KEGG pathway record for Chemical carcinogenesis - DNA adducts",
           "url": "https://www.kegg.jp/entry/hsa05204"
-        }
-      ]
-    },
-    {
-      "source": "BaP",
-      "target": "BaP_epoxide",
-      "type": "ACTIVATES",
-      "label": "Procarcinogen to 7,8-epoxide",
-      "carcinogen": "BaP",
-      "source_db": "Curated showcase",
-      "evidence": "Procarcinogen to 7,8-epoxide (CYP1A1/CYP1B1-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "BaP->BaP_epoxide",
-          "evidence": "Procarcinogen to 7,8-epoxide (CYP1A1/CYP1B1-mediated)",
-          "citation": "Procarcinogen to 7,8-epoxide (CYP1A1/CYP1B1-mediated)"
-        }
-      ]
-    },
-    {
-      "source": "BaP_epoxide",
-      "target": "BaP_diol",
-      "type": "ACTIVATES",
-      "label": "Epoxide hydration to 7,8-diol",
-      "carcinogen": "BaP",
-      "source_db": "Curated showcase",
-      "evidence": "BaP-7,8-epoxide hydrated to BaP-7,8-diol (EPHX1-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "BaP_epoxide->BaP_diol",
-          "evidence": "BaP-7,8-epoxide hydrated to BaP-7,8-diol (EPHX1-mediated)",
-          "citation": "BaP-7,8-epoxide hydrated to BaP-7,8-diol (EPHX1-mediated)"
-        }
-      ]
-    },
-    {
-      "source": "BaP_diol",
-      "target": "BPDE",
-      "type": "ACTIVATES",
-      "label": "Second epoxidation to BPDE",
-      "carcinogen": "BaP",
-      "source_db": "Curated showcase",
-      "evidence": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "BaP_diol->BPDE",
-          "evidence": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)",
-          "citation": "BaP-7,8-diol epoxidized to BPDE (CYP1A1/CYP1B1-mediated)"
         }
       ]
     },
@@ -12460,27 +11975,6 @@
       ]
     },
     {
-      "source": "AndrogenicAnabolicSteroids",
-      "target": "Testosterone",
-      "type": "ACTIVATES",
-      "label": "Endogenous androgen elevation",
-      "carcinogen": "AndrogenicAnabolicSteroids",
-      "source_db": "IARC Monographs Vol. 100A",
-      "evidence": "Anabolic steroid use elevates circulating testosterone, connecting the pharmaceutical exposure to the intracellular androgen pathway.",
-      "origin": "imported",
-      "match_status": "canonical",
-      "canonical_predicate": "ACTIVATES",
-      "canonical_namespace": "schema",
-      "provenance": [
-        {
-          "source_db": "IARC Monographs Vol. 100A",
-          "record_id": "AndrogenicAnabolicSteroids->Testosterone",
-          "evidence": "Anabolic steroid use increases systemic testosterone levels.",
-          "citation": "IARC Monographs Vol. 100A, Pharmaceuticals (2012)"
-        }
-      ]
-    },
-    {
       "source": "Testosterone",
       "target": "AR",
       "type": "ACTIVATES",
@@ -12737,20 +12231,6 @@
       ]
     },
     {
-      "source": "MMA_V",
-      "target": "MMA_III",
-      "type": "ACTIVATES",
-      "carcinogen": "ArsenicInorganic",
-      "evidence": "GSTO1 catalyzes reduction of MMA(V) to MMA(III); rate-limiting step in arsenic methylation producing the most toxic trivalent species (IARC Vol 100C, 2012)",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "GSTO1 catalyzes reduction of MMA(V) to MMA(III); rate-limiting step in arsenic methylation producing the most toxic trivalent species (IARC Vol 100C, 2012)"
-        }
-      ]
-    },
-    {
       "source": "MMA_III",
       "target": "8_OHdG",
       "type": "FORMS_ADDUCT",
@@ -12807,20 +12287,6 @@
       ]
     },
     {
-      "source": "Dibenz_ah_anthracene",
-      "target": "DBA_3_4_diol",
-      "type": "ACTIVATES",
-      "carcinogen": "Dibenz_ah_anthracene",
-      "evidence": "CYP1A1/CYP1B1 epoxidation to 3,4-epoxide, EPHX1 hydration to diol",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP1A1/CYP1B1 epoxidation to 3,4-epoxide, EPHX1 hydration to diol"
-        }
-      ]
-    },
-    {
       "source": "CYP1A1",
       "target": "DBA_3_4_diol",
       "type": "ACTIVATES",
@@ -12845,20 +12311,6 @@
       "provenance": [
         {
           "evidence": "CYP1B1 catalyzes initial epoxidation"
-        }
-      ]
-    },
-    {
-      "source": "DBA_3_4_diol",
-      "target": "DBA_diol_epoxide",
-      "type": "ACTIVATES",
-      "carcinogen": "Dibenz_ah_anthracene",
-      "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967"
         }
       ]
     },
@@ -12885,20 +12337,6 @@
       "provenance": []
     },
     {
-      "source": "Benz_a_anthracene",
-      "target": "BaA_3_4_diol",
-      "type": "ACTIVATES",
-      "carcinogen": "Benz_a_anthracene",
-      "evidence": "CYP1A1/CYP1B1 epoxidation to 3,4-epoxide, EPHX1 hydration to diol",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP1A1/CYP1B1 epoxidation to 3,4-epoxide, EPHX1 hydration to diol"
-        }
-      ]
-    },
-    {
       "source": "CYP1A1",
       "target": "BaA_3_4_diol",
       "type": "ACTIVATES",
@@ -12923,20 +12361,6 @@
       "provenance": [
         {
           "evidence": "CYP1B1 catalyzes initial epoxidation"
-        }
-      ]
-    },
-    {
-      "source": "BaA_3_4_diol",
-      "target": "BaA_diol_epoxide",
-      "type": "ACTIVATES",
-      "carcinogen": "Benz_a_anthracene",
-      "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977"
         }
       ]
     },
@@ -12963,20 +12387,6 @@
       "provenance": []
     },
     {
-      "source": "Chrysene",
-      "target": "Chrysene_1_2_diol",
-      "type": "ACTIVATES",
-      "carcinogen": "Chrysene",
-      "evidence": "CYP1A1/CYP1B1 epoxidation to 1,2-epoxide, EPHX1 hydration to diol",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP1A1/CYP1B1 epoxidation to 1,2-epoxide, EPHX1 hydration to diol"
-        }
-      ]
-    },
-    {
       "source": "CYP1A1",
       "target": "Chrysene_1_2_diol",
       "type": "ACTIVATES",
@@ -13001,20 +12411,6 @@
       "provenance": [
         {
           "evidence": "CYP1B1 catalyzes initial epoxidation"
-        }
-      ]
-    },
-    {
-      "source": "Chrysene_1_2_diol",
-      "target": "Chrysene_diol_epoxide",
-      "type": "ACTIVATES",
-      "carcinogen": "Chrysene",
-      "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874"
         }
       ]
     },
@@ -13041,20 +12437,6 @@
       "provenance": []
     },
     {
-      "source": "Benzo_b_fluoranthene",
-      "target": "BbF_9_10_diol",
-      "type": "ACTIVATES",
-      "carcinogen": "Benzo_b_fluoranthene",
-      "evidence": "CYP1A1/CYP1B1 epoxidation to 9,10-epoxide, EPHX1 hydration to diol",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP1A1/CYP1B1 epoxidation to 9,10-epoxide, EPHX1 hydration to diol"
-        }
-      ]
-    },
-    {
       "source": "CYP1A1",
       "target": "BbF_9_10_diol",
       "type": "ACTIVATES",
@@ -13083,20 +12465,6 @@
       ]
     },
     {
-      "source": "BbF_9_10_diol",
-      "target": "BbF_diol_epoxide",
-      "type": "ACTIVATES",
-      "carcinogen": "Benzo_b_fluoranthene",
-      "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994"
-        }
-      ]
-    },
-    {
       "source": "BbF_diol_epoxide",
       "target": "BbF_dG",
       "type": "FORMS_ADDUCT",
@@ -13117,20 +12485,6 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
-    },
-    {
-      "source": "Naphthalene",
-      "target": "Naphthalene_1_2_oxide",
-      "type": "ACTIVATES",
-      "carcinogen": "Naphthalene",
-      "evidence": "CYP2E1/CYP2F1 epoxidation to 1,2-oxide; PMC4030291",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": [
-        {
-          "evidence": "CYP2E1/CYP2F1 epoxidation to 1,2-oxide; PMC4030291"
-        }
-      ]
     },
     {
       "source": "CYP2E1",
@@ -13938,6 +13292,706 @@
       "type": "DETOXIFIES",
       "label": "UGT1A1 glucuronidation of Bilirubin",
       "carcinogen": "bilirubin",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "CYP2E1",
+      "target": "TCA",
+      "type": "ACTIVATES",
+      "carcinogen": "PCE",
+      "evidence": "PCE CYP2E1 oxidation to trichloroacetic acid",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "PCE CYP2E1 oxidation to trichloroacetic acid"
+        }
+      ]
+    },
+    {
+      "source": "CYP2E1",
+      "target": "Vinyl_carbamate_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Urethane",
+      "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Second CYP2E1 epoxidation generates the ultimate electrophile (PMID:20205516)"
+        }
+      ]
+    },
+    {
+      "source": "CYP1A1",
+      "target": "DBA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967"
+        }
+      ]
+    },
+    {
+      "source": "CYP1B1",
+      "target": "DBA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to bis-diol-epoxide; PMID:8439967"
+        }
+      ]
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BaA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977"
+        }
+      ]
+    },
+    {
+      "source": "CYP1B1",
+      "target": "BaA_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to diol-epoxide; PMID:22282977"
+        }
+      ]
+    },
+    {
+      "source": "CYP1A1",
+      "target": "Chrysene_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Chrysene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874"
+        }
+      ]
+    },
+    {
+      "source": "CYP1B1",
+      "target": "Chrysene_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Chrysene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to 1,2-diol-3,4-epoxide; PMID:6652874"
+        }
+      ]
+    },
+    {
+      "source": "CYP1A1",
+      "target": "BbF_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994"
+        }
+      ]
+    },
+    {
+      "source": "CYP1B1",
+      "target": "BbF_diol_epoxide",
+      "type": "ACTIVATES",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Further CYP1A1/CYP1B1 oxidation to 9,10-diol-11,12-epoxide; Polycyclic Aromatic Compounds 1994"
+        }
+      ]
+    },
+    {
+      "source": "MeIQx",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "MeIQx",
+      "evidence": "MeIQx is a metabolic substrate of CYP1A2, which converts it to NOH_MeIQx (see that edge for citation: N-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benzidine",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Benzidine",
+      "evidence": "Benzidine is a metabolic substrate of CYP1A2, which converts it to NOH_Benzidine (see that edge for citation: Benzidine N-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "NDMA",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "NDMA",
+      "evidence": "NDMA is a metabolic substrate of CYP2E1, which converts it to NDMA_hydroxyl (see that edge for citation: Alpha-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "E2",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "E2",
+      "evidence": "E2 is a metabolic substrate of CYP1B1, which converts it to HydroxyE2 (see that edge for citation: Catechol estrogen formation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "VinylChloride",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "VinylChloride",
+      "evidence": "VinylChloride is a metabolic substrate of CYP2E1, which converts it to Chloroethylene_oxide (see that edge for citation: Vinyl chloride oxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "E2_from_T",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "E2_from_T",
+      "evidence": "E2_from_T is a metabolic substrate of CYP1B1 (see corresponding CYP1B1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "ArsenicInorganic",
+      "target": "AS3MT",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "ArsenicInorganic",
+      "evidence": "ArsenicInorganic is a metabolic substrate of AS3MT, which converts it to MMA_V (see that edge for citation: PMID:34730462).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "NDEA",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "NDEA",
+      "evidence": "NDEA is a metabolic substrate of CYP2E1 (see corresponding CYP2E1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "TCE",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "TCE",
+      "evidence": "TCE is a metabolic substrate of CYP2E1, which converts it to Chloral_hydrate (see that edge for citation: Primary CYP2E1 oxidation of TCE).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "TCE",
+      "target": "GSTT1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "TCE",
+      "evidence": "TCE is a metabolic substrate of GSTT1, which converts it to DCVG (see that edge for citation: BIOACTIVATION for TCE (inverted role); GSTT1-active required for renal carcinogenesis. GSTT1-null is PROTECTIVE (OR 0.93) (PMID:20663906)).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "PCE",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "PCE",
+      "evidence": "PCE is a metabolic substrate of CYP2E1, which converts it to TCA (see that edge for citation: PCE CYP2E1 oxidation to trichloroacetic acid).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "DCVG",
+      "target": "CCBL1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "DCVG",
+      "evidence": "DCVG is a metabolic substrate of CCBL1 (see corresponding CCBL1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Ethanol",
+      "target": "ADH1B",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Ethanol",
+      "evidence": "Ethanol is a metabolic substrate of ADH1B (see corresponding ADH1B -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Ethanol",
+      "target": "ADH1C",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Ethanol",
+      "evidence": "Ethanol is a metabolic substrate of ADH1C (see corresponding ADH1C -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Acrylamide",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Acrylamide",
+      "evidence": "Acrylamide is a metabolic substrate of CYP2E1, which converts it to Glycidamide (see that edge for citation: Primary P450 for acrylamide epoxidation (PMID:16141435)).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Cyclophosphamide",
+      "target": "CYP2B6",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Cyclophosphamide",
+      "evidence": "Cyclophosphamide is a metabolic substrate of CYP2B6, which converts it to 4OH_cyclophosphamide (see that edge for citation: Major 4-hydroxylation activity in human liver microsomes (PMID:8242617; PMID:10348794)).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Cyclophosphamide",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Cyclophosphamide",
+      "evidence": "Cyclophosphamide is a metabolic substrate of CYP3A4, which converts it to 4OH_cyclophosphamide (see that edge for citation: Secondary 4-hydroxylation with competing N-dechloroethylation producing chloroacetaldehyde (PMID:8242617)).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Urethane",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Urethane",
+      "evidence": "Urethane is a metabolic substrate of CYP2E1, which converts it to Vinyl_carbamate (see that edge for citation: Primary P450 for urethane dehydrogenation; abolished in CYP2E1-null mice (PMID:12704224)).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Furfural",
+      "target": "SULT1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Furfural",
+      "evidence": "Furfural is a metabolic substrate of SULT1A1, which converts it to SMF (see that edge for citation: SULT1A1 is the principal sulfotransferase generating SMF in human systems (PMID:22563731; PMID:26454887; PMID:21462333)).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Vinyl_carbamate",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Vinyl_carbamate",
+      "evidence": "Vinyl_carbamate is a metabolic substrate of CYP2E1 (see corresponding CYP2E1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "AristolochicAcid",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "AristolochicAcid",
+      "evidence": "AristolochicAcid is a metabolic substrate of CYP1A1, which converts it to AL_nitrenium (see that edge for citation: CYP1A1-mediated nitroreduction of aristolochic acid).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "AristolochicAcid",
+      "target": "NQO1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "AristolochicAcid",
+      "evidence": "AristolochicAcid is a metabolic substrate of NQO1, which converts it to AL_nitrenium (see that edge for citation: NQO1-mediated nitroreduction of aristolochic acid).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "AFB1",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "AFB1",
+      "evidence": "AFB1 is a metabolic substrate of CYP1A2, which converts it to AFB1_epoxide (see that edge for citation: Secondary epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "AFB1",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "AFB1",
+      "evidence": "AFB1 is a metabolic substrate of CYP3A4, which converts it to AFB1_epoxide (see that edge for citation: Aflatoxin epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benzene",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Benzene",
+      "evidence": "Benzene is a metabolic substrate of CYP2E1, which converts it to Benzene_oxide (see that edge for citation: Benzene oxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "4ABP",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "4ABP",
+      "evidence": "4ABP is a metabolic substrate of CYP1A2, which converts it to NOH_4ABP (see that edge for citation: N-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "4ABP",
+      "target": "NAT1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "4ABP",
+      "evidence": "4ABP is a metabolic substrate of NAT1, which converts it to NOH_4ABP (see that edge for citation: ).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "PhIP",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "PhIP",
+      "evidence": "PhIP is a metabolic substrate of CYP1A2, which converts it to NOH_PhIP (see that edge for citation: N-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "NNK",
+      "target": "CYP2A6",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "NNK",
+      "evidence": "NNK is a metabolic substrate of CYP2A6, which converts it to NNK_hydroxyl (see that edge for citation: Alpha-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "NNK",
+      "target": "CYP2A13",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "NNK",
+      "evidence": "NNK is a metabolic substrate of CYP2A13, which converts it to NNK_hydroxyl (see that edge for citation: Pulmonary alpha-hydroxylation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaP",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaP",
+      "evidence": "BaP is a metabolic substrate of CYP1A1, which converts it to BaP_epoxide (see that edge for citation: BaP epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaP",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaP",
+      "evidence": "BaP is a metabolic substrate of CYP1B1, which converts it to BaP_epoxide (see that edge for citation: Extrahepatic BaP epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaP_epoxide",
+      "target": "EPHX1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaP_epoxide",
+      "evidence": "BaP_epoxide is a metabolic substrate of EPHX1 (see corresponding EPHX1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaP_diol",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaP_diol",
+      "evidence": "BaP_diol is a metabolic substrate of CYP1A1 (see corresponding CYP1A1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaP_diol",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaP_diol",
+      "evidence": "BaP_diol is a metabolic substrate of CYP1B1 (see corresponding CYP1B1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "AndrogenicAnabolicSteroids",
+      "target": "AKR1C3",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "AndrogenicAnabolicSteroids",
+      "evidence": "AndrogenicAnabolicSteroids is a metabolic substrate of AKR1C3 (see corresponding AKR1C3 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "MMA_V",
+      "target": "GSTO1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "MMA_V",
+      "evidence": "MMA_V is a metabolic substrate of GSTO1 (see corresponding GSTO1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "MMA_V",
+      "target": "GSTO2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "MMA_V",
+      "evidence": "MMA_V is a metabolic substrate of GSTO2 (see corresponding GSTO2 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Dibenz_ah_anthracene",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "Dibenz_ah_anthracene is a metabolic substrate of CYP1A1, which converts it to DBA_3_4_diol (see that edge for citation: CYP1A1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Dibenz_ah_anthracene",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Dibenz_ah_anthracene",
+      "evidence": "Dibenz_ah_anthracene is a metabolic substrate of CYP1B1, which converts it to DBA_3_4_diol (see that edge for citation: CYP1B1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "DBA_3_4_diol",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "DBA_3_4_diol",
+      "evidence": "DBA_3_4_diol is a metabolic substrate of CYP1A1 (see corresponding CYP1A1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "DBA_3_4_diol",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "DBA_3_4_diol",
+      "evidence": "DBA_3_4_diol is a metabolic substrate of CYP1B1 (see corresponding CYP1B1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benz_a_anthracene",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "Benz_a_anthracene is a metabolic substrate of CYP1A1, which converts it to BaA_3_4_diol (see that edge for citation: CYP1A1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benz_a_anthracene",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Benz_a_anthracene",
+      "evidence": "Benz_a_anthracene is a metabolic substrate of CYP1B1, which converts it to BaA_3_4_diol (see that edge for citation: CYP1B1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaA_3_4_diol",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaA_3_4_diol",
+      "evidence": "BaA_3_4_diol is a metabolic substrate of CYP1A1 (see corresponding CYP1A1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BaA_3_4_diol",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BaA_3_4_diol",
+      "evidence": "BaA_3_4_diol is a metabolic substrate of CYP1B1 (see corresponding CYP1B1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Chrysene",
+      "evidence": "Chrysene is a metabolic substrate of CYP1A1, which converts it to Chrysene_1_2_diol (see that edge for citation: CYP1A1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Chrysene",
+      "evidence": "Chrysene is a metabolic substrate of CYP1B1, which converts it to Chrysene_1_2_diol (see that edge for citation: CYP1B1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene_1_2_diol",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Chrysene_1_2_diol",
+      "evidence": "Chrysene_1_2_diol is a metabolic substrate of CYP1A1 (see corresponding CYP1A1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Chrysene_1_2_diol",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Chrysene_1_2_diol",
+      "evidence": "Chrysene_1_2_diol is a metabolic substrate of CYP1B1 (see corresponding CYP1B1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benzo_b_fluoranthene",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "Benzo_b_fluoranthene is a metabolic substrate of CYP1A1, which converts it to BbF_9_10_diol (see that edge for citation: CYP1A1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Benzo_b_fluoranthene",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Benzo_b_fluoranthene",
+      "evidence": "Benzo_b_fluoranthene is a metabolic substrate of CYP1B1, which converts it to BbF_9_10_diol (see that edge for citation: CYP1B1 catalyzes initial epoxidation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BbF_9_10_diol",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BbF_9_10_diol",
+      "evidence": "BbF_9_10_diol is a metabolic substrate of CYP1A1 (see corresponding CYP1A1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "BbF_9_10_diol",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "BbF_9_10_diol",
+      "evidence": "BbF_9_10_diol is a metabolic substrate of CYP1B1 (see corresponding CYP1B1 -> metabolite ACTIVATES/DETOXIFIES edge for citation).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthalene",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Naphthalene",
+      "evidence": "Naphthalene is a metabolic substrate of CYP2E1, which converts it to Naphthalene_1_2_oxide (see that edge for citation: CYP2E1 catalyzes naphthalene epoxidation; PMC4030291).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "Naphthalene",
+      "target": "CYP2F1",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "Naphthalene",
+      "evidence": "Naphthalene is a metabolic substrate of CYP2F1, which converts it to Naphthalene_1_2_oxide (see that edge for citation: CYP2F1 catalyzes naphthalene bioactivation in lung; PMC4030291).",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []

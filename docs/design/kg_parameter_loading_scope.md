@@ -418,3 +418,80 @@ Proposed discrete, independently auditable commits, in dependency order:
    identical output to the JSON-backed path are required before this
    commit, since it's the actual behavior-affecting cutover the whole
    plan has been building toward.
+
+## Addendum 4: `SUBSTRATE_OF` edge type + deferred direct-edge cleanup (TODO: 18 unclear cases)
+
+As part of fixing the overloaded `ACTIVATES`/`DETOXIFIES` edge type (direct
+`Carcinogen/Metabolite -> Carcinogen/Metabolite` edges that duplicated the
+information already carried by a parallel `Enzyme -> Metabolite` edge), a
+full audit of all 68 such direct edges was run and categorized:
+
+- **33 `REDUNDANT_PARALLEL_ENZYME_EDGE`** and **6 `ENZYME_NAMED_IN_PROSE_NOT_MODELED`**
+  (39 total) were restructured: the direct edge was removed, a new
+  `EdgeType.SUBSTRATE_OF` edge (`Carcinogen/Metabolite -> Enzyme`) was added
+  in its place, and (for the 6 prose-only cases) the missing
+  `Enzyme -> Metabolite` `ACTIVATES` edge was added so the chain reads
+  `Carcinogen/Metabolite -[SUBSTRATE_OF]-> Enzyme -[ACTIVATES]-> Metabolite`
+  end to end. This lets a query on an enzyme's neighbors show every
+  carcinogen/metabolite competing for that enzyme (motivating use case:
+  reasoning about competitive inhibition).
+- **11 `LIKELY_LEGITIMATE_NON_ENZYMATIC`** were left as direct edges
+  (spontaneous, non-enzymatic transformations — no enzyme to restructure
+  through).
+- **18 `UNCLEAR_NEEDS_SME_REVIEW` were deliberately deferred, not yet fixed.**
+  These still have the old direct-edge shape and need a domain expert to
+  confirm whether they are (a) genuinely spontaneous/non-enzymatic (→ leave
+  as-is, reclassify as `LIKELY_LEGITIMATE_NON_ENZYMATIC`), (b) enzyme-mediated
+  but with the catalyzing enzyme not yet identified in the literature review
+  done for this pass (→ restructure via `SUBSTRATE_OF` like the 39 above once
+  the enzyme is known), or (c) something else entirely (e.g. two distinct
+  sequential steps mis-modeled as one edge). The 18 are:
+
+  | Source | Target | Edge type |
+  |---|---|---|
+  | LeadInorganicCompounds | GSH | ACTIVATES |
+  | HydroxyE2 | E2_quinone | ACTIVATES |
+  | Benzene_oxide | HQ | ACTIVATES |
+  | HQ | Benzoquinone | ACTIVATES |
+  | Cd | Cd_MT | ACTIVATES |
+  | Cd | ROS_metal | ACTIVATES |
+  | CrVI | Cr_III | ACTIVATES |
+  | CrVI | Cr_V | ACTIVATES |
+  | CrVI | Asc_Cr_III | ACTIVATES |
+  | NickelCompounds | ROS_metal | ACTIVATES |
+  | MMA_III | ROS_metal | ACTIVATES |
+  | Cr_V | ROS_metal | ACTIVATES |
+  | Chloral_hydrate | TCA | ACTIVATES |
+  | Radon | Radon_decay_products | ACTIVATES |
+  | EstrogenProgestogenTherapy | E2 | ACTIVATES |
+  | Naphthalene_1_2_oxide | Naphthoquinone | ACTIVATES |
+  | MethylmercuryCompounds | MeHg_GSH | ACTIVATES |
+  | GSH | MeHg_GSH | ACTIVATES |
+
+  Full categorization detail (why each of the 68 landed where it did) is in
+  `audit/activates_detoxifies_direct_edge_audit.csv` in the working tree
+  this pass was done in (not yet committed to the repo as of this addendum —
+  should be moved under `docs/` or `data/audits/` if kept long-term).
+
+**Companion fixes required by the restructuring above** (also applied this
+pass, since they'd otherwise silently regress existing functionality):
+
+- `ExposoGraph/tissue_subgraphs.py`: two edge-type allow-lists (tissue-subgraph
+  node inclusion logic) needed `SUBSTRATE_OF` added, or carcinogens connected
+  to a tissue-relevant enzyme *only* via the now-removed direct edge would
+  silently drop out of tissue subgraphs.
+- `ExposoGraph/graph_analysis.py`: `metabolism_chain`'s `_METABOLISM_EDGE_TYPES`
+  allow-list needed `SUBSTRATE_OF` added for the same reason — otherwise the
+  first hop of the metabolism chain for all 39 restructured pathways would be
+  invisible to that function.
+- `ExposoGraph/engine.py`'s `paths_from_carcinogen`/`paths_to_carcinogen`
+  needed no change — their default (`edge_types=None`) already walks every
+  edge type, `SUBSTRATE_OF` included.
+- `ExposoGraph/unified_api.py`'s kinetic-parameter attachment (keyed on
+  `{EdgeType.ACTIVATES, EdgeType.DETOXIFIES}`) needed no change — `SUBSTRATE_OF`
+  correctly carries no reaction role / kinetics of its own (see
+  `ExposoGraph/reaction_role_rules.py`'s docstring).
+- Edge-color maps in `exporter.py` / `_app_shared.py` (`ui_data.py`,
+  `ui_preview.py` consumers) all use `.get(edge_type, <default color>)`, so
+  `SUBSTRATE_OF` renders in the generic fallback color rather than crashing.
+  Adding a dedicated color for it is a cosmetic follow-up, not yet done.
