@@ -708,3 +708,53 @@ Total edge count: 557 → 563. Applied via
 4 PASS / 0 WARN / 0 FAIL, and `paths_from_carcinogen` for `HCB` now
 correctly traverses the new `AGONIZES -> INDUCES` chain (e.g.
 `HCB -[AGONIZES]-> AHR -[INDUCES]-> CYP1A1 -[PRODUCES]-> BaP_epoxide -> ...`).
+
+## Addendum 7: MTF1 node, AHRR reclassification, and the `ANTAGONIZES` non-decision
+
+Two node-level follow-ups to Addendum 5/6's receptor/enzyme split, plus a
+resolved question about whether a new edge type was warranted.
+
+**Added `MTF1` as a `Receptor` node.** The existing
+`MercuryInorganicCompounds -[INDUCES]-> MT1A` edge skips over the actual
+transcription factor (MTF-1, metal-responsive transcription factor 1) that
+mediates metal-induced metallothionein expression via metal response
+elements — mercury doesn't induce `MT1A` transcription directly. `MTF1` was
+added (`type: Receptor`, `role: Transcription Factor`) so this pathway can
+eventually be modeled as `Mercury -> MTF1 -> MT1A` instead of collapsing it
+into one direct hop. **The node is currently an orphan (degree 0) — no
+edges were added or changed.** Restructuring the Mercury/MT1A edge through
+MTF1 is a separate, not-yet-authorized follow-up. No `tissue_weights` were
+set (unlike other `Receptor` nodes) since fabricating GTEx-style per-tissue
+values without a real source would be worse than leaving the field empty;
+flagged as a gap if/when this node gets curated further.
+
+**Reclassified `AHRR` from `Enzyme` to `Receptor`.** AHRR (AhR repressor)
+has no catalytic activity — it's a bHLH-PAS family transcription factor,
+the same family as AHR itself, whose only modeled role is competing with
+AHR for the ARNT dimerization partner. It was previously grouped with
+`Enzyme` nodes, which no longer fit now that catalytic vs. regulatory roles
+have been split out elsewhere in this schema. Node counts after: `Enzyme`
+68 (was 69), `Receptor` 10 (was 8, +1 for this change +1 for `MTF1`).
+`figure_architecture.py`'s node-count logic (`node_counts.get(NodeType.ENZYME.value, ...)`)
+computes counts dynamically and needed no edit.
+
+**Considered, then rejected, introducing `ANTAGONIZES`** for the
+`AHRR -[INHIBITS]-> AHR` edge (ARNT-competition negative feedback, mechanistically
+different from the other 6 `INHIBITS` edges, which are all direct catalytic/
+cofactor-site blockade by a carcinogen on an enzyme). Audited the whole
+graph for other antagonism-shaped relationships that could justify the new
+type: found only `Lindane`/`Toxaphene` evidence text mentioning "GABA-A
+antagonism" (no `GABA-A receptor` node exists to attach an edge to) and
+`SEPP1`'s "selenium antagonism" (a nutrient-scavenging mechanism, not
+receptor-level antagonism — doesn't fit). With zero qualifying edges besides
+`AHRR->AHR` itself, a singleton-use edge type was judged not worth the
+schema sprawl. **Decision: keep `AHRR -[INHIBITS]-> AHR` as-is**, with this
+note as the documented caveat that the label is an approximation (negative
+feedback via dimerization-partner competition, not catalytic inhibition).
+GABA-A receptor modeling is left as a real future candidate for
+`ANTAGONIZES` if that receptor is ever added as a node.
+
+This decision was informed by (and keeps in sync with) draft-paper language
+already committed to describing this mechanism ("AHRR provides negative
+feedback regulation") — the graph's structure now matches that framing
+without requiring the paper to be revised.

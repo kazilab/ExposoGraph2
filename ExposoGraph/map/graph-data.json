@@ -4035,7 +4035,7 @@
     {
       "id": "AHRR",
       "label": "AHRR",
-      "type": "Enzyme",
+      "type": "Receptor",
       "detail": "AhR repressor; negative feedback regulator. cg05575921 CpG hypomethylation is a validated blood-based biomarker for tobacco/TCDD exposure.",
       "role": "Transcription Factor",
       "tissue": "ubiquitous",
@@ -6398,6 +6398,21 @@
         {
           "evidence": "Unstable O-sulfonate ester of N-hydroxy-PhIP formed by SULT1A1; hydrolyzes to an arylnitrenium ion that reacts with DNA",
           "citation": "PMID:11191883"
+        }
+      ]
+    },
+    {
+      "id": "MTF1",
+      "label": "MTF1",
+      "type": "Receptor",
+      "detail": "Metal-responsive transcription factor 1; zinc-finger transcription factor activated by elevated intracellular free zinc (often released when heavy metals such as mercury or cadmium displace zinc from metallothionein/GSH); translocates to the nucleus and binds metal response elements (MREs) to induce metallothionein and other metal-homeostasis genes.",
+      "role": "Transcription Factor",
+      "tissue": "ubiquitous",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "detail": "Zinc-finger transcription factor; MRE-mediated induction of metallothioneins"
         }
       ]
     }
