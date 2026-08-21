@@ -13995,6 +13995,90 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "source": "AHR",
+      "target": "CYP1A2",
+      "type": "INDUCES",
+      "carcinogen": "HCB",
+      "evidence": "Weak AhR agonist; induces CYP1A1/CYP1A2/CYP1B1 in rodent liver (IARC Monograph 79, 2001)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Weak AhR agonist; induces CYP1A1/CYP1A2/CYP1B1 in rodent liver (IARC Monograph 79, 2001)"
+        }
+      ]
+    },
+    {
+      "source": "CAR",
+      "target": "CYP2B6",
+      "type": "INDUCES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate CAR/NR1I3, inducing CYP2B (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Non-dioxin-like PCBs activate CAR/NR1I3, inducing CYP2B (IARC Monograph 107)"
+        }
+      ]
+    },
+    {
+      "source": "CAR",
+      "target": "CYP3A4",
+      "type": "INDUCES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate CAR/NR1I3, inducing CYP3A (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Non-dioxin-like PCBs activate CAR/NR1I3, inducing CYP3A (IARC Monograph 107)"
+        }
+      ]
+    },
+    {
+      "source": "PXR",
+      "target": "CYP3A4",
+      "type": "INDUCES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing CYP3A4 (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing CYP3A4 (IARC Monograph 107)"
+        }
+      ]
+    },
+    {
+      "source": "PXR",
+      "target": "ABCB1",
+      "type": "INDUCES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing ABC transporters including ABCB1/P-glycoprotein (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing ABC transporters including ABCB1/P-glycoprotein (IARC Monograph 107)"
+        }
+      ]
+    },
+    {
+      "source": "PXR",
+      "target": "ABCC2",
+      "type": "INDUCES",
+      "carcinogen": "PCB_non_dioxin",
+      "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing ABC transporters including ABCC2/MRP2 (IARC Monograph 107)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing ABC transporters including ABCC2/MRP2 (IARC Monograph 107)"
+        }
+      ]
     }
   ]
 }

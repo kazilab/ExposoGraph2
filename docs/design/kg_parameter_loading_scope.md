@@ -675,3 +675,36 @@ uncommitted, unrelated pending work and was not touched in this pass either.
    (`exporter.py`, `_app_shared.py`, `ui_data.py`, `ui_preview.py`) are not
    yet added — same fallback-color situation noted for `SUBSTRATE_OF` in
    Addendum 4.
+
+## Addendum 6: filled in missing AHR/CAR/PXR `INDUCES` edges
+
+Addendum 5 introduced `AGONIZES` (ligand→receptor binding) as distinct from
+`INDUCES` (receptor→enzyme transcriptional induction), but a review found
+several `AGONIZES` edges whose own evidence text already named a downstream
+induced enzyme that had no corresponding `INDUCES` edge. Six were added,
+each carrying the `carcinogen` field of the specific `AGONIZES` edge whose
+evidence text motivated it (all target enzyme/transporter nodes already
+existed in the graph — no new nodes added):
+
+| New edge | Sourced from (`carcinogen` field) | Citation |
+|---|---|---|
+| `AHR -[INDUCES]-> CYP1A2` | HCB | IARC Monograph 79, 2001 |
+| `CAR -[INDUCES]-> CYP2B6` | PCB_non_dioxin | IARC Monograph 107 |
+| `CAR -[INDUCES]-> CYP3A4` | PCB_non_dioxin | IARC Monograph 107 |
+| `PXR -[INDUCES]-> CYP3A4` | PCB_non_dioxin | IARC Monograph 107 |
+| `PXR -[INDUCES]-> ABCB1` | PCB_non_dioxin | IARC Monograph 107 |
+| `PXR -[INDUCES]-> ABCC2` | PCB_non_dioxin | IARC Monograph 107 |
+
+`PPARA` was reviewed but not extended: its `AGONIZES` edges (`PFOA`, `PFOS`,
+`PCE`) only cite vague "peroxisome proliferation" language without naming a
+specific enzyme, and the textbook PPARα target (`ACOX1`) does not yet exist
+as a node in the graph — adding that `INDUCES` edge would require adding a
+new node first, which was out of scope for this pass.
+
+Total edge count: 557 → 563. Applied via
+`audit/add_induces_edges.py` (raw `json.load`/`json.dump`, no pydantic
+`model_dump`). Re-validated: `build_reference_engine()` loads cleanly
+(327 nodes / 563 edges), `tools/graph_role_consistency_check.py` still
+4 PASS / 0 WARN / 0 FAIL, and `paths_from_carcinogen` for `HCB` now
+correctly traverses the new `AGONIZES -> INDUCES` chain (e.g.
+`HCB -[AGONIZES]-> AHR -[INDUCES]-> CYP1A1 -[PRODUCES]-> BaP_epoxide -> ...`).
