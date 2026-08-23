@@ -167,10 +167,7 @@ body.is-resizing * { user-select: none !important; }
   gap: 8px;
   padding: 5px 0;
   font-size: 12px;
-  cursor: pointer;
-  transition: opacity 0.15s;
 }
-.legend-item:hover { opacity: 0.7; }
 .legend-item .legend-label {
   flex: 1 1 auto;
   min-width: 0;
@@ -495,28 +492,12 @@ body.is-resizing * { user-select: none !important; }
       <div class="panel-body" id="edge-legend" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; min-height: 0;"></div>
     </div>
 
-    <!-- Carcinogen Filter -->
-    <div class="panel" style="display: flex; flex-direction: column; max-height: 30vh;">
-      <div class="panel-header">Filter by Carcinogen Class</div>
-      <div class="panel-body" style="overflow-y: auto; overflow-x: hidden; min-height: 0; padding-bottom: 10px;">
-        <div class="filter-group" id="carcinogen-filters" style="padding-left: 1px;"></div>
-      </div>
-    </div>
-
-  <!-- Filter by Tissue Panel with restricted max-height -->
-    <div class="panel" style="display: flex; flex-direction: column; max-height: 45vh;">
-      <div class="panel-header">Filter by Tissue</div>
-    
-    <!-- Enabled vertical scrolling and added a bottom padding safety gap -->
-      <div class="panel-body" style="overflow-y: auto; overflow-x: hidden; padding-bottom: 25px; min-height: 0;">
-        <label class="control-label" for="tissue-select">GTEx/HPA Tissue</label>
-        <select class="select-control" id="tissue-select"></select>
-        <label class="control-label" for="tissue-threshold">Minimum nTPM Weight</label>
-        <input class="range-control" id="tissue-threshold" type="range" min="0" max="1" step="0.05" value="0.05">
-      <div class="helper-text" id="tissue-summary">
-        GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.
-      </div>
-    </div>
+    <!-- Filtering (node type, carcinogen group, tissue threshold) is now
+    driven by Streamlit widgets in ui_map_viewer.py, which recompute the
+    subgraph in Python and re-render this whole document -- there is no
+    client-side filter UI here anymore. Tissue dimming (`_dimmed` on nodes
+    and their incident edges) is still rendered client-side; see
+    resetGraphVisibility() below. -->
 
     <!-- Detail Panel -->
     <div class="panel detail-panel" id="detail-panel">
@@ -614,6 +595,10 @@ const nodes = GRAPH_DATA.nodes.map(d => ({...d}));
 const edges = GRAPH_DATA.edges.map(d => ({...d}));
 const DEFAULT_EDGE_OPACITY = d => d.type === "PATHWAY" ? 0.25 : 0.45;
 const DEFAULT_EDGE_WIDTH = d => d.type === "PATHWAY" ? 0.8 : 1.2;
+// Nodes/edges the Python side marked as below the active tissue threshold
+// (GraphEngine.dim_by_tissue_threshold) render at this reduced opacity
+// instead of being hidden, per the "gray out, don't remove" filter semantics.
+const DIMMED_OPACITY = 0.12;
 
 // ── Header Stats (dynamic, reflect current selection) ──────────────
 const statNodeCount = document.getElementById("node-count");
@@ -700,7 +685,6 @@ Object.entries(NODE_COLORS).forEach(([type, color]) => {
   item.innerHTML = `${buildNodeLegendGlyph(type, color)}
     <span class="legend-label">${NODE_LABELS[type]}</span>
     <span class="legend-count">${count}</span>`;
-  item.addEventListener("click", () => highlightType(type));
   nodeLegend.appendChild(item);
 });
 
@@ -716,37 +700,14 @@ Object.entries(EDGE_COLORS).forEach(([type, color]) => {
   edgeLegend.appendChild(item);
 });
 
-// ── Carcinogen Filters ───────────────────────────────────────────────
-const carcinogenGroups = [...new Set(nodes.filter(n => n.type === "Carcinogen").map(n => n.group))];
-const filterContainer = document.getElementById("carcinogen-filters");
-const allBtn = document.createElement("button");
-allBtn.className = "filter-btn active";
-allBtn.textContent = "All";
-allBtn.addEventListener("click", () => filterByCarcinogen(null));
-filterContainer.appendChild(allBtn);
-
-carcinogenGroups.forEach(g => {
-  const btn = document.createElement("button");
-  btn.className = "filter-btn";
-  btn.textContent = g.replace("_", " ");
-  btn.dataset.group = g;
-  btn.addEventListener("click", () => filterByCarcinogen(g));
-  filterContainer.appendChild(btn);
-});
-
-// ── Tissue Filter Controls ──────────────────────────────────────────
-const tissueSelect = document.getElementById("tissue-select");
-const tissueThreshold = document.getElementById("tissue-threshold");
-const tissueSummary = document.getElementById("tissue-summary");
+// Node-type, carcinogen-group, and tissue-threshold filtering all happen in
+// Python now (see GraphEngine.map_viewer_subgraph/dim_by_tissue_threshold and
+// ui_map_viewer.py) -- this document only ever receives the already-filtered
+// GRAPH_DATA it's rendering, plus a per-node/edge `_dimmed` flag for the
+// tissue-threshold overlay (applied below in resetGraphVisibility()).
 const headerSubtitle = document.getElementById("header-subtitle");
 const tissueSourceNote = "GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.";
 const tissueCaveatNote = "Colon averages sigmoid/transverse; Breast uses mammary tissue; Kidney uses cortex; Esophagus uses mucosa. GSTT1 has no bundled HPA/GTEx nTPM value.";
-const tissueNames = [...new Set(
-  nodes.flatMap(n => n.tissue_weights ? Object.keys(n.tissue_weights) : [])
-)].sort((a, b) => a.localeCompare(b));
-
-tissueSelect.innerHTML = '<option value="">All tissues</option>' +
-  tissueNames.map(t => `<option value="${t}">${t}</option>`).join("");
 
 function updateBundleSubtitle() {
   const heavyMetalDetected = nodes.some(
@@ -760,22 +721,6 @@ function updateBundleSubtitle() {
 }
 
 updateBundleSubtitle();
-
-tissueThreshold.addEventListener("input", () => {
-  if (tissueSelect.value) {
-    filterByTissue(tissueSelect.value, Number(tissueThreshold.value));
-  }
-});
-tissueSelect.addEventListener("change", () => {
-  filterByTissue(tissueSelect.value || null, Number(tissueThreshold.value));
-});
-
-if (tissueNames.length === 0) {
-  tissueSummary.textContent = "No GTEx/HPA-weighted nodes are embedded in this bundled payload.";
-} else if (!nodes.some(n => n.type === "Tissue")) {
-  tissueSummary.textContent =
-    `${tissueSourceNote} ${tissueCaveatNote}`;
-}
 
 // ── D3 Force Simulation ─────────────────────────────────────────────
 const g = svg.append("g");
@@ -902,6 +847,11 @@ node.append("text")
   .attr("stroke", "var(--bg)")
   .attr("stroke-width", 3);
 
+// Apply the initial opacity baseline (full for ordinary nodes/edges, dimmed
+// for anything the Python side flagged via _dimmed) before the simulation
+// starts, rather than waiting for a search/hover interaction to trigger it.
+resetGraphVisibility();
+
 // ── Simulation ───────────────────────────────────────────────────────
 const simulation = d3.forceSimulation(nodes)
   .force("link", d3.forceLink(edges).id(d => d.id).distance(d => {
@@ -932,9 +882,9 @@ function ticked() {
 }
 
 function resetGraphVisibility() {
-  node.style("opacity", 1);
+  node.style("opacity", d => d._dimmed ? DIMMED_OPACITY : 1);
   link
-    .style("stroke-opacity", d => DEFAULT_EDGE_OPACITY(d))
+    .style("stroke-opacity", d => d._dimmed ? DIMMED_OPACITY : DEFAULT_EDGE_OPACITY(d))
     .style("stroke-width", d => DEFAULT_EDGE_WIDTH(d));
   updateHeaderStats();
 }
@@ -960,26 +910,13 @@ function formatTissueWeights(weights, preferredTissue = null, limit = 4) {
     .join(" · ");
 }
 
-let activeView = { kind: "all" };
-
-function restoreActiveView() {
-  if (activeView.kind === "search") {
-    applySearch(activeView.query);
-    return;
-  }
-  if (activeView.kind === "type") {
-    applyTypeHighlight(activeView.type);
-    return;
-  }
-  if (activeView.kind === "carcinogen") {
-    applyCarcinogenFilter(activeView.group);
-    return;
-  }
-  if (activeView.kind === "tissue") {
-    applyTissueFilter(activeView.tissue, activeView.threshold);
-    return;
-  }
-  resetGraphVisibility();
+// The only remaining client-side "view" is free-text search; everything else
+// (node type, carcinogen group, tissue threshold) is decided in Python before
+// this document is rendered. Re-applying the current search box value here
+// restores either the active search highlight or the tissue-dimmed baseline
+// (applySearch("") falls through to resetGraphVisibility()).
+function restoreView() {
+  applySearch(searchInput.value.toLowerCase().trim());
 }
 
 // ── Drag ─────────────────────────────────────────────────────────────
@@ -1019,7 +956,7 @@ node.on("mouseover", (event, d) => {
   }
   if (d.type === "Tissue" && d.tissue) typeExtra = ` · ${d.tissue}`;
   const tissueWeightsHtml = d.tissue_weights
-    ? `<div class="tooltip-desc"><b>GTEx/HPA nTPM weights:</b> ${formatTissueWeights(d.tissue_weights, tissueSelect.value || null, 3)}</div>`
+    ? `<div class="tooltip-desc"><b>GTEx/HPA nTPM weights:</b> ${formatTissueWeights(d.tissue_weights, null, 3)}</div>`
     : "";
 
   tooltip.innerHTML = `
@@ -1058,7 +995,7 @@ node.on("mouseover", (event, d) => {
 })
 .on("mouseout", () => {
   tooltip.classList.remove("visible");
-  restoreActiveView();
+  restoreView();
 });
 
 // ── Click for Details ────────────────────────────────────────────────
@@ -1125,7 +1062,7 @@ function showDetail(d) {
     d.role ? `<div><b>Role:</b> ${d.role}</div>` : "",
     d.reactivity ? `<div><b>Reactivity:</b> ${d.reactivity}</div>` : "",
     d.tissue ? `<div><b>Tissue:</b> ${d.tissue}</div>` : "",
-    d.tissue_weights ? `<div><b>GTEx/HPA nTPM Weights:</b> ${formatTissueWeights(d.tissue_weights, tissueSelect.value || null, 8)}</div>` : "",
+    d.tissue_weights ? `<div><b>GTEx/HPA nTPM Weights:</b> ${formatTissueWeights(d.tissue_weights, null, 8)}</div>` : "",
     d.tissue_weights ? `<div><b>Tissue Data:</b> ${tissueSourceNote} ${tissueCaveatNote}</div>` : "",
     d.variant ? `<div><b>Variant:</b> ${d.variant}</div>` : "",
     d.phenotype ? `<div><b>Phenotype:</b> ${d.phenotype}</div>` : "",
@@ -1187,156 +1124,18 @@ function applySearch(q) {
   updateHeaderStats(expandedIds, visibleEdgeIdx);
 }
 
-document.getElementById("search-input").addEventListener("input", function() {
-  const q = this.value.toLowerCase().trim();
-  activeView = q ? { kind: "search", query: q } : { kind: "all" };
-  applySearch(q);
+const searchInput = document.getElementById("search-input");
+searchInput.addEventListener("input", function() {
+  applySearch(this.value.toLowerCase().trim());
 });
 
-// ── Type Highlight ───────────────────────────────────────────────────
-let activeType = null;
-function applyTypeHighlight(type) {
-  const typeIds = new Set(nodes.filter(n => n.type === type).map(n => n.id));
-  const visibleEdgeIdx = new Set();
-  edges.forEach((e, i) => {
-    const sid = typeof e.source === "object" ? e.source.id : e.source;
-    const tid = typeof e.target === "object" ? e.target.id : e.target;
-    if (typeIds.has(sid) || typeIds.has(tid)) visibleEdgeIdx.add(i);
-  });
-
-  node.style("opacity", n => typeIds.has(n.id) ? 1 : 0.08);
-  link.style("stroke-opacity", (e, i) => visibleEdgeIdx.has(i) ? 0.5 : 0.02);
-
-  updateHeaderStats(typeIds, visibleEdgeIdx);
-}
-
-function highlightType(type) {
-  if (activeType === type) {
-    activeType = null;
-    activeView = { kind: "all" };
-    resetGraphVisibility();
-    return;
-  }
-  activeType = type;
-  activeView = { kind: "type", type };
-  applyTypeHighlight(type);
-}
-
-// ── Carcinogen Filter ────────────────────────────────────────────────
-function applyCarcinogenFilter(group) {
-  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-  if (!group) {
-    document.querySelector(".filter-btn").classList.add("active");
-    resetGraphVisibility();
-    return;
-  }
-
-  document.querySelector(`[data-group="${group}"]`).classList.add("active");
-
-  // Find carcinogen IDs in this group
-  const carcinogens = new Set(nodes.filter(n => n.type === "Carcinogen" && n.group === group).map(n => n.id));
-
-  // Find all edges that involve these carcinogens
-  const relevantEdgeIds = new Set();
-  const connectedIds = new Set(carcinogens);
-
-  edges.forEach((e, i) => {
-    const sid = typeof e.source === "object" ? e.source.id : e.source;
-    const tid = typeof e.target === "object" ? e.target.id : e.target;
-    // Direct carcinogen connection or matching carcinogen field
-    if (carcinogens.has(sid) || carcinogens.has(tid) ||
-        (e.carcinogen && carcinogens.has(e.carcinogen))) {
-      relevantEdgeIds.add(i);
-      connectedIds.add(sid);
-      connectedIds.add(tid);
-    }
-  });
-
-  // Expand one more level for metabolite → adduct connections
-  edges.forEach((e, i) => {
-    const sid = typeof e.source === "object" ? e.source.id : e.source;
-    const tid = typeof e.target === "object" ? e.target.id : e.target;
-    if (connectedIds.has(sid) || connectedIds.has(tid)) {
-      if (e.type === "FORMS_ADDUCT" || e.type === "REPAIRS") {
-        relevantEdgeIds.add(i);
-        connectedIds.add(sid);
-        connectedIds.add(tid);
-      }
-    }
-  });
-
-  node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
-  link.style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? 0.7 : 0.02)
-    .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? 2 : 0.3);
-
-  updateHeaderStats(connectedIds, relevantEdgeIds);
-}
-
-function filterByCarcinogen(group) {
-  activeView = group ? { kind: "carcinogen", group } : { kind: "all" };
-  applyCarcinogenFilter(group);
-}
-
-function applyTissueFilter(tissue, threshold) {
-  if (!tissue) {
-    tissueSummary.textContent = `${tissueSourceNote} ${tissueCaveatNote}`;
-    resetGraphVisibility();
-    return;
-  }
-
-  const activeIds = new Set(
-    nodes
-      .filter(n => n.tissue_weights && Number(n.tissue_weights[tissue] ?? -1) >= threshold)
-      .map(n => n.id)
-  );
-  const matchingTissueNodes = new Set(
-    nodes
-      .filter(n => n.type === "Tissue" && (
-        normalizeString(n.label) === normalizeString(tissue) ||
-        normalizeString(n.id) === normalizeString(tissue) ||
-        normalizeString(n.tissue) === normalizeString(tissue)
-      ))
-      .map(n => n.id)
-  );
-
-  const relevantEdgeIds = new Set();
-  const connectedIds = new Set([...activeIds, ...matchingTissueNodes]);
-
-  edges.forEach((e, i) => {
-    const sid = typeof e.source === "object" ? e.source.id : e.source;
-    const tid = typeof e.target === "object" ? e.target.id : e.target;
-    if (activeIds.has(sid) || activeIds.has(tid) || matchingTissueNodes.has(sid) || matchingTissueNodes.has(tid)) {
-      relevantEdgeIds.add(i);
-      connectedIds.add(sid);
-      connectedIds.add(tid);
-    }
-  });
-
-  edges.forEach((e, i) => {
-    const sid = typeof e.source === "object" ? e.source.id : e.source;
-    const tid = typeof e.target === "object" ? e.target.id : e.target;
-    if (connectedIds.has(sid) || connectedIds.has(tid)) {
-      if (["ACTIVATES", "DETOXIFIES", "FORMS_ADDUCT", "REPAIRS", "TRANSPORTS", "EXPRESSED_IN"].includes(e.type)) {
-        relevantEdgeIds.add(i);
-        connectedIds.add(sid);
-        connectedIds.add(tid);
-      }
-    }
-  });
-
-  tissueSummary.textContent = `${tissue}: ${activeIds.size} GTEx/HPA-supported enzyme/gene nodes with nTPM weight >= ${threshold.toFixed(2)}. ${tissueSourceNote}`;
-  node.style("opacity", n => connectedIds.has(n.id) ? 1 : 0.05);
-  link
-    .style("stroke-opacity", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 0.35 : 0.7) : 0.02)
-    .style("stroke-width", (d, i) => relevantEdgeIds.has(i) ? (d.type === "PATHWAY" ? 1.2 : 2) : 0.3);
-
-  updateHeaderStats(connectedIds, relevantEdgeIds);
-}
-
-function filterByTissue(tissue, threshold) {
-  activeView = tissue ? { kind: "tissue", tissue, threshold } : { kind: "all" };
-  applyTissueFilter(tissue, threshold);
-}
+// Node-type highlighting, carcinogen-group filtering, and tissue-threshold
+// filtering used to live here as client-side JS (applyTypeHighlight/
+// highlightType, applyCarcinogenFilter/filterByCarcinogen, applyTissueFilter/
+// filterByTissue). They have moved to Python -- GraphEngine.map_viewer_subgraph
+// and GraphEngine.dim_by_tissue_threshold in engine.py -- and are now driven by
+// Streamlit widgets in ui_map_viewer.py, which recompute the subgraph and
+// re-render this document rather than manipulating it client-side.
 
 // ── Sidebar Resizer ──────────────────────────────────────────────────
 (function setupSidebarResizer() {

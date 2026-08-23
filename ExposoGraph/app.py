@@ -84,7 +84,7 @@ tab_map, tab_flux, tab_manual, tab_data = st.tabs(
 )
 
 with tab_map:
-    ui_map_viewer.render()
+    ui_map_viewer.render(engine)
 
 with tab_flux:
     ui_flux.render()
