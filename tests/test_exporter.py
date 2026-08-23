@@ -8,7 +8,9 @@ from ExposoGraph.exporter import (
     export_viewer_bundle,
     parse_graph_artifact,
     parse_graph_data_js,
+    parse_graph_data_text,
     parse_graph_html,
+    subgraph_to_html_string,
     to_graph_data_js,
     to_interactive_html,
     to_interactive_html_string,
@@ -289,6 +291,61 @@ class TestInteractiveHtml:
         assert "GRAPH_DATA" in html
         assert {node.id for node in parsed.nodes} == {"Mystery", "Novel"}
         assert len(parsed.edges) == 1
+
+
+class TestSubgraphToHtmlString:
+    """subgraph_to_html_string: the dict-based analog of to_interactive_html_string.
+
+    Used by ui_map_viewer.py to render a filtered {"nodes": ..., "edges": ...}
+    dict (from GraphEngine.map_viewer_subgraph/dim_by_tissue_threshold)
+    without first assembling a throwaway GraphEngine.
+    """
+
+    def test_inlines_arbitrary_dict_as_graph_data(self, tmp_path):
+        template = tmp_path / "template.html"
+        template.write_text(
+            '<html><head><script src="./graph-data.js"></script></head><body></body></html>',
+            encoding="utf-8",
+        )
+        graph = {
+            "nodes": [
+                {"id": "BaP", "label": "Benzo[a]pyrene", "type": "Carcinogen"},
+                {"id": "CYP1A1", "label": "CYP1A1", "type": "Enzyme", "_dimmed": False},
+            ],
+            "edges": [
+                {"source": "BaP", "target": "CYP1A1", "type": "ACTIVATES", "_dimmed": False},
+            ],
+        }
+
+        html = subgraph_to_html_string(graph, template_path=template)
+
+        assert "GRAPH_DATA" in html
+        assert './graph-data.js' not in html
+        restored = parse_graph_data_text(html)
+        assert {node.id for node in restored.nodes} == {"BaP", "CYP1A1"}
+        assert len(restored.edges) == 1
+
+    def test_strips_none_values(self, tmp_path):
+        template = tmp_path / "template.html"
+        template.write_text(
+            '<html><head><script src="./graph-data.js"></script></head><body></body></html>',
+            encoding="utf-8",
+        )
+        graph = {
+            "nodes": [{"id": "X", "label": "X", "type": "Enzyme", "group": None}],
+            "edges": [],
+        }
+
+        html = subgraph_to_html_string(graph, template_path=template)
+
+        start = html.index("const GRAPH_DATA")
+        end = html.index(";", start)
+        data = json.loads(html[start:end].split("=", 1)[1].strip())
+        assert "group" not in data["nodes"][0]
+
+    def test_uses_builtin_template_when_missing(self):
+        html = subgraph_to_html_string({"nodes": [], "edges": []})
+        assert "GRAPH_DATA" in html
 
 
 class TestPlotlyExport:

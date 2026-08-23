@@ -781,6 +781,18 @@ def _graph_data_script(
     return f"const GRAPH_DATA = {json.dumps(data, indent=2)};"
 
 
+def _graph_data_script_from_dict(graph: dict[str, list[Any]]) -> str:
+    """Render an arbitrary ``{"nodes": [...], "edges": [...]}`` dict as a
+    ``GRAPH_DATA`` script body -- the dict-based analog of
+    :func:`_graph_data_script`, which takes a whole :class:`GraphEngine`
+    instead. Used for subgraphs produced by ``GraphEngine`` filtering helpers
+    (e.g. :meth:`GraphEngine.map_viewer_subgraph`) that were never assembled
+    into a standalone engine.
+    """
+    data = _clean_for_js(graph)
+    return f"const GRAPH_DATA = {json.dumps(data, indent=2)};"
+
+
 def _inline_graph_data_script(template: str, data_script: str) -> str:
     script_tag = f"<script>\n{data_script.rstrip()}\n</script>"
     external_tag = '<script src="./graph-data.js"></script>'
@@ -1049,6 +1061,27 @@ def to_interactive_html_string(
     """Render a self-contained interactive HTML document."""
     template = _load_viewer_template(template_path)
     data_script = _graph_data_script(engine, visibility=visibility)
+    return _inline_graph_data_script(template, data_script)
+
+
+def subgraph_to_html_string(
+    graph: dict[str, list[Any]],
+    *,
+    template_path: str | Path | None = None,
+) -> str:
+    """Render an arbitrary node/edge dict as a self-contained interactive HTML document.
+
+    Dict-based analog of :func:`to_interactive_html_string`, for callers that
+    already have a subgraph dict (e.g. from
+    :meth:`GraphEngine.map_viewer_subgraph`/:meth:`GraphEngine.dim_by_tissue_threshold`)
+    rather than a whole ``GraphEngine`` to select ``visibility=`` on. This is
+    the mechanism ``ui_map_viewer.py`` uses to re-render on every filter
+    interaction: recompute the filtered dict with the engine's filtering
+    helpers, then hand it straight to this function instead of constructing a
+    throwaway ``GraphEngine`` just to export it.
+    """
+    template = _load_viewer_template(template_path)
+    data_script = _graph_data_script_from_dict(graph)
     return _inline_graph_data_script(template, data_script)
 
 
