@@ -6599,14 +6599,13 @@
       ]
     },
     {
-      "source": "GSTO1",
-      "target": "AntimonyTrivalent",
-      "type": "PRODUCES",
+      "source": "AntimonyTrivalent",
+      "target": "GSTO1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "AntimonyTrivalent",
-      "evidence": "GSTO1 catalyzes reduction of Sb(V) to toxic Sb(III), analogous to arsenic biotransformation (IARC Vol 131, 2023)",
+      "evidence": "GSTO1 catalyzes reduction of Sb(V) to toxic Sb(III), analogous to arsenic biotransformation (IARC Vol 131, 2023) [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review, per explicit instruction to convert all such edges to SUBSTRATE_OF. CAUTION: this one does not fit the substrate-of pattern cleanly -- the evidence describes GSTO1 *producing* Sb(III) from Sb(V), not consuming AntimonyTrivalent as a substrate. The Sb(V) precursor is not modeled as a separate node in this graph. Recommend follow-up review rather than treating this retype as validated.]",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "PRODUCES",
       "provenance": [
         {
           "evidence": "GSTO1 catalyzes reduction of Sb(V) to toxic Sb(III), analogous to arsenic biotransformation (IARC Vol 131, 2023)"
@@ -6961,11 +6960,11 @@
       ]
     },
     {
-      "source": "CYP1A1",
-      "target": "Cd",
-      "type": "PRODUCES",
+      "source": "Cd",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "Cd",
-      "evidence": "Singh et al. Urol Oncol 2023",
+      "evidence": "Singh et al. Urol Oncol 2023 [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -7173,14 +7172,13 @@
       ]
     },
     {
-      "source": "CYP2A6",
-      "target": "NDMA",
-      "type": "PRODUCES",
+      "source": "NDMA",
+      "target": "CYP2A6",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NDMA",
-      "evidence": "Secondary activation at higher NDMA concentrations (ATSDR TP-141)",
+      "evidence": "Secondary activation at higher NDMA concentrations (ATSDR TP-141) [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "PRODUCES",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -12607,14 +12605,14 @@
       ]
     },
     {
-      "source": "CYP2E1",
-      "target": "Ethanol",
-      "type": "PRODUCES",
-      "label": "CYP2E1 metabolism of Ethanol",
+      "source": "Ethanol",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "Ethanol",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "Ethanol in alcoholic beverages is a metabolic substrate of CYP2E1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "acetaminophen",
@@ -12647,14 +12645,14 @@
       "provenance": []
     },
     {
-      "source": "CYP2E1",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP2E1 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP2E1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "p_nitrophenol",
@@ -12687,24 +12685,24 @@
       "provenance": []
     },
     {
-      "source": "CYP1A2",
-      "target": "BaP",
-      "type": "PRODUCES",
-      "label": "CYP1A2 metabolism of Benzo[a]pyrene",
+      "source": "BaP",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "BaP",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "Benzo[a]pyrene is a metabolic substrate of CYP1A2. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP1A2",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP1A2 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP1A2. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "CYP1A2",
@@ -12737,14 +12735,14 @@
       "provenance": []
     },
     {
-      "source": "CYP1A1",
-      "target": "PhIP",
-      "type": "PRODUCES",
-      "label": "CYP1A1 metabolism of PhIP",
+      "source": "PhIP",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "PhIP",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "PhIP is a metabolic substrate of CYP1A1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "CYP1A1",
@@ -12807,14 +12805,14 @@
       "provenance": []
     },
     {
-      "source": "CYP1B1",
-      "target": "4ABP",
-      "type": "PRODUCES",
-      "label": "CYP1B1 metabolism of 4-Aminobiphenyl",
+      "source": "4ABP",
+      "target": "CYP1B1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "4ABP",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "4-Aminobiphenyl is a metabolic substrate of CYP1B1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "resveratrol",
@@ -12857,34 +12855,34 @@
       "provenance": []
     },
     {
-      "source": "CYP2A6",
-      "target": "NDEA",
-      "type": "PRODUCES",
-      "label": "CYP2A6 metabolism of NDEA",
+      "source": "NDEA",
+      "target": "CYP2A6",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NDEA",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NDEA is a metabolic substrate of CYP2A6. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP2A13",
-      "target": "Benzene",
-      "type": "PRODUCES",
-      "label": "CYP2A13 metabolism of Benzene",
+      "source": "Benzene",
+      "target": "CYP2A13",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "Benzene",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "Benzene is a metabolic substrate of CYP2A13. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP2A13",
-      "target": "NDEA",
-      "type": "PRODUCES",
-      "label": "CYP2A13 metabolism of NDEA",
+      "source": "NDEA",
+      "target": "CYP2A13",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NDEA",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NDEA is a metabolic substrate of CYP2A13. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "CYP2A13",
@@ -12927,14 +12925,14 @@
       "provenance": []
     },
     {
-      "source": "CYP2B6",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP2B6 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP2B6",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP2B6. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "tolbutamide",
@@ -12967,24 +12965,24 @@
       "provenance": []
     },
     {
-      "source": "CYP2C9",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP2C9 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP2C9",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP2C9. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP2C9",
-      "target": "4ABP",
-      "type": "PRODUCES",
-      "label": "CYP2C9 metabolism of 4-Aminobiphenyl",
+      "source": "4ABP",
+      "target": "CYP2C9",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "4ABP",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "4-Aminobiphenyl is a metabolic substrate of CYP2C9. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "S_mephenytoin",
@@ -13017,14 +13015,14 @@
       "provenance": []
     },
     {
-      "source": "CYP2C19",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP2C19 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP2C19",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP2C19. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "dextromethorphan",
@@ -13057,14 +13055,14 @@
       "provenance": []
     },
     {
-      "source": "CYP2D6",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP2D6 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP2D6",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP2D6. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "CYP3A4",
@@ -13137,24 +13135,24 @@
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "NNK",
-      "type": "PRODUCES",
-      "label": "CYP3A4 metabolism of NNK",
+      "source": "NNK",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "NNK is a metabolic substrate of CYP3A4. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP2F1",
-      "target": "Benzene",
-      "type": "PRODUCES",
-      "label": "CYP2F1 metabolism of Benzene",
+      "source": "Benzene",
+      "target": "CYP2F1",
+      "type": "SUBSTRATE_OF",
       "carcinogen": "Benzene",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [],
+      "evidence": "Benzene is a metabolic substrate of CYP2F1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
       "source": "CYP2F1",
