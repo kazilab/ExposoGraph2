@@ -104,14 +104,18 @@ def get_engine() -> GraphEngine:
 
 
 def start_engine(engine: GraphEngine) -> None:
+    """Populate *engine* from the bundled reference graph, once per session.
+
+    Uses :meth:`GraphEngine.load_reference_graph`, which loads
+    ``map/graph-data.json`` (the canonical knowledge graph) and layers the
+    tissue-expression and interaction-parameter overlays on top of it -- this
+    is the single source of truth for every tab, not just the Reference Map.
+    """
     if "graph_initialized" not in st.session_state:
         try:
-            default_js_path = (
-                Path(__file__).resolve().parent / "map" / "graph_data.json"
-            )
-            if default_js_path.exists():
-                engine.load_base_data(default_js_path)
-                st.session_state.graph_initialized = True
+            warnings = engine.load_reference_graph()
+            st.session_state.graph_initialized = True
+            st.session_state.graph_load_warnings = warnings
         except Exception as e:
             st.warning(f"Could not pre-load reference map: {e}")
 

@@ -493,3 +493,169 @@ class TestLoadReferenceGraph:
             assert "tissue_weights" not in node
             assert "Km" not in node
             assert "Vmax" not in node
+
+
+class TestMapViewerFiltering:
+    """Tests for the new map-viewer filtering helpers used by ui_map_viewer.py.
+
+    Fixture graph shape (see ``mv_engine``):
+      BaP  (Carcinogen, group="PAH")   -> CYP1A1 (Enzyme) -> BPDE (Metabolite) -> DNAAdduct1 (DNA_Adduct)
+      Benz (Carcinogen, group="PAH")   -> CYP2E1 (Enzyme) -> BQ   (Metabolite)
+      As   (Carcinogen, group="Metal") -> GSTM1  (Enzyme, no outgoing edge -- leaf)
+      CaffeineSub (Substrate) <- CYP1A1 (kept in graph, hidden from viewer by default)
+      CYP1A1.tissue_weights = {"Liver": 0.9, "Lung": 0.1}
+      CYP2E1.tissue_weights = {"Liver": 0.05}
+      GSTM1.tissue_weights = {} (empty -- no entry for any tissue)
+    """
+
+    @pytest.fixture
+    def mv_engine(self):
+        engine = GraphEngine()
+        engine.add_node(Node(id="BaP", label="Benzo[a]pyrene", type=NodeType.CARCINOGEN, group="PAH"))
+        engine.add_node(Node(id="Benz", label="Benzene", type=NodeType.CARCINOGEN, group="PAH"))
+        engine.add_node(Node(id="As", label="Arsenic", type=NodeType.CARCINOGEN, group="Metal"))
+        engine.add_node(
+            Node(id="CYP1A1", label="CYP1A1", type=NodeType.ENZYME, tissue_weights={"Liver": 0.9, "Lung": 0.1})
+        )
+        engine.add_node(Node(id="CYP2E1", label="CYP2E1", type=NodeType.ENZYME, tissue_weights={"Liver": 0.05}))
+        engine.add_node(Node(id="GSTM1", label="GSTM1", type=NodeType.ENZYME))
+        engine.add_node(Node(id="BPDE", label="BPDE", type=NodeType.METABOLITE))
+        engine.add_node(Node(id="BQ", label="Benzoquinone", type=NodeType.METABOLITE))
+        engine.add_node(Node(id="DNAAdduct1", label="BPDE-dG adduct", type=NodeType.DNA_ADDUCT))
+        engine.add_node(Node(id="CaffeineSub", label="Caffeine", type=NodeType.SUBSTRATE))
+        engine.add_edge(Edge(source="BaP", target="CYP1A1", type=EdgeType.ACTIVATES, carcinogen="BaP"))
+        engine.add_edge(Edge(source="CYP1A1", target="BPDE", type=EdgeType.ACTIVATES, carcinogen="BaP"))
+        engine.add_edge(Edge(source="BPDE", target="DNAAdduct1", type=EdgeType.FORMS_ADDUCT, carcinogen="BaP"))
+        engine.add_edge(Edge(source="Benz", target="CYP2E1", type=EdgeType.ACTIVATES, carcinogen="Benz"))
+        engine.add_edge(Edge(source="CYP2E1", target="BQ", type=EdgeType.ACTIVATES, carcinogen="Benz"))
+        engine.add_edge(Edge(source="As", target="GSTM1", type=EdgeType.DETOXIFIES, carcinogen="As"))
+        engine.add_edge(Edge(source="CYP1A1", target="CaffeineSub", type=EdgeType.TRANSPORTS))
+        return engine
+
+    # ── carcinogen_group_paths_subgraph ──────────────────────────────────
+
+    def test_group_paths_union_across_carcinogens_in_group(self, mv_engine):
+        result = mv_engine.carcinogen_group_paths_subgraph(["PAH"])
+        node_ids = {n["id"] for n in result["nodes"]}
+        edge_pairs = {(e["source"], e["target"]) for e in result["edges"]}
+        # Both BaP's and Benz's paths are unioned since both are in group "PAH".
+        # CYP1A1 has two outgoing edges (to BPDE and to CaffeineSub), so BaP
+        # has two maximal paths and both are included.
+        assert node_ids == {"BaP", "CYP1A1", "BPDE", "DNAAdduct1", "CaffeineSub", "Benz", "CYP2E1", "BQ"}
+        assert edge_pairs == {
+            ("BaP", "CYP1A1"),
+            ("CYP1A1", "BPDE"),
+            ("BPDE", "DNAAdduct1"),
+            ("CYP1A1", "CaffeineSub"),
+            ("Benz", "CYP2E1"),
+            ("CYP2E1", "BQ"),
+        }
+        # Metal-group carcinogen As is not pulled in.
+        assert "As" not in node_ids and "GSTM1" not in node_ids
+
+    def test_group_paths_leaf_carcinogen_keeps_its_own_node(self, mv_engine):
+        # As -> GSTM1 is a real path, so As, GSTM1 pass; but GSTM1 has no
+        # further outgoing edges (leaf), which must not drop either node.
+        result = mv_engine.carcinogen_group_paths_subgraph(["Metal"])
+        node_ids = {n["id"] for n in result["nodes"]}
+        assert node_ids == {"As", "GSTM1"}
+
+    def test_group_paths_unknown_group_is_empty_not_error(self, mv_engine):
+        result = mv_engine.carcinogen_group_paths_subgraph(["NoSuchGroup"])
+        assert result == {"nodes": [], "edges": []}
+
+    def test_group_paths_empty_groups_returns_empty(self, mv_engine):
+        assert mv_engine.carcinogen_group_paths_subgraph([]) == {"nodes": [], "edges": []}
+
+    # ── subgraph_by_node_types ────────────────────────────────────────────
+
+    def test_node_types_none_excludes_substrate_by_default(self, mv_engine):
+        result = mv_engine.subgraph_by_node_types()
+        node_ids = {n["id"] for n in result["nodes"]}
+        assert "CaffeineSub" not in node_ids
+        assert node_ids == {"BaP", "Benz", "As", "CYP1A1", "CYP2E1", "GSTM1", "BPDE", "BQ", "DNAAdduct1"}
+        # The CYP1A1 -> CaffeineSub edge drops too since its target is excluded.
+        assert ("CYP1A1", "CaffeineSub") not in {(e["source"], e["target"]) for e in result["edges"]}
+
+    def test_node_types_restricts_to_selected_types_only(self, mv_engine):
+        result = mv_engine.subgraph_by_node_types([NodeType.ENZYME.value])
+        node_ids = {n["id"] for n in result["nodes"]}
+        assert node_ids == {"CYP1A1", "CYP2E1", "GSTM1"}
+        # No direct Enzyme-Enzyme edges exist, so the induced edge set is empty.
+        assert result["edges"] == []
+
+    def test_node_types_exclude_types_override_still_applies(self, mv_engine):
+        # Even explicitly requesting Substrate nodes, exclude_types defaults
+        # to hiding them unless the caller overrides exclude_types too.
+        result = mv_engine.subgraph_by_node_types([NodeType.SUBSTRATE.value])
+        assert result == {"nodes": [], "edges": []}
+
+    def test_node_types_can_opt_in_to_substrate_via_exclude_types(self, mv_engine):
+        result = mv_engine.subgraph_by_node_types([NodeType.SUBSTRATE.value], exclude_types=())
+        assert {n["id"] for n in result["nodes"]} == {"CaffeineSub"}
+
+    # ── map_viewer_subgraph ───────────────────────────────────────────────
+
+    def test_map_viewer_no_filters_is_full_graph_minus_substrate(self, mv_engine):
+        result = mv_engine.map_viewer_subgraph()
+        node_ids = {n["id"] for n in result["nodes"]}
+        assert "CaffeineSub" not in node_ids
+        assert len(node_ids) == 9
+
+    def test_map_viewer_intersects_type_and_carcinogen_axes(self, mv_engine):
+        # Enzyme type-filter intersected with PAH carcinogen-group filter:
+        # only the enzymes reachable from a PAH-group carcinogen survive.
+        result = mv_engine.map_viewer_subgraph(
+            node_types=[NodeType.ENZYME.value], carcinogen_groups=["PAH"]
+        )
+        node_ids = {n["id"] for n in result["nodes"]}
+        assert node_ids == {"CYP1A1", "CYP2E1"}
+        assert "GSTM1" not in node_ids  # Metal group, filtered out by carcinogen axis.
+
+    def test_map_viewer_type_filter_alone_ignores_carcinogen_axis(self, mv_engine):
+        result = mv_engine.map_viewer_subgraph(node_types=[NodeType.CARCINOGEN.value])
+        assert {n["id"] for n in result["nodes"]} == {"BaP", "Benz", "As"}
+
+    def test_map_viewer_carcinogen_filter_alone_ignores_type_axis(self, mv_engine):
+        result = mv_engine.map_viewer_subgraph(carcinogen_groups=["Metal"])
+        assert {n["id"] for n in result["nodes"]} == {"As", "GSTM1"}
+
+    def test_map_viewer_substrate_always_excluded_even_with_filters(self, mv_engine):
+        result = mv_engine.map_viewer_subgraph(node_types=[NodeType.SUBSTRATE.value, NodeType.ENZYME.value])
+        node_ids = {n["id"] for n in result["nodes"]}
+        assert "CaffeineSub" not in node_ids
+        assert node_ids == {"CYP1A1", "CYP2E1", "GSTM1"}
+
+    # ── dim_by_tissue_threshold ───────────────────────────────────────────
+
+    def test_dim_by_tissue_threshold_marks_low_expression_enzymes(self, mv_engine):
+        subgraph = mv_engine.map_viewer_subgraph()
+        dimmed = mv_engine.dim_by_tissue_threshold(subgraph, "Liver", 0.5)
+        dimmed_by_id = {n["id"]: n["_dimmed"] for n in dimmed["nodes"]}
+        assert dimmed_by_id["CYP1A1"] is False  # 0.9 >= 0.5
+        assert dimmed_by_id["CYP2E1"] is True  # 0.05 < 0.5
+        assert dimmed_by_id["GSTM1"] is True  # no Liver entry at all
+        # Non-enzyme nodes are never dimmed.
+        assert dimmed_by_id["BaP"] is False
+        assert dimmed_by_id["BPDE"] is False
+
+    def test_dim_by_tissue_threshold_dims_edges_touching_dimmed_enzyme(self, mv_engine):
+        subgraph = mv_engine.map_viewer_subgraph()
+        dimmed = mv_engine.dim_by_tissue_threshold(subgraph, "Liver", 0.5)
+        dimmed_edges = {(e["source"], e["target"]): e["_dimmed"] for e in dimmed["edges"]}
+        assert dimmed_edges[("Benz", "CYP2E1")] is True  # touches dimmed CYP2E1
+        assert dimmed_edges[("CYP2E1", "BQ")] is True
+        assert dimmed_edges[("BaP", "CYP1A1")] is False  # touches non-dimmed CYP1A1
+        assert dimmed_edges[("CYP1A1", "BPDE")] is False
+
+    def test_dim_by_tissue_threshold_never_removes_nodes_or_edges(self, mv_engine):
+        subgraph = mv_engine.map_viewer_subgraph()
+        dimmed = mv_engine.dim_by_tissue_threshold(subgraph, "Liver", 0.5)
+        assert len(dimmed["nodes"]) == len(subgraph["nodes"])
+        assert len(dimmed["edges"]) == len(subgraph["edges"])
+
+    def test_dim_by_tissue_threshold_is_non_mutating(self, mv_engine):
+        subgraph = mv_engine.map_viewer_subgraph()
+        mv_engine.dim_by_tissue_threshold(subgraph, "Liver", 0.5)
+        assert all("_dimmed" not in n for n in subgraph["nodes"])
+        assert all("_dimmed" not in e for e in subgraph["edges"])

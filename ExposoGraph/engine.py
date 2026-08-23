@@ -560,6 +560,47 @@ class GraphEngine:
         """
         return {"nodes": self.nodes_by_type(node_type), "edges": []}
 
+    #: Node types hidden from viewer-facing subgraphs by default (they
+    #: remain in the underlying graph for callers that bypass this method,
+    #: e.g. the flux engine) -- see :meth:`subgraph_by_node_types`.
+    _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES: tuple[str, ...] = ("Substrate",)
+
+    def subgraph_by_node_types(
+        self,
+        node_types: Sequence[str] | None = None,
+        *,
+        exclude_types: Sequence[str] = _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES,
+    ) -> dict[str, list[Any]]:
+        """Return the subgraph restricted to *node_types*, minus *exclude_types*.
+
+        Generalizes :meth:`subgraph_by_node_type` to a multi-select: *node_types*
+        of ``None`` or empty imposes no restriction (every type is included) --
+        the identity element for this axis, mirroring the ``None``-means-
+        unrestricted convention :meth:`filtered_subgraph` already uses.
+        *exclude_types* is always subtracted afterward regardless of whether it
+        appears in *node_types*, defaulting to hiding ``Substrate`` nodes from
+        viewer-facing subgraphs -- pass ``exclude_types=()`` to see them.
+
+        Edges are included only when *both* endpoints survive the type
+        filter; an edge's separate ``carcinogen`` context field is not
+        itself a node-type constraint.
+        """
+        excluded = set(exclude_types)
+        allowed = set(node_types) if node_types else None
+        nodes = [
+            dict(data)
+            for _, data in self.G.nodes(data=True)
+            if data.get("type") not in excluded
+            and (allowed is None or data.get("type") in allowed)
+        ]
+        kept_ids = {node["id"] for node in nodes}
+        edges = [
+            dict(data)
+            for u, v, data in self.G.edges(data=True)
+            if u in kept_ids and v in kept_ids
+        ]
+        return {"nodes": nodes, "edges": edges}
+
     def subgraph_by_edge_type(self, edge_type: str) -> dict[str, list[Any]]:
         """Return every edge with ``type == edge_type``, plus their adjacent nodes.
 
@@ -832,6 +873,148 @@ class GraphEngine:
         if self.G.nodes[carcinogen_id].get("type") != "Carcinogen":
             raise ValueError(f"Node {carcinogen_id!r} is not a Carcinogen node")
         return self._maximal_simple_paths(carcinogen_id, forward=False, edge_types=edge_types)
+
+    def carcinogen_group_paths_subgraph(
+        self,
+        groups: Sequence[str],
+        *,
+        edge_types: Sequence[str] | None = None,
+    ) -> dict[str, list[Any]]:
+        """Return the union of every forward path out of each carcinogen in *groups*.
+
+        For every group in *groups* (see :meth:`get_carcinogen_groups`), every
+        matching Carcinogen node (:meth:`carcinogens_by_group`) contributes
+        its full set of maximal simple directed paths
+        (:meth:`paths_from_carcinogen`); the result is the union of all of
+        those, at the class/group level rather than per-individual-carcinogen
+        -- selecting a group pulls in every carcinogen in it. A carcinogen
+        with no outgoing edges still contributes its own node.
+
+        Nodes are deduplicated by id. Edges are deduplicated by
+        ``(source, target)`` -- the same structural edge recurring across
+        multiple paths (or multiple carcinogens) is kept once, using the
+        attributes from wherever it was first encountered. Groups matching no
+        Carcinogen node contribute nothing (not an error); empty *groups*
+        returns an empty subgraph -- unlike :meth:`subgraph_by_node_types`,
+        this axis has no "no restriction" identity element, since selecting
+        nothing here means "show no carcinogen paths", not "show every path".
+        See :meth:`map_viewer_subgraph` for how the two axes combine.
+        """
+        node_ids: set[str] = set()
+        nodes: list[dict[str, Any]] = []
+        edges_by_key: dict[tuple[str, str], dict[str, Any]] = {}
+
+        def _add_node(node_id: str) -> None:
+            if node_id not in node_ids and node_id in self.G:
+                node_ids.add(node_id)
+                nodes.append(dict(self.G.nodes[node_id]))
+
+        for group in groups:
+            for carcinogen in self.carcinogens_by_group(group):
+                carcinogen_id = carcinogen["id"]
+                _add_node(carcinogen_id)
+                for path in self.paths_from_carcinogen(carcinogen_id, edge_types=edge_types):
+                    for node in path["nodes"]:
+                        _add_node(node["id"])
+                    for edge in path["edges"]:
+                        key = (edge["source"], edge["target"])
+                        edges_by_key.setdefault(key, edge)
+
+        return {"nodes": nodes, "edges": list(edges_by_key.values())}
+
+    # ── Map viewer filtering ────────────────────────────────────────────────
+
+    def map_viewer_subgraph(
+        self,
+        *,
+        node_types: Sequence[str] | None = None,
+        carcinogen_groups: Sequence[str] | None = None,
+        exclude_types: Sequence[str] = _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES,
+    ) -> dict[str, list[Any]]:
+        """Return the Reference Map viewer's subgraph: node-type ∩ carcinogen-path axes.
+
+        Each axis is independently optional: a ``None``/empty *node_types*
+        imposes no restriction on the type axis, and a ``None``/empty
+        *carcinogen_groups* imposes no restriction on the carcinogen-path
+        axis (unlike :meth:`carcinogen_group_paths_subgraph` called directly,
+        where empty *groups* means "match nothing" -- here it means "this
+        axis doesn't apply"). Passing neither returns the full graph minus
+        *exclude_types* (``Substrate`` by default, dropped unconditionally
+        regardless of either axis).
+
+        *node_types* restricts to nodes of exactly those types -- excluded
+        types are absent from the result entirely, never merely
+        de-emphasized. *carcinogen_groups* restricts to nodes reachable via
+        :meth:`carcinogen_group_paths_subgraph`.
+
+        The two axes are intersected on node id (this is the multi-select
+        "intersection of filters" behavior, not "most recently changed filter
+        wins"). Edges are the induced subgraph over the surviving node ids --
+        every real graph edge between two surviving nodes, not merely the
+        specific path edges that produced carcinogen-axis membership.
+
+        This never dims -- it only removes. Tissue-threshold de-emphasis is a
+        separate, non-removing overlay applied afterward; see
+        :meth:`dim_by_tissue_threshold`.
+        """
+        type_subgraph = self.subgraph_by_node_types(node_types, exclude_types=exclude_types)
+        kept_ids = {node["id"] for node in type_subgraph["nodes"]}
+
+        if carcinogen_groups:
+            carcinogen_subgraph = self.carcinogen_group_paths_subgraph(carcinogen_groups)
+            kept_ids &= {node["id"] for node in carcinogen_subgraph["nodes"]}
+
+        nodes = [dict(self.G.nodes[node_id]) for node_id in kept_ids]
+        edges = [
+            dict(data)
+            for u, v, data in self.G.edges(data=True)
+            if u in kept_ids and v in kept_ids
+        ]
+        return {"nodes": nodes, "edges": edges}
+
+    def dim_by_tissue_threshold(
+        self,
+        subgraph: dict[str, list[Any]],
+        tissue: str,
+        threshold: float,
+    ) -> dict[str, list[Any]]:
+        """Return *subgraph* with under-expressed Enzyme nodes/edges marked ``_dimmed``.
+
+        Every ``Enzyme`` node in *subgraph* whose ``tissue_weights[tissue]``
+        is below *threshold* (or has no entry for *tissue* at all) is
+        annotated ``_dimmed: True``; every edge in *subgraph* directly
+        incident to a dimmed enzyme (as ``source`` or ``target`` -- not via
+        the separate ``carcinogen`` context field) is dimmed too. Every other
+        node and edge is annotated ``_dimmed: False``. Non-Enzyme nodes are
+        never dimmed by this, regardless of *tissue*/*threshold*.
+
+        This never removes anything: the returned dict has exactly the same
+        node and edge sets as *subgraph*, just annotated -- composes cleanly
+        after any node-removing filter such as :meth:`map_viewer_subgraph`.
+        Non-mutating: *subgraph* and its contents are not modified; every
+        returned node/edge is a fresh copy.
+        """
+        dimmed_ids: set[str] = set()
+        nodes: list[dict[str, Any]] = []
+        for node in subgraph["nodes"]:
+            node = dict(node)
+            is_dimmed = False
+            if node.get("type") == "Enzyme":
+                weights = node.get("tissue_weights") or {}
+                weight = weights.get(tissue)
+                is_dimmed = weight is None or weight < threshold
+            node["_dimmed"] = is_dimmed
+            if is_dimmed:
+                dimmed_ids.add(node["id"])
+            nodes.append(node)
+
+        edges: list[dict[str, Any]] = []
+        for edge in subgraph["edges"]:
+            edge = dict(edge)
+            edge["_dimmed"] = edge.get("source") in dimmed_ids or edge.get("target") in dimmed_ids
+            edges.append(edge)
+
+        return {"nodes": nodes, "edges": edges}
 
     # ── Serialization ────────────────────────────────────────────────────
 
