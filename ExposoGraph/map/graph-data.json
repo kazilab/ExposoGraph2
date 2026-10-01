@@ -14077,6 +14077,66 @@
           "evidence": "Non-dioxin-like PCBs activate PXR/NR1I2, inducing ABC transporters including ABCC2/MRP2 (IARC Monograph 107)"
         }
       ]
+    },
+    {
+      "source": "Testosterone",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
+      "label": "6beta-hydroxylation",
+      "carcinogen": "Testosterone",
+      "evidence": "Testosterone is a metabolic substrate of CYP3A4; 6beta-hydroxylation is the classical CYP3A4 probe reaction (PMID:10594474; DOI:10.1046/J.1365-2125.1999.00073.X)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Testosterone is a metabolic substrate of CYP3A4; 6beta-hydroxylation is the classical CYP3A4 probe reaction (PMID:10594474; DOI:10.1046/J.1365-2125.1999.00073.X)"
+        }
+      ]
+    },
+    {
+      "source": "BPDE",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
+      "label": "GSH conjugation",
+      "carcinogen": "BaP",
+      "evidence": "GSTM1 conjugates BPDE with glutathione; primary PAH detoxification pathway, lost in GSTM1-null individuals (PMID:9403173; DOI:10.1021/TX970099W)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "GSTM1 conjugates BPDE with glutathione; primary PAH detoxification pathway, lost in GSTM1-null individuals (PMID:9403173; DOI:10.1021/TX970099W)"
+        }
+      ]
+    },
+    {
+      "source": "BPDE",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
+      "label": "GSH conjugation",
+      "carcinogen": "BaP",
+      "evidence": "GSTP1 conjugates BPDE with glutathione; primary PAH detoxification in lung, Ile105Val reduces activity (PMID:9403173; DOI:10.1021/TX970099W)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "GSTP1 conjugates BPDE with glutathione; primary PAH detoxification in lung, Ile105Val reduces activity (PMID:9403173; DOI:10.1021/TX970099W)"
+        }
+      ]
+    },
+    {
+      "source": "NOH_PhIP",
+      "target": "SULT1A1",
+      "type": "SUBSTRATE_OF",
+      "label": "O-sulfonation",
+      "carcinogen": "PhIP",
+      "evidence": "N-OH-PhIP is a metabolic substrate of SULT1A1; O-sulfonation yields the DNA-reactive sulfonyloxy ester, i.e. bioactivation not detoxification (PMID:7852185; DOI:10.1111/J.1349-7006.1994.TB02933.X)",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "N-OH-PhIP is a metabolic substrate of SULT1A1; O-sulfonation yields the DNA-reactive sulfonyloxy ester, i.e. bioactivation not detoxification (PMID:7852185; DOI:10.1111/J.1349-7006.1994.TB02933.X)"
+        }
+      ]
     }
   ]
 }
