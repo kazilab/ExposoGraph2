@@ -2,7 +2,7 @@
 
 from dataclasses import asdict
 
-from ExposoGraph import (
+from ExposoGraph.unified_api import (
     FluxClassEvidence,
     PatientRiskProfile,
     # build_reference_graph,

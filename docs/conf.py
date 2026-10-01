@@ -7,7 +7,8 @@ import sys
 # Add project root so autodoc can find the package
 sys.path.insert(0, os.path.abspath(".."))
 
-from ExposoGraph import APP_NAME, COPYRIGHT_HOLDER, DEVELOPED_BY, __version__
+from ExposoGraph._version import __version__
+from ExposoGraph.branding import APP_NAME, COPYRIGHT_HOLDER, DEVELOPED_BY
 
 # -- Project information -----------------------------------------------------
 project = APP_NAME

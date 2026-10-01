@@ -2,7 +2,7 @@
 
 import pytest
 
-from ExposoGraph import (
+from ExposoGraph.sensitivity_analysis import (
     SobolIndex,
     SobolResult,
     sobol_for_synergy_score,

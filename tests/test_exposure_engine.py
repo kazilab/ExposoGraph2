@@ -2,7 +2,7 @@
 
 import pytest
 
-from ExposoGraph import (
+from ExposoGraph.exposure_engine import (
     ExposureWeightedRisk,
     LifetimeCancerRisk,
     compute_exposure_weighted_risk,

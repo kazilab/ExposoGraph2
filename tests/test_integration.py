@@ -11,9 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from ExposoGraph import (
-    GraphEngine,
-    KnowledgeGraph,
+from ExposoGraph.engine import GraphEngine
+from ExposoGraph.graph_analysis import (
     all_shortest_paths,
     centrality,
     metabolism_chain,
@@ -21,6 +20,7 @@ from ExposoGraph import (
     shortest_path,
     variant_impact_score,
 )
+from ExposoGraph.models import KnowledgeGraph
 from ExposoGraph.db_clients.iarc import IARCClassifier, IARCGroup
 from ExposoGraph.exporter import (
     parse_graph_data_text,

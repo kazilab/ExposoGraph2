@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from ExposoGraph import FluxTissueWeightSource, flux_engine
+from ExposoGraph import flux_engine
+from ExposoGraph.flux_engine import FluxTissueWeightSource
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "ExposoGraph" / "data"
 

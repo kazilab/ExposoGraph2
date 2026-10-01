@@ -5,14 +5,14 @@ from dataclasses import asdict
 
 import pytest
 
-from ExposoGraph import (
+from ExposoGraph import flux_engine
+from ExposoGraph.flux_engine import (
     CarcinogenClass,
     FluxTissueWeightSource,
     PathwayFluxResult,
     RiskClassification,
     compute_full_profile,
     compute_pathway_flux,
-    flux_engine,
     genotype_modifier,
     qivive_intrinsic_clearance,
     solve_flux_steady_state,

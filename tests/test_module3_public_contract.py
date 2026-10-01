@@ -10,7 +10,7 @@ import pytest
 
 
 def _reference_module3_result():
-    from ExposoGraph import CarcinogenClass, compute_pathway_flux
+    from ExposoGraph.flux_engine import CarcinogenClass, compute_pathway_flux
 
     return compute_pathway_flux(
         CarcinogenClass.PAH,
@@ -29,7 +29,7 @@ def test_module3_imports():
 
 
 def test_module3_public_api_available():
-    from ExposoGraph import (
+    from ExposoGraph.flux_engine import (
         CarcinogenClass,
         FluxTissueWeightSource,
         PathwayFluxResult,
@@ -43,7 +43,11 @@ def test_module3_public_api_available():
 
 
 def test_module3_single_carcinogen_default_case():
-    from ExposoGraph import FluxTissueWeightSource, PathwayFluxResult, RiskClassification
+    from ExposoGraph.flux_engine import (
+        FluxTissueWeightSource,
+        PathwayFluxResult,
+        RiskClassification,
+    )
 
     result = _reference_module3_result()
 
@@ -72,7 +76,11 @@ def test_module3_static_km_behavior_preserved_if_applicable():
 
 
 def test_module3_tissue_expression_vmax_scaling_preserved_if_applicable():
-    from ExposoGraph import CarcinogenClass, compute_pathway_flux, get_flux_tissue_weight
+    from ExposoGraph.flux_engine import (
+        CarcinogenClass,
+        compute_pathway_flux,
+        get_flux_tissue_weight,
+    )
 
     lung_weight = get_flux_tissue_weight("CYP1A1", "Lung")
     liver_weight = get_flux_tissue_weight("CYP1A1", "Liver")
@@ -126,7 +134,7 @@ def test_module3_output_shape_stable():
 def test_module3_does_not_require_module5_interaction_context():
     import inspect
 
-    from ExposoGraph import compute_pathway_flux
+    from ExposoGraph.flux_engine import compute_pathway_flux
 
     signature = inspect.signature(compute_pathway_flux)
     required = [
@@ -145,7 +153,7 @@ def test_module3_does_not_require_module5_interaction_context():
 
 
 def test_module3_integration_harness_case():
-    from ExposoGraph import PathwayFluxResult
+    from ExposoGraph.flux_engine import PathwayFluxResult
 
     result = _reference_module3_result()
 

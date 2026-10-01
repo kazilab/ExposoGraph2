@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from ExposoGraph import (
+from ExposoGraph.interaction_engine import (
     InteractionMatrixResult,
     SynergyConfidenceInterval,
     SynergyDecomposition,

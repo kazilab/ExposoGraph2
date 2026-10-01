@@ -1,6 +1,6 @@
 """Smoke tests for tissue-specific subgraph extraction."""
 
-from ExposoGraph import (
+from ExposoGraph.tissue_subgraphs import (
     DEFAULT_THRESHOLD_SWEEP,
     TissueType,
     get_available_gtex_genes,

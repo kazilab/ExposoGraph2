@@ -12,18 +12,10 @@ from pathlib import Path
 import pytest
 
 import ExposoGraph
-from ExposoGraph import (
-    CarcinogenClass,
-    InteractionMatrixResult,
-    PathwayFluxResult,
-    build_reference_engine,
-    build_reference_graph,
-    compute_interaction_matrix,
-    compute_pathway_flux,
-    exposure_engine,
-    flux_engine,
-    interaction_engine,
-)
+from ExposoGraph import exposure_engine, flux_engine, interaction_engine
+from ExposoGraph.flux_engine import CarcinogenClass, PathwayFluxResult, compute_pathway_flux
+from ExposoGraph.interaction_engine import InteractionMatrixResult, compute_interaction_matrix
+from ExposoGraph.reference_data import build_reference_engine, build_reference_graph
 from ExposoGraph.exporter import parse_graph_data_js, to_graph_data_js
 from ExposoGraph.models import NodeType
 from ExposoGraph.parameter_provider import JSONInteractionParameterProvider

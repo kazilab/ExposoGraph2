@@ -11,7 +11,7 @@ import pytest
 
 
 def test_module3_api_example_runs():
-    from ExposoGraph import CarcinogenClass, compute_pathway_flux
+    from ExposoGraph.flux_engine import CarcinogenClass, compute_pathway_flux
 
     result = compute_pathway_flux(
         CarcinogenClass.PAH,
@@ -30,7 +30,7 @@ def test_module3_api_example_runs():
 
 
 def test_module5_api_example_runs():
-    from ExposoGraph import compute_interaction_matrix
+    from ExposoGraph.interaction_engine import compute_interaction_matrix
     from ExposoGraph.interaction_engine import _interaction_matrix_to_compat_dict
 
     result = compute_interaction_matrix(
@@ -137,7 +137,7 @@ def test_ui_labels_do_not_deprecate_module3():
 
 
 def test_graph_data_validation(tmp_path):
-    from ExposoGraph import build_reference_engine
+    from ExposoGraph.reference_data import build_reference_engine
     from ExposoGraph.config import GraphVisibility
     from ExposoGraph.exporter import parse_graph_data_js, to_graph_data_js
     from ExposoGraph.graph_filters import graph_visibility_label

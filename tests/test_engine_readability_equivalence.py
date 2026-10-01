@@ -5,7 +5,7 @@ from dataclasses import asdict
 
 import pytest
 
-from ExposoGraph import get_default_v2_provider
+from ExposoGraph.provider_interface import get_default_v2_provider
 from ExposoGraph.flux_equations import (
     activation_detox_ratio,
     hill_equation,

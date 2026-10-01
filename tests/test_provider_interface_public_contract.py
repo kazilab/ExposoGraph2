@@ -4,12 +4,9 @@ import json
 from pathlib import Path
 
 import ExposoGraph
-from ExposoGraph import (
-    InteractionMatrixResult,
-    LocalV2DataProvider,
-    PathwayFluxResult,
-    get_default_v2_provider,
-)
+from ExposoGraph.flux_engine import PathwayFluxResult
+from ExposoGraph.interaction_engine import InteractionMatrixResult
+from ExposoGraph.provider_interface import LocalV2DataProvider, get_default_v2_provider
 
 
 PACKAGE_ROOT = Path(ExposoGraph.__file__).resolve().parent

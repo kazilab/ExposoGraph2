@@ -220,7 +220,11 @@ def main() -> int:
     module3_result = None
     if exposograph is not None:
         try:
-            from ExposoGraph import CarcinogenClass, PathwayFluxResult, compute_pathway_flux
+            from ExposoGraph.flux_engine import (
+                CarcinogenClass,
+                PathwayFluxResult,
+                compute_pathway_flux,
+            )
 
             if not callable(compute_pathway_flux):
                 raise RuntimeError("compute_pathway_flux is not callable")
@@ -248,7 +252,10 @@ def main() -> int:
     module5_result = None
     if exposograph is not None:
         try:
-            from ExposoGraph import InteractionMatrixResult, compute_interaction_matrix
+            from ExposoGraph.interaction_engine import (
+                InteractionMatrixResult,
+                compute_interaction_matrix,
+            )
 
             if not callable(compute_interaction_matrix):
                 raise RuntimeError("compute_interaction_matrix is not callable")
@@ -283,7 +290,7 @@ def main() -> int:
 
     if reference_engine is not None and exposograph is not None:
         try:
-            from ExposoGraph import to_json
+            from ExposoGraph.exporter import to_json
 
             if not callable(to_json):
                 record_check("Graph export path", "WARN", "to_json export helper is unavailable; continuing.")
