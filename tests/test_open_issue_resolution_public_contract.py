@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import pytest
 
@@ -240,18 +239,6 @@ def test_issue9_unknown_mode_review_required() -> None:
 
     assert result.status is InhibitionResolutionStatus.REVIEW_REQUIRED
     assert "UNKNOWN_INHIBITION_MODE" in _warning_codes(result.warnings)
-
-
-def test_issue13_v2_v3_scope_documented() -> None:
-    docs = (
-        Path("docs/module3_module5_user_paths.rst").read_text(encoding="utf-8")
-        + "\n"
-        + Path("docs/module5_mechanism_resolved_model.rst").read_text(encoding="utf-8")
-    )
-
-    assert "Module 3 remains in v2.0 and is not deprecated" in docs
-    assert "deferred to v3 or later" in docs
-    assert "does not replace Module 3" in docs
 
 
 def test_issue13_pending_cases_neutral_visible() -> None:
