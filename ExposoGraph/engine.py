@@ -281,8 +281,13 @@ class GraphEngine:
 
         The entry's remaining fields (Km_uM, Vmax_relative, Ki_uM, product,
         product_carcinogenic, ...) are set, unchanged, as ``kinetics`` on
-        every existing edge whose ``source`` is that enzyme and whose
-        ``carcinogen`` attribute equals ``graph_node_id``. This *overwrites*
+        every existing edge whose ``source`` **or** ``target`` is that enzyme
+        and whose ``carcinogen`` attribute equals ``graph_node_id``. Matching
+        both endpoints covers the two edge directions the graph now uses for
+        the same enzyme/substrate relationship: legacy-style
+        ``Enzyme -> Metabolite`` ``PRODUCES`` edges (enzyme as source) and the
+        retyped ``Substrate/Carcinogen -> Enzyme`` ``SUBSTRATE_OF`` /
+        ``DETOXIFIED_BY`` edges (enzyme as target). This *overwrites*
         any ``kinetics`` already present on those edges (e.g. baked in by the
         bundled graph-data.json), which is no longer trusted as a data source
         once this method has run -- the same overwrite semantics as
@@ -326,11 +331,13 @@ class GraphEngine:
                     pending_block[(enzyme_id, resolved)] = block_name
 
         applied: set[tuple[str, str]] = set()
-        for source_id, _target_id, edge_data in self.G.edges(data=True):
-            key = (source_id, edge_data.get("carcinogen"))
-            if key in pending:
-                edge_data["kinetics"] = dict(pending[key])
-                applied.add(key)
+        for source_id, target_id, edge_data in self.G.edges(data=True):
+            carcinogen = edge_data.get("carcinogen")
+            for endpoint in (source_id, target_id):
+                key = (endpoint, carcinogen)
+                if key in pending:
+                    edge_data["kinetics"] = dict(pending[key])
+                    applied.add(key)
 
         for enzyme_id, resolved in pending:
             if (enzyme_id, resolved) not in applied:
