@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,78 @@ _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
 _DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_data_raw.json"
 _DEFAULT_INTERACTION_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "interaction_parameters.json"
+_DEFAULT_FLUX_KINETIC_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "kinetic_parameters.json"
+_DEFAULT_PROXY_FLUX_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "proxy_flux_parameters.json"
+
+# Fields a flux-parameter term carries that are represented on the
+# FluxReaction record itself (or as provenance pointers) rather than inside
+# its verbatim ``params`` payload.
+_FLUX_RESERVED_TERM_FIELDS = frozenset(
+    {"graph_node_id", "rate_law", "equation", "gene", "confidence", "note", "notes", "provenance_ref", "sources"}
+)
+
+# Pathway-block names that map unambiguously onto the coarse flux role
+# vocabulary. Idiosyncratic blocks (e.g. ``ethanol_oxidation``) are recorded
+# as "other" with their verbatim pathway name until the flux JSONs carry
+# explicit per-term role annotations.
+_FLUX_ROLE_KINDS = {
+    "activation": "activation",
+    "activation_terms": "activation",
+    "detoxification": "detoxification",
+    "detox_terms": "detoxification",
+    "repair_terms": "repair",
+}
+
+# Bridge mapping from flux-parameter class keys to the Carcinogen node
+# ``group`` labels used in graph-data.json. Transitional: once the flux JSONs
+# carry explicit ``graph_group`` / ``carcinogen_node_ids`` annotations, the
+# JSON-declared values take precedence and this mapping is only a fallback.
+_FLUX_CLASS_GRAPH_GROUPS = {
+    "PAH": "PAHs",
+    "Aflatoxin": "Mycotoxins",
+    "Aldehyde": "Aldehydes",
+    "Nitrosamine": "Nitrosamines",
+    "NDMA": "Nitrosamines",
+    "NDEA": "Nitrosamines",
+    "HCA": "HCAs",
+    "AromaticAmines": "Aromatic Amines",
+    "EstrogenMetabolites": "Estrogen",
+    "Benzene": "Benzene",
+    "VinylChloride": "Vinyl Chloride",
+    "ChlorinatedSolvent": "Chlorinated Solvents",
+    "UV_Radiation": "UV Radiation",
+    "Dioxin": "Dioxins",
+    "HeavyMetal": "Heavy Metals",
+}
+
+# Edge types that can carry flux-reaction scope between a Carcinogen (or its
+# metabolites) and an Enzyme; used by get_flux_reaction_coverage.
+_FLUX_SCOPE_EDGE_TYPES = frozenset({"SUBSTRATE_OF", "DETOXIFIED_BY", "REPAIRED_BY"})
+
+
+@dataclass(frozen=True)
+class FluxReaction:
+    """One reaction term of the flux contract, per reaction (not per class).
+
+    Built by :meth:`GraphEngine._apply_flux_parameters` from
+    ``kinetic_parameters.json`` and ``proxy_flux_parameters.json``. The
+    engine-side index is the interim bridge: group-level flux is an
+    aggregation over these records, and once the graph carries role-typed
+    scope edges and per-term kinetics, scope can be derived from edges
+    instead of the parameter rosters.
+    """
+
+    carcinogen_class: str
+    term_key: str
+    pathway: str
+    role: str
+    rate_law: str
+    params: dict[str, Any]
+    confidence: str
+    provenance_ref: str
+    enzyme_id: str | None
+    graph_group: str | None
+    source: str
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +131,8 @@ class GraphEngine:
         self.G: nx.MultiDiGraph = nx.MultiDiGraph()
         self._interaction_parameters: dict[str, Any] | None = None
         self._parameter_provider: JSONInteractionParameterProvider | None = None
+        self._flux_reactions_by_class: dict[str, list[FluxReaction]] | None = None
+        self._flux_class_sources: dict[str, set[str]] | None = None
 
     # ── Mutations ────────────────────────────────────────────────────────
 
@@ -152,6 +227,8 @@ class GraphEngine:
         self.G.clear()
         self._interaction_parameters = None
         self._parameter_provider = None
+        self._flux_reactions_by_class = None
+        self._flux_class_sources = None
 
     def load_reference_graph(
         self,
@@ -159,6 +236,8 @@ class GraphEngine:
         graph_data_path: str | Path | None = None,
         tissue_expression_path: str | Path | None = None,
         interaction_parameters_path: str | Path | None = None,
+        kinetic_parameters_path: str | Path | None = None,
+        proxy_flux_parameters_path: str | Path | None = None,
     ) -> list[str]:
         """Load the bundled reference graph from ``map/graph-data.json``.
 
@@ -181,8 +260,14 @@ class GraphEngine:
            enzyme/substrate edges -- see :meth:`_apply_interaction_parameters`
            for details. Same overwrite semantics: the JSON file is the
            trusted source for ``Edge.kinetics``, not graph-data.json.
+        3. Flux parameters from ``data/kinetic_parameters.json`` and
+           ``data/proxy_flux_parameters.json`` build the engine-side
+           flux-reaction index -- see :meth:`_apply_flux_parameters`. This
+           does not mutate the graph; it makes the quantitative flux
+           contract queryable through the engine
+           (:meth:`get_flux_reactions` and friends).
 
-        Returns the combined warning messages from all three steps.
+        Returns the combined warning messages from all steps.
         """
         from .exporter import parse_graph_artifact  # local import avoids an import cycle
 
@@ -191,6 +276,7 @@ class GraphEngine:
         warnings = self.load(kg)
         warnings.extend(self._apply_tissue_expression(tissue_expression_path))
         warnings.extend(self._apply_interaction_parameters(interaction_parameters_path))
+        warnings.extend(self._apply_flux_parameters(kinetic_parameters_path, proxy_flux_parameters_path))
         return warnings
 
     def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
@@ -369,6 +455,137 @@ class GraphEngine:
 
         return warnings
 
+    def _apply_flux_parameters(
+        self,
+        kinetic_path: str | Path | None = None,
+        proxy_path: str | Path | None = None,
+    ) -> list[str]:
+        """(Re)build the flux-reaction side index from the two flux parameter JSONs.
+
+        Reads ``data/kinetic_parameters.json`` (mechanistic Km/Vmax classes)
+        and ``data/proxy_flux_parameters.json`` (semi-quantitative proxy
+        classes) and builds ``self._flux_reactions_by_class`` -- an
+        engine-side index, NOT node attributes: non-enzyme proxy terms
+        (``general_ROS``, ``AHRR_feedback``) have no node to live on, and node
+        storage would leak into ``to_dict()``/exports. GraphEngine is still
+        the contract because the public getters live on it.
+
+        Precedence: classes present in both files (ChlorinatedSolvent,
+        Dioxin, HeavyMetal) keep only their proxy entries, matching current
+        flux-engine dispatch behavior; the kinetic entries are shadowed
+        (visible via ``get_flux_reaction_coverage`` source reporting).
+
+        Enzyme linkage: an explicit ``graph_node_id`` term field is honored
+        when present (warned when it names no node); otherwise a term whose
+        key exactly matches a node id resolves to it, and everything else
+        (alias pseudo-terms like ``CYP2E1_liver``) resolves to ``None``
+        pending explicit annotations in the JSONs.
+
+        Returns warning messages, mirroring the other overlay methods.
+        """
+        kinetic_resolved = Path(kinetic_path) if kinetic_path else _DEFAULT_FLUX_KINETIC_PARAMETERS_PATH
+        proxy_resolved = Path(proxy_path) if proxy_path else _DEFAULT_PROXY_FLUX_PARAMETERS_PATH
+
+        warnings: list[str] = []
+        index: dict[str, list[FluxReaction]] = {}
+        sources: dict[str, set[str]] = {}
+
+        def _record(
+            cls: str,
+            term_key: str,
+            block: str,
+            term: Mapping[str, Any],
+            class_data: Mapping[str, Any],
+            source: str,
+            provenance_prefix: str,
+        ) -> FluxReaction:
+            graph_node_id = term.get("graph_node_id")
+            enzyme_id: str | None = None
+            if graph_node_id:
+                enzyme_id = str(graph_node_id)
+                if enzyme_id not in self.G:
+                    warnings.append(
+                        f"graph_node_id {enzyme_id!r} for flux term "
+                        f"{cls}/{block}/{term_key} is not a node in the graph"
+                    )
+            elif term_key in self.G:
+                enzyme_id = term_key
+            gene = term.get("gene")
+            if enzyme_id is None and isinstance(gene, str) and gene in self.G:
+                enzyme_id = gene
+            declared_group = class_data.get("graph_group")
+            return FluxReaction(
+                carcinogen_class=cls,
+                term_key=term_key,
+                pathway=block,
+                role=_FLUX_ROLE_KINDS.get(block, "other"),
+                rate_law=str(
+                    term.get("rate_law")
+                    or term.get("equation")
+                    or class_data.get("kinetics_model")
+                    or ""
+                ),
+                params={k: v for k, v in term.items() if k not in _FLUX_RESERVED_TERM_FIELDS},
+                confidence=str(term.get("confidence") or class_data.get("confidence_overall") or ""),
+                provenance_ref=str(
+                    term.get("provenance_ref") or f"{provenance_prefix}.{block}.{term_key}"
+                ),
+                enzyme_id=enzyme_id,
+                graph_group=str(declared_group) if declared_group else _FLUX_CLASS_GRAPH_GROUPS.get(cls),
+                source=source,
+            )
+
+        # kinetic_parameters.json -- mechanistic classes
+        try:
+            kinetic_doc = json.loads(kinetic_resolved.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            warnings.append(f"Could not read flux kinetic parameters at {kinetic_resolved}: {exc}")
+            kinetic_doc = {}
+        for cls, cls_data in kinetic_doc.get("carcinogen_classes", {}).items():
+            if not isinstance(cls_data, dict):
+                continue
+            reactions = []
+            for block, terms in cls_data.get("pathways", {}).items():
+                if not isinstance(terms, dict):
+                    continue
+                for term_key, term in terms.items():
+                    if term_key.startswith("_") or not isinstance(term, dict):
+                        continue
+                    reactions.append(
+                        _record(cls, term_key, block, term, cls_data, "kinetic_parameters", f"carcinogen_classes.{cls}.pathways")
+                    )
+            index[cls] = reactions
+            sources[cls] = {"kinetic_parameters"}
+
+        # proxy_flux_parameters.json -- semi-quantitative classes; proxy wins
+        try:
+            proxy_doc = json.loads(proxy_resolved.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            warnings.append(f"Could not read proxy flux parameters at {proxy_resolved}: {exc}")
+            proxy_doc = {}
+        for cls, cls_data in proxy_doc.get("classes", {}).items():
+            if not isinstance(cls_data, dict):
+                continue
+            reactions = []
+            for block, terms in cls_data.items():
+                if not block.endswith("_terms") or not isinstance(terms, dict):
+                    continue
+                for term_key, term in terms.items():
+                    if term_key.startswith("_") or not isinstance(term, dict):
+                        continue
+                    reactions.append(
+                        _record(cls, term_key, block, term, cls_data, "proxy_flux_parameters", f"classes.{cls}")
+                    )
+            if cls in index:
+                sources[cls].add("proxy_flux_parameters")
+            else:
+                sources[cls] = {"proxy_flux_parameters"}
+            index[cls] = reactions
+
+        self._flux_reactions_by_class = index
+        self._flux_class_sources = sources
+        return warnings
+
     # ── Interaction-parameter access ─────────────────────────────────────
 
     def get_interaction_parameters(self) -> dict[str, Any]:
@@ -439,6 +656,116 @@ class GraphEngine:
     def get_interaction_rules(self) -> dict[str, Any]:
         """Return the ``interaction_rules`` block (thresholds, synergies, antagonisms)."""
         return self.get_interaction_parameters().get("interaction_rules", {})
+
+    # ── Flux-reaction access ─────────────────────────────────────────────
+
+    def _ensure_flux_index(self) -> None:
+        """Lazily build the flux-reaction index from the bundled default files."""
+        if self._flux_reactions_by_class is None or self._flux_class_sources is None:
+            self._apply_flux_parameters()
+
+    def get_flux_reactions(
+        self,
+        carcinogen_class: Any,
+        role: str | None = None,
+    ) -> list[FluxReaction]:
+        """Return the flux-reaction terms for a carcinogen class.
+
+        ``carcinogen_class`` accepts either the plain class key (``"PAH"``)
+        or a ``CarcinogenClass`` enum member. ``role`` optionally filters on
+        the coarse role vocabulary (``"activation"`` / ``"detoxification"`` /
+        ``"repair"``); ``"other"`` matches terms whose JSON pathway block does
+        not map onto that vocabulary yet (e.g. Aldehyde's
+        ``ethanol_oxidation``). For dual-source classes
+        (ChlorinatedSolvent, Dioxin, HeavyMetal) the proxy entries are
+        returned, matching current flux-engine dispatch.
+        """
+        self._ensure_flux_index()
+        cls = getattr(carcinogen_class, "value", carcinogen_class)
+        reactions = list(self._flux_reactions_by_class.get(cls, []))
+        if role is not None:
+            reactions = [reaction for reaction in reactions if reaction.role == role]
+        return reactions
+
+    def get_flux_classes(self) -> list[str]:
+        """Return the union of kinetic + proxy flux classes.
+
+        Ordering follows file insertion order: kinetic classes in
+        ``kinetic_parameters.json`` order first, then proxy-only classes in
+        ``proxy_flux_parameters.json`` order (dual-source classes keep their
+        kinetic position). Consumers that need the ``CarcinogenClass`` enum
+        order (e.g. ``compute_full_profile`` output ordering) should apply it
+        themselves rather than relying on this list.
+        """
+        self._ensure_flux_index()
+        return list(self._flux_reactions_by_class)
+
+    def get_flux_reaction_coverage(self, carcinogen_class: Any) -> dict[str, Any]:
+        """Compare a class's flux-reaction rosters against graph scope edges.
+
+        For every flux-reaction term in the class, reports whether its
+        enzyme resolves to a graph node and whether any scope edge
+        (``SUBSTRATE_OF`` / ``DETOXIFIED_BY`` / ``REPAIRED_BY``, either
+        direction) connects the class's Carcinogen nodes to that enzyme.
+        Unresolved terms and missing scope edges form the curation backlog
+        for making flux scope graph-derived -- this getter is the driver of
+        that backlog, not a pass/fail check.
+        """
+        self._ensure_flux_index()
+        cls = getattr(carcinogen_class, "value", carcinogen_class)
+        reactions = self._flux_reactions_by_class.get(cls, [])
+        graph_group = next((r.graph_group for r in reactions if r.graph_group), None) or _FLUX_CLASS_GRAPH_GROUPS.get(cls)
+        carcinogen_ids = []
+        if graph_group:
+            carcinogen_ids = [
+                node_id
+                for node_id, data in self.G.nodes(data=True)
+                if data.get("type") == "Carcinogen" and data.get("group") == graph_group
+            ]
+        rows: list[dict[str, Any]] = []
+        unresolved: list[str] = []
+        missing_edges: list[str] = []
+        for reaction in reactions:
+            resolved = reaction.enzyme_id is not None and reaction.enzyme_id in self.G
+            edge_types: set[str] = set()
+            if resolved and carcinogen_ids:
+                for carcinogen_id in carcinogen_ids:
+                    for source_id, target_id in (
+                        (carcinogen_id, reaction.enzyme_id),
+                        (reaction.enzyme_id, carcinogen_id),
+                    ):
+                        if not self.G.has_edge(source_id, target_id):
+                            continue
+                        for data in self.G.get_edge_data(source_id, target_id).values():
+                            if data.get("type") in _FLUX_SCOPE_EDGE_TYPES:
+                                edge_types.add(str(data.get("type")))
+            if not resolved:
+                unresolved.append(reaction.term_key)
+            elif not edge_types:
+                missing_edges.append(reaction.term_key)
+            rows.append(
+                {
+                    "term_key": reaction.term_key,
+                    "pathway": reaction.pathway,
+                    "role": reaction.role,
+                    "rate_law": reaction.rate_law,
+                    "enzyme_id": reaction.enzyme_id,
+                    "resolved": resolved,
+                    "scope_edge_types": sorted(edge_types),
+                }
+            )
+        return {
+            "carcinogen_class": cls,
+            "graph_group": graph_group,
+            "carcinogen_node_ids": carcinogen_ids,
+            "sources": sorted(self._flux_class_sources.get(cls, set())),
+            "reaction_count": len(reactions),
+            "resolved_enzyme_count": len(reactions) - len(unresolved),
+            "with_scope_edge_count": len(reactions) - len(unresolved) - len(missing_edges),
+            "unresolved_terms": unresolved,
+            "missing_scope_edges": missing_edges,
+            "reactions": rows,
+        }
 
     # ── Queries ──────────────────────────────────────────────────────────
 
