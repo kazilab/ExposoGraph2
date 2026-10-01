@@ -12,7 +12,9 @@ import networkx as nx
 
 from .config import GraphMode
 from .grounding import prepare_knowledge_graph
+from .interaction_schema import GSHConsumer, InductionRule
 from .models import Edge, KnowledgeGraph, Node
+from .parameter_provider import JSONInteractionParameterProvider
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
@@ -54,6 +56,8 @@ class GraphEngine:
 
     def __init__(self) -> None:
         self.G: nx.MultiDiGraph = nx.MultiDiGraph()
+        self._interaction_parameters: dict[str, Any] | None = None
+        self._parameter_provider: JSONInteractionParameterProvider | None = None
 
     # ── Mutations ────────────────────────────────────────────────────────
 
@@ -146,6 +150,8 @@ class GraphEngine:
 
     def clear(self) -> None:
         self.G.clear()
+        self._interaction_parameters = None
+        self._parameter_provider = None
 
     def load_reference_graph(
         self,
@@ -304,6 +310,21 @@ class GraphEngine:
         resolved_path = Path(path) if path else _DEFAULT_INTERACTION_PARAMETERS_PATH
         source_data = json.loads(resolved_path.read_text(encoding="utf-8"))
 
+        # Retain the parsed document and a typed provider over it so the
+        # engine can serve the non-edge parameter blocks (enzyme_induction,
+        # gsh_depletion, genotype_modifiers, interaction_rules) through
+        # getters instead of every consumer reading data/*.json directly.
+        # This is the interim bridge until those parameters are carried as
+        # graph node/edge attributes (see the interaction-parameter getters
+        # below the mutation section).
+        self._interaction_parameters = source_data
+        if resolved_path.name == "interaction_parameters.json":
+            self._parameter_provider = JSONInteractionParameterProvider(resolved_path.parent)
+        else:
+            # Custom-named overlay documents have no provider-side
+            # counterpart file; fall back to the bundled default provider.
+            self._parameter_provider = None
+
         warnings: list[str] = []
         pending: dict[tuple[str, str], dict[str, Any]] = {}
         pending_block: dict[tuple[str, str], str] = {}
@@ -347,6 +368,77 @@ class GraphEngine:
                 )
 
         return warnings
+
+    # ── Interaction-parameter access ─────────────────────────────────────
+
+    def get_interaction_parameters(self) -> dict[str, Any]:
+        """Return the parsed ``interaction_parameters.json`` document.
+
+        The engine retains the document it applied in
+        :meth:`_apply_interaction_parameters` so downstream modules can source
+        interaction data (enzyme induction, GSH depletion, genotype modifiers,
+        interaction rules) through the engine instead of reading
+        ``data/interaction_parameters.json`` directly. When no overlay has been
+        applied, the bundled default document is read on first use.
+
+        This is the documented interim bridge for the four parameter blocks
+        that are not yet carried as graph node/edge attributes. The returned
+        mapping is the engine's live copy -- treat it as read-only.
+        """
+        if self._interaction_parameters is None:
+            self._interaction_parameters = json.loads(
+                _DEFAULT_INTERACTION_PARAMETERS_PATH.read_text(encoding="utf-8")
+            )
+        return self._interaction_parameters
+
+    def get_parameter_provider(self) -> JSONInteractionParameterProvider:
+        """Return the typed interaction-parameter provider owned by the engine.
+
+        The provider offers the typed record layer (``CompetitiveInteraction``,
+        ``MetabolicReaction``, ``GSHConsumer``, ``InductionRule``,
+        ``EvidenceRecord``) over the same parameter document the engine
+        applied. Consumers needing typed records should take the provider
+        from here rather than constructing their own, so the whole
+        application reads one copy of the parameter data.
+        """
+        if self._parameter_provider is None:
+            self._parameter_provider = JSONInteractionParameterProvider()
+        return self._parameter_provider
+
+    def get_induction_rules(
+        self,
+        exposure_context: str | None = None,
+        tissue: str | None = None,
+    ) -> list[InductionRule]:
+        """Return enzyme-induction rules as typed ``InductionRule`` records.
+
+        ``exposure_context`` optionally filters to one lifestyle section
+        (e.g. ``"smoking"``, ``"chronic_alcohol"``, ``"TCDD_dioxin"``);
+        ``tissue`` mirrors the provider's tissue filter.
+        """
+        rules = self.get_parameter_provider().get_induction_rules(tissue=tissue)
+        if exposure_context is not None:
+            rules = [rule for rule in rules if rule.exposure_context == exposure_context]
+        return rules
+
+    def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
+        """Return GSH-depletion consumer records, optionally tissue-filtered."""
+        return self.get_parameter_provider().get_gsh_consumers(tissue=tissue)
+
+    def get_gsh_parameters(self) -> dict[str, Any]:
+        """Return the ``gsh_depletion`` block (scalars, consumers, biology model)."""
+        return self.get_interaction_parameters().get("gsh_depletion", {})
+
+    def get_genotype_modifiers(self, gene: str | None = None) -> dict[str, Any]:
+        """Return genotype-modifier tables, or one gene's table when ``gene`` is given."""
+        block = self.get_interaction_parameters().get("genotype_modifiers", {})
+        if gene is None:
+            return block
+        return block.get(gene, {})
+
+    def get_interaction_rules(self) -> dict[str, Any]:
+        """Return the ``interaction_rules`` block (thresholds, synergies, antagonisms)."""
+        return self.get_interaction_parameters().get("interaction_rules", {})
 
     # ── Queries ──────────────────────────────────────────────────────────
 
