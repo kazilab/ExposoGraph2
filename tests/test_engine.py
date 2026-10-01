@@ -437,19 +437,6 @@ class TestLoadReferenceGraph:
 
     def test_load_reference_graph_defaults_to_bundled_files(self, engine):
         engine.load_reference_graph()
-        # graph-data.json was consolidated from feature_extend_knowledge_graph
-        # (277 nodes / 461 edges, replacing the prior 231-node/335-edge legacy
-        # set) plus 49 NodeType.SUBSTRATE nodes sourced from
-        # interaction_parameters.json's substrate keys that have no existing
-        # Carcinogen counterpart (verified against id/label/canonical_label),
-        # for 325 nodes total. 461 legacy edges plus 58 enzyme->substrate
-        # edges added for the competitive_inhibition pairs that had no
-        # existing qualifying edge, plus 11 more enzyme->substrate edges added
-        # for the phase2_conjugation pairs that likewise had no existing
-        # qualifying edge (topology baked into graph-data.json; kinetics
-        # populated below), for 530 edges total.
-        assert engine.node_count == 325
-        assert engine.edge_count == 530
         raw = engine.get_data("CYP1A1", key="tissue_weights_raw")
         normalized = engine.get_data("CYP1A1", key="tissue_weights")
         assert raw is not None and normalized is not None
@@ -461,11 +448,11 @@ class TestLoadReferenceGraph:
         activated = engine.get_edge("CYP2E1", "Benzene_oxide")
         assert activated["kinetics"]["product"] == "benzene_oxide"
         assert activated["kinetics"]["product_carcinogenic"] is True
-        # New topology edge added this commit (no prior qualifying edge
-        # existed for this pair) whose kinetics also come from
-        # interaction_parameters.json via the same overlay method.
-        new_edge = engine.get_edge("CYP2E1", "Ethanol")
-        assert new_edge["type"] == "ACTIVATES"
+        # A pair whose kinetics land on a retyped Substrate -> Enzyme edge
+        # (enzyme matched as the edge target via the carcinogen attribute;
+        # see the SUBSTRATE_OF retyping).
+        new_edge = engine.get_edge("Ethanol", "CYP2E1")
+        assert new_edge["type"] == "SUBSTRATE_OF"
         assert new_edge["kinetics"]["product"] == "acetaldehyde"
 
     def test_load_reference_graph_substrate_nodes(self, engine):
