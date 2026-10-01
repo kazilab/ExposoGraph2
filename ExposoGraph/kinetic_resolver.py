@@ -35,6 +35,23 @@ from .parameter_resolution import (
 )
 from .reversible_inhibition import compute_reversible_inhibition
 
+_DEFAULT_PROVIDER: JSONInteractionParameterProvider | None = None
+
+
+def _shared_default_provider() -> JSONInteractionParameterProvider:
+    """Return the module-level default provider, constructed once.
+
+    Callers that do not inject a provider (including the module-level
+    ``get_ki`` / ``resolve_reversible_inhibition`` helpers) no longer re-read
+    ``interaction_parameters.json`` and ``parameter_provenance.json`` on
+    every call. Pass ``GraphEngine.get_parameter_provider()`` or an explicit
+    provider to read from a different source.
+    """
+    global _DEFAULT_PROVIDER
+    if _DEFAULT_PROVIDER is None:
+        _DEFAULT_PROVIDER = JSONInteractionParameterProvider()
+    return _DEFAULT_PROVIDER
+
 
 MODULE3_KM_STATIC_FOR_2_0 = True
 _QUANTITATIVE_CONCENTRATION_BASES = {
@@ -81,7 +98,7 @@ class KineticParameterResolver:
     """Resolve kinetic parameters from local provider data with explicit fallbacks."""
 
     def __init__(self, provider: JSONInteractionParameterProvider | None = None) -> None:
-        self.provider = provider or JSONInteractionParameterProvider()
+        self.provider = provider or _shared_default_provider()
 
     def get_ki(
         self,
