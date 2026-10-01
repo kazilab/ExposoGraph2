@@ -19,15 +19,6 @@ def _reference_module3_result():
     )
 
 
-def test_module3_imports():
-    import ExposoGraph
-    from ExposoGraph import flux_engine
-
-    assert hasattr(ExposoGraph, "compute_pathway_flux")
-    assert hasattr(ExposoGraph, "PathwayFluxResult")
-    assert hasattr(flux_engine, "compute_pathway_flux")
-
-
 def test_module3_public_api_available():
     from ExposoGraph.flux_engine import (
         CarcinogenClass,
