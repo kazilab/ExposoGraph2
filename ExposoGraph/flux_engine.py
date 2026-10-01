@@ -21,7 +21,7 @@ import warnings
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, Mapping, TypeAlias, cast
+from typing import TYPE_CHECKING, Any, Callable, Mapping, TypeAlias, cast
 
 from .flux_equations import (
     activation_detox_ratio,
@@ -32,6 +32,9 @@ from .flux_equations import (
     scaled_vmax,
     susceptibility_score_log2 as _equation_susceptibility_score_log2,
 )
+
+if TYPE_CHECKING:
+    from .engine import GraphEngine
 
 # ── Enums ──────────────────────────────────────────────────────────────────
 
@@ -842,6 +845,7 @@ def _term_gene_name(term_name: str) -> str | None:
 def _resolve_induction_factors(
     lifestyle: LifestyleMap | None = None,
     induction_factors: Mapping[str, float] | None = None,
+    interaction_params: Mapping[str, Any] | None = None,
 ) -> dict[str, float]:
     """Resolve optional co-exposure induction inputs into per-enzyme Vmax folds."""
     resolved: dict[str, float] = {}
@@ -850,7 +854,9 @@ def _resolve_induction_factors(
         try:
             from .interaction_engine import enzyme_induction_modifier
 
-            resolved.update(enzyme_induction_modifier(lifestyle).enzyme_folds)
+            resolved.update(
+                enzyme_induction_modifier(lifestyle, interaction_params=interaction_params).enzyme_folds
+            )
         except Exception as exc:
             warnings.warn(
                 f"Could not resolve lifestyle induction factors; using explicit/default factors only: {exc}",
@@ -2946,6 +2952,7 @@ def compute_pathway_flux(
     qivive: bool = False,
     qivive_context: Mapping[str, float] | None = None,
     steady_state_context: Mapping[str, float] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> PathwayFluxResult:
     """Compute activation/detoxification flux for a carcinogen class.
 
@@ -2969,6 +2976,10 @@ def compute_pathway_flux(
         steady_state_context: Optional PBPK steady-state context override
             (body weight, central volume, tissue partition, blood-flow
             fraction, background clearance, and related first-order rates).
+        engine: Optional :class:`~ExposoGraph.engine.GraphEngine`. When
+            given, lifestyle-driven induction folds are resolved against
+            the engine's interaction-parameter document instead of the
+            interaction engine's own file loader.
 
     Returns:
         :class:`PathwayFluxResult` with activation, detoxification,
@@ -3001,7 +3012,11 @@ def compute_pathway_flux(
     if substrate_conc_uM is None:
         substrate_conc_uM = _get_default_concentration(cls_str)
 
-    resolved_induction = _resolve_induction_factors(lifestyle, induction_factors)
+    resolved_induction = _resolve_induction_factors(
+        lifestyle,
+        induction_factors,
+        interaction_params=engine.get_interaction_parameters() if engine is not None else None,
+    )
     result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
     result = _annotate_flux_result_metadata(cls_str, result)
     result = _apply_induction_modifiers(result, resolved_induction)
