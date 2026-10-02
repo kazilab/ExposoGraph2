@@ -695,7 +695,7 @@
             "Km_uM": null,
             "CLint_relative": "significant",
             "confidence": "low",
-            "notes": "CYP2F2 is significant in pulmonary microsomes; human-specific lung metabolism. Quantitative Km not extracted.",
+            "notes": "CYP2F2 is significant in pulmonary microsomes; human-specific lung metabolism. Quantitative Km not extracted. Term bound to human ortholog enzyme node CYP2F1.",
             "sources": ["PMID:11701230"],
             "tissue_expression": ["lung"]
           }
@@ -746,7 +746,6 @@
         },
         "oxidative_stress": {
           "general_ROS": {
-            "substrate_node_id": "ArsenicInorganic",
             "reaction": "Arsenic → ROS generation → oxidative DNA damage",
             "mechanism": "indirect_genotoxicity",
             "confidence": "estimated",
@@ -777,7 +776,6 @@
       "pathways": {
         "AhR_signaling": {
           "AhR_binding": {
-            "substrate_node_id": "TCDD",
             "reaction": "TCDD → AhR complex → CYP1A1/CYP1B1 induction",
             "Kd_nM": 0.1,
             "EC50_nM": 0.5,
