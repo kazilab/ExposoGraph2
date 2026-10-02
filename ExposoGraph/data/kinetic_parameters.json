@@ -421,6 +421,8 @@
             "tissue_expression": ["lung", "nasal mucosa"]
           },
           "CYP2A13_methyl": {
+            "rate_law": "michaelis_menten",
+            "dormant": true,
             "reaction": "NNK → methyl-hydroxy-NNK",
             "Km_uM": null,
             "Vmax_pmol_min_pmolP450": 4.6,
@@ -443,6 +445,7 @@
         },
         "detoxification": {
           "carbonyl_reduction": {
+            "dormant": true,
             "reaction": "NNK → NNAL (reduction, detoxification product)",
             "Km_uM": null,
             "CLint_relative": "moderate",
@@ -483,6 +486,8 @@
             "tissue_expression": ["liver", "lung", "esophagus", "kidney"]
           },
           "CYP2E1_with_b5": {
+            "rate_law": "michaelis_menten",
+            "dormant": true,
             "graph_node_id": "CYP2E1",
             "reaction": "NDMA → hydroxymethylnitrosamine (with cytochrome b5)",
             "Km_uM": 22.0,
@@ -495,6 +500,7 @@
         "detoxification": {
           "note": "No major enzymatic detoxification pathway identified for NDMA; clearance is primarily through activation and conjugation of formaldehyde downstream",
           "ADH5_formaldehyde": {
+            "dormant": true,
             "reaction": "Formaldehyde (downstream) → Formate",
             "CLint_relative": "low",
             "confidence": "low",
@@ -556,6 +562,7 @@
         },
         "detoxification": {
           "SULT1A1": {
+            "dormant": true,
             "reaction": "N-OH-PhIP → N-sulfonyloxy-PhIP (further activation) OR competing detox sulfation",
             "CLint_relative": "moderate",
             "confidence": "low",
@@ -564,6 +571,7 @@
             "tissue_expression": ["liver", "colon", "prostate"]
           },
           "NAT2": {
+            "dormant": true,
             "reaction": "PhIP → PhIP-N-acetate (competing N-acetylation pathway)",
             "CLint_relative": "moderate",
             "confidence": "low",
@@ -585,6 +593,7 @@
         "entry_round": {"activation": 4, "detoxification": 4},
         "total_round": {"activation": 4, "detoxification": 4},
         "unit_note": "Flux in pmol/min/mg (estimated Vmax)",
+        "entry_names": {"CYP2E1_liver": "CYP2E1"},
         "derived_terms": {
           "NQO1": {
             "base_term": "CYP2E1_liver",
@@ -611,6 +620,7 @@
             "tissue_expression": ["liver"]
           },
           "CYP2F2_lung": {
+            "dormant": true,
             "reaction": "Benzene → Phenol (pulmonary, lung-specific)",
             "Km_uM": null,
             "CLint_relative": "significant",
@@ -630,6 +640,7 @@
             "tissue_expression": ["liver", "bone_marrow", "lung"]
           },
           "GSTT1": {
+            "dormant": true,
             "reaction": "Benzene oxide → Benzene-GSH (detoxification)",
             "CLint_relative": "low_to_moderate",
             "confidence": "low",
