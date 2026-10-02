@@ -135,6 +135,24 @@ _FLUX_RESERVED_TERM_FIELDS = frozenset(
     {"graph_node_id", "rate_law", "equation", "confidence", "notes", "provenance_ref", "sources"}
 )
 
+# Audit metadata ``_apply_flux_edge_kinetics`` adds to each baked edge
+# payload on top of the term's parameter dict. ``get_edge_flux_reactions``
+# strips exactly these keys (and no parameter keys) when reconstructing a
+# FluxReaction from an edge payload, so the two records stay identical.
+_FLUX_PAYLOAD_META_FIELDS = frozenset(
+    {
+        "rate_law",
+        "role",
+        "confidence",
+        "provenance_ref",
+        "source",
+        "graph_group",
+        "sources",
+        "notes",
+        "enzyme_id",
+    }
+)
+
 # Pathway-block names that map unambiguously onto the coarse flux role
 # vocabulary. Idiosyncratic blocks (e.g. ``ethanol_oxidation``) are recorded
 # as "other" with their verbatim pathway name until the flux JSONs carry
@@ -878,6 +896,12 @@ class GraphEngine:
             payload["source"] = reaction.source
             if reaction.graph_group is not None:
                 payload["graph_group"] = reaction.graph_group
+            # The roster's *resolved* enzyme id (graph_node_id / exact key /
+            # gene), which can differ from the binding annotation (e.g.
+            # alias pseudo-terms like ``CYP2E1_liver`` resolve to ``None``).
+            # Baked so the edge payload reconstructs the index record exactly.
+            if reaction.enzyme_id is not None:
+                payload["enzyme_id"] = reaction.enzyme_id
             if reaction.sources is not None:
                 payload["sources"] = reaction.sources
             if reaction.notes is not None:
@@ -985,6 +1009,81 @@ class GraphEngine:
         if role is not None:
             reactions = [reaction for reaction in reactions if reaction.role == role]
         return reactions
+
+    def get_edge_flux_reactions(self, carcinogen_class: Any) -> list[FluxReaction]:
+        """Return flux-reaction terms with their parameters read from edges.
+
+        Graph-walking counterpart to :meth:`get_flux_reactions`: walks every
+        edge of the loaded graph, collects the
+        ``Edge.kinetics["flux_terms"]`` payloads baked by
+        :meth:`_apply_flux_edge_kinetics` for *carcinogen_class*, and returns
+        the class's reaction roster with each edge-anchored term's record
+        reconstructed from its edge payload. The roster and its order are
+        still taken from the side index (the JSON files' pathway/term
+        order), so the returned list is identical to
+        ``get_flux_reactions`` by construction -- only the *source of the
+        values* differs.
+
+        Fallbacks, all visible in the returned records' ``source``/params:
+
+        - Terms whose bindings have no edge yet (``HCA/CYP1B1``, pending
+          the ``PhIP → CYP1B1`` scope edge; ``Aflatoxin/GSTA1``, pending a
+          GSTA1 node) keep their side-index record.
+        - Binding-less terms (proxy entries, substrate-only terms,
+          non-enzymatic drivers) are never baked and keep their index
+          record.
+        - With a bare engine (no graph loaded) there are no edges to walk,
+          so this degrades to ``get_flux_reactions`` unchanged.
+
+        Dual-source classes: only their shadowed kinetic entries are
+        baked; the proxy entries the roster carries are returned as index
+        records, so this method is not useful for them (flux dispatch for
+        those classes does not consult reaction terms).
+        """
+        cls = getattr(carcinogen_class, "value", carcinogen_class)
+        roster = self.get_flux_reactions(cls)
+        if not self.G.number_of_edges():
+            return roster
+        walked: dict[tuple[str, str], FluxReaction] = {}
+        for _source_id, _target_id, edge_data in self.G.edges(data=True):
+            kinetics = edge_data.get("kinetics")
+            if not isinstance(kinetics, dict):
+                continue
+            flux_terms = kinetics.get("flux_terms")
+            if not isinstance(flux_terms, dict):
+                continue
+            class_terms = flux_terms.get(cls)
+            if not isinstance(class_terms, dict):
+                continue
+            for pathway, terms in class_terms.items():
+                if not isinstance(terms, dict):
+                    continue
+                for term_key, payload in terms.items():
+                    if not isinstance(payload, dict):
+                        continue
+                    params = {
+                        key: value
+                        for key, value in payload.items()
+                        if key not in _FLUX_PAYLOAD_META_FIELDS
+                    }
+                    walked[(pathway, term_key)] = FluxReaction(
+                        carcinogen_class=cls,
+                        term_key=term_key,
+                        pathway=pathway,
+                        role=str(payload.get("role", "other")),
+                        rate_law=str(payload.get("rate_law", "")),
+                        params=params,
+                        confidence=str(payload.get("confidence", "")),
+                        provenance_ref=str(payload.get("provenance_ref", "")),
+                        enzyme_id=payload.get("enzyme_id"),
+                        graph_group=payload.get("graph_group"),
+                        source=str(payload.get("source", "")),
+                        sources=list(payload["sources"]) if isinstance(payload.get("sources"), list) else None,
+                        notes=str(payload["notes"]) if payload.get("notes") is not None else None,
+                    )
+        if not walked:
+            return roster
+        return [walked.get((reaction.pathway, reaction.term_key), reaction) for reaction in roster]
 
     def get_flux_classes(self) -> list[str]:
         """Return the union of kinetic + proxy flux classes.

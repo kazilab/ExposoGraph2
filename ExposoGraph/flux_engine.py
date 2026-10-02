@@ -881,10 +881,13 @@ _FLUX_CONTRACT_ENGINE: "GraphEngine | None" = None
 def _get_flux_contract_engine() -> "GraphEngine":
     """Return the module-level bare engine serving the flux-reaction contract.
 
-    A bare GraphEngine is enough: ``get_flux_reactions`` lazily builds the
-    side index from the bundled parameter files without loading the full
-    graph. Callers that already hold a reference engine pass it explicitly
-    through ``compute_pathway_flux(engine=...)``.
+    A bare GraphEngine is enough: ``get_flux_reactions`` and friends lazily
+    build the side index from the bundled parameter files without loading
+    the full graph, and ``get_edge_flux_reactions`` degrades to the index
+    when no graph is loaded. Callers that already hold a reference engine
+    (with the graph loaded and edge kinetics baked) pass it explicitly
+    through ``compute_pathway_flux(engine=...)`` so the mechanistic reads
+    walk ``Edge.kinetics`` instead.
     """
     global _FLUX_CONTRACT_ENGINE
     if _FLUX_CONTRACT_ENGINE is None:
@@ -1003,7 +1006,10 @@ def _compute_generic_mechanistic_flux(
 
     Replaces the hand-written PAH, Nitrosamine, NDMA, HCA, and Benzene
     functions. Direct terms (roster entries without a ``dormant`` flag)
-    come from ``GraphEngine.get_flux_reactions``; how they combine --
+    come from ``GraphEngine.get_edge_flux_reactions`` -- term parameters
+    are read off the substrate→enzyme edges' ``kinetics["flux_terms"]``
+    payloads, with the side index supplying only the roster order and the
+    handful of terms not yet edge-anchored; how they combine --
     per-role vmax fields, derived terms, efficiency scaling, detox
     fractions, total scaling, rounding, and unit notes -- comes from the
     class's ``aggregation`` block in kinetic_parameters.json via
@@ -1012,7 +1018,7 @@ def _compute_generic_mechanistic_flux(
     ``dedicated_function`` status note).
     """
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    reactions = active_engine.get_flux_reactions(carcinogen_class)
+    reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
     agg = active_engine.get_flux_aggregation(carcinogen_class)
     vmax_fields: dict[str, Any] = dict(agg.get("vmax_field", {}))
     km_field = str(agg.get("km_field", "Km_uM"))
@@ -1264,7 +1270,7 @@ def _compute_aflatoxin_flux(
 ) -> FluxResultDict:
     """Compute AFB1 activation and detoxification fluxes."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {r.term_key: r for r in active_engine.get_flux_reactions("Aflatoxin")}
+    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("Aflatoxin")}
     agg = active_engine.get_flux_aggregation("Aflatoxin")
     entry_round = agg["entry_round"]
     entry_round_overrides = agg.get("entry_round_overrides", {})
@@ -1369,7 +1375,7 @@ def _compute_aldehyde_flux(
 ) -> FluxResultDict:
     """Compute aldehyde (acetaldehyde) clearance flux."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {r.term_key: r for r in active_engine.get_flux_reactions("Aldehyde")}
+    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("Aldehyde")}
     agg = active_engine.get_flux_aggregation("Aldehyde")
     entry_round = agg["entry_round"]
     total_round = agg["total_round"]
