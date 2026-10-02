@@ -416,7 +416,6 @@ def build_transparency_report(
             "scientific_calculations_changed": False,
             "engine_integration": False,
             "interaction_engine_integration": False,
-            "unified_api_integration": False,
             "public_adjusted_risk_output": False,
             "release_packaging_behavior": False,
             "github_behavior": False,
