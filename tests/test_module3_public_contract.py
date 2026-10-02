@@ -50,7 +50,7 @@ def test_module3_single_carcinogen_default_case():
     assert result.total_detox > 0.0
     assert math.isfinite(result.net_ratio)
     assert result.risk_classification in set(RiskClassification)
-    assert result.tissue_weight_source == FluxTissueWeightSource.CURATED
+    assert result.tissue_weight_source == FluxTissueWeightSource.GTEX
     assert result.induction_factors_used == {}
 
 

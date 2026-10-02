@@ -658,14 +658,18 @@ def _normalize_tissue(tissue: str) -> str:
 def _normalize_tissue_weight_source(
     tissue_weight_source: FluxTissueWeightSource | str,
 ) -> FluxTissueWeightSource:
-    """Normalize tissue-weight source labels to a supported enum."""
+    """Validate the requested source label and report the source actually used.
+
+    Tissue weights now always come from the engine's GTEx expression
+    table, so every valid request resolves to ``GTEX``; invalid labels
+    still raise. The request parameter remains part of the public API
+    for compatibility.
+    """
     if isinstance(tissue_weight_source, FluxTissueWeightSource):
-        return tissue_weight_source
+        return FluxTissueWeightSource.GTEX
 
     normalized = str(tissue_weight_source).strip().lower()
-    if normalized == FluxTissueWeightSource.CURATED.value:
-        return FluxTissueWeightSource.CURATED
-    if normalized == FluxTissueWeightSource.GTEX.value:
+    if normalized in (FluxTissueWeightSource.CURATED.value, FluxTissueWeightSource.GTEX.value):
         return FluxTissueWeightSource.GTEX
     raise ValueError(
         f"Unknown tissue_weight_source '{tissue_weight_source}'. "

@@ -299,11 +299,17 @@ class GraphEngine:
         """
         if self._tissue_expression_raw is None or self._tissue_expression_normalized is None:
             try:
-                expression: dict[str, dict[str, float]] = json.loads(
-                    _DEFAULT_TISSUE_EXPRESSION_PATH.read_text(encoding="utf-8")
-                )["expression"]
-            except (OSError, json.JSONDecodeError, KeyError):
-                expression = {}
+                doc = json.loads(_DEFAULT_TISSUE_EXPRESSION_PATH.read_text(encoding="utf-8"))
+                expression: dict[str, dict[str, float]] = doc["expression"]
+            except (OSError, json.JSONDecodeError, KeyError) as exc:
+                # This file is the authoritative flux tissue-weight table;
+                # silently degrading every lookup to a fallback weight would
+                # compute a full profile on invented numbers.
+                raise RuntimeError(
+                    f"Tissue expression source {_DEFAULT_TISSUE_EXPRESSION_PATH} is the "
+                    "authoritative tissue-weight table and must be readable with an "
+                    f"'expression' block: {exc}"
+                ) from exc
             normalized: dict[str, dict[str, float]] = {}
             for gene, raw in expression.items():
                 max_raw = max(raw.values()) if raw else 0.0

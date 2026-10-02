@@ -36,7 +36,7 @@ def test_compute_pathway_flux_returns_finite_ratio_for_reference_pah_genotype():
     assert result.steady_state_model["time_to_steady_state_days"] > 0
     assert result.steady_state_concentration_proxy_uM["reactive_intermediate_proxy_uM"] >= 0
     assert result.risk_classification in set(RiskClassification)
-    assert result.tissue_weight_source == FluxTissueWeightSource.CURATED.value
+    assert result.tissue_weight_source == FluxTissueWeightSource.GTEX.value
 
 
 def test_measured_flux_result_exposes_measured_parameter_source():
