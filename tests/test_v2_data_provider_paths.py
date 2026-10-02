@@ -49,7 +49,6 @@ RUNTIME_SOURCE_FILES = (
     PACKAGE_ROOT / "kinetic_resolver.py",
     PACKAGE_ROOT / "tissue_subgraphs.py",
     PACKAGE_ROOT / "expanded_metals.py",
-    PACKAGE_ROOT / "unified_api.py",
     PACKAGE_ROOT / "exporter.py",
     PACKAGE_ROOT / "biomarker_mapping.py",
     PACKAGE_ROOT / "mutational_signatures.py",

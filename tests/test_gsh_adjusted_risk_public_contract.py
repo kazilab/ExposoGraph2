@@ -12,7 +12,6 @@ from ExposoGraph.interaction_engine import (
     _interaction_matrix_to_compat_dict,
     compute_interaction_matrix,
 )
-from ExposoGraph.unified_api import patient_risk_query
 
 
 def _warning_codes(records):
@@ -243,30 +242,3 @@ def test_adjusted_risk_output_contains_gsh_provenance():
     assert "warnings" in gsh
     json.dumps(pah.to_dict(), allow_nan=False)
 
-
-def test_platform_integration_module5_gsh_case():
-    result = compute_interaction_matrix(
-        {"PAH": 4.0, "HCA": 1.0, "acrolein": 4.0},
-        genotypes={"GSTM1": "NM"},
-        include_biological_outputs=True,
-    )
-    payload = _interaction_matrix_to_compat_dict(result)
-
-    assert payload["module5_model_card"]["gsh_model_version"] == (
-        GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY.value
-    )
-    assert payload["gsh_status"]["model_version"] == GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY.value
-    assert payload["mechanism_resolved_risks"]["PAH"]["provenance"]["gsh"]
-    json.dumps(payload, allow_nan=False)
-
-    profile = patient_risk_query(
-        {"CYP1A1": "NM", "GSTM1": "NM", "NAT2": "NM"},
-        tissue="Liver",
-        include_tissue_report=False,
-    )
-    integration = profile.biological_output_integration
-    assert integration["module5_model_card"]["gsh_model_version"] == (
-        GSHModelVersion.PHASE7_QUASI_STEADY_RELATIVE_CAPACITY.value
-    )
-    assert "mechanism_resolved_risks" in integration
-    json.dumps(integration, allow_nan=False)

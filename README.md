@@ -539,7 +539,6 @@ ExposoGraph/
 ├── cross_species.py         # Allometric scaling and species comparisons
 ├── expanded_metals.py       # Expanded heavy-metal catalogue (Wave 2)
 ├── wave2_classes.py         # Wave 2 carcinogen class profiles
-├── unified_api.py           # PatientRiskProfile / patient_risk_query
 ├── population_simulation/   # Synthetic cohort generator + validation
 ├── data/                    # Bundled JSON parameter files
 │   ├── kinetic_parameters.json

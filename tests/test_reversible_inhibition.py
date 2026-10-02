@@ -230,15 +230,3 @@ def test_serialized_result_has_no_nan_or_infinity():
     assert "Infinity" not in json.dumps(payload)
     assert "NaN" not in json.dumps(payload)
 
-
-def test_reversible_inhibition_kernel_is_not_routed_into_live_engines():
-    import ExposoGraph.flux_engine as flux_engine
-    import ExposoGraph.interaction_engine as interaction_engine
-    import ExposoGraph.unified_api as unified_api
-
-    assert "reversible_inhibition" not in interaction_engine.__dict__
-    assert "compute_reversible_inhibition" not in interaction_engine.__dict__
-    assert "reversible_inhibition" not in flux_engine.__dict__
-    assert "compute_reversible_inhibition" not in flux_engine.__dict__
-    assert "reversible_inhibition" not in unified_api.__dict__
-    assert "compute_reversible_inhibition" not in unified_api.__dict__

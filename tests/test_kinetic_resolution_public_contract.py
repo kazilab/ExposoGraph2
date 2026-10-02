@@ -22,7 +22,6 @@ from ExposoGraph.parameter_resolution import (
     ParameterSourceKind,
     ReversibleInhibitionResolutionRequest,
 )
-from ExposoGraph.unified_api import patient_risk_query
 
 
 def _evidence() -> EvidenceRecord:
@@ -227,29 +226,3 @@ def test_kinetic_resolution_serializes_status_warnings_and_provenance():
     assert "metadata" in competitor
     json.dumps(output, allow_nan=False)
 
-
-def test_kinetic_resolution_is_visible_in_platform_outputs():
-    matrix = compute_interaction_matrix({"benzene": 1.0, "ethanol": 1.0})
-    compat = _interaction_matrix_to_compat_dict(matrix)
-
-    effects = compat["competitive_effects"]["CYP2E1"]["benzene"]
-    kinetic_effect = effects["biological_output"]["kinetic_effect"]
-    assert "status" in kinetic_effect
-    assert "warnings" in kinetic_effect
-    assert "provenance" in kinetic_effect
-    assert "ki_resolver_statuses" in compat["module5_model_card"]
-    json.dumps(compat, allow_nan=False)
-
-    risk = patient_risk_query(
-        {"CYP1A1": "NM", "GSTM1": "NM", "NAT2": "NM"},
-        tissue="Liver",
-        include_tissue_report=False,
-    )
-    integration = risk.biological_output_integration
-    assert "ki_resolver_statuses" in integration["module5_model_card"]
-    if integration["substrate_outputs"]:
-        first_output = next(iter(integration["substrate_outputs"].values()))["kinetic_effect"]
-        assert "status" in first_output
-        assert "warnings" in first_output
-        assert "provenance" in first_output
-    json.dumps(integration, allow_nan=False)

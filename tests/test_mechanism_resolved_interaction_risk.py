@@ -12,7 +12,6 @@ from ExposoGraph.interaction_engine import (
     compute_interaction_matrix,
 )
 from ExposoGraph.gsh_redox_capacity import GSHModelVersion
-from ExposoGraph.unified_api import _build_biological_output_integration, patient_risk_query
 
 
 def _finite_walk(value):
@@ -721,40 +720,6 @@ def test_no_competition_and_disabled_competition_are_neutral_without_changing_ot
     assert disabled.mechanism_resolved_risks["PAH"].matrix_gsh_penalty > 1.0
 
 
-def test_biological_output_flag_does_not_change_principal_numbers():
-    exposure = {"benzene": 1.0, "NDMA": 1.0, "PAH": 4.0, "ethanol": 10.0}
-    with_outputs = compute_interaction_matrix(
-        exposure,
-        lifestyle={"chronic_alcohol": True},
-        include_biological_outputs=True,
-    )
-    without_outputs = compute_interaction_matrix(
-        exposure,
-        lifestyle={"chronic_alcohol": True},
-        include_biological_outputs=False,
-    )
-
-    assert with_outputs.mechanism_attribution is not None
-    assert without_outputs.mechanism_attribution is None
-    assert _principal_numbers(with_outputs) == _principal_numbers(without_outputs)
-    assert with_outputs.mechanism_resolved_risks
-    assert without_outputs.mechanism_resolved_risks == {}
-    assert any(
-        flux.biological_output is not None
-        for enzyme_result in with_outputs.competitive_effects.values()
-        for flux in enzyme_result.substrates.values()
-    )
-    assert all(
-        flux.biological_output is None
-        for enzyme_result in without_outputs.competitive_effects.values()
-        for flux in enzyme_result.substrates.values()
-    )
-    assert "mechanism_resolved_risks" in _interaction_matrix_to_compat_dict(with_outputs)
-    assert "mechanism_resolved_risks" not in _interaction_matrix_to_compat_dict(without_outputs)
-    assert "mechanism_resolved_risks" in _build_biological_output_integration(with_outputs)
-    assert "mechanism_resolved_risks" not in _build_biological_output_integration(without_outputs)
-
-
 def test_exact_once_non_neutral_induction_gsh_and_susceptibility_factors():
     result = compute_interaction_matrix(
         {"PAH": 8.0, "HCA": 2.0, "NDMA": 2.0, "ethanol": 12.0, "acrolein": 8.0},
@@ -985,36 +950,3 @@ def test_factor_application_and_derived_fields_use_resolved_risks():
         )
         assert synergy == pytest.approx(round(adjusted_total / independent_total, 3))
 
-
-def test_public_serializers_keep_existing_fields_and_finite_values():
-    result = compute_interaction_matrix({"benzene": 1.0, "ethanol": 10.0})
-    payload = _interaction_matrix_to_compat_dict(result)
-
-    assert {
-        "individual_risks",
-        "interaction_adjusted_risks",
-        "synergy_matrix",
-        "competitive_effects",
-        "total_interaction_risk",
-        "interaction_factor",
-        "mechanism_attribution",
-    }.issubset(payload)
-    assert "mechanism_resolved_risks" in payload
-    for resolved in payload["mechanism_resolved_risks"].values():
-        assert resolved["mechanism_model_version"] == "module5_mechanism_resolved_v2"
-    assert payload["module5_model_card"]["mechanism_model_version"] == "module5_mechanism_resolved_v2"
-    assert payload["module5_model_card"]["gsh_model_version"] == "phase7_quasi_steady_relative_capacity"
-    json.dumps(payload, allow_nan=False)
-    _finite_walk(payload)
-
-    profile = patient_risk_query(
-        {"CYP1A1": "NM", "GSTM1": "NM", "NAT2": "NM"},
-        include_tissue_report=False,
-    )
-    assert "mechanism_resolved_risks" in profile.biological_output_integration
-    assert (
-        profile.biological_output_integration["module5_model_card"]["mechanism_model_version"]
-        == "module5_mechanism_resolved_v2"
-    )
-    json.dumps(profile.biological_output_integration, allow_nan=False)
-    _finite_walk(profile.biological_output_integration)

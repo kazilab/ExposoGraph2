@@ -48,45 +48,6 @@ def test_module5_api_example_runs():
     json.dumps(payload, default=str, allow_nan=False)
 
 
-def test_module5_output_contains_transparency_fields():
-    from ExposoGraph.unified_api import patient_risk_query
-
-    profile = patient_risk_query(
-        {"CYP1A1": "NM", "GSTM1": "null", "CYP2E1": "NM", "NAT2": "NM"},
-        tissue="Liver",
-        lifestyle={"smoking": True, "alcohol_moderate": True},
-    )
-    integration = profile.biological_output_integration
-
-    assert profile.workflow_labels["module3_simple"]["status"] == "active"
-    assert profile.workflow_labels["module3_simple"]["deprecated"] is False
-    assert profile.workflow_labels["module5_advanced"]["status"] == "active"
-    assert profile.workflow_labels["module5_advanced"]["deprecated"] is False
-    assert integration["workflow_kind"] == "module5_advanced"
-    assert "Module 5 advanced" in integration["workflow_label"]
-
-    card = integration["module5_model_card"]
-    assert card["mechanism_model_version"] == "module5_mechanism_resolved_v2"
-    assert card["synergy_decomposition_basis"] == "eight_state_shapley"
-    assert card["detailed_records_location"]["mechanism_resolved_risks"]
-
-    resolved = next(iter(integration["mechanism_resolved_risks"].values()))
-    for field in {
-        "baseline_relative_risk",
-        "adjusted_relative_risk",
-        "induction_multiplier",
-        "inhibition_burden_multiplier",
-        "final_mechanism_multiplier",
-        "inhibition_status",
-        "review_required",
-        "warnings",
-        "provenance",
-    }:
-        assert field in resolved
-    assert isinstance(resolved["warnings"], list)
-    assert isinstance(resolved["provenance"], dict)
-
-
 def test_cli_imports_or_runs_if_advertised():
     for module_name in ("flux_cli", "exposure_cli", "interaction_cli"):
         completed = subprocess.run(

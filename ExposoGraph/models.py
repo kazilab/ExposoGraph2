@@ -25,7 +25,7 @@ class NodeType(str, Enum):
 
 class EdgeType(str, Enum):
     # Legacy edge types -- retained (not emitted into graph-data.json anymore, except
-    # where noted) so that seeder.py, unified_api.py, figure_architecture.py, and
+    # where noted) so that seeder.py, figure_architecture.py, and
     # reaction_role_rules.py -- none of which were updated in this migration -- keep
     # working unmodified. See docs/design/kg_parameter_loading_scope.md Addendum 5.
     ACTIVATES = "ACTIVATES"

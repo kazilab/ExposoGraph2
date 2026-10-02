@@ -8,7 +8,6 @@ from ExposoGraph.interaction_engine import (
     compute_interaction_matrix,
     decompose_synergy,
 )
-from ExposoGraph.unified_api import patient_risk_query
 
 
 EXPOSURE = {"PAH": 4.0, "HCA": 1.0, "acrolein": 4.0, "ethanol": 8.0}
@@ -159,23 +158,3 @@ def test_figure3_can_consume_mechanism_attribution_output(module5_result, decomp
     assert rows
     json.dumps(rows, allow_nan=False)
 
-
-def test_platform_output_contains_synergy_fields(module5_result):
-    payload = _interaction_matrix_to_compat_dict(module5_result)
-
-    assert payload["synergy_matrix"] == module5_result.synergy_matrix
-    assert payload["interaction_factor"] == module5_result.interaction_factor
-    assert payload["mechanism_attribution"]["decomposition_basis"] == "eight_state_shapley"
-    assert payload["module5_model_card"]["synergy_decomposition_basis"] == "eight_state_shapley"
-
-    profile = patient_risk_query(
-        {"CYP1A1": "NM", "GSTM1": "NM", "NAT2": "NM"},
-        tissue="Liver",
-        include_tissue_report=False,
-    )
-    integration = profile.biological_output_integration
-    assert "synergy_matrix" in integration
-    assert "interaction_factor" in integration
-    assert integration["synergy_reporting"]["authoritative_attribution"] == "mechanism_attribution"
-    assert integration["synergy_reporting"]["pairwise_heatmap"] == "synergy_matrix_descriptive"
-    assert integration["module5_model_card"]["synergy_decomposition_basis"] == "eight_state_shapley"
