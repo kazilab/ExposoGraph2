@@ -388,6 +388,11 @@ class GraphEngine:
            does not mutate the graph; it makes the quantitative flux
            contract queryable through the engine
            (:meth:`get_flux_reactions` and friends).
+        4. Substrate-bound flux terms are then baked onto their
+           substrate→enzyme edges under ``Edge.kinetics["flux_terms"]`` --
+           see :meth:`_apply_flux_edge_kinetics`. Like the interaction
+           overlay, the parameter JSONs (not graph-data.json) remain the
+           trusted source; the edge payload is derived at load time.
 
         Returns the combined warning messages from all steps.
         """
@@ -399,6 +404,7 @@ class GraphEngine:
         warnings.extend(self._apply_tissue_expression(tissue_expression_path))
         warnings.extend(self._apply_interaction_parameters(interaction_parameters_path))
         warnings.extend(self._apply_flux_parameters(kinetic_parameters_path, proxy_flux_parameters_path))
+        warnings.extend(self._apply_flux_edge_kinetics())
         return warnings
 
     def _ensure_tissue_expression(self) -> dict[str, dict[str, float]]:
@@ -616,7 +622,14 @@ class GraphEngine:
             for endpoint in (source_id, target_id):
                 key = (endpoint, carcinogen)
                 if key in pending:
+                    previous = edge_data.get("kinetics")
                     edge_data["kinetics"] = dict(pending[key])
+                    # The engine-owned flux-term namespace (see
+                    # ``_apply_flux_edge_kinetics``) survives this overwrite:
+                    # re-applying interaction parameters must not clobber
+                    # flux bindings baked in an earlier pass.
+                    if isinstance(previous, dict) and "flux_terms" in previous:
+                        edge_data["kinetics"]["flux_terms"] = previous["flux_terms"]
                     applied.add(key)
 
         for enzyme_id, resolved in pending:
@@ -769,6 +782,64 @@ class GraphEngine:
             if isinstance(kinetic_doc.get("genotype_modifiers"), dict)
             else {}
         )
+        return warnings
+
+    def _apply_flux_edge_kinetics(self) -> list[str]:
+        """Bake substrate-bound flux terms onto their substrate→enzyme edges.
+
+        Iterates the flux-reaction index built by
+        :meth:`_apply_flux_parameters` and, for every term carrying both a
+        ``substrate_node_id`` and an ``enzyme_node_id`` binding, attaches the
+        term's verbatim parameter payload to the graph edge between those
+        two nodes, under ``Edge.kinetics["flux_terms"]``, nested as
+        ``flux_terms[carcinogen_class][pathway][term_key]``. The nesting is
+        required because several edges carry multiple terms -- diplotype
+        variants (``ALDH2_star1`` / ``ALDH2_star1_star2`` with different
+        kinetics) and competing reaction channels catalyzed by one enzyme
+        (``CYP3A4`` activation vs. ``CYP3A4_AFQ1`` detoxification), and one
+        edge (``Formaldehyde → ADH5``) carries terms from two different
+        carcinogen classes. ``kinetic_parameters.json`` stays the single
+        source of truth: the payload is baked at load time, not copied into
+        ``graph-data.json``.
+
+        Terms with bindings whose edge does not exist (e.g. the known
+        ``PhIP → CYP1B1`` / ``PhIP → NAT2`` scope gaps) are skipped and
+        reported as warnings rather than raising. Binding-less terms
+        (substrate-only, driver/proxy, non-enzymatic) are ignored here by
+        design. For dual-source classes the flux-reaction index keeps only
+        the proxy entries, so their kinetic bindings are not baked either
+        (``get_flux_reactions`` shadowing semantics).
+
+        Where an edge also carries interaction kinetics from
+        :meth:`_apply_interaction_parameters`, both coexist: the interaction
+        block keeps its flat keys (``Km_uM``/``Ki_uM``/...) and the flux
+        terms live under the ``flux_terms`` namespace.
+
+        Returns a list of warning messages, mirroring the other overlay
+        methods.
+        """
+        warnings: list[str] = []
+        if self._flux_reactions_by_class is None:
+            self._apply_flux_parameters()
+        for cls, reactions in self._flux_reactions_by_class.items():
+            for reaction in reactions:
+                substrate = reaction.params.get("substrate_node_id")
+                enzyme = reaction.params.get("enzyme_node_id")
+                if not substrate or not enzyme:
+                    continue
+                if not self.G.has_edge(substrate, enzyme):
+                    warnings.append(
+                        f"No edge for flux binding: {cls}/{reaction.term_key} "
+                        f"({substrate} -> {enzyme})"
+                    )
+                    continue
+                edge_view = self.G[substrate][enzyme]
+                edge_data = next(iter(edge_view.values()))
+                kinetics = edge_data.setdefault("kinetics", {})
+                flux_terms = kinetics.setdefault("flux_terms", {})
+                by_class = flux_terms.setdefault(cls, {})
+                by_pathway = by_class.setdefault(reaction.pathway, {})
+                by_pathway[reaction.term_key] = dict(reaction.params)
         return warnings
 
     # ── Interaction-parameter access ─────────────────────────────────────
