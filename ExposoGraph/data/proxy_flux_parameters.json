@@ -14,6 +14,7 @@
   "classes": {
     "AromaticAmines": {
       "model_kind": "semi_quantitative_proxy",
+      "graph_group": "Aromatic Amines",
       "exposure_default": {
         "source": "exposure_database",
         "class": "AromaticAmines",
@@ -75,6 +76,7 @@
       },
       "repair_terms": {
         "XPC": {
+          "rate_law": "repair",
           "gene": "XPC",
           "scale": 0.35,
           "confidence": "estimated",
@@ -83,6 +85,7 @@
           "provenance_ref": "classes.AromaticAmines.repair_terms.XPC"
         },
         "ERCC2": {
+          "rate_law": "repair",
           "gene": "ERCC2",
           "scale": 0.2,
           "confidence": "estimated",
@@ -94,6 +97,7 @@
     },
     "EstrogenMetabolites": {
       "model_kind": "semi_quantitative_proxy",
+      "graph_group": "Estrogen",
       "exposure_default": {
         "source": "exposure_database",
         "class": "EstrogenMetabolites",
@@ -173,6 +177,7 @@
       },
       "repair_terms": {
         "XRCC1": {
+          "rate_law": "repair",
           "gene": "XRCC1",
           "scale": 0.25,
           "confidence": "estimated",
@@ -184,6 +189,7 @@
     },
     "NDEA": {
       "model_kind": "semi_quantitative_proxy",
+      "graph_group": "Nitrosamines",
       "exposure_default": {
         "source": "exposure_database",
         "class": "DietaryNitroso",
@@ -236,6 +242,7 @@
       },
       "repair_terms": {
         "MGMT": {
+          "rate_law": "repair",
           "gene": "MGMT",
           "scale": 0.45,
           "confidence": "estimated",
@@ -247,6 +254,7 @@
     },
     "VinylChloride": {
       "model_kind": "semi_quantitative_proxy",
+      "graph_group": "Vinyl Chloride",
       "exposure_default": {
         "source": "exposure_database",
         "class": "VinylChloride",
@@ -310,6 +318,7 @@
       },
       "repair_terms": {
         "ERCC2": {
+          "rate_law": "repair",
           "gene": "ERCC2",
           "scale": 0.35,
           "confidence": "estimated",
@@ -321,6 +330,7 @@
     },
     "UV_Radiation": {
       "model_kind": "damage_repair_proxy",
+      "graph_group": "UV Radiation",
       "exposure_default": {
         "source": "exposure_database",
         "class": "UV_Radiation",
@@ -330,6 +340,7 @@
       "unit_note": "Relative UV damage burden (general-population default = 1.0 DNA-damage unit) versus NER/BER repair capacity.",
       "activation_terms": {
         "UVB_photoproduct_burden": {
+          "graph_node_id": null,
           "equation": "hill",
           "vmax": 14.0,
           "k50": 1.0,
@@ -340,6 +351,7 @@
           "provenance_ref": "classes.UV_Radiation.activation_terms.UVB_photoproduct_burden"
         },
         "UVA_oxidative_tail": {
+          "graph_node_id": null,
           "equation": "hill",
           "vmax": 5.0,
           "k50": 1.5,
@@ -352,6 +364,7 @@
       },
       "repair_terms": {
         "XPC": {
+          "rate_law": "repair",
           "gene": "XPC",
           "scale": 0.35,
           "confidence": "estimated",
@@ -360,6 +373,7 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.XPC"
         },
         "ERCC2": {
+          "rate_law": "repair",
           "gene": "ERCC2",
           "scale": 0.25,
           "confidence": "estimated",
@@ -368,6 +382,7 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.ERCC2"
         },
         "OGG1": {
+          "rate_law": "repair",
           "gene": "OGG1",
           "scale": 0.15,
           "confidence": "estimated",
@@ -376,6 +391,7 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.OGG1"
         },
         "POLH": {
+          "rate_law": "repair",
           "gene": "POLH",
           "scale": 0.1,
           "confidence": "estimated",
@@ -387,6 +403,7 @@
     },
     "ChlorinatedSolvent": {
       "model_kind": "semi_quantitative_proxy",
+      "graph_group": "Chlorinated Solvents",
       "exposure_default": {
         "source": "kinetic_parameters",
         "field": "TCE"
@@ -417,6 +434,8 @@
       },
       "detox_terms": {
         "non_genotoxic_clearance_proxy": {
+          "rate_law": "derived_scale",
+          "graph_node_id": null,
           "scale_of": "CYP2E1",
           "scale": 0.6,
           "confidence": "estimated",
@@ -427,6 +446,7 @@
     },
     "Dioxin": {
       "model_kind": "receptor_mediated_proxy",
+      "graph_group": "Dioxins",
       "exposure_default": {
         "source": "kinetic_parameters",
         "field": "TCDD"
@@ -446,6 +466,7 @@
       },
       "activation_terms": {
         "CYP1A1": {
+          "rate_law": "receptor",
           "gene": "CYP1A1",
           "induction_factor": 50.0,
           "confidence": "moderate",
@@ -453,6 +474,7 @@
           "provenance_ref": "classes.Dioxin.activation_terms.CYP1A1"
         },
         "CYP1B1": {
+          "rate_law": "receptor",
           "gene": "CYP1B1",
           "induction_factor": 20.0,
           "confidence": "moderate",
@@ -462,6 +484,8 @@
       },
       "detox_terms": {
         "AHRR_feedback": {
+          "rate_law": "receptor",
+          "graph_node_id": null,
           "scale_of_signal": 8.0,
           "confidence": "estimated",
           "note": "Estimated negative-feedback burden opposing sustained AhR activation.",
@@ -471,6 +495,7 @@
     },
     "HeavyMetal": {
       "model_kind": "semi_quantitative_proxy",
+      "graph_group": "Heavy Metals",
       "exposure_default": {
         "source": "kinetic_parameters",
         "field": "arsenic"
@@ -478,6 +503,7 @@
       "unit_note": "Semi-quantitative proxy balancing ROS-generation burden against AS3MT-mediated arsenic methylation.",
       "activation_terms": {
         "general_ROS": {
+          "graph_node_id": null,
           "equation": "saturating",
           "scale": 5.0,
           "km": 1.0,
@@ -487,6 +513,7 @@
           "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
         },
         "cadmium_stress_proxy": {
+          "graph_node_id": null,
           "equation": "saturating",
           "scale": 2.0,
           "km": 0.5,
