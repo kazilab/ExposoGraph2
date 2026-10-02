@@ -197,6 +197,11 @@ class FluxReaction:
     enzyme_id: str | None
     graph_group: str | None
     source: str
+    # Audit metadata retained so the edge-baking step
+    # (``_apply_flux_edge_kinetics``) can attach the full term payload --
+    # including PMID lists and notes -- to ``Edge.kinetics["flux_terms"]``.
+    sources: list[str] | None = None
+    notes: str | None = None
 
 logger = logging.getLogger(__name__)
 
@@ -237,6 +242,7 @@ class GraphEngine:
         self._parameter_provider: JSONInteractionParameterProvider | None = None
         self._flux_reactions_by_class: dict[str, list[FluxReaction]] | None = None
         self._flux_class_sources: dict[str, set[str]] | None = None
+        self._flux_shadowed_reactions: list[FluxReaction] = []
         self._flux_aggregation_by_class: dict[str, dict[str, Any]] | None = None
         self._flux_metadata: dict[str, Any] | None = None
         self._flux_genotype_modifiers: dict[str, Any] | None = None
@@ -342,6 +348,7 @@ class GraphEngine:
         self._parameter_provider = None
         self._flux_reactions_by_class = None
         self._flux_class_sources = None
+        self._flux_shadowed_reactions = []
         self._flux_aggregation_by_class = None
         self._flux_metadata = None
         self._flux_genotype_modifiers = None
@@ -659,7 +666,10 @@ class GraphEngine:
         Precedence: classes present in both files (ChlorinatedSolvent,
         Dioxin, HeavyMetal) keep only their proxy entries, matching current
         flux-engine dispatch behavior; the kinetic entries are shadowed
-        (visible via ``get_flux_reaction_coverage`` source reporting).
+        (visible via ``get_flux_reaction_coverage`` source reporting) and
+        retained in ``_flux_shadowed_reactions`` so
+        :meth:`_apply_flux_edge_kinetics` can still bake their graph-edge
+        bindings.
 
         Enzyme linkage: an explicit ``graph_node_id`` term field is honored
         when present (warned when it names no node); otherwise a term whose
@@ -720,6 +730,8 @@ class GraphEngine:
                 enzyme_id=enzyme_id,
                 graph_group=str(declared_group) if declared_group else _FLUX_CLASS_GRAPH_GROUPS.get(cls),
                 source=source,
+                sources=list(term["sources"]) if isinstance(term.get("sources"), list) else None,
+                notes=str(term["notes"]) if term.get("notes") is not None else None,
             )
 
         # kinetic_parameters.json -- mechanistic classes
@@ -765,6 +777,11 @@ class GraphEngine:
                         _record(cls, term_key, block, term, cls_data, "proxy_flux_parameters", f"classes.{cls}")
                     )
             if cls in index:
+                # Proxy wins for dispatch, but the kinetic entries are
+                # retained as ``shadowed`` reactions so the graph-edge
+                # baking step can still attach their bindings (dispatch
+                # choice and graph knowledge are separate concerns).
+                self._flux_shadowed_reactions.extend(index[cls])
                 sources[cls].add("proxy_flux_parameters")
             else:
                 sources[cls] = {"proxy_flux_parameters"}
@@ -806,14 +823,23 @@ class GraphEngine:
         ``PhIP → CYP1B1`` / ``PhIP → NAT2`` scope gaps) are skipped and
         reported as warnings rather than raising. Binding-less terms
         (substrate-only, driver/proxy, non-enzymatic) are ignored here by
-        design. For dual-source classes the flux-reaction index keeps only
-        the proxy entries, so their kinetic bindings are not baked either
-        (``get_flux_reactions`` shadowing semantics).
+        design. Dual-source classes (ChlorinatedSolvent, Dioxin, HeavyMetal)
+        dispatch on their proxy entries, but their shadowed kinetic entries
+        are baked here too -- dispatch choice and graph knowledge are
+        separate concerns -- with ``source: kinetic_parameters`` recording
+        where each payload came from.
 
         Where an edge also carries interaction kinetics from
         :meth:`_apply_interaction_parameters`, both coexist: the interaction
         block keeps its flat keys (``Km_uM``/``Ki_uM``/...) and the flux
         terms live under the ``flux_terms`` namespace.
+
+        Each baked payload is self-contained: the term's parameter dict
+        (Km/Vmax/CLint, genotype labels, ...) plus the audit metadata the
+        reaction index carries (``rate_law``, ``role``, ``confidence``,
+        ``provenance_ref``, ``source``, ``graph_group``, ``sources`` PMID
+        list, ``notes``), so a consumer walking the graph can compute and
+        audit the reaction from the edge alone.
 
         Returns a list of warning messages, mirroring the other overlay
         methods.
@@ -821,25 +847,42 @@ class GraphEngine:
         warnings: list[str] = []
         if self._flux_reactions_by_class is None:
             self._apply_flux_parameters()
-        for cls, reactions in self._flux_reactions_by_class.items():
-            for reaction in reactions:
-                substrate = reaction.params.get("substrate_node_id")
-                enzyme = reaction.params.get("enzyme_node_id")
-                if not substrate or not enzyme:
-                    continue
-                if not self.G.has_edge(substrate, enzyme):
-                    warnings.append(
-                        f"No edge for flux binding: {cls}/{reaction.term_key} "
-                        f"({substrate} -> {enzyme})"
-                    )
-                    continue
-                edge_view = self.G[substrate][enzyme]
-                edge_data = next(iter(edge_view.values()))
-                kinetics = edge_data.setdefault("kinetics", {})
-                flux_terms = kinetics.setdefault("flux_terms", {})
-                by_class = flux_terms.setdefault(cls, {})
-                by_pathway = by_class.setdefault(reaction.pathway, {})
-                by_pathway[reaction.term_key] = dict(reaction.params)
+        all_reactions = [
+            reaction
+            for reactions in self._flux_reactions_by_class.values()
+            for reaction in reactions
+        ]
+        all_reactions.extend(self._flux_shadowed_reactions)
+        for reaction in all_reactions:
+            substrate = reaction.params.get("substrate_node_id")
+            enzyme = reaction.params.get("enzyme_node_id")
+            if not substrate or not enzyme:
+                continue
+            if not self.G.has_edge(substrate, enzyme):
+                warnings.append(
+                    f"No edge for flux binding: {reaction.carcinogen_class}/{reaction.term_key} "
+                    f"({substrate} -> {enzyme})"
+                )
+                continue
+            edge_view = self.G[substrate][enzyme]
+            edge_data = next(iter(edge_view.values()))
+            kinetics = edge_data.setdefault("kinetics", {})
+            flux_terms = kinetics.setdefault("flux_terms", {})
+            by_class = flux_terms.setdefault(reaction.carcinogen_class, {})
+            by_pathway = by_class.setdefault(reaction.pathway, {})
+            payload = dict(reaction.params)
+            payload["rate_law"] = reaction.rate_law
+            payload["role"] = reaction.role
+            payload["confidence"] = reaction.confidence
+            payload["provenance_ref"] = reaction.provenance_ref
+            payload["source"] = reaction.source
+            if reaction.graph_group is not None:
+                payload["graph_group"] = reaction.graph_group
+            if reaction.sources is not None:
+                payload["sources"] = reaction.sources
+            if reaction.notes is not None:
+                payload["notes"] = reaction.notes
+            by_pathway[reaction.term_key] = payload
         return warnings
 
     # ── Interaction-parameter access ─────────────────────────────────────
