@@ -1864,7 +1864,12 @@ def _compute_aflatoxin_flux(
 ) -> FluxResultDict:
     """Compute AFB1 activation and detoxification fluxes."""
     params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["Aflatoxin"]["pathways"]
+    aflatoxin_data = params["carcinogen_classes"]["Aflatoxin"]
+    p = aflatoxin_data["pathways"]
+    agg = aflatoxin_data["aggregation"]
+    entry_round = agg["entry_round"]
+    entry_round_overrides = agg.get("entry_round_overrides", {})
+    total_round = agg["total_round"]
     activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
 
@@ -1879,13 +1884,13 @@ def _compute_aflatoxin_flux(
         cyp3a4_p["hill_n"],
     )
     activation_enzymes["CYP3A4"] = {
-        "flux": round(v_cyp3a4, 4),
+        "flux": round(v_cyp3a4, entry_round["activation"]),
         "kinetics": "hill",
         "n": cyp3a4_p["hill_n"],
         "genotype_modifier": gm3a4,
         "tissue_weight": tw3a4,
         "confidence": cyp3a4_p["confidence"],
-        "fraction_contribution": 0.45,
+        "fraction_contribution": cyp3a4_p["fraction_contribution"],
     }
 
     # CYP1A2 — Michaelis-Menten
@@ -1898,12 +1903,12 @@ def _compute_aflatoxin_flux(
         cyp1a2_p["Km_uM"],
     )
     activation_enzymes["CYP1A2"] = {
-        "flux": round(v_cyp1a2, 4),
+        "flux": round(v_cyp1a2, entry_round["activation"]),
         "kinetics": "michaelis_menten",
         "genotype_modifier": gm1a2,
         "tissue_weight": tw1a2,
         "confidence": cyp1a2_p["confidence"],
-        "fraction_contribution": 0.49,
+        "fraction_contribution": cyp1a2_p["fraction_contribution"],
     }
 
     total_activation = v_cyp3a4 + v_cyp1a2
@@ -1914,26 +1919,34 @@ def _compute_aflatoxin_flux(
         S,
         afq1_p["Vmax_pmol_min_pmolP450"] * gm3a4 * tw3a4,
         afq1_p["Km_uM"],
-        n=2.0,
+        afq1_p["hill_n"],
     )
     detox_enzymes["CYP3A4_AFQ1"] = {
-        "flux": round(v_afq1, 4),
+        "flux": round(v_afq1, entry_round["detoxification"]),
         "genotype_modifier": gm3a4,
         "tissue_weight": tw3a4,
         "confidence": afq1_p["confidence"],
     }
 
     # GSTA1 (estimated)
+    gsta1_p = p["detoxification"]["GSTA1"]
     gsta1_gm = genotype_modifier(genotypes.get("GSTA1", "NM"), "GSTA1")
-    gsta1_tw = get_flux_tissue_weight("GSTM1", tissue, tissue_weight_source)  # proxy
-    GSTA1_VMAX_EST = 0.05
-    GSTA1_KM_EST = 10.0
-    v_gsta1 = michaelis_menten(S, GSTA1_VMAX_EST * gsta1_gm * gsta1_tw, GSTA1_KM_EST)
+    gsta1_tw = get_flux_tissue_weight(
+        gsta1_p.get("tissue_weight_gene", "GSTA1"), tissue, tissue_weight_source
+    )
+    v_gsta1 = michaelis_menten(
+        S,
+        gsta1_p["Vmax_pmol_min_pmolP450_estimated"] * gsta1_gm * gsta1_tw,
+        gsta1_p["Km_uM"],
+    )
     detox_enzymes["GSTA1_conjugation"] = {
-        "flux": round(v_gsta1, 6),
+        "flux": round(
+            v_gsta1,
+            entry_round_overrides.get("GSTA1_conjugation", entry_round["detoxification"]),
+        ),
         "genotype_modifier": gsta1_gm,
         "tissue_weight": gsta1_tw,
-        "confidence": "low",
+        "confidence": gsta1_p["confidence"],
     }
 
     total_detox = v_afq1 + v_gsta1
@@ -1941,9 +1954,9 @@ def _compute_aflatoxin_flux(
     return {
         "activation_enzymes": activation_enzymes,
         "detox_enzymes": detox_enzymes,
-        "total_activation": round(total_activation, 4),
-        "total_detox": round(total_detox, 6),
-        "unit_note": "All fluxes in pmol/min/pmolP450; GSTA1 Vmax is estimated",
+        "total_activation": round(total_activation, total_round["activation"]),
+        "total_detox": round(total_detox, total_round["detoxification"]),
+        "unit_note": agg["unit_note"],
     }
 
 
@@ -1955,7 +1968,12 @@ def _compute_aldehyde_flux(
 ) -> FluxResultDict:
     """Compute aldehyde (acetaldehyde) clearance flux."""
     params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["Aldehyde"]["pathways"]["acetaldehyde_clearance"]
+    aldehyde_data = params["carcinogen_classes"]["Aldehyde"]
+    p = aldehyde_data["pathways"]["acetaldehyde_clearance"]
+    agg = aldehyde_data["aggregation"]
+    entry_round = agg["entry_round"]
+    total_round = agg["total_round"]
+    extras_round = agg.get("extras_round", {})
     detox_enzymes: dict[str, Any] = {}
 
     # Determine ALDH2 genotype
@@ -1984,12 +2002,12 @@ def _compute_aldehyde_flux(
     tw_aldh2 = get_flux_tissue_weight("ALDH2", tissue, tissue_weight_source)
     v_aldh2 = michaelis_menten(S, aldh2_vmax * aldh2_gm * tw_aldh2, aldh2_km)
     detox_enzymes["ALDH2"] = {
-        "flux": round(v_aldh2, 6),
+        "flux": round(v_aldh2, entry_round["detoxification"]),
         "genotype": aldh2_gt,
         "genotype_modifier": aldh2_gm,
         "tissue_weight": tw_aldh2,
-        "CLint": round((aldh2_vmax * aldh2_gm * tw_aldh2) / aldh2_km, 4),
-        "confidence": "high",
+        "CLint": round((aldh2_vmax * aldh2_gm * tw_aldh2) / aldh2_km, extras_round["CLint"]),
+        "confidence": aldh2_p["confidence"],
     }
 
     # ALDH1A1 (backup)
@@ -2000,16 +2018,16 @@ def _compute_aldehyde_flux(
         S, aldh1a1_p["Vmax_U_per_mg"] * aldh1a1_gm * tw_aldh1a1, aldh1a1_p["Km_uM"]
     )
     detox_enzymes["ALDH1A1"] = {
-        "flux": round(v_aldh1a1, 6),
+        "flux": round(v_aldh1a1, entry_round["detoxification"]),
         "genotype_modifier": aldh1a1_gm,
         "tissue_weight": tw_aldh1a1,
-        "confidence": "high",
+        "confidence": aldh1a1_p["confidence"],
     }
 
     total_detox = v_aldh2 + v_aldh1a1
 
     # Ethanol -> Acetaldehyde production
-    adh_p = params["carcinogen_classes"]["Aldehyde"]["pathways"]["ethanol_oxidation"]
+    adh_p = aldehyde_data["pathways"]["ethanol_oxidation"]
     adh_gt = genotypes.get("ADH1B", "*1/*1")
     if adh_gt in ("*2/*2", "fast", "RM"):
         adh_params = adh_p["ADH1B_star2"]
@@ -2025,17 +2043,17 @@ def _compute_aldehyde_flux(
         "activation_enzymes": {
             "ADH1B": {
                 "reaction": "Ethanol -> Acetaldehyde",
-                "flux": round(v_adh, 6),
+                "flux": round(v_adh, entry_round["activation"]),
                 "genotype": adh_gt,
                 "genotype_modifier": 1.0,
                 "tissue_weight": 1.0,
-                "confidence": "high",
+                "confidence": adh_params["confidence"],
             }
         },
         "detox_enzymes": detox_enzymes,
-        "total_activation": round(v_adh, 6),
-        "total_detox": round(total_detox, 6),
-        "unit_note": "Flux in U/mg; ratio dimensionally consistent",
+        "total_activation": round(v_adh, total_round["activation"]),
+        "total_detox": round(total_detox, total_round["detoxification"]),
+        "unit_note": agg["unit_note"],
     }
 
 

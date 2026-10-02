@@ -207,18 +207,18 @@
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450", "detoxification": "Vmax_pmol_min_pmolP450"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 4, "detoxification": 4},
+        "entry_round_overrides": {"GSTA1_conjugation": 6},
         "total_round": {"activation": 4, "detoxification": 6},
         "unit_note": "All fluxes in pmol/min/pmolP450; GSTA1 Vmax is estimated",
         "status": "dedicated_function",
-        "notes": "Hand-rolled until term-factor sharing (CYP3A4_AFQ1 reuses CYP3A4 gm/tw, hill_n 2.0 hardcoded) and estimated constants (GSTA1 Vmax 0.05 / Km 10.0 uM) are expressed declaratively.",
-        "estimated_constants": {"GSTA1_Vmax_est": 0.05, "GSTA1_Km_est_uM": 10.0, "AFQ1_hill_n": 2.0},
-        "fraction_contribution": {"CYP3A4": 0.45, "CYP1A2": 0.49}
+        "notes": "Dedicated function: term-factor sharing (CYP3A4_AFQ1 reuses CYP3A4 gm/tw) is model-specific. Term kinetics, estimates, fraction contributions, and the GSTA1 tissue-weight proxy live on the terms; entry/total rounding and the unit note are read from this block."
       },
       "pathways": {
         "activation": {
           "CYP3A4": {
             "rate_law": "hill",
             "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
+            "fraction_contribution": 0.45,
             "Km_uM": 49.6,
             "Vmax_pmol_min_pmolP450": 43.6,
             "CLint": 0.879,
@@ -232,6 +232,7 @@
           "CYP1A2": {
             "rate_law": "michaelis_menten",
             "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
+            "fraction_contribution": 0.49,
             "Km_uM": 58.2,
             "Vmax_pmol_min_pmolP450": 283.0,
             "CLint": 4.86,
@@ -245,6 +246,7 @@
         "detoxification": {
           "CYP3A4_AFQ1": {
             "rate_law": "hill",
+            "hill_n": 2.0,
             "graph_node_id": "CYP3A4",
             "reaction": "AFB1 → AFQ1 (hydroxylation, non-reactive detox product)",
             "Km_uM": 160.0,
@@ -257,8 +259,10 @@
           },
           "GSTA1": {
             "rate_law": "michaelis_menten",
+            "tissue_weight_gene": "GSTM1",
             "reaction": "AFBO → AFBO-GSH conjugate",
             "Km_uM": 10.0,
+            "Vmax_pmol_min_pmolP450_estimated": 0.05,
             "CLint_relative": 1.0,
             "confidence": "low",
             "notes": "GSTA1 is the main AFB1-epoxide conjugating enzyme in human liver; exact human Km is not well-established — estimate from rat/human comparison",
@@ -282,6 +286,7 @@
         "vmax_field": {"detoxification": "Vmax_U_per_mg", "ethanol_oxidation": "Vmax_U_per_mg"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 6, "detoxification": 6},
+        "extras_round": {"CLint": 4},
         "total_round": {"activation": 6, "detoxification": 6},
         "unit_note": "Flux in U/mg; ratio dimensionally consistent",
         "status": "dedicated_function",
