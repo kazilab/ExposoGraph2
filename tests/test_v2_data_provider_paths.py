@@ -75,7 +75,6 @@ def test_module3_data_loads_from_packaged_paths() -> None:
     for path in (
         flux_engine._KINETIC_PARAMS_FILE,
         flux_engine._EXPOSURE_DB_FILE,
-        flux_engine._INTERACTION_PARAMS_FILE,
         flux_engine._PROXY_FLUX_PARAMS_FILE,
         flux_engine._PROXY_FLUX_PROVENANCE_FILE,
         exposure_engine._EXPOSURE_DB_FILE,

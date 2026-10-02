@@ -196,8 +196,6 @@ _KINETIC_PARAMS_FILE = Path(__file__).parent / "data" / "kinetic_parameters.json
 _KINETIC_CACHE: JsonDict | None = None
 _EXPOSURE_DB_FILE = Path(__file__).parent / "data" / "exposure_database.json"
 _EXPOSURE_DB_CACHE: JsonDict | None = None
-_INTERACTION_PARAMS_FILE = Path(__file__).parent / "data" / "interaction_parameters.json"
-_INTERACTION_CACHE: JsonDict | None = None
 _PROXY_FLUX_PARAMS_FILE = Path(__file__).parent / "data" / "proxy_flux_parameters.json"
 _PROXY_FLUX_CACHE: JsonDict | None = None
 _PROXY_FLUX_PROVENANCE_FILE = Path(__file__).parent / "data" / "proxy_flux_provenance.json"
@@ -225,15 +223,6 @@ def _load_exposure_db() -> JsonDict:
         with open(_EXPOSURE_DB_FILE, "r", encoding="utf-8") as fh:
             _EXPOSURE_DB_CACHE = cast(JsonDict, json.load(fh))
     return _EXPOSURE_DB_CACHE
-
-
-def _load_interaction_params() -> JsonDict:
-    """Lazy-load and cache the interaction-parameter JSON."""
-    global _INTERACTION_CACHE
-    if _INTERACTION_CACHE is None:
-        with open(_INTERACTION_PARAMS_FILE, "r", encoding="utf-8") as fh:
-            _INTERACTION_CACHE = cast(JsonDict, json.load(fh))
-    return _INTERACTION_CACHE
 
 
 def _load_proxy_flux_params() -> JsonDict:
