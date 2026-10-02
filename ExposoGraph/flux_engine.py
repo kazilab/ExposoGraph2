@@ -20,6 +20,7 @@ import sys
 import warnings
 from dataclasses import asdict, dataclass, field
 from enum import Enum
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Mapping, TypeAlias, cast
 
@@ -34,7 +35,7 @@ from .flux_equations import (
 )
 
 if TYPE_CHECKING:
-    from .engine import GraphEngine
+    from .engine import FluxReaction, GraphEngine
 
 # ── Enums ──────────────────────────────────────────────────────────────────
 
@@ -1468,6 +1469,121 @@ def _get_proxy_class_params(class_name: str) -> JsonDict:
     return cast(JsonDict, proxy_classes[class_name])
 
 
+_FLUX_CONTRACT_ENGINE: "GraphEngine | None" = None
+
+
+def _get_flux_contract_engine() -> "GraphEngine":
+    """Return the module-level bare engine serving the flux-reaction contract.
+
+    A bare GraphEngine is enough: ``get_flux_reactions`` lazily builds the
+    side index from the bundled parameter files without loading the full
+    graph. Callers that already hold a reference engine pass it explicitly
+    through ``compute_pathway_flux(engine=...)``.
+    """
+    global _FLUX_CONTRACT_ENGINE
+    if _FLUX_CONTRACT_ENGINE is None:
+        from .engine import GraphEngine
+
+        _FLUX_CONTRACT_ENGINE = GraphEngine()
+    return _FLUX_CONTRACT_ENGINE
+
+
+# Output labels for the proxy kinetics field, keyed by rate law.
+_PROXY_TERM_KINETICS_LABELS: dict[str, str] = {
+    "michaelis_menten": "semi_quantitative",
+    "hill": "damage_proxy",
+    "saturating": "semi_quantitative",
+    "repair": "repair_proxy",
+}
+
+# Legacy output-shape compatibility: the hand-written NDEA and VinylChloride
+# functions omitted the "kinetics" label on activation entries, so
+# _enzyme_flux_from_dict defaulted those to "michaelis_menten". Preserved so
+# the generic loop is output-identical; drop when output normalization is
+# accepted as a deliberate change.
+_PROXY_ACTIVATION_WITHOUT_KINETICS = frozenset({"NDEA", "VinylChloride"})
+
+
+def _compute_generic_proxy_flux(
+    carcinogen_class: str,
+    genotypes: GenotypeMap,
+    tissue: str,
+    S: float,
+    tissue_weight_source: FluxTissueWeightSource,
+    *,
+    engine: "GraphEngine | None" = None,
+) -> FluxResultDict:
+    """Compute a semi-quantitative proxy flux from engine FluxReaction records.
+
+    Replaces the six hand-written proxy-class functions (AromaticAmines,
+    EstrogenMetabolites, NDEA, VinylChloride, UV_Radiation, HeavyMetal).
+    Enzyme scope, role, and rate law come from
+    ``GraphEngine.get_flux_reactions`` -- the flux contract -- and the
+    per-term parameters ride on the reaction records. Dioxin
+    (receptor/signaling model) and ChlorinatedSolvent (derived clearance)
+    keep their dedicated functions: their model structures are not
+    term-sum proxies.
+    """
+    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    reactions = active_engine.get_flux_reactions(carcinogen_class)
+    cfg = _get_proxy_class_params(carcinogen_class)
+
+    def _entry(reaction: "FluxReaction", value: float, gm: float, tw: float) -> JsonDict:
+        entry: JsonDict = {
+            "flux": round(value, 6),
+            "genotype_modifier": gm,
+            "tissue_weight": tw,
+            "confidence": reaction.confidence,
+        }
+        if reaction.role != "activation" or carcinogen_class not in _PROXY_ACTIVATION_WITHOUT_KINETICS:
+            entry["kinetics"] = _PROXY_TERM_KINETICS_LABELS.get(reaction.rate_law, "semi_quantitative")
+        entry["note"] = str(reaction.params.get("note", ""))
+        return entry
+
+    def _evaluate(reaction: "FluxReaction", activation_base: float | None = None) -> tuple[float, float, float]:
+        term = reaction.params
+        if reaction.rate_law == "repair":
+            if activation_base is None:
+                raise ValueError(f"Repair term {reaction.term_key} evaluated without an activation base")
+            return _compute_proxy_repair_term(activation_base, term, genotypes, tissue, tissue_weight_source)
+        if reaction.rate_law == "michaelis_menten":
+            return _compute_proxy_mm_term(term, genotypes, tissue, S, tissue_weight_source)
+        if reaction.rate_law == "hill":
+            return _compute_proxy_hill_term(term, genotypes, tissue, S, tissue_weight_source)
+        if reaction.rate_law == "saturating":
+            return _compute_proxy_saturating_term(term, genotypes, tissue, S, tissue_weight_source)
+        raise ValueError(
+            f"Unsupported proxy rate law {reaction.rate_law!r} for "
+            f"{carcinogen_class}/{reaction.term_key}"
+        )
+
+    activation_enzymes: dict[str, Any] = {}
+    total_activation = 0.0
+    for reaction in reactions:
+        if reaction.role != "activation":
+            continue
+        value, gm, tw = _evaluate(reaction)
+        total_activation += value
+        activation_enzymes[reaction.term_key] = _entry(reaction, value, gm, tw)
+
+    detox_enzymes: dict[str, Any] = {}
+    total_detox = 0.0
+    for reaction in reactions:
+        if reaction.role == "activation":
+            continue
+        value, gm, tw = _evaluate(reaction, activation_base=total_activation)
+        total_detox += value
+        detox_enzymes[reaction.term_key] = _entry(reaction, value, gm, tw)
+
+    return {
+        "activation_enzymes": activation_enzymes,
+        "detox_enzymes": detox_enzymes,
+        "total_activation": round(total_activation, 6),
+        "total_detox": round(total_detox, 6),
+        "unit_note": cfg["unit_note"],
+    }
+
+
 def _resolve_nested_ref(doc: JsonDict, ref: str) -> JsonDict:
     """Resolve a dotted reference inside a nested mapping."""
     node: JsonDict = doc
@@ -2048,650 +2164,6 @@ def _compute_benzene_flux(
     }
 
 
-def _compute_aromatic_amine_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute a semi-quantitative 4-ABP / aromatic-amine activation proxy."""
-    cfg = _get_proxy_class_params("AromaticAmines")
-    act1_p = cfg["activation_terms"]["CYP1A2"]
-    v_1a2, gm1a2, tw1a2 = _compute_proxy_mm_term(
-        act1_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    act2_p = cfg["activation_terms"]["NAT1"]
-    v_nat1, gm_nat1, tw_nat1 = _compute_proxy_mm_term(
-        act2_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    total_activation = v_1a2 + v_nat1
-
-    detox_nat2 = cfg["detox_terms"]["NAT2"]
-    v_nat2, gm_nat2, tw_nat2 = _compute_proxy_mm_term(
-        detox_nat2,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_gstm1 = cfg["detox_terms"]["GSTM1"]
-    v_gstm1, gm_gstm1, tw_gstm1 = _compute_proxy_mm_term(
-        detox_gstm1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_gstp1 = cfg["detox_terms"]["GSTP1"]
-    v_gstp1, gm_gstp1, tw_gstp1 = _compute_proxy_mm_term(
-        detox_gstp1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    repair_xpc_p = cfg["repair_terms"]["XPC"]
-    repair_xpc, gm_xpc, tw_xpc = _compute_proxy_repair_term(
-        total_activation,
-        repair_xpc_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    repair_ercc2_p = cfg["repair_terms"]["ERCC2"]
-    repair_ercc2, gm_ercc2, tw_ercc2 = _compute_proxy_repair_term(
-        total_activation,
-        repair_ercc2_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    total_detox = v_nat2 + v_gstm1 + v_gstp1 + repair_xpc + repair_ercc2
-
-    return {
-        "activation_enzymes": {
-            "CYP1A2": {
-                "flux": round(v_1a2, 6),
-                "genotype_modifier": gm1a2,
-                "tissue_weight": tw1a2,
-                "confidence": act1_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": act1_p["note"],
-            },
-            "NAT1": {
-                "flux": round(v_nat1, 6),
-                "genotype_modifier": gm_nat1,
-                "tissue_weight": tw_nat1,
-                "confidence": act2_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": act2_p["note"],
-            },
-        },
-        "detox_enzymes": {
-            "NAT2": {
-                "flux": round(v_nat2, 6),
-                "genotype_modifier": gm_nat2,
-                "tissue_weight": tw_nat2,
-                "confidence": detox_nat2["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_nat2["note"],
-            },
-            "GSTM1": {
-                "flux": round(v_gstm1, 6),
-                "genotype_modifier": gm_gstm1,
-                "tissue_weight": tw_gstm1,
-                "confidence": detox_gstm1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_gstm1["note"],
-            },
-            "GSTP1": {
-                "flux": round(v_gstp1, 6),
-                "genotype_modifier": gm_gstp1,
-                "tissue_weight": tw_gstp1,
-                "confidence": detox_gstp1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_gstp1["note"],
-            },
-            "XPC": {
-                "flux": round(repair_xpc, 6),
-                "genotype_modifier": gm_xpc,
-                "tissue_weight": tw_xpc,
-                "confidence": repair_xpc_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_xpc_p["note"],
-            },
-            "ERCC2": {
-                "flux": round(repair_ercc2, 6),
-                "genotype_modifier": gm_ercc2,
-                "tissue_weight": tw_ercc2,
-                "confidence": repair_ercc2_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_ercc2_p["note"],
-            },
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_detox, 6),
-        "unit_note": cfg["unit_note"],
-    }
-
-
-def _compute_estrogen_metabolite_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute catechol-estrogen / estradiol-quinone burden with detox proxies."""
-    cfg = _get_proxy_class_params("EstrogenMetabolites")
-
-    act1_p = cfg["activation_terms"]["CYP1B1"]
-    v_1b1, gm1b1, tw1b1 = _compute_proxy_mm_term(
-        act1_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    act2_p = cfg["activation_terms"]["CYP1A1"]
-    v_1a1, gm1a1, tw1a1 = _compute_proxy_mm_term(
-        act2_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    act3_p = cfg["activation_terms"]["CYP1A2"]
-    v_1a2, gm1a2, tw1a2 = _compute_proxy_mm_term(
-        act3_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    total_activation = v_1b1 + v_1a1 + v_1a2
-
-    detox_comt = cfg["detox_terms"]["COMT"]
-    v_comt, gm_comt, tw_comt = _compute_proxy_mm_term(
-        detox_comt,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_sult = cfg["detox_terms"]["SULT1E1"]
-    v_sult1e1, gm_sult1e1, tw_sult1e1 = _compute_proxy_mm_term(
-        detox_sult,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_ugt = cfg["detox_terms"]["UGT2B7"]
-    v_ugt2b7, gm_ugt2b7, tw_ugt2b7 = _compute_proxy_mm_term(
-        detox_ugt,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_gstp1 = cfg["detox_terms"]["GSTP1"]
-    v_gstp1, gm_gstp1, tw_gstp1 = _compute_proxy_mm_term(
-        detox_gstp1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    repair_xrcc1_p = cfg["repair_terms"]["XRCC1"]
-    repair_xrcc1, gm_xrcc1, tw_xrcc1 = _compute_proxy_repair_term(
-        total_activation,
-        repair_xrcc1_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    total_detox = v_comt + v_sult1e1 + v_ugt2b7 + v_gstp1 + repair_xrcc1
-
-    return {
-        "activation_enzymes": {
-            "CYP1B1": {
-                "flux": round(v_1b1, 6),
-                "genotype_modifier": gm1b1,
-                "tissue_weight": tw1b1,
-                "confidence": act1_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": act1_p["note"],
-            },
-            "CYP1A1": {
-                "flux": round(v_1a1, 6),
-                "genotype_modifier": gm1a1,
-                "tissue_weight": tw1a1,
-                "confidence": act2_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": act2_p["note"],
-            },
-            "CYP1A2": {
-                "flux": round(v_1a2, 6),
-                "genotype_modifier": gm1a2,
-                "tissue_weight": tw1a2,
-                "confidence": act3_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": act3_p["note"],
-            },
-        },
-        "detox_enzymes": {
-            "COMT": {
-                "flux": round(v_comt, 6),
-                "genotype_modifier": gm_comt,
-                "tissue_weight": tw_comt,
-                "confidence": detox_comt["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_comt["note"],
-            },
-            "SULT1E1": {
-                "flux": round(v_sult1e1, 6),
-                "genotype_modifier": gm_sult1e1,
-                "tissue_weight": tw_sult1e1,
-                "confidence": detox_sult["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_sult["note"],
-            },
-            "UGT2B7": {
-                "flux": round(v_ugt2b7, 6),
-                "genotype_modifier": gm_ugt2b7,
-                "tissue_weight": tw_ugt2b7,
-                "confidence": detox_ugt["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_ugt["note"],
-            },
-            "GSTP1": {
-                "flux": round(v_gstp1, 6),
-                "genotype_modifier": gm_gstp1,
-                "tissue_weight": tw_gstp1,
-                "confidence": detox_gstp1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_gstp1["note"],
-            },
-            "XRCC1": {
-                "flux": round(repair_xrcc1, 6),
-                "genotype_modifier": gm_xrcc1,
-                "tissue_weight": tw_xrcc1,
-                "confidence": repair_xrcc1_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_xrcc1_p["note"],
-            },
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_detox, 6),
-        "unit_note": cfg["unit_note"],
-    }
-
-
-def _compute_ndea_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute NDEA-specific dietary nitroso activation with pulmonary/liver proxies."""
-    cfg = _get_proxy_class_params("NDEA")
-
-    act_2a13 = cfg["activation_terms"]["CYP2A13"]
-    v_2a13, gm2a13, tw2a13 = _compute_proxy_mm_term(
-        act_2a13,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    act_2e1 = cfg["activation_terms"]["CYP2E1"]
-    v_2e1, gm2e1, tw2e1 = _compute_proxy_mm_term(
-        act_2e1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    act_2a6 = cfg["activation_terms"]["CYP2A6"]
-    v_2a6, gm2a6, tw2a6 = _compute_proxy_mm_term(
-        act_2a6,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    total_activation = v_2a13 + v_2e1 + v_2a6
-
-    repair_mgmt_p = cfg["repair_terms"]["MGMT"]
-    repair_mgmt, gm_mgmt, tw_mgmt = _compute_proxy_repair_term(
-        total_activation,
-        repair_mgmt_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    detox_gstp1 = cfg["detox_terms"]["GSTP1"]
-    v_gstp1, gm_gstp1, tw_gstp1 = _compute_proxy_mm_term(
-        detox_gstp1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-    total_detox = repair_mgmt + v_gstp1
-
-    return {
-        "activation_enzymes": {
-            "CYP2A13": {
-                "flux": round(v_2a13, 6),
-                "genotype_modifier": gm2a13,
-                "tissue_weight": tw2a13,
-                "confidence": act_2a13["confidence"],
-                "note": act_2a13["note"],
-            },
-            "CYP2E1": {
-                "flux": round(v_2e1, 6),
-                "genotype_modifier": gm2e1,
-                "tissue_weight": tw2e1,
-                "confidence": act_2e1["confidence"],
-                "note": act_2e1["note"],
-            },
-            "CYP2A6": {
-                "flux": round(v_2a6, 6),
-                "genotype_modifier": gm2a6,
-                "tissue_weight": tw2a6,
-                "confidence": act_2a6["confidence"],
-                "note": act_2a6["note"],
-            },
-        },
-        "detox_enzymes": {
-            "MGMT": {
-                "flux": round(repair_mgmt, 6),
-                "genotype_modifier": gm_mgmt,
-                "tissue_weight": tw_mgmt,
-                "confidence": repair_mgmt_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_mgmt_p["note"],
-            },
-            "GSTP1": {
-                "flux": round(v_gstp1, 6),
-                "genotype_modifier": gm_gstp1,
-                "tissue_weight": tw_gstp1,
-                "confidence": detox_gstp1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_gstp1["note"],
-            },
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_detox, 6),
-        "unit_note": cfg["unit_note"],
-    }
-
-
-def _compute_vinyl_chloride_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute vinyl-chloride activation with GST/repair attenuation proxies."""
-    cfg = _get_proxy_class_params("VinylChloride")
-
-    act_2e1 = cfg["activation_terms"]["CYP2E1"]
-    v_2e1, gm2e1, tw2e1 = _compute_proxy_mm_term(
-        act_2e1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_gstt1 = cfg["detox_terms"]["GSTT1"]
-    v_gstt1, gm_gstt1, tw_gstt1 = _compute_proxy_mm_term(
-        detox_gstt1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_gstm1 = cfg["detox_terms"]["GSTM1"]
-    v_gstm1, gm_gstm1, tw_gstm1 = _compute_proxy_mm_term(
-        detox_gstm1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_ephx1 = cfg["detox_terms"]["EPHX1"]
-    v_ephx1, gm_ephx1, tw_ephx1 = _compute_proxy_mm_term(
-        detox_ephx1,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    detox_aldh2 = cfg["detox_terms"]["ALDH2"]
-    v_aldh2, gm_aldh2, tw_aldh2 = _compute_proxy_mm_term(
-        detox_aldh2,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    repair_ercc2_p = cfg["repair_terms"]["ERCC2"]
-    repair_ercc2, gm_ercc2, tw_ercc2 = _compute_proxy_repair_term(
-        v_2e1,
-        repair_ercc2_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    total_detox = v_gstt1 + v_gstm1 + v_ephx1 + v_aldh2 + repair_ercc2
-
-    return {
-        "activation_enzymes": {
-            "CYP2E1": {
-                "flux": round(v_2e1, 6),
-                "genotype_modifier": gm2e1,
-                "tissue_weight": tw2e1,
-                "confidence": act_2e1["confidence"],
-                "note": act_2e1["note"],
-            }
-        },
-        "detox_enzymes": {
-            "GSTT1": {
-                "flux": round(v_gstt1, 6),
-                "genotype_modifier": gm_gstt1,
-                "tissue_weight": tw_gstt1,
-                "confidence": detox_gstt1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_gstt1["note"],
-            },
-            "GSTM1": {
-                "flux": round(v_gstm1, 6),
-                "genotype_modifier": gm_gstm1,
-                "tissue_weight": tw_gstm1,
-                "confidence": detox_gstm1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_gstm1["note"],
-            },
-            "EPHX1": {
-                "flux": round(v_ephx1, 6),
-                "genotype_modifier": gm_ephx1,
-                "tissue_weight": tw_ephx1,
-                "confidence": detox_ephx1["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_ephx1["note"],
-            },
-            "ALDH2": {
-                "flux": round(v_aldh2, 6),
-                "genotype_modifier": gm_aldh2,
-                "tissue_weight": tw_aldh2,
-                "confidence": detox_aldh2["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": detox_aldh2["note"],
-            },
-            "ERCC2": {
-                "flux": round(repair_ercc2, 6),
-                "genotype_modifier": gm_ercc2,
-                "tissue_weight": tw_ercc2,
-                "confidence": repair_ercc2_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_ercc2_p["note"],
-            },
-        },
-        "total_activation": round(v_2e1, 6),
-        "total_detox": round(total_detox, 6),
-        "unit_note": cfg["unit_note"],
-    }
-
-
-def _compute_uv_radiation_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute UV-driven DNA-damage burden as photoproducts versus repair capacity."""
-    cfg = _get_proxy_class_params("UV_Radiation")
-    uvb_p = cfg["activation_terms"]["UVB_photoproduct_burden"]
-    v_uvb, _, tissue_signal = _compute_proxy_hill_term(
-        uvb_p,
-        {},
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-    uva_p = cfg["activation_terms"]["UVA_oxidative_tail"]
-    v_uva, _, _ = _compute_proxy_hill_term(
-        uva_p,
-        {},
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-    total_activation = v_uvb + v_uva
-
-    repair_xpc_p = cfg["repair_terms"]["XPC"]
-    repair_xpc, gm_xpc, tw_xpc = _compute_proxy_repair_term(
-        total_activation,
-        repair_xpc_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    repair_ercc2_p = cfg["repair_terms"]["ERCC2"]
-    repair_ercc2, gm_ercc2, tw_ercc2 = _compute_proxy_repair_term(
-        total_activation,
-        repair_ercc2_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    repair_ogg1_p = cfg["repair_terms"]["OGG1"]
-    repair_ogg1, gm_ogg1, tw_ogg1 = _compute_proxy_repair_term(
-        total_activation,
-        repair_ogg1_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    repair_polh_p = cfg["repair_terms"]["POLH"]
-    repair_polh, gm_polh, tw_polh = _compute_proxy_repair_term(
-        total_activation,
-        repair_polh_p,
-        genotypes,
-        tissue,
-        tissue_weight_source,
-    )
-    total_detox = repair_xpc + repair_ercc2 + repair_ogg1 + repair_polh
-
-    return {
-        "activation_enzymes": {
-            "UVB_photoproduct_burden": {
-                "flux": round(v_uvb, 6),
-                "genotype_modifier": 1.0,
-                "tissue_weight": tissue_signal,
-                "confidence": uvb_p["confidence"],
-                "kinetics": "damage_proxy",
-                "note": uvb_p["note"],
-            },
-            "UVA_oxidative_tail": {
-                "flux": round(v_uva, 6),
-                "genotype_modifier": 1.0,
-                "tissue_weight": tissue_signal,
-                "confidence": uva_p["confidence"],
-                "kinetics": "damage_proxy",
-                "note": uva_p["note"],
-            },
-        },
-        "detox_enzymes": {
-            "XPC": {
-                "flux": round(repair_xpc, 6),
-                "genotype_modifier": gm_xpc,
-                "tissue_weight": tw_xpc,
-                "confidence": repair_xpc_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_xpc_p["note"],
-            },
-            "ERCC2": {
-                "flux": round(repair_ercc2, 6),
-                "genotype_modifier": gm_ercc2,
-                "tissue_weight": tw_ercc2,
-                "confidence": repair_ercc2_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_ercc2_p["note"],
-            },
-            "OGG1": {
-                "flux": round(repair_ogg1, 6),
-                "genotype_modifier": gm_ogg1,
-                "tissue_weight": tw_ogg1,
-                "confidence": repair_ogg1_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_ogg1_p["note"],
-            },
-            "POLH": {
-                "flux": round(repair_polh, 6),
-                "genotype_modifier": gm_polh,
-                "tissue_weight": tw_polh,
-                "confidence": repair_polh_p["confidence"],
-                "kinetics": "repair_proxy",
-                "note": repair_polh_p["note"],
-            },
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_detox, 6),
-        "unit_note": cfg["unit_note"],
-    }
-
-
 def _compute_chlorinated_solvent_flux(
     genotypes: GenotypeMap,
     tissue: str,
@@ -2822,79 +2294,6 @@ def _compute_dioxin_flux(
     }
 
 
-def _compute_heavy_metal_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute semi-quantitative heavy-metal risk as ROS burden vs methylation clearance."""
-    cfg = _get_proxy_class_params("HeavyMetal")
-
-    as3mt_p = cfg["detox_terms"]["AS3MT"]
-    v_as3mt, gm_as3mt, tw_as3mt = _compute_proxy_mm_term(
-        as3mt_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    ros_p = cfg["activation_terms"]["general_ROS"]
-    v_ros, _, tw_ros = _compute_proxy_saturating_term(
-        ros_p,
-        {},
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    cadmium_p = cfg["activation_terms"]["cadmium_stress_proxy"]
-    v_cadmium, _, tw_cadmium = _compute_proxy_saturating_term(
-        cadmium_p,
-        {},
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-
-    total_activation = v_ros + v_cadmium
-
-    return {
-        "activation_enzymes": {
-            "general_ROS": {
-                "flux": round(v_ros, 6),
-                "genotype_modifier": 1.0,
-                "tissue_weight": tw_ros,
-                "confidence": ros_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": ros_p["note"],
-            },
-            "cadmium_stress_proxy": {
-                "flux": round(v_cadmium, 6),
-                "genotype_modifier": 1.0,
-                "tissue_weight": tw_cadmium,
-                "confidence": cadmium_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": cadmium_p["note"],
-            },
-        },
-        "detox_enzymes": {
-            "AS3MT": {
-                "flux": round(v_as3mt, 6),
-                "genotype_modifier": gm_as3mt,
-                "tissue_weight": tw_as3mt,
-                "confidence": as3mt_p["confidence"],
-                "kinetics": "semi_quantitative",
-                "note": as3mt_p["note"],
-            }
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(v_as3mt, 6),
-        "unit_note": cfg["unit_note"],
-    }
-
-
 # ── Helpers for dataclass conversion ───────────────────────────────────────
 
 
@@ -2921,22 +2320,30 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 
 # ── Public API ─────────────────────────────────────────────────────────────
 
+# Proxy classes routed through the generic engine-contract loop; the
+# remaining entries in _DISPATCH keep their hand-written functions (seven
+# mechanistic classes plus Dioxin and ChlorinatedSolvent, whose model
+# structures are not term-sum proxies).
+_GENERIC_PROXY_FLUX_CLASSES = frozenset(
+    {"AromaticAmines", "EstrogenMetabolites", "NDEA", "VinylChloride", "UV_Radiation", "HeavyMetal"}
+)
+
 _DISPATCH: dict[str, FluxCalculator] = {
     "PAH": _compute_pah_flux,
     "Aflatoxin": _compute_aflatoxin_flux,
     "Aldehyde": _compute_aldehyde_flux,
     "Nitrosamine": _compute_nitrosamine_flux,
     "NDMA": _compute_ndma_flux,
-    "NDEA": _compute_ndea_flux,
+    "NDEA": partial(_compute_generic_proxy_flux, "NDEA"),
     "HCA": _compute_hca_flux,
-    "AromaticAmines": _compute_aromatic_amine_flux,
-    "EstrogenMetabolites": _compute_estrogen_metabolite_flux,
+    "AromaticAmines": partial(_compute_generic_proxy_flux, "AromaticAmines"),
+    "EstrogenMetabolites": partial(_compute_generic_proxy_flux, "EstrogenMetabolites"),
     "Benzene": _compute_benzene_flux,
-    "VinylChloride": _compute_vinyl_chloride_flux,
+    "VinylChloride": partial(_compute_generic_proxy_flux, "VinylChloride"),
     "ChlorinatedSolvent": _compute_chlorinated_solvent_flux,
-    "UV_Radiation": _compute_uv_radiation_flux,
+    "UV_Radiation": partial(_compute_generic_proxy_flux, "UV_Radiation"),
     "Dioxin": _compute_dioxin_flux,
-    "HeavyMetal": _compute_heavy_metal_flux,
+    "HeavyMetal": partial(_compute_generic_proxy_flux, "HeavyMetal"),
 }
 
 
@@ -3017,7 +2424,10 @@ def compute_pathway_flux(
         induction_factors,
         interaction_params=engine.get_interaction_parameters() if engine is not None else None,
     )
-    result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
+    if cls_str in _GENERIC_PROXY_FLUX_CLASSES:
+        result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source, engine=engine)
+    else:
+        result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
     result = _annotate_flux_result_metadata(cls_str, result)
     result = _apply_induction_modifiers(result, resolved_induction)
 

@@ -26,9 +26,10 @@ _DEFAULT_PROXY_FLUX_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "proxy_flux_parame
 
 # Fields a flux-parameter term carries that are represented on the
 # FluxReaction record itself (or as provenance pointers) rather than inside
-# its verbatim ``params`` payload.
+# its verbatim ``params`` payload. ``gene`` and ``note`` stay in ``params``
+# because the flux proxy-term helpers consume them directly.
 _FLUX_RESERVED_TERM_FIELDS = frozenset(
-    {"graph_node_id", "rate_law", "equation", "gene", "confidence", "note", "notes", "provenance_ref", "sources"}
+    {"graph_node_id", "rate_law", "equation", "confidence", "notes", "provenance_ref", "sources"}
 )
 
 # Pathway-block names that map unambiguously onto the coarse flux role

@@ -229,17 +229,6 @@
           "provenance_ref": "classes.NDEA.activation_terms.CYP2A6"
         }
       },
-      "detox_terms": {
-        "GSTP1": {
-          "gene": "GSTP1",
-          "equation": "michaelis_menten",
-          "vmax": 8.0,
-          "km": 0.02,
-          "confidence": "estimated",
-          "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
-          "provenance_ref": "classes.NDEA.detox_terms.GSTP1"
-        }
-      },
       "repair_terms": {
         "MGMT": {
           "rate_law": "repair",
@@ -249,6 +238,17 @@
           "note": "Direct-reversal repair proxy for O6-ethylguanine-like alkylation burden.",
           "supported_tissues": ["liver", "esophagus", "stomach", "colon", "kidney"],
           "provenance_ref": "classes.NDEA.repair_terms.MGMT"
+        }
+      },
+      "detox_terms": {
+        "GSTP1": {
+          "gene": "GSTP1",
+          "equation": "michaelis_menten",
+          "vmax": 8.0,
+          "km": 0.02,
+          "confidence": "estimated",
+          "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
+          "provenance_ref": "classes.NDEA.detox_terms.GSTP1"
         }
       }
     },
