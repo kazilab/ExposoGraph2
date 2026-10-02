@@ -73,19 +73,19 @@ def test_packaged_data_files_exist() -> None:
 
 def test_module3_data_loads_from_packaged_paths() -> None:
     for path in (
-        flux_engine._KINETIC_PARAMS_FILE,
+        graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH,
         graph_engine._DEFAULT_EXPOSURE_DB_PATH,
-        flux_engine._PROXY_FLUX_PARAMS_FILE,
-        flux_engine._PROXY_FLUX_PROVENANCE_FILE,
+        graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH,
+        graph_engine._DEFAULT_PROXY_FLUX_PROVENANCE_PATH,
         exposure_engine._EXPOSURE_DB_FILE,
     ):
         assert Path(path).is_file()
         _assert_under(Path(path), DATA_DIR)
 
-    assert flux_engine._load_kinetic_params()["carcinogen_classes"]
+    assert json.loads(graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
     assert json.loads(graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
-    assert flux_engine._load_proxy_flux_params()["classes"]
-    assert flux_engine._load_proxy_flux_provenance()
+    assert json.loads(graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH.read_text(encoding="utf-8"))["classes"]
+    assert json.loads(graph_engine._DEFAULT_PROXY_FLUX_PROVENANCE_PATH.read_text(encoding="utf-8"))["classes"]
 
     result = compute_pathway_flux(
         CarcinogenClass.PAH,
@@ -191,9 +191,9 @@ def test_no_missing_json_runtime_dependency() -> None:
     assert graph.nodes
     assert graph.edges
 
-    assert flux_engine._load_kinetic_params()
+    assert json.loads(graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
     assert json.loads(graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
-    assert flux_engine._load_proxy_flux_params()
+    assert json.loads(graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH.read_text(encoding="utf-8"))["classes"]
     assert interaction_engine._load_interaction_params()
     assert interaction_engine.get_parameter_provenance()
 

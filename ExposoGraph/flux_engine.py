@@ -190,46 +190,10 @@ class SensitivityResult:
     tissue_weight_source: FluxTissueWeightSource
 
 
-# ── Data loading (lazy cache) ──────────────────────────────────────────────
+# ── Parameter-source labels (output vocabulary; data served by GraphEngine) ──
 
-_KINETIC_PARAMS_FILE = Path(__file__).parent / "data" / "kinetic_parameters.json"
-_KINETIC_CACHE: JsonDict | None = None
-_PROXY_FLUX_PARAMS_FILE = Path(__file__).parent / "data" / "proxy_flux_parameters.json"
-_PROXY_FLUX_CACHE: JsonDict | None = None
-_PROXY_FLUX_PROVENANCE_FILE = Path(__file__).parent / "data" / "proxy_flux_provenance.json"
-_PROXY_FLUX_PROVENANCE_CACHE: JsonDict | None = None
-
-
-def _load_kinetic_params() -> JsonDict:
-    """Lazy-load and cache the kinetic parameters JSON."""
-    global _KINETIC_CACHE
-    if _KINETIC_CACHE is None:
-        if not _KINETIC_PARAMS_FILE.exists():
-            raise FileNotFoundError(
-                f"Kinetic parameters not found at {_KINETIC_PARAMS_FILE}. "
-                "Ensure kinetic_parameters.json is in the data/ directory."
-            )
-        with open(_KINETIC_PARAMS_FILE, "r", encoding="utf-8") as fh:
-            _KINETIC_CACHE = cast(JsonDict, json.load(fh))
-    return _KINETIC_CACHE
-
-
-def _load_proxy_flux_params() -> JsonDict:
-    """Lazy-load and cache the proxy flux parameter JSON."""
-    global _PROXY_FLUX_CACHE
-    if _PROXY_FLUX_CACHE is None:
-        with open(_PROXY_FLUX_PARAMS_FILE, "r", encoding="utf-8") as fh:
-            _PROXY_FLUX_CACHE = cast(JsonDict, json.load(fh))
-    return _PROXY_FLUX_CACHE
-
-
-def _load_proxy_flux_provenance() -> JsonDict:
-    """Lazy-load and cache the proxy flux provenance JSON."""
-    global _PROXY_FLUX_PROVENANCE_CACHE
-    if _PROXY_FLUX_PROVENANCE_CACHE is None:
-        with open(_PROXY_FLUX_PROVENANCE_FILE, "r", encoding="utf-8") as fh:
-            _PROXY_FLUX_PROVENANCE_CACHE = cast(JsonDict, json.load(fh))
-    return _PROXY_FLUX_PROVENANCE_CACHE
+_KINETIC_PARAMETER_SOURCE = "kinetic_parameters.json"
+_PROXY_PARAMETER_SOURCE = "proxy_flux_parameters.json"
 
 
 # ── Core kinetic equations ─────────────────────────────────────────────────
@@ -904,9 +868,11 @@ def _compute_proxy_repair_term(
 
 
 def _get_proxy_class_params(class_name: str) -> JsonDict:
-    """Return the proxy flux config for a class."""
-    proxy_classes = cast(JsonDict, _load_proxy_flux_params()["classes"])
-    return cast(JsonDict, proxy_classes[class_name])
+    """Return the proxy flux config for a class (served by GraphEngine)."""
+    cfg = _get_flux_contract_engine().get_flux_class_config(class_name)
+    if not cfg:
+        raise KeyError(class_name)
+    return cast(JsonDict, cfg)
 
 
 _FLUX_CONTRACT_ENGINE: "GraphEngine | None" = None
@@ -1198,25 +1164,17 @@ def _compute_generic_mechanistic_flux(
     return result
 
 
-def _resolve_nested_ref(doc: JsonDict, ref: str) -> JsonDict:
-    """Resolve a dotted reference inside a nested mapping."""
-    node: JsonDict = doc
-    for part in ref.split("."):
-        node = cast(JsonDict, node[part])
-    return node
-
-
 def _class_parameter_metadata(carcinogen_class: str) -> dict[str, str]:
     """Return class-level parameter metadata for measured or proxy models."""
-    proxy_cfg = _load_proxy_flux_params()["classes"].get(carcinogen_class)
-    if proxy_cfg is None:
+    proxy_cfg = _get_flux_contract_engine().get_flux_class_config(carcinogen_class)
+    if not proxy_cfg:
         return {
             "model_kind": "measured_kinetics",
-            "parameter_source": _KINETIC_PARAMS_FILE.name,
+            "parameter_source": _KINETIC_PARAMETER_SOURCE,
         }
     return {
         "model_kind": proxy_cfg["model_kind"],
-        "parameter_source": _PROXY_FLUX_PARAMS_FILE.name,
+        "parameter_source": _PROXY_PARAMETER_SOURCE,
     }
 
 
@@ -1239,13 +1197,13 @@ def _proxy_term_metadata(
         sources: list[str] = []
         basis = ""
         if ref:
-            entry = _resolve_nested_ref(_load_proxy_flux_provenance(), ref)
+            entry = _get_flux_contract_engine().get_flux_provenance_entry(ref)
             sources = list(entry.get("sources", []))
             basis = entry.get("parameter_basis", "")
 
         return {
             "model_kind": cfg["model_kind"],
-            "parameter_source": _PROXY_FLUX_PARAMS_FILE.name,
+            "parameter_source": _PROXY_PARAMETER_SOURCE,
             "provenance_ref": ref,
             "provenance_sources": sources,
             "parameter_basis": basis,
@@ -1263,7 +1221,7 @@ def _annotate_flux_result_metadata(
     result.setdefault("model_kind", class_meta["model_kind"])
     result.setdefault("parameter_source", class_meta["parameter_source"])
 
-    proxy_mode = class_meta["parameter_source"] == _PROXY_FLUX_PARAMS_FILE.name
+    proxy_mode = class_meta["parameter_source"] == _PROXY_PARAMETER_SOURCE
     for activation_term, enzymes in (
         (True, result.get("activation_enzymes", {})),
         (False, result.get("detox_enzymes", {})),
@@ -1651,7 +1609,7 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
         kinetics=str(d.get("kinetics", "michaelis_menten")),
         note=str(d.get("note", "")),
         model_kind=str(d.get("model_kind", "measured_kinetics")),
-        parameter_source=str(d.get("parameter_source", _KINETIC_PARAMS_FILE.name)),
+        parameter_source=str(d.get("parameter_source", _KINETIC_PARAMETER_SOURCE)),
         provenance_ref=str(d.get("provenance_ref", "")),
         provenance_sources=[str(source) for source in d.get("provenance_sources", [])],
         parameter_basis=str(d.get("parameter_basis", "")),
@@ -1866,7 +1824,7 @@ def compute_pathway_flux(
         risk_classification=risk,
         tissue_weight_source=weight_source,
         model_kind=result.get("model_kind", "measured_kinetics"),
-        parameter_source=result.get("parameter_source", _KINETIC_PARAMS_FILE.name),
+        parameter_source=result.get("parameter_source", _KINETIC_PARAMETER_SOURCE),
         unit_note=result.get("unit_note", ""),
         warnings=warn_list,
         induction_factors_used=resolved_induction,

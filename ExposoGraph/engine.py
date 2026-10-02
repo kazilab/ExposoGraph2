@@ -9,7 +9,7 @@ import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import networkx as nx
 
@@ -25,6 +25,7 @@ _DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_dat
 _DEFAULT_INTERACTION_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "interaction_parameters.json"
 _DEFAULT_FLUX_KINETIC_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "kinetic_parameters.json"
 _DEFAULT_PROXY_FLUX_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "proxy_flux_parameters.json"
+_DEFAULT_PROXY_FLUX_PROVENANCE_PATH = _PACKAGE_DIR / "data" / "proxy_flux_provenance.json"
 
 # Residual activity retained by GSTM1/GSTT1 homozygous deletion carriers
 # (see kinetic_parameters.json genotype_modifiers.special_cases).
@@ -240,6 +241,8 @@ class GraphEngine:
         self._flux_metadata: dict[str, Any] | None = None
         self._flux_genotype_modifiers: dict[str, Any] | None = None
         self._flux_proxy_exposure_defaults: dict[str, dict[str, Any]] = {}
+        self._flux_proxy_class_cfg: dict[str, dict[str, Any]] = {}
+        self._flux_proxy_provenance: dict[str, Any] | None = None
         self._exposure_database: dict[str, Any] | None = None
         self._tissue_expression_raw: dict[str, dict[str, float]] | None = None
         self._tissue_expression_normalized: dict[str, dict[str, float]] | None = None
@@ -343,6 +346,8 @@ class GraphEngine:
         self._flux_metadata = None
         self._flux_genotype_modifiers = None
         self._flux_proxy_exposure_defaults = {}
+        self._flux_proxy_class_cfg = {}
+        self._flux_proxy_provenance = None
         self._exposure_database = None
         self._tissue_expression_raw = None
         self._tissue_expression_normalized = None
@@ -753,6 +758,7 @@ class GraphEngine:
             index[cls] = reactions
             if isinstance(cls_data.get("exposure_default"), dict):
                 self._flux_proxy_exposure_defaults[cls] = dict(cls_data["exposure_default"])
+            self._flux_proxy_class_cfg[cls] = dict(cls_data)
 
         self._flux_reactions_by_class = index
         self._flux_class_sources = sources
@@ -1436,6 +1442,38 @@ class GraphEngine:
                     f"Could not read exposure database at {_DEFAULT_EXPOSURE_DB_PATH}: {exc}"
                 ) from exc
         return self._exposure_database
+
+
+    def get_flux_class_config(self, carcinogen_class: Any) -> dict[str, Any]:
+        """Return a class's raw proxy config block from proxy_flux_parameters.json.
+
+        Empty dict for classes that only have kinetic-parameters entries.
+        Serves model_kind, unit notes, per-term blocks, and signal
+        configuration for the proxy flux classes.
+        """
+        self._ensure_flux_index()
+        cls = getattr(carcinogen_class, "value", carcinogen_class)
+        return self._flux_proxy_class_cfg.get(cls, {})
+
+    def get_flux_provenance_entry(self, ref: str) -> dict[str, Any]:
+        """Resolve a dotted ``provenance_ref`` into proxy_flux_provenance.json."""
+        node: Any = self._ensure_flux_proxy_provenance()
+        for part in ref.split("."):
+            node = node[part]
+        return cast(dict[str, Any], node)
+
+    def _ensure_flux_proxy_provenance(self) -> dict[str, Any]:
+        """Lazily load the packaged proxy flux provenance doc."""
+        if self._flux_proxy_provenance is None:
+            try:
+                self._flux_proxy_provenance = json.loads(
+                    _DEFAULT_PROXY_FLUX_PROVENANCE_PATH.read_text(encoding="utf-8")
+                )
+            except (OSError, json.JSONDecodeError) as exc:
+                raise RuntimeError(
+                    f"Could not read proxy flux provenance at {_DEFAULT_PROXY_FLUX_PROVENANCE_PATH}: {exc}"
+                ) from exc
+        return self._flux_proxy_provenance
 
     def get_flux_reaction_coverage(self, carcinogen_class: Any) -> dict[str, Any]:
         """Compare a class's flux-reaction rosters against graph scope edges.
