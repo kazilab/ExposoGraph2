@@ -113,12 +113,14 @@
   },
   "carcinogen_classes": {
     "PAH": {
+      "graph_group": "PAHs",
       "index_carcinogen": "Benzo[a]pyrene",
       "description": "Polycyclic aromatic hydrocarbons — require metabolic activation to reactive diol-epoxide intermediates",
       "kinetics_model": "michaelis_menten",
       "pathways": {
         "activation": {
           "CYP1A1": {
+            "rate_law": "michaelis_menten",
             "reaction": "BaP → BaP-7,8-oxide",
             "Km_uM": 0.054,
             "Vmax_pmol_min_pmolP450": 59.4,
@@ -129,6 +131,7 @@
             "tissue_expression": ["lung", "liver", "lymphocyte", "placenta"]
           },
           "CYP1B1": {
+            "rate_law": "michaelis_menten",
             "reaction": "BaP → BaP-7,8-oxide",
             "Km_uM": 0.35,
             "Vmax_pmol_min_pmolP450": 5.0,
@@ -139,6 +142,7 @@
             "tissue_expression": ["lung", "prostate", "breast", "colon"]
           },
           "EPHX1": {
+            "rate_law": "clint_ceiling",
             "reaction": "BaP-7,8-oxide → BaP-7,8-diol",
             "Km_uM": 5.0,
             "Vmax_nmol_min_mg": 200.0,
@@ -151,6 +155,7 @@
         },
         "detoxification": {
           "GSTM1": {
+            "rate_law": "clint_normalized",
             "reaction": "BPDE → BPDE-GSH conjugate",
             "Km_uM": 50.0,
             "kcat_s": 1.2,
@@ -162,6 +167,7 @@
             "tissue_expression": ["liver", "lung", "colon", "kidney"]
           },
           "GSTP1": {
+            "rate_law": "clint_normalized",
             "reaction": "BPDE → BPDE-GSH conjugate",
             "Km_uM": 25.0,
             "kcat_s": 1.2,
@@ -179,12 +185,14 @@
       }
     },
     "Aflatoxin": {
+      "graph_group": "Mycotoxins",
       "index_carcinogen": "Aflatoxin B1 (AFB1)",
       "description": "Mycotoxin requiring CYP-mediated epoxidation to the reactive AFB1-8,9-epoxide (AFBO); AFQ1 is a detoxification product",
       "kinetics_model": "mixed",
       "pathways": {
         "activation": {
           "CYP3A4": {
+            "rate_law": "hill",
             "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
             "Km_uM": 49.6,
             "Vmax_pmol_min_pmolP450": 43.6,
@@ -197,6 +205,7 @@
             "tissue_expression": ["liver", "intestine", "lung"]
           },
           "CYP1A2": {
+            "rate_law": "michaelis_menten",
             "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
             "Km_uM": 58.2,
             "Vmax_pmol_min_pmolP450": 283.0,
@@ -210,6 +219,8 @@
         },
         "detoxification": {
           "CYP3A4_AFQ1": {
+            "rate_law": "hill",
+            "graph_node_id": "CYP3A4",
             "reaction": "AFB1 → AFQ1 (hydroxylation, non-reactive detox product)",
             "Km_uM": 160.0,
             "Vmax_pmol_min_pmolP450": 67.0,
@@ -220,6 +231,7 @@
             "tissue_expression": ["liver"]
           },
           "GSTA1": {
+            "rate_law": "michaelis_menten",
             "reaction": "AFBO → AFBO-GSH conjugate",
             "Km_uM": 10.0,
             "CLint_relative": 1.0,
@@ -237,12 +249,15 @@
       }
     },
     "Aldehyde": {
+      "graph_group": "Aldehydes",
       "index_carcinogen": "Acetaldehyde (from ethanol metabolism)",
       "description": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
       "kinetics_model": "michaelis_menten",
       "pathways": {
         "ethanol_oxidation": {
           "ADH1B_star1": {
+            "rate_law": "michaelis_menten",
+            "graph_node_id": "ADH1B",
             "diplotype": "*1/*1",
             "reaction": "Ethanol → Acetaldehyde",
             "Km_uM": 16.0,
@@ -254,6 +269,8 @@
             "tissue_expression": ["liver", "stomach", "intestine"]
           },
           "ADH1B_star2": {
+            "rate_law": "michaelis_menten",
+            "graph_node_id": "ADH1B",
             "diplotype": "*2/*2",
             "reaction": "Ethanol → Acetaldehyde",
             "Km_uM": 1900.0,
@@ -267,6 +284,8 @@
         },
         "acetaldehyde_clearance": {
           "ALDH2_star1": {
+            "rate_law": "michaelis_menten",
+            "graph_node_id": "ALDH2",
             "diplotype": "*1/*1",
             "reaction": "Acetaldehyde → Acetate",
             "Km_uM": 0.20,
@@ -278,6 +297,8 @@
             "tissue_expression": ["liver", "heart", "muscle"]
           },
           "ALDH2_star2_homozygous": {
+            "rate_law": "michaelis_menten",
+            "graph_node_id": "ALDH2",
             "diplotype": "*2/*2",
             "reaction": "Acetaldehyde → Acetate",
             "Km_uM": 4.6,
@@ -290,6 +311,7 @@
             "tissue_expression": ["liver", "heart", "muscle"]
           },
           "ALDH2_star1_star2": {
+            "graph_node_id": "ALDH2",
             "diplotype": "*1/*2",
             "reaction": "Acetaldehyde → Acetate",
             "activity_fraction": 0.25,
@@ -300,6 +322,7 @@
             "tissue_expression": ["liver", "heart", "muscle"]
           },
           "ALDH1A1": {
+            "rate_law": "michaelis_menten",
             "reaction": "Acetaldehyde → Acetate (backup pathway)",
             "Km_uM": 33.0,
             "Vmax_U_per_mg": 0.63,
@@ -312,6 +335,7 @@
         },
         "formaldehyde_oxidation": {
           "ADH5": {
+            "rate_law": "michaelis_menten",
             "reaction": "Formaldehyde → Formate",
             "Km_uM": 300.0,
             "Vmax_relative": "moderate",
@@ -329,12 +353,14 @@
       }
     },
     "Nitrosamine": {
+      "graph_group": "Nitrosamines",
       "index_carcinogen": "NNK (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone)",
       "description": "Tobacco-specific nitrosamine. α-hydroxylation by CYP2A13 generates reactive methylating and pyridyloxobutylating species.",
       "kinetics_model": "michaelis_menten",
       "pathways": {
         "activation": {
           "CYP2A13": {
+            "rate_law": "michaelis_menten",
             "reaction": "NNK → 4-hydroxy-NNK (α-hydroxylation, major activation)",
             "Km_uM": 3.6,
             "Vmax_pmol_min_pmolP450": 13.8,
@@ -344,6 +370,7 @@
             "tissue_expression": ["lung", "nasal mucosa"]
           },
           "CYP2A13_methyl": {
+            "rate_law": "michaelis_menten",
             "reaction": "NNK → methyl-hydroxy-NNK",
             "Km_uM": null,
             "Vmax_pmol_min_pmolP450": 4.6,
@@ -378,12 +405,14 @@
       }
     },
     "NDMA": {
+      "graph_group": "Nitrosamines",
       "index_carcinogen": "N-Nitrosodimethylamine (NDMA)",
       "description": "Volatile nitrosamine formed endogenously and from diet/water. CYP2E1-mediated α-hydroxylation generates formaldehyde and methyldiazonium ion.",
       "kinetics_model": "michaelis_menten",
       "pathways": {
         "activation": {
           "CYP2E1": {
+            "rate_law": "michaelis_menten",
             "reaction": "NDMA → hydroxymethylnitrosamine (α-demethylation)",
             "Km_uM_range": [7.5, 22.0],
             "Km_uM": 14.75,
@@ -395,6 +424,8 @@
             "tissue_expression": ["liver", "lung", "esophagus", "kidney"]
           },
           "CYP2E1_with_b5": {
+            "rate_law": "michaelis_menten",
+            "graph_node_id": "CYP2E1",
             "reaction": "NDMA → hydroxymethylnitrosamine (with cytochrome b5)",
             "Km_uM": 22.0,
             "Vmax_pmol_min_mg": 173.0,
@@ -416,12 +447,14 @@
       }
     },
     "HCA": {
+      "graph_group": "HCAs",
       "index_carcinogen": "PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine)",
       "description": "Heterocyclic amine formed in cooked meat. N-hydroxylation by CYP1A2/CYP1A1/CYP1B1 generates reactive N-OH-PhIP.",
       "kinetics_model": "michaelis_menten",
       "pathways": {
         "activation": {
           "CYP1A2": {
+            "rate_law": "michaelis_menten",
             "reaction": "PhIP → N-OH-PhIP (N-hydroxylation)",
             "Km_uM": 79.0,
             "Vmax_nmol_min_nmolP450": 90.0,
@@ -432,6 +465,7 @@
             "tissue_expression": ["liver"]
           },
           "CYP1A1": {
+            "rate_law": "michaelis_menten",
             "reaction": "PhIP → N-OH-PhIP (N-hydroxylation)",
             "Km_uM": 5.1,
             "Vmax_nmol_min_nmolP450": 16.0,
@@ -442,6 +476,7 @@
             "tissue_expression": ["lung", "lymphocyte", "colon", "mammary"]
           },
           "CYP1B1": {
+            "rate_law": "michaelis_menten",
             "reaction": "PhIP → N-OH-PhIP + 4-OH-PhIP",
             "Km_uM": 4.5,
             "Vmax_nmol_min_nmolP450": 0.2,
@@ -473,12 +508,15 @@
       }
     },
     "Benzene": {
+      "graph_group": "Benzene",
       "index_carcinogen": "Benzene",
       "description": "Industrial/environmental chemical. CYP2E1-mediated oxidation to phenol, then further to catechol and benzoquinone — reactive hematotoxic/leukemogenic metabolites.",
       "kinetics_model": "michaelis_menten",
       "pathways": {
         "activation": {
           "CYP2E1_liver": {
+            "rate_law": "michaelis_menten",
+            "graph_node_id": "CYP2E1",
             "reaction": "Benzene → Benzene oxide → Phenol (hepatic)",
             "Km_uM": 75.0,
             "Km_uM_range": [50, 100],
@@ -519,6 +557,7 @@
       }
     },
     "HeavyMetal": {
+      "graph_group": "Heavy Metals",
       "index_carcinogen": "Arsenic (inorganic)",
       "description": "Heavy metals including arsenic, cadmium, chromium. Mechanism involves indirect genotoxicity — oxidative stress, DNA repair inhibition, epigenetic dysregulation rather than direct enzyme-mediated metabolism. Limited Michaelis-Menten parameters available.",
       "kinetics_model": "semi_quantitative",
@@ -559,6 +598,7 @@
       "notes": "Heavy metal carcinogenicity modeling is semi-quantitative. Enzyme kinetics not applicable to primary mechanism. Use oxidative stress / DNA repair inhibition scores as proxies."
     },
     "Dioxin": {
+      "graph_group": "Dioxins",
       "index_carcinogen": "TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)",
       "description": "Persistent organic pollutant acting through AhR signaling rather than direct metabolic activation. Induces CYP1A1/CYP1B1 expression, amplifying downstream PAH activation.",
       "kinetics_model": "receptor_mediated",
@@ -581,6 +621,7 @@
       "notes": "Quantitative enzyme kinetics not applicable. Model via AhR-mediated induction amplifying PAH pathway fluxes. TEF approach recommended for dioxin-like compounds."
     },
     "ChlorinatedSolvent": {
+      "graph_group": "Chlorinated Solvents",
       "index_carcinogen": "Trichloroethylene (TCE)",
       "description": "TCE oxidized by CYP2E1/CYP1A2 to trichloroethylene oxide → trichloroacetaldehyde → trichloroacetic acid and other metabolites. Also conjugated to GSH via GSTT1.",
       "kinetics_model": "michaelis_menten",
