@@ -3837,7 +3837,27 @@
           "tissue": "liver, esophagus, stomach"
         }
       ]
+    },    {
+      "id": "ALDH1A1",
+      "label": "ALDH1A1",
+      "type": "Enzyme",
+      "detail": "Cytosolic aldehyde dehydrogenase 1A1; backup acetaldehyde oxidation to acetate (Km ~33 uM vs ALDH2 ~0.2 uM), main residual cytosolic activity in ALDH2*2 homozygotes; also oxidizes retinal to retinoic acid.",
+      "phase": "II",
+      "role": "Detoxification",
+      "tissue": "liver, lung, stomach, kidney",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "216",
+          "evidence": "Cytosolic aldehyde dehydrogenase 1A1; backup acetaldehyde oxidation, main residual activity in ALDH2*2 homozygotes (PMC3525274)",
+          "citation": "NCBI Gene: ALDH1A1 aldehyde dehydrogenase 1 family member A1",
+          "url": "https://www.ncbi.nlm.nih.gov/gene/216"
+        }
+      ]
     },
+
     {
       "id": "ADH1B",
       "label": "ADH1B",
@@ -9665,7 +9685,23 @@
           "evidence": "Primary clearance; rs671 ALDH2*2 causes 6-19x acetaldehyde accumulation (PMC4376259)"
         }
       ]
+    },    {
+      "source": "Acetaldehyde_int",
+      "target": "ALDH1A1",
+      "type": "DETOXIFIED_BY",
+      "carcinogen": "Acetaldehyde",
+      "evidence": "Cytosolic backup acetaldehyde oxidation; Km ~33 uM vs ALDH2 ~0.2 uM; mainly responsible for residual acetaldehyde oxidation in ALDH2*2 homozygotes (PMC3525274)",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "216",
+          "evidence": "Cytosolic backup acetaldehyde oxidation; residual activity in ALDH2*2 homozygotes (PMC3525274)"
+        }
+      ]
     },
+
     {
       "source": "Formaldehyde",
       "target": "ALDH2",
