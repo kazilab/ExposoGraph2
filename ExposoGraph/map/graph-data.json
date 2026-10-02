@@ -3841,19 +3841,21 @@
       "id": "ALDH1A1",
       "label": "ALDH1A1",
       "type": "Enzyme",
-      "detail": "Cytosolic aldehyde dehydrogenase 1A1; backup acetaldehyde oxidation to acetate (Km ~33 uM vs ALDH2 ~0.2 uM), main residual cytosolic activity in ALDH2*2 homozygotes; also oxidizes retinal to retinoic acid.",
+      "detail": "Cytosolic aldehyde dehydrogenase 1A1; lower-affinity backup acetaldehyde oxidation to acetate and main residual cytosolic activity when ALDH2 is impaired (ALDH2*2); also oxidizes retinal to retinoic acid.",
       "phase": "II",
       "role": "Detoxification",
-      "tissue": "liver, lung, stomach, kidney",
+      "tissue": "liver, stomach",
       "origin": "seeded",
       "match_status": "unmatched",
       "provenance": [
         {
           "source_db": "NCBI Gene",
           "record_id": "216",
-          "evidence": "Cytosolic aldehyde dehydrogenase 1A1; backup acetaldehyde oxidation, main residual activity in ALDH2*2 homozygotes (PMC3525274)",
           "citation": "NCBI Gene: ALDH1A1 aldehyde dehydrogenase 1 family member A1",
           "url": "https://www.ncbi.nlm.nih.gov/gene/216"
+        },
+        {
+          "evidence": "Cytosolic ALDH1A1 oxidizes acetaldehyde at lower affinity than mitochondrial ALDH2 and is mainly responsible for residual acetaldehyde oxidation in ALDH2*2 homozygotes (PMC3525274; tissue distribution PMC6286250)"
         }
       ]
     },
@@ -9690,13 +9692,11 @@
       "target": "ALDH1A1",
       "type": "DETOXIFIED_BY",
       "carcinogen": "Acetaldehyde",
-      "evidence": "Cytosolic backup acetaldehyde oxidation; Km ~33 uM vs ALDH2 ~0.2 uM; mainly responsible for residual acetaldehyde oxidation in ALDH2*2 homozygotes (PMC3525274)",
+      "evidence": "Cytosolic backup acetaldehyde oxidation, lower affinity than mitochondrial ALDH2; mainly responsible for residual acetaldehyde oxidation in ALDH2*2 homozygotes (PMC3525274)",
       "origin": "seeded",
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "NCBI Gene",
-          "record_id": "216",
           "evidence": "Cytosolic backup acetaldehyde oxidation; residual activity in ALDH2*2 homozygotes (PMC3525274)"
         }
       ]
