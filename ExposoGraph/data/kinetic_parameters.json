@@ -135,6 +135,8 @@
       "pathways": {
         "activation": {
           "CYP1A1": {
+            "substrate_node_id": "BaP",
+            "enzyme_node_id": "CYP1A1",
             "rate_law": "michaelis_menten",
             "reaction": "BaP → BaP-7,8-oxide",
             "Km_uM": 0.054,
@@ -146,6 +148,8 @@
             "tissue_expression": ["lung", "liver", "lymphocyte", "placenta"]
           },
           "CYP1B1": {
+            "substrate_node_id": "BaP",
+            "enzyme_node_id": "CYP1B1",
             "rate_law": "michaelis_menten",
             "reaction": "BaP → BaP-7,8-oxide",
             "Km_uM": 0.35,
@@ -157,6 +161,8 @@
             "tissue_expression": ["lung", "prostate", "breast", "colon"]
           },
           "EPHX1": {
+            "substrate_node_id": "BaP_epoxide",
+            "enzyme_node_id": "EPHX1",
             "rate_law": "clint_ceiling",
             "reaction": "BaP-7,8-oxide → BaP-7,8-diol",
             "Km_uM": 5.0,
@@ -170,6 +176,8 @@
         },
         "detoxification": {
           "GSTM1": {
+            "substrate_node_id": "BPDE",
+            "enzyme_node_id": "GSTM1",
             "rate_law": "clint_normalized",
             "reaction": "BPDE → BPDE-GSH conjugate",
             "Km_uM": 50.0,
@@ -182,6 +190,8 @@
             "tissue_expression": ["liver", "lung", "colon", "kidney"]
           },
           "GSTP1": {
+            "substrate_node_id": "BPDE",
+            "enzyme_node_id": "GSTP1",
             "rate_law": "clint_normalized",
             "reaction": "BPDE → BPDE-GSH conjugate",
             "Km_uM": 25.0,
