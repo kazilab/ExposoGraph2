@@ -1584,6 +1584,180 @@ def _compute_generic_proxy_flux(
     }
 
 
+def _compute_generic_mechanistic_flux(
+    carcinogen_class: str,
+    genotypes: GenotypeMap,
+    tissue: str,
+    S: float,
+    tissue_weight_source: FluxTissueWeightSource,
+    *,
+    engine: "GraphEngine | None" = None,
+) -> FluxResultDict:
+    """Compute a measured-kinetics flux from engine records and an aggregation spec.
+
+    Replaces the hand-written PAH, Nitrosamine, NDMA, HCA, and Benzene
+    functions. Direct terms (roster entries without a ``dormant`` flag)
+    come from ``GraphEngine.get_flux_reactions``; how they combine --
+    per-role vmax fields, derived terms, efficiency scaling, detox
+    fractions, total scaling, rounding, and unit notes -- comes from the
+    class's ``aggregation`` block in kinetic_parameters.json via
+    ``GraphEngine.get_flux_aggregation``. Aflatoxin and Aldehyde keep
+    dedicated functions (their aggregation blocks carry a
+    ``dedicated_function`` status note).
+    """
+    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    reactions = active_engine.get_flux_reactions(carcinogen_class)
+    agg = active_engine.get_flux_aggregation(carcinogen_class)
+    vmax_fields: dict[str, Any] = dict(agg.get("vmax_field", {}))
+    km_field = str(agg.get("km_field", "Km_uM"))
+    entry_round: dict[str, Any] = dict(agg.get("entry_round", {}))
+    total_round: dict[str, Any] = dict(agg.get("total_round", {}))
+    derived_specs: dict[str, Any] = dict(agg.get("derived_terms", {}))
+    entry_names: dict[str, str] = dict(agg.get("entry_names", {}))
+    efficiency_spec: JsonDict | None = agg.get("activation_efficiency_term")
+
+    def _gene(reaction: "FluxReaction") -> str:
+        gene = reaction.params.get("gene")
+        if isinstance(gene, str) and gene:
+            return gene
+        return str(reaction.enzyme_id or reaction.term_key)
+
+    def _entry(value: float, gm: float, tw: float, role: str, confidence: str) -> JsonDict:
+        rnd = entry_round.get(role)
+        return {
+            "flux": round(value, rnd) if rnd is not None else value,
+            "genotype_modifier": gm,
+            "tissue_weight": tw,
+            "confidence": confidence,
+        }
+
+    def _evaluate(reaction: "FluxReaction", role: str) -> tuple[float, float, float]:
+        term = reaction.params
+        gene = _gene(reaction)
+        gm = genotype_modifier(genotypes.get(gene, "NM"), gene)
+        tw = get_flux_tissue_weight(gene, tissue, tissue_weight_source)
+        vmax_field = vmax_fields.get(role) or vmax_fields.get("activation")
+        if vmax_field is None:
+            raise ValueError(
+                f"No vmax field for {carcinogen_class}/{reaction.term_key} role {role!r}"
+            )
+        vmax = float(term[vmax_field]) * gm * tw
+        km = float(term[km_field])
+        if reaction.rate_law == "hill":
+            return hill_equation(S, vmax, km, float(term.get("hill_n", 1.0))), gm, tw
+        # michaelis_menten and clint_normalized (kcat-form GST) terms share
+        # the MM expression Vmax * S / (Km + S).
+        return michaelis_menten(S, vmax, km), gm, tw
+
+    activation_entries: dict[str, Any] = {}
+    detox_entries: dict[str, Any] = {}
+    computed: dict[str, tuple[float, float, float]] = {}
+    term_roles: dict[str, str] = {}
+
+    # Pass 1: direct terms (roster entries the model evaluates as-is).
+    for reaction in reactions:
+        if reaction.term_key in derived_specs or reaction.params.get("dormant"):
+            continue
+        if reaction.rate_law == "clint_ceiling":
+            if efficiency_spec is None or efficiency_spec.get("term") != reaction.term_key:
+                raise ValueError(
+                    f"clint_ceiling term {carcinogen_class}/{reaction.term_key} "
+                    "has no activation_efficiency_term spec"
+                )
+            continue
+        role = reaction.role
+        if role not in ("activation", "detoxification"):
+            continue
+        value, gm, tw = _evaluate(reaction, role)
+        computed[reaction.term_key] = (value, gm, tw)
+        term_roles[reaction.term_key] = role
+        entries = activation_entries if role == "activation" else detox_entries
+        entries[entry_names.get(reaction.term_key, reaction.term_key)] = _entry(
+            value, gm, tw, role, reaction.confidence
+        )
+
+    # Pass 2: derived terms (flux expressed from an already-evaluated base).
+    for name, spec in derived_specs.items():
+        base_key = str(spec["base_term"])
+        if base_key not in computed:
+            raise ValueError(f"Derived term {name!r} has unevaluated base {base_key!r}")
+        base_value, base_gm, base_tw = computed[base_key]
+        fraction = float(spec["fraction"])
+        gm = genotype_modifier(genotypes.get(name, "NM"), name)
+        form = str(spec.get("form", "fraction_of_base"))
+        if form == "fraction_of_base":
+            tw = 1.0
+            value = base_value * fraction * gm
+        elif form == "relative_to_base":
+            tw = get_flux_tissue_weight(name, tissue, tissue_weight_source)
+            value = base_value * fraction * gm * tw / (base_gm * base_tw + 1e-9)
+        else:
+            raise ValueError(f"Unsupported derived form {form!r} for {name}")
+        role = next((r.role for r in reactions if r.term_key == name), None)
+        if role not in ("activation", "detoxification"):
+            raise ValueError(f"Derived term {name!r} has no activation/detoxification role")
+        computed[name] = (value, gm, tw)
+        term_roles[name] = role
+        entries = activation_entries if role == "activation" else detox_entries
+        entries[entry_names.get(name, name)] = _entry(
+            value, gm, tw, role, str(spec.get("confidence", ""))
+        )
+
+    # Totals: raw sums in entry order, then class-level aggregation.
+    total_activation = 0.0
+    total_detox = 0.0
+    for key, (value, _, _) in computed.items():
+        if term_roles[key] == "activation":
+            total_activation += value
+        else:
+            total_detox += value
+
+    if efficiency_spec is not None:
+        eff_reaction = next(r for r in reactions if r.term_key == efficiency_spec["term"])
+        gene = _gene(eff_reaction)
+        eff_gm = genotype_modifier(genotypes.get(gene, "NM"), gene)
+        eff_tw = get_flux_tissue_weight(gene, tissue, tissue_weight_source)
+        efficiency = min(
+            1.0,
+            (float(eff_reaction.params["CLint"]) / float(efficiency_spec["reference_CLint"]))
+            * eff_gm
+            * eff_tw,
+        )
+        total_activation = total_activation * efficiency
+
+    detox_fraction = agg.get("detox_fraction_of_activation")
+    if detox_fraction is not None:
+        total_detox = total_activation * float(detox_fraction)
+        detox_entry_spec = agg.get("detox_entry")
+        if detox_entry_spec:
+            detox_entries[str(detox_entry_spec["name"])] = {
+                "flux": total_detox,
+                "genotype_modifier": 1.0,
+                "tissue_weight": 1.0,
+                "confidence": str(detox_entry_spec.get("confidence", "estimated")),
+            }
+
+    detox_scale = agg.get("detox_total_scale")
+    if detox_scale is not None:
+        total_detox = total_detox * float(detox_scale)
+
+    def _round_total(value: float, spec: Any) -> Any:
+        return value if spec is None else round(value, spec)
+
+    result: FluxResultDict = {
+        "activation_enzymes": activation_entries,
+        "detox_enzymes": detox_entries,
+        "total_activation": _round_total(total_activation, total_round.get("activation")),
+        "total_detox": _round_total(total_detox, total_round.get("detoxification")),
+    }
+    if efficiency_spec is not None:
+        result[str(efficiency_spec["output_field"])] = round(
+            efficiency, int(efficiency_spec.get("output_round", 3))
+        )
+    result["unit_note"] = str(agg.get("unit_note", ""))
+    return result
+
+
 def _resolve_nested_ref(doc: JsonDict, ref: str) -> JsonDict:
     """Resolve a dotted reference inside a nested mapping."""
     node: JsonDict = doc
@@ -1680,98 +1854,6 @@ def _annotate_flux_result_metadata(
 
 
 # ── Pathway-specific flux calculators ──────────────────────────────────────
-
-
-def _compute_pah_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute PAH (BaP) activation and detoxification fluxes."""
-    params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["PAH"]["pathways"]
-    activation_enzymes: dict[str, Any] = {}
-    detox_enzymes: dict[str, Any] = {}
-
-    # --- ACTIVATION ---
-    # CYP1A1
-    cyp1a1_p = p["activation"]["CYP1A1"]
-    gm = genotype_modifier(genotypes.get("CYP1A1", "NM"), "CYP1A1")
-    tw = get_flux_tissue_weight("CYP1A1", tissue, tissue_weight_source)
-    v_cyp1a1 = michaelis_menten(
-        S, cyp1a1_p["Vmax_pmol_min_pmolP450"] * gm * tw, cyp1a1_p["Km_uM"]
-    )
-    activation_enzymes["CYP1A1"] = {
-        "flux": round(v_cyp1a1, 4),
-        "genotype_modifier": gm,
-        "tissue_weight": tw,
-        "confidence": cyp1a1_p["confidence"],
-    }
-
-    # CYP1B1
-    cyp1b1_p = p["activation"]["CYP1B1"]
-    gm1b1 = genotype_modifier(genotypes.get("CYP1B1", "NM"), "CYP1B1")
-    tw1b1 = get_flux_tissue_weight("CYP1B1", tissue, tissue_weight_source)
-    v_cyp1b1 = michaelis_menten(
-        S, cyp1b1_p["Vmax_pmol_min_pmolP450"] * gm1b1 * tw1b1, cyp1b1_p["Km_uM"]
-    )
-    activation_enzymes["CYP1B1"] = {
-        "flux": round(v_cyp1b1, 4),
-        "genotype_modifier": gm1b1,
-        "tissue_weight": tw1b1,
-        "confidence": cyp1b1_p["confidence"],
-    }
-
-    # EPHX1 (intermediate efficiency factor)
-    ephx1_p = p["activation"]["EPHX1"]
-    ephx1_gm = genotype_modifier(genotypes.get("EPHX1", "NM"), "EPHX1")
-    ephx1_tw = get_flux_tissue_weight("EPHX1", tissue, tissue_weight_source)
-    ephx1_efficiency = min(
-        1.0, (ephx1_p["CLint"] / 40.0) * ephx1_gm * ephx1_tw
-    )
-
-    total_activation_raw = v_cyp1a1 + v_cyp1b1
-    total_activation = total_activation_raw * ephx1_efficiency
-
-    # --- DETOXIFICATION ---
-    # GSTM1
-    gstm1_p = p["detoxification"]["GSTM1"]
-    gstm1_gm = genotype_modifier(genotypes.get("GSTM1", "NM"), "GSTM1")
-    gstm1_tw = get_flux_tissue_weight("GSTM1", tissue, tissue_weight_source)
-    v_gstm1 = gstm1_p["kcat_s"] * gstm1_gm * gstm1_tw * S / (gstm1_p["Km_uM"] + S)
-    detox_enzymes["GSTM1"] = {
-        "flux": round(v_gstm1, 6),
-        "genotype_modifier": gstm1_gm,
-        "tissue_weight": gstm1_tw,
-        "confidence": gstm1_p["confidence"],
-    }
-
-    # GSTP1
-    gstp1_p = p["detoxification"]["GSTP1"]
-    gstp1_gm = genotype_modifier(genotypes.get("GSTP1", "NM"), "GSTP1")
-    gstp1_tw = get_flux_tissue_weight("GSTP1", tissue, tissue_weight_source)
-    v_gstp1 = gstp1_p["kcat_s"] * gstp1_gm * gstp1_tw * S / (gstp1_p["Km_uM"] + S)
-    detox_enzymes["GSTP1"] = {
-        "flux": round(v_gstp1, 6),
-        "genotype_modifier": gstp1_gm,
-        "tissue_weight": gstp1_tw,
-        "confidence": gstp1_p["confidence"],
-    }
-
-    total_detox_raw = v_gstm1 + v_gstp1
-    # CLint normalization: CYP1A1 CLint 1100 / (GSTM1 CLint 0.024 * 60) = 764
-    GST_SCALE = 764.0
-    total_detox = total_detox_raw * GST_SCALE
-
-    return {
-        "activation_enzymes": activation_enzymes,
-        "detox_enzymes": detox_enzymes,
-        "total_activation": round(total_activation, 4),
-        "total_detox": round(total_detox, 4),
-        "ephx1_efficiency": round(ephx1_efficiency, 3),
-        "unit_note": "Activation in pmol/min/pmolP450; detox scaled via CLint normalization",
-    }
 
 
 def _compute_aflatoxin_flux(
@@ -1957,213 +2039,6 @@ def _compute_aldehyde_flux(
     }
 
 
-def _compute_nitrosamine_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute NNK activation flux."""
-    params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["Nitrosamine"]["pathways"]
-    activation_enzymes: dict[str, Any] = {}
-
-    # CYP2A13
-    cyp2a13_p = p["activation"]["CYP2A13"]
-    gm2a13 = genotype_modifier(genotypes.get("CYP2A13", "NM"), "CYP2A13")
-    tw2a13 = get_flux_tissue_weight("CYP2A13", tissue, tissue_weight_source)
-    v_cyp2a13 = michaelis_menten(
-        S,
-        cyp2a13_p["Vmax_pmol_min_pmolP450"] * gm2a13 * tw2a13,
-        cyp2a13_p["Km_uM"],
-    )
-    activation_enzymes["CYP2A13"] = {
-        "flux": round(v_cyp2a13, 6),
-        "genotype_modifier": gm2a13,
-        "tissue_weight": tw2a13,
-        "confidence": cyp2a13_p["confidence"],
-    }
-
-    # CYP2A6 (~200-fold lower CLint)
-    gm2a6 = genotype_modifier(genotypes.get("CYP2A6", "NM"), "CYP2A6")
-    tw2a6 = get_flux_tissue_weight("CYP2A6", tissue, tissue_weight_source)
-    divisor = gm2a13 * tw2a13 + 1e-9
-    v_cyp2a6 = v_cyp2a13 * 0.005 * gm2a6 * tw2a6 / divisor
-    activation_enzymes["CYP2A6"] = {
-        "flux": round(v_cyp2a6, 6),
-        "genotype_modifier": gm2a6,
-        "tissue_weight": tw2a6,
-        "confidence": "moderate",
-    }
-
-    total_activation = v_cyp2a13 + v_cyp2a6
-
-    return {
-        "activation_enzymes": activation_enzymes,
-        "detox_enzymes": {
-            "NNAL_reduction": {
-                "flux": total_activation * 0.3,
-                "genotype_modifier": 1.0,
-                "tissue_weight": 1.0,
-                "confidence": "estimated",
-            }
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_activation * 0.3, 6),
-        "unit_note": "Flux in pmol/min/pmolP450",
-    }
-
-
-def _compute_ndma_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute NDMA activation flux via CYP2E1."""
-    params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["NDMA"]["pathways"]["activation"]["CYP2E1"]
-    gm2e1 = genotype_modifier(genotypes.get("CYP2E1", "NM"), "CYP2E1")
-    tw2e1 = get_flux_tissue_weight("CYP2E1", tissue, tissue_weight_source)
-    v_cyp2e1 = michaelis_menten(
-        S, p["Vmax_pmol_min_mg"] * gm2e1 * tw2e1, p["Km_uM"]
-    )
-
-    return {
-        "activation_enzymes": {
-            "CYP2E1": {
-                "flux": round(v_cyp2e1, 4),
-                "genotype_modifier": gm2e1,
-                "tissue_weight": tw2e1,
-                "confidence": p["confidence"],
-            }
-        },
-        "detox_enzymes": {},
-        "total_activation": round(v_cyp2e1, 4),
-        "total_detox": v_cyp2e1 * 0.1,
-        "unit_note": "Flux in pmol/min/mg microsomal protein",
-    }
-
-
-def _compute_hca_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute PhIP (HCA) activation and detoxification fluxes."""
-    params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["HCA"]["pathways"]
-    activation_enzymes: dict[str, Any] = {}
-
-    # CYP1A2
-    cyp1a2_p = p["activation"]["CYP1A2"]
-    gm1a2 = genotype_modifier(genotypes.get("CYP1A2", "NM"), "CYP1A2")
-    tw1a2 = get_flux_tissue_weight("CYP1A2", tissue, tissue_weight_source)
-    v_1a2 = michaelis_menten(
-        S,
-        cyp1a2_p["Vmax_nmol_min_nmolP450"] * gm1a2 * tw1a2,
-        cyp1a2_p["Km_uM"],
-    )
-    activation_enzymes["CYP1A2"] = {
-        "flux": round(v_1a2, 6),
-        "genotype_modifier": gm1a2,
-        "tissue_weight": tw1a2,
-        "confidence": cyp1a2_p["confidence"],
-    }
-
-    # CYP1A1
-    cyp1a1_p = p["activation"]["CYP1A1"]
-    gm1a1 = genotype_modifier(genotypes.get("CYP1A1", "NM"), "CYP1A1")
-    tw1a1 = get_flux_tissue_weight("CYP1A1", tissue, tissue_weight_source)
-    v_1a1 = michaelis_menten(
-        S,
-        cyp1a1_p["Vmax_nmol_min_nmolP450"] * gm1a1 * tw1a1,
-        cyp1a1_p["Km_uM"],
-    )
-    activation_enzymes["CYP1A1"] = {
-        "flux": round(v_1a1, 6),
-        "genotype_modifier": gm1a1,
-        "tissue_weight": tw1a1,
-        "confidence": cyp1a1_p["confidence"],
-    }
-
-    # CYP1B1
-    cyp1b1_p = p["activation"]["CYP1B1"]
-    gm1b1 = genotype_modifier(genotypes.get("CYP1B1", "NM"), "CYP1B1")
-    tw1b1 = get_flux_tissue_weight("CYP1B1", tissue, tissue_weight_source)
-    v_1b1 = michaelis_menten(
-        S,
-        cyp1b1_p["Vmax_nmol_min_nmolP450"] * gm1b1 * tw1b1,
-        cyp1b1_p["Km_uM"],
-    )
-    activation_enzymes["CYP1B1"] = {
-        "flux": round(v_1b1, 6),
-        "genotype_modifier": gm1b1,
-        "tissue_weight": tw1b1,
-        "confidence": cyp1b1_p["confidence"],
-    }
-
-    total_activation = v_1a2 + v_1a1 + v_1b1
-
-    return {
-        "activation_enzymes": activation_enzymes,
-        "detox_enzymes": {
-            "NAT2_acetylation": {
-                "flux": total_activation * 0.2,
-                "genotype_modifier": 1.0,
-                "tissue_weight": 1.0,
-                "confidence": "estimated",
-            }
-        },
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_activation * 0.2, 6),
-        "unit_note": "Flux in nmol/min/nmolP450",
-    }
-
-
-def _compute_benzene_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-) -> FluxResultDict:
-    """Compute benzene activation flux via CYP2E1."""
-    params = _load_kinetic_params()
-    p = params["carcinogen_classes"]["Benzene"]["pathways"]["activation"]["CYP2E1_liver"]
-    gm2e1 = genotype_modifier(genotypes.get("CYP2E1", "NM"), "CYP2E1")
-    tw2e1 = get_flux_tissue_weight("CYP2E1", tissue, tissue_weight_source)
-    km = p["Km_uM"]
-    vmax_estimate = 100.0
-    v_cyp2e1 = michaelis_menten(S, vmax_estimate * gm2e1 * tw2e1, km)
-
-    # NQO1 detox (benzoquinone reduction)
-    nqo1_gm = genotype_modifier(genotypes.get("NQO1", "NM"), "NQO1")
-    v_nqo1 = v_cyp2e1 * 0.4 * nqo1_gm
-
-    return {
-        "activation_enzymes": {
-            "CYP2E1": {
-                "flux": round(v_cyp2e1, 4),
-                "genotype_modifier": gm2e1,
-                "tissue_weight": tw2e1,
-                "confidence": "moderate",
-            }
-        },
-        "detox_enzymes": {
-            "NQO1": {
-                "flux": round(v_nqo1, 4),
-                "genotype_modifier": nqo1_gm,
-                "tissue_weight": 1.0,
-                "confidence": "low",
-            }
-        },
-        "total_activation": round(v_cyp2e1, 4),
-        "total_detox": round(v_nqo1, 4),
-        "unit_note": "Flux in pmol/min/mg (estimated Vmax)",
-    }
-
-
 def _compute_chlorinated_solvent_flux(
     genotypes: GenotypeMap,
     tissue: str,
@@ -2320,25 +2195,31 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 
 # ── Public API ─────────────────────────────────────────────────────────────
 
-# Proxy classes routed through the generic engine-contract loop; the
-# remaining entries in _DISPATCH keep their hand-written functions (seven
-# mechanistic classes plus Dioxin and ChlorinatedSolvent, whose model
-# structures are not term-sum proxies).
+# Proxy classes routed through the generic engine-contract loop.
+# Measured-kinetics classes routed through the generic mechanistic loop are
+# listed in _GENERIC_MECHANISTIC_FLUX_CLASSES below. The remaining entries in
+# _DISPATCH keep their hand-written functions: Aflatoxin and Aldehyde (whose
+# aggregation blocks carry a dedicated_function status note) plus Dioxin and
+# ChlorinatedSolvent, whose model structures are not term-sum proxies.
 _GENERIC_PROXY_FLUX_CLASSES = frozenset(
     {"AromaticAmines", "EstrogenMetabolites", "NDEA", "VinylChloride", "UV_Radiation", "HeavyMetal"}
 )
 
+# Measured-kinetics classes whose term evaluation and aggregation are fully
+# described by the per-class "aggregation" block in kinetic_parameters.json.
+_GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset({"PAH", "Nitrosamine", "NDMA", "HCA", "Benzene"})
+
 _DISPATCH: dict[str, FluxCalculator] = {
-    "PAH": _compute_pah_flux,
+    "PAH": partial(_compute_generic_mechanistic_flux, "PAH"),
     "Aflatoxin": _compute_aflatoxin_flux,
     "Aldehyde": _compute_aldehyde_flux,
-    "Nitrosamine": _compute_nitrosamine_flux,
-    "NDMA": _compute_ndma_flux,
+    "Nitrosamine": partial(_compute_generic_mechanistic_flux, "Nitrosamine"),
+    "NDMA": partial(_compute_generic_mechanistic_flux, "NDMA"),
     "NDEA": partial(_compute_generic_proxy_flux, "NDEA"),
-    "HCA": _compute_hca_flux,
+    "HCA": partial(_compute_generic_mechanistic_flux, "HCA"),
     "AromaticAmines": partial(_compute_generic_proxy_flux, "AromaticAmines"),
     "EstrogenMetabolites": partial(_compute_generic_proxy_flux, "EstrogenMetabolites"),
-    "Benzene": _compute_benzene_flux,
+    "Benzene": partial(_compute_generic_mechanistic_flux, "Benzene"),
     "VinylChloride": partial(_compute_generic_proxy_flux, "VinylChloride"),
     "ChlorinatedSolvent": _compute_chlorinated_solvent_flux,
     "UV_Radiation": partial(_compute_generic_proxy_flux, "UV_Radiation"),
@@ -2424,7 +2305,7 @@ def compute_pathway_flux(
         induction_factors,
         interaction_params=engine.get_interaction_parameters() if engine is not None else None,
     )
-    if cls_str in _GENERIC_PROXY_FLUX_CLASSES:
+    if cls_str in _GENERIC_PROXY_FLUX_CLASSES or cls_str in _GENERIC_MECHANISTIC_FLUX_CLASSES:
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source, engine=engine)
     else:
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)

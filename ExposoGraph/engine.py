@@ -134,6 +134,7 @@ class GraphEngine:
         self._parameter_provider: JSONInteractionParameterProvider | None = None
         self._flux_reactions_by_class: dict[str, list[FluxReaction]] | None = None
         self._flux_class_sources: dict[str, set[str]] | None = None
+        self._flux_aggregation_by_class: dict[str, dict[str, Any]] | None = None
 
     # ── Mutations ────────────────────────────────────────────────────────
 
@@ -230,6 +231,7 @@ class GraphEngine:
         self._parameter_provider = None
         self._flux_reactions_by_class = None
         self._flux_class_sources = None
+        self._flux_aggregation_by_class = None
 
     def load_reference_graph(
         self,
@@ -490,6 +492,7 @@ class GraphEngine:
         warnings: list[str] = []
         index: dict[str, list[FluxReaction]] = {}
         sources: dict[str, set[str]] = {}
+        aggregations: dict[str, dict[str, Any]] = {}
 
         def _record(
             cls: str,
@@ -557,6 +560,7 @@ class GraphEngine:
                     )
             index[cls] = reactions
             sources[cls] = {"kinetic_parameters"}
+            aggregations[cls] = dict(cls_data.get("aggregation", {})) if isinstance(cls_data.get("aggregation"), dict) else {}
 
         # proxy_flux_parameters.json -- semi-quantitative classes; proxy wins
         try:
@@ -585,6 +589,7 @@ class GraphEngine:
 
         self._flux_reactions_by_class = index
         self._flux_class_sources = sources
+        self._flux_aggregation_by_class = aggregations
         return warnings
 
     # ── Interaction-parameter access ─────────────────────────────────────
@@ -700,6 +705,20 @@ class GraphEngine:
         """
         self._ensure_flux_index()
         return list(self._flux_reactions_by_class)
+
+    def get_flux_aggregation(self, carcinogen_class: Any) -> dict[str, Any]:
+        """Return the per-class flux aggregation spec from the kinetic JSON.
+
+        The aggregation block (see the ``aggregation`` key of a class in
+        ``kinetic_parameters.json``) names how a class's reaction terms
+        combine: per-role vmax fields, derived terms, detox fractions,
+        total scaling, rounding, and unit notes. Classes without a block
+        (proxy classes, or mechanistic classes pending annotation) return
+        an empty dict.
+        """
+        self._ensure_flux_index()
+        cls = getattr(carcinogen_class, "value", carcinogen_class)
+        return self._flux_aggregation_by_class.get(cls, {})
 
     def get_flux_reaction_coverage(self, carcinogen_class: Any) -> dict[str, Any]:
         """Compare a class's flux-reaction rosters against graph scope edges.
