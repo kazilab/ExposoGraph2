@@ -680,54 +680,41 @@ def get_flux_tissue_weight(
 ) -> float:
     """Return tissue expression weight for an enzyme in a given tissue.
 
-    The default ``curated`` mode preserves the original ``04_flux_model``
-    scientific calibration, which was developed and validated against the
-    curated weights stored in ``kinetic_parameters.json``. The optional
-    ``gtex`` mode uses quantitative GTEx weights where available, and falls
-    back to the curated table for non-GTEx tissues or genes missing from GTEx.
+    Weights come from the engine's GTEx expression table
+    (``tissue_expression_data_raw.json``, normalized per enzyme by its
+    most-expressing tissue) -- the same source ``GraphEngine`` bakes onto
+    enzyme nodes at ``load_reference_graph`` time. The hand-curated
+    ``tissue_expression_weights`` table formerly shipped in
+    ``kinetic_parameters.json`` was removed; ``tissue_weight_source`` is
+    kept for API compatibility and no longer selects a different source.
 
     Args:
         gene: Gene/enzyme symbol (e.g. "CYP1A1").
         tissue: Tissue name (e.g. "Lung", "liver").
-        tissue_weight_source: ``"curated"`` (default) or ``"gtex"``.
+        tissue_weight_source: Ignored (retained for API compatibility).
 
     Returns:
-        Expression weight between 0.0 and 1.0.  Returns 0.5 if the gene
-        is not found in any source (moderate default).
+        Expression weight between 0.0 and 1.0. Returns 0.2 when the gene
+        is known but the tissue is not covered by the expression source,
+        and 0.5 when the gene has no entry in the source (moderate
+        default).
     """
-    source = _normalize_tissue_weight_source(tissue_weight_source)
+    _normalize_tissue_weight_source(tissue_weight_source)
     tissue_key = _normalize_tissue(tissue)
 
-    # Explicit GTEx mode: use quantitative GTEx data when available.
-    if source == FluxTissueWeightSource.GTEX:
-        gtex_name = _FLUX_TISSUE_TO_GTEX.get(tissue_key)
-        if gtex_name is not None:
-            try:
-                from .tissue_subgraphs import get_tissue_weights
-
-                weights = get_tissue_weights(gtex_name)
-                if gene in weights:
-                    return float(weights[gene])
-            except (ImportError, FileNotFoundError, ValueError):
-                pass
-
-    # Curated source model, used by the original standalone flux extension.
-    params = _load_kinetic_params()
-    tw = cast(JsonDict, params["tissue_expression_weights"])
-
-    if gene in tw:
-        gene_weights = cast(JsonDict, tw[gene])
-        if tissue_key in gene_weights:
-            return float(gene_weights[tissue_key])
-        # Partial match
-        for k, v in gene_weights.items():
-            if tissue_key in k or k in tissue_key:
-                return float(v)
-        # Gene exists but tissue not listed
-        return 0.2
-    else:
-        # Gene not in table — moderate default
+    engine = _get_flux_contract_engine()
+    weights = engine.get_tissue_expression(gene)
+    if weights is None:
+        # Gene not in the expression source -- moderate default
         return 0.5
+    expression_tissue = _FLUX_TISSUE_TO_GTEX.get(tissue_key)
+    if expression_tissue is None:
+        # Tissue not covered by the expression source
+        return 0.2
+    weight = weights.get(expression_tissue)
+    if weight is None:
+        return 0.2
+    return float(weight)
 
 
 def tissue_weight(
@@ -1338,9 +1325,8 @@ def _pathway_tissue_weight(
     supported_tissues: list[str] | None = None,
 ) -> float:
     """Return a tissue weight, falling back to pathway-level tissue support."""
-    params = _load_kinetic_params()
-    tissue_weights = cast(JsonDict, params["tissue_expression_weights"])
-    if gene and gene in tissue_weights:
+    engine = _get_flux_contract_engine()
+    if gene and engine.get_tissue_expression(gene) is not None:
         return get_flux_tissue_weight(gene, tissue, tissue_weight_source)
 
     if supported_tissues:

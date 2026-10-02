@@ -136,6 +136,8 @@ class GraphEngine:
         self._flux_class_sources: dict[str, set[str]] | None = None
         self._flux_aggregation_by_class: dict[str, dict[str, Any]] | None = None
         self._flux_metadata: dict[str, Any] | None = None
+        self._tissue_expression_raw: dict[str, dict[str, float]] | None = None
+        self._tissue_expression_normalized: dict[str, dict[str, float]] | None = None
 
     # ── Mutations ────────────────────────────────────────────────────────
 
@@ -234,6 +236,8 @@ class GraphEngine:
         self._flux_class_sources = None
         self._flux_aggregation_by_class = None
         self._flux_metadata = None
+        self._tissue_expression_raw = None
+        self._tissue_expression_normalized = None
 
     def load_reference_graph(
         self,
@@ -284,6 +288,44 @@ class GraphEngine:
         warnings.extend(self._apply_flux_parameters(kinetic_parameters_path, proxy_flux_parameters_path))
         return warnings
 
+    def _ensure_tissue_expression(self) -> dict[str, dict[str, float]]:
+        """Lazily load and normalize ``tissue_expression_data_raw.json``.
+
+        Retains both the raw per-tissue nTPM values and the per-enzyme
+        divide-by-max normalization (most-expressing tissue = 1.0) that
+        :meth:`_apply_tissue_expression` bakes onto enzyme nodes. The
+        normalized table is the single tissue-weight source served to flux
+        models via :meth:`get_tissue_expression`.
+        """
+        if self._tissue_expression_raw is None or self._tissue_expression_normalized is None:
+            try:
+                expression: dict[str, dict[str, float]] = json.loads(
+                    _DEFAULT_TISSUE_EXPRESSION_PATH.read_text(encoding="utf-8")
+                )["expression"]
+            except (OSError, json.JSONDecodeError, KeyError):
+                expression = {}
+            normalized: dict[str, dict[str, float]] = {}
+            for gene, raw in expression.items():
+                max_raw = max(raw.values()) if raw else 0.0
+                normalized[gene] = (
+                    {tissue: value / max_raw for tissue, value in raw.items()}
+                    if max_raw
+                    else dict.fromkeys(raw, 0.0)
+                )
+            self._tissue_expression_raw = expression
+            self._tissue_expression_normalized = normalized
+        return self._tissue_expression_normalized
+
+    def get_tissue_expression(self, gene: str) -> dict[str, float] | None:
+        """Return normalized per-tissue expression weights for a gene.
+
+        Weights come from ``tissue_expression_data_raw.json`` (GTEx v8
+        nTPM via Human Protein Atlas), normalized per enzyme by its
+        most-expressing tissue. Returns ``None`` when the gene has no
+        entry in the expression source.
+        """
+        return self._ensure_tissue_expression().get(gene)
+
     def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
         """(Re)apply ``tissue_expression_data_raw.json`` to the relevant enzyme nodes.
 
@@ -314,12 +356,25 @@ class GraphEngine:
         the graph but absent from the tissue expression source file.
         """
         resolved_path = Path(path) if path else _DEFAULT_TISSUE_EXPRESSION_PATH
-        # This file's "expression" table is raw nTPM values with no
-        # normalization applied -- the divide-by-max step below is this
-        # method's own responsibility, unchanged regardless of source file.
-        expression: dict[str, dict[str, float]] = json.loads(
-            resolved_path.read_text(encoding="utf-8")
-        )["expression"]
+        if resolved_path == _DEFAULT_TISSUE_EXPRESSION_PATH:
+            # Share the retained (and flux-served) normalized table so node
+            # baking and get_tissue_expression can never diverge.
+            self._ensure_tissue_expression()
+            expression = self._tissue_expression_raw or {}
+            normalized_by_gene = self._tissue_expression_normalized or {}
+        else:
+            # This file's "expression" table is raw nTPM values with no
+            # normalization applied -- the divide-by-max step below is this
+            # method's own responsibility, unchanged regardless of source file.
+            expression = json.loads(resolved_path.read_text(encoding="utf-8"))["expression"]
+            normalized_by_gene = {}
+            for gene, raw in expression.items():
+                max_raw = max(raw.values()) if raw else 0.0
+                normalized_by_gene[gene] = (
+                    {tissue: value / max_raw for tissue, value in raw.items()}
+                    if max_raw
+                    else dict.fromkeys(raw, 0.0)
+                )
 
         warnings: list[str] = []
         enzyme_ids = [
@@ -334,14 +389,8 @@ class GraphEngine:
                 warnings.append(f"No tissue expression data for enzyme: {enzyme_id}")
                 continue
 
-            max_raw = max(raw.values()) if raw else 0.0
-            normalized = (
-                {tissue: value / max_raw for tissue, value in raw.items()}
-                if max_raw
-                else dict.fromkeys(raw, 0.0)
-            )
             node_data["tissue_weights_raw"] = raw
-            node_data["tissue_weights"] = normalized
+            node_data["tissue_weights"] = normalized_by_gene[enzyme_id]
 
         return warnings
 
