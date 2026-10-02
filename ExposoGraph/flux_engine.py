@@ -194,8 +194,6 @@ class SensitivityResult:
 
 _KINETIC_PARAMS_FILE = Path(__file__).parent / "data" / "kinetic_parameters.json"
 _KINETIC_CACHE: JsonDict | None = None
-_EXPOSURE_DB_FILE = Path(__file__).parent / "data" / "exposure_database.json"
-_EXPOSURE_DB_CACHE: JsonDict | None = None
 _PROXY_FLUX_PARAMS_FILE = Path(__file__).parent / "data" / "proxy_flux_parameters.json"
 _PROXY_FLUX_CACHE: JsonDict | None = None
 _PROXY_FLUX_PROVENANCE_FILE = Path(__file__).parent / "data" / "proxy_flux_provenance.json"
@@ -214,15 +212,6 @@ def _load_kinetic_params() -> JsonDict:
         with open(_KINETIC_PARAMS_FILE, "r", encoding="utf-8") as fh:
             _KINETIC_CACHE = cast(JsonDict, json.load(fh))
     return _KINETIC_CACHE
-
-
-def _load_exposure_db() -> JsonDict:
-    """Lazy-load and cache the exposure database JSON."""
-    global _EXPOSURE_DB_CACHE
-    if _EXPOSURE_DB_CACHE is None:
-        with open(_EXPOSURE_DB_FILE, "r", encoding="utf-8") as fh:
-            _EXPOSURE_DB_CACHE = cast(JsonDict, json.load(fh))
-    return _EXPOSURE_DB_CACHE
 
 
 def _load_proxy_flux_params() -> JsonDict:
@@ -442,43 +431,7 @@ def _classify_risk(net_ratio: float) -> str:
 
 def _get_default_concentration(carcinogen_class: str) -> float:
     """Return default environmental exposure concentration in uM."""
-    params = _load_kinetic_params()
-    defaults = params["metadata"]["exposure_defaults_uM"]
-    class_map = {
-        "PAH": defaults["BaP"],
-        "Aflatoxin": defaults["AFB1"],
-        "Aldehyde": defaults["acetaldehyde"],
-        "Nitrosamine": defaults["NNK"],
-        "NDMA": defaults["NDMA"],
-        "HCA": defaults["PhIP"],
-        "Benzene": defaults["benzene"],
-        "ChlorinatedSolvent": defaults["TCE"],
-        "Dioxin": defaults["TCDD"],
-        "HeavyMetal": defaults["arsenic"],
-    }
-    if carcinogen_class in class_map:
-        return float(class_map[carcinogen_class])
-
-    proxy_classes = _load_proxy_flux_params()["classes"]
-    proxy_cfg = proxy_classes.get(carcinogen_class)
-    if proxy_cfg is not None:
-        source = proxy_cfg["exposure_default"]["source"]
-        if source == "kinetic_parameters":
-            field = proxy_cfg["exposure_default"]["field"]
-            value = defaults.get(field)
-            if value is not None:
-                return float(value)
-        elif source == "exposure_database":
-            exposure_db = _load_exposure_db()["carcinogen_classes"]
-            class_name = proxy_cfg["exposure_default"]["class"]
-            scenario_name = proxy_cfg["exposure_default"]["scenario"]
-            field_name = proxy_cfg["exposure_default"]["field"]
-            scenario = exposure_db.get(class_name, {}).get("exposure_scenarios", {}).get(scenario_name, {})
-            value = scenario.get(field_name)
-            if value is not None:
-                return float(value)
-
-    return 0.1
+    return float(_get_flux_contract_engine().get_default_concentration(carcinogen_class))
 
 
 _KNOWN_FLUX_GENE_PREFIXES = tuple(
@@ -588,80 +541,6 @@ def _apply_induction_modifiers(
     return result
 
 
-_FALLBACK_QIVIVE_TISSUES: dict[str, dict[str, float]] = {
-    "liver": {"mppgl_mg_per_g": 40.0, "organ_weight_g": 1500.0},
-    "lung": {"mppgl_mg_per_g": 20.0, "organ_weight_g": 1000.0},
-    "kidney": {"mppgl_mg_per_g": 12.0, "organ_weight_g": 300.0},
-    "intestine": {"mppgl_mg_per_g": 35.0, "organ_weight_g": 900.0},
-}
-
-_STEADY_STATE_DEFAULTS: dict[str, float] = {
-    "body_weight_kg": 70.0,
-    "volume_l_per_kg": 0.7,
-    "absorption_fraction": 1.0,
-    "exposure_frequency_per_day": 1.0,
-    "cardiac_output_l_per_day": 7200.0,
-    "background_clearance_rate_per_day": 0.05,
-    "reactive_intermediate_loss_rate_per_day": 1.0,
-    "detoxified_metabolite_loss_rate_per_day": 1.0,
-    "flux_rate_scale_per_day": 1.0,
-    "rate_reference_concentration_uM": 1.0,
-}
-
-_FALLBACK_STEADY_STATE_TISSUES: dict[str, dict[str, float]] = {
-    "liver": {
-        "organ_weight_g": 1500.0,
-        "tissue_partition_coefficient": 1.0,
-        "tissue_blood_flow_fraction": 0.25,
-    },
-    "lung": {
-        "organ_weight_g": 1000.0,
-        "tissue_partition_coefficient": 0.8,
-        "tissue_blood_flow_fraction": 1.0,
-    },
-    "kidney": {
-        "organ_weight_g": 300.0,
-        "tissue_partition_coefficient": 1.1,
-        "tissue_blood_flow_fraction": 0.2,
-    },
-    "intestine": {
-        "organ_weight_g": 900.0,
-        "tissue_partition_coefficient": 0.9,
-        "tissue_blood_flow_fraction": 0.12,
-    },
-    "bladder": {
-        "organ_weight_g": 150.0,
-        "tissue_partition_coefficient": 0.7,
-        "tissue_blood_flow_fraction": 0.02,
-    },
-    "breast": {
-        "organ_weight_g": 500.0,
-        "tissue_partition_coefficient": 1.4,
-        "tissue_blood_flow_fraction": 0.03,
-    },
-    "colon": {
-        "organ_weight_g": 600.0,
-        "tissue_partition_coefficient": 0.9,
-        "tissue_blood_flow_fraction": 0.08,
-    },
-    "prostate": {
-        "organ_weight_g": 30.0,
-        "tissue_partition_coefficient": 0.8,
-        "tissue_blood_flow_fraction": 0.01,
-    },
-    "esophagus": {
-        "organ_weight_g": 40.0,
-        "tissue_partition_coefficient": 0.8,
-        "tissue_blood_flow_fraction": 0.01,
-    },
-    "skin": {
-        "organ_weight_g": 3300.0,
-        "tissue_partition_coefficient": 1.2,
-        "tissue_blood_flow_fraction": 0.05,
-    },
-}
-
-
 def qivive_intrinsic_clearance(
     vmax: float,
     km: float,
@@ -688,23 +567,7 @@ def _qivive_context_for_tissue(
     overrides: Mapping[str, float] | None = None,
 ) -> dict[str, float]:
     """Return MPPGL/organ-weight context for optional QIVIVE flux scaling."""
-    params = _load_kinetic_params()
-    metadata = cast(JsonDict, params.get("metadata", {}))
-    qivive_defaults = cast(JsonDict, metadata.get("qivive_defaults", {}))
-    tissue_defaults = cast(JsonDict, qivive_defaults.get("tissues", {}))
-    tissue_key = _normalize_tissue(tissue)
-    source = cast(dict[str, float], tissue_defaults.get(tissue_key, _FALLBACK_QIVIVE_TISSUES.get(tissue_key, _FALLBACK_QIVIVE_TISSUES["liver"])))
-    context = {
-        "mppgl_mg_per_g": float(source["mppgl_mg_per_g"]),
-        "organ_weight_g": float(source["organ_weight_g"]),
-    }
-    if overrides:
-        if "mppgl_mg_per_g" in overrides:
-            context["mppgl_mg_per_g"] = float(overrides["mppgl_mg_per_g"])
-        if "organ_weight_g" in overrides:
-            context["organ_weight_g"] = float(overrides["organ_weight_g"])
-    context["scale"] = round(context["mppgl_mg_per_g"] * context["organ_weight_g"], 6)
-    return context
+    return _get_flux_contract_engine().get_qivive_context(_normalize_tissue(tissue), overrides)
 
 
 def _apply_qivive_scale(result: FluxResultDict, qivive_context: Mapping[str, float]) -> FluxResultDict:
@@ -743,28 +606,6 @@ def _susceptibility_score_log2(net_ratio: float) -> float:
     return _equation_susceptibility_score_log2(net_ratio)
 
 
-def _positive_context_float(context: Mapping[str, Any], key: str, fallback: float) -> float:
-    """Read a positive numeric context value with a conservative fallback."""
-    try:
-        value = float(context.get(key, fallback))
-    except (TypeError, ValueError):
-        return fallback
-    if value <= 0 or not math.isfinite(value):
-        return fallback
-    return value
-
-
-def _bounded_fraction_context(context: Mapping[str, Any], key: str, fallback: float) -> float:
-    """Read a fraction constrained to the open interval used by PBPK rates."""
-    try:
-        value = float(context.get(key, fallback))
-    except (TypeError, ValueError):
-        return fallback
-    if not math.isfinite(value):
-        return fallback
-    return min(max(value, 1e-6), 1.0)
-
-
 def _round_steady_state_value(value: float) -> float:
     """Round steady-state outputs without hiding very small non-zero values."""
     if not math.isfinite(value) or value < 0:
@@ -779,68 +620,7 @@ def _steady_state_context_for_tissue(
     overrides: Mapping[str, float] | None = None,
 ) -> dict[str, float]:
     """Return validated defaults for the flux-coupled steady-state solver."""
-    params = _load_kinetic_params()
-    metadata = cast(JsonDict, params.get("metadata", {}))
-    configured = cast(JsonDict, metadata.get("steady_state_defaults", {}))
-    tissue_key = _normalize_tissue(tissue)
-
-    qivive_context = _qivive_context_for_tissue(tissue)
-    fallback_tissue = _FALLBACK_STEADY_STATE_TISSUES.get(
-        tissue_key,
-        _FALLBACK_STEADY_STATE_TISSUES["liver"],
-    )
-    configured_tissues = cast(JsonDict, configured.get("tissues", {}))
-    configured_tissue = cast(JsonDict, configured_tissues.get(tissue_key, {}))
-    tissue_source: dict[str, Any] = {
-        **fallback_tissue,
-        **configured_tissue,
-        "organ_weight_g": configured_tissue.get(
-            "organ_weight_g",
-            qivive_context.get("organ_weight_g", fallback_tissue["organ_weight_g"]),
-        ),
-    }
-
-    context: dict[str, float] = {}
-    for key, fallback in _STEADY_STATE_DEFAULTS.items():
-        context[key] = _positive_context_float(configured, key, fallback)
-    context["absorption_fraction"] = _bounded_fraction_context(
-        configured,
-        "absorption_fraction",
-        _STEADY_STATE_DEFAULTS["absorption_fraction"],
-    )
-    context["organ_weight_g"] = _positive_context_float(
-        tissue_source,
-        "organ_weight_g",
-        fallback_tissue["organ_weight_g"],
-    )
-    context["tissue_partition_coefficient"] = _positive_context_float(
-        tissue_source,
-        "tissue_partition_coefficient",
-        fallback_tissue["tissue_partition_coefficient"],
-    )
-    context["tissue_blood_flow_fraction"] = _bounded_fraction_context(
-        tissue_source,
-        "tissue_blood_flow_fraction",
-        fallback_tissue["tissue_blood_flow_fraction"],
-    )
-
-    if overrides:
-        for key, value in overrides.items():
-            if key in {"absorption_fraction", "tissue_blood_flow_fraction"}:
-                context[key] = _bounded_fraction_context(overrides, key, context[key])
-            else:
-                context[key] = _positive_context_float(overrides, key, context.get(key, 1.0))
-
-    context["central_volume_l"] = round(
-        context["body_weight_kg"] * context["volume_l_per_kg"],
-        6,
-    )
-    context["tissue_volume_l"] = round(context["organ_weight_g"] / 1000.0, 6)
-    context["tissue_blood_flow_l_per_day"] = round(
-        context["cardiac_output_l_per_day"] * context["tissue_blood_flow_fraction"],
-        6,
-    )
-    return context
+    return _get_flux_contract_engine().get_steady_state_context(_normalize_tissue(tissue), overrides)
 
 
 def solve_flux_steady_state(

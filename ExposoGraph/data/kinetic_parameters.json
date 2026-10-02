@@ -118,6 +118,7 @@
       "description": "Polycyclic aromatic hydrocarbons — require metabolic activation to reactive diol-epoxide intermediates",
       "kinetics_model": "michaelis_menten",
       "aggregation": {
+        "exposure_default_field": "BaP",
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450", "detoxification": "kcat_s"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 4, "detoxification": 6},
@@ -204,6 +205,7 @@
       "description": "Mycotoxin requiring CYP-mediated epoxidation to the reactive AFB1-8,9-epoxide (AFBO); AFQ1 is a detoxification product",
       "kinetics_model": "mixed",
       "aggregation": {
+        "exposure_default_field": "AFB1",
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450", "detoxification": "Vmax_pmol_min_pmolP450"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 4, "detoxification": 4},
@@ -283,6 +285,7 @@
       "description": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
       "kinetics_model": "michaelis_menten",
       "aggregation": {
+        "exposure_default_field": "acetaldehyde",
         "vmax_field": {"detoxification": "Vmax_U_per_mg", "ethanol_oxidation": "Vmax_U_per_mg"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 6, "detoxification": 6},
@@ -397,6 +400,7 @@
       "description": "Tobacco-specific nitrosamine. α-hydroxylation by CYP2A13 generates reactive methylating and pyridyloxobutylating species.",
       "kinetics_model": "michaelis_menten",
       "aggregation": {
+        "exposure_default_field": "NNK",
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 6},
@@ -468,6 +472,7 @@
       "description": "Volatile nitrosamine formed endogenously and from diet/water. CYP2E1-mediated α-hydroxylation generates formaldehyde and methyldiazonium ion.",
       "kinetics_model": "michaelis_menten",
       "aggregation": {
+        "exposure_default_field": "NDMA",
         "vmax_field": {"activation": "Vmax_pmol_min_mg"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 4},
@@ -521,6 +526,7 @@
       "description": "Heterocyclic amine formed in cooked meat. N-hydroxylation by CYP1A2/CYP1A1/CYP1B1 generates reactive N-OH-PhIP.",
       "kinetics_model": "michaelis_menten",
       "aggregation": {
+        "exposure_default_field": "PhIP",
         "vmax_field": {"activation": "Vmax_nmol_min_nmolP450"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 6},
@@ -593,6 +599,7 @@
       "description": "Industrial/environmental chemical. CYP2E1-mediated oxidation to phenol, then further to catechol and benzoquinone — reactive hematotoxic/leukemogenic metabolites.",
       "kinetics_model": "michaelis_menten",
       "aggregation": {
+        "exposure_default_field": "benzene",
         "vmax_field": {"activation": "Vmax_pmol_min_mg_estimated"},
         "km_field": "Km_uM",
         "entry_round": {"activation": 4, "detoxification": 4},

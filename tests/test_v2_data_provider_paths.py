@@ -12,6 +12,7 @@ from pathlib import Path
 import pytest
 
 import ExposoGraph
+from ExposoGraph import engine as graph_engine
 from ExposoGraph import exposure_engine, flux_engine, interaction_engine
 from ExposoGraph.flux_engine import CarcinogenClass, PathwayFluxResult, compute_pathway_flux
 from ExposoGraph.interaction_engine import InteractionMatrixResult, compute_interaction_matrix
@@ -74,7 +75,7 @@ def test_packaged_data_files_exist() -> None:
 def test_module3_data_loads_from_packaged_paths() -> None:
     for path in (
         flux_engine._KINETIC_PARAMS_FILE,
-        flux_engine._EXPOSURE_DB_FILE,
+        graph_engine._DEFAULT_EXPOSURE_DB_PATH,
         flux_engine._PROXY_FLUX_PARAMS_FILE,
         flux_engine._PROXY_FLUX_PROVENANCE_FILE,
         exposure_engine._EXPOSURE_DB_FILE,
@@ -83,7 +84,7 @@ def test_module3_data_loads_from_packaged_paths() -> None:
         _assert_under(Path(path), DATA_DIR)
 
     assert flux_engine._load_kinetic_params()["carcinogen_classes"]
-    assert flux_engine._load_exposure_db()["carcinogen_classes"]
+    assert json.loads(graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
     assert flux_engine._load_proxy_flux_params()["classes"]
     assert flux_engine._load_proxy_flux_provenance()
 
@@ -192,7 +193,7 @@ def test_no_missing_json_runtime_dependency() -> None:
     assert graph.edges
 
     assert flux_engine._load_kinetic_params()
-    assert flux_engine._load_exposure_db()
+    assert json.loads(graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
     assert flux_engine._load_proxy_flux_params()
     assert interaction_engine._load_interaction_params()
     assert interaction_engine.get_parameter_provenance()
