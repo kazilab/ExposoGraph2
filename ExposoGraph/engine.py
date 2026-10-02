@@ -135,6 +135,7 @@ class GraphEngine:
         self._flux_reactions_by_class: dict[str, list[FluxReaction]] | None = None
         self._flux_class_sources: dict[str, set[str]] | None = None
         self._flux_aggregation_by_class: dict[str, dict[str, Any]] | None = None
+        self._flux_metadata: dict[str, Any] | None = None
 
     # ── Mutations ────────────────────────────────────────────────────────
 
@@ -232,6 +233,7 @@ class GraphEngine:
         self._flux_reactions_by_class = None
         self._flux_class_sources = None
         self._flux_aggregation_by_class = None
+        self._flux_metadata = None
 
     def load_reference_graph(
         self,
@@ -590,6 +592,7 @@ class GraphEngine:
         self._flux_reactions_by_class = index
         self._flux_class_sources = sources
         self._flux_aggregation_by_class = aggregations
+        self._flux_metadata = dict(kinetic_doc.get("metadata", {})) if isinstance(kinetic_doc.get("metadata"), dict) else {}
         return warnings
 
     # ── Interaction-parameter access ─────────────────────────────────────
@@ -719,6 +722,17 @@ class GraphEngine:
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
         return self._flux_aggregation_by_class.get(cls, {})
+
+    def get_flux_metadata(self) -> dict[str, Any]:
+        """Return the metadata block of kinetic_parameters.json.
+
+        Carries the doc-level parameter context shared across classes --
+        exposure defaults (uM), qivive and steady-state tissue defaults --
+        so consumers (e.g. the Aldehyde ethanol-oxidation substrate
+        default) read it through the engine instead of the JSON file.
+        """
+        self._ensure_flux_index()
+        return self._flux_metadata or {}
 
     def get_flux_reaction_coverage(self, carcinogen_class: Any) -> dict[str, Any]:
         """Compare a class's flux-reaction rosters against graph scope edges.

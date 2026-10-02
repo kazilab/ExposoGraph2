@@ -1850,12 +1850,13 @@ def _compute_aflatoxin_flux(
     tissue: str,
     S: float,
     tissue_weight_source: FluxTissueWeightSource,
+    *,
+    engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
     """Compute AFB1 activation and detoxification fluxes."""
-    params = _load_kinetic_params()
-    aflatoxin_data = params["carcinogen_classes"]["Aflatoxin"]
-    p = aflatoxin_data["pathways"]
-    agg = aflatoxin_data["aggregation"]
+    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    terms = {r.term_key: r for r in active_engine.get_flux_reactions("Aflatoxin")}
+    agg = active_engine.get_flux_aggregation("Aflatoxin")
     entry_round = agg["entry_round"]
     entry_round_overrides = agg.get("entry_round_overrides", {})
     total_round = agg["total_round"]
@@ -1863,7 +1864,7 @@ def _compute_aflatoxin_flux(
     detox_enzymes: dict[str, Any] = {}
 
     # CYP3A4 — Hill kinetics
-    cyp3a4_p = p["activation"]["CYP3A4"]
+    cyp3a4_p = terms["CYP3A4"].params
     gm3a4 = genotype_modifier(genotypes.get("CYP3A4", "NM"), "CYP3A4")
     tw3a4 = get_flux_tissue_weight("CYP3A4", tissue, tissue_weight_source)
     v_cyp3a4 = hill_equation(
@@ -1878,12 +1879,12 @@ def _compute_aflatoxin_flux(
         "n": cyp3a4_p["hill_n"],
         "genotype_modifier": gm3a4,
         "tissue_weight": tw3a4,
-        "confidence": cyp3a4_p["confidence"],
+        "confidence": terms["CYP3A4"].confidence,
         "fraction_contribution": cyp3a4_p["fraction_contribution"],
     }
 
     # CYP1A2 — Michaelis-Menten
-    cyp1a2_p = p["activation"]["CYP1A2"]
+    cyp1a2_p = terms["CYP1A2"].params
     gm1a2 = genotype_modifier(genotypes.get("CYP1A2", "NM"), "CYP1A2")
     tw1a2 = get_flux_tissue_weight("CYP1A2", tissue, tissue_weight_source)
     v_cyp1a2 = michaelis_menten(
@@ -1896,14 +1897,14 @@ def _compute_aflatoxin_flux(
         "kinetics": "michaelis_menten",
         "genotype_modifier": gm1a2,
         "tissue_weight": tw1a2,
-        "confidence": cyp1a2_p["confidence"],
+        "confidence": terms["CYP1A2"].confidence,
         "fraction_contribution": cyp1a2_p["fraction_contribution"],
     }
 
     total_activation = v_cyp3a4 + v_cyp1a2
 
     # CYP3A4 AFQ1 (detox)
-    afq1_p = p["detoxification"]["CYP3A4_AFQ1"]
+    afq1_p = terms["CYP3A4_AFQ1"].params
     v_afq1 = hill_equation(
         S,
         afq1_p["Vmax_pmol_min_pmolP450"] * gm3a4 * tw3a4,
@@ -1914,11 +1915,11 @@ def _compute_aflatoxin_flux(
         "flux": round(v_afq1, entry_round["detoxification"]),
         "genotype_modifier": gm3a4,
         "tissue_weight": tw3a4,
-        "confidence": afq1_p["confidence"],
+        "confidence": terms["CYP3A4_AFQ1"].confidence,
     }
 
     # GSTA1 (estimated)
-    gsta1_p = p["detoxification"]["GSTA1"]
+    gsta1_p = terms["GSTA1"].params
     gsta1_gm = genotype_modifier(genotypes.get("GSTA1", "NM"), "GSTA1")
     gsta1_tw = get_flux_tissue_weight(
         gsta1_p.get("tissue_weight_gene", "GSTA1"), tissue, tissue_weight_source
@@ -1935,7 +1936,7 @@ def _compute_aflatoxin_flux(
         ),
         "genotype_modifier": gsta1_gm,
         "tissue_weight": gsta1_tw,
-        "confidence": gsta1_p["confidence"],
+        "confidence": terms["GSTA1"].confidence,
     }
 
     total_detox = v_afq1 + v_gsta1
@@ -1954,12 +1955,13 @@ def _compute_aldehyde_flux(
     tissue: str,
     S: float,
     tissue_weight_source: FluxTissueWeightSource,
+    *,
+    engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
     """Compute aldehyde (acetaldehyde) clearance flux."""
-    params = _load_kinetic_params()
-    aldehyde_data = params["carcinogen_classes"]["Aldehyde"]
-    p = aldehyde_data["pathways"]["acetaldehyde_clearance"]
-    agg = aldehyde_data["aggregation"]
+    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    terms = {r.term_key: r for r in active_engine.get_flux_reactions("Aldehyde")}
+    agg = active_engine.get_flux_aggregation("Aldehyde")
     entry_round = agg["entry_round"]
     total_round = agg["total_round"]
     extras_round = agg.get("extras_round", {})
@@ -1968,22 +1970,26 @@ def _compute_aldehyde_flux(
     # Determine ALDH2 genotype
     aldh2_gt = genotypes.get("ALDH2", "*1/*1")
     if aldh2_gt in ("*1/*1", "NM", "WT", "wildtype"):
-        aldh2_p = p["ALDH2_star1"]
+        aldh2_term = terms["ALDH2_star1"]
+        aldh2_p = aldh2_term.params
         aldh2_gm = 1.0
         aldh2_km = aldh2_p["Km_uM"]
         aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
     elif aldh2_gt in ("*1/*2", "heterozygote"):
-        aldh2_p = p["ALDH2_star1"]
+        aldh2_term = terms["ALDH2_star1"]
+        aldh2_p = aldh2_term.params
         aldh2_gm = genotype_modifier("*1/*2", "ALDH2")  # 0.25
         aldh2_km = aldh2_p["Km_uM"]
         aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
     elif aldh2_gt in ("*2/*2", "PM", "PM_ALDH2"):
-        aldh2_p = p["ALDH2_star2_homozygous"]
+        aldh2_term = terms["ALDH2_star2_homozygous"]
+        aldh2_p = aldh2_term.params
         aldh2_gm = 1.0  # parameters already reflect variant
         aldh2_km = aldh2_p["Km_uM"]
         aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
     else:
-        aldh2_p = p["ALDH2_star1"]
+        aldh2_term = terms["ALDH2_star1"]
+        aldh2_p = aldh2_term.params
         aldh2_gm = genotype_modifier(aldh2_gt, "ALDH2")
         aldh2_km = aldh2_p["Km_uM"]
         aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
@@ -1996,11 +2002,11 @@ def _compute_aldehyde_flux(
         "genotype_modifier": aldh2_gm,
         "tissue_weight": tw_aldh2,
         "CLint": round((aldh2_vmax * aldh2_gm * tw_aldh2) / aldh2_km, extras_round["CLint"]),
-        "confidence": aldh2_p["confidence"],
+        "confidence": aldh2_term.confidence,
     }
 
     # ALDH1A1 (backup)
-    aldh1a1_p = p["ALDH1A1"]
+    aldh1a1_p = terms["ALDH1A1"].params
     aldh1a1_gm = genotype_modifier(genotypes.get("ALDH1A1", "NM"), "ALDH1A1")
     tw_aldh1a1 = get_flux_tissue_weight("ALDH1A1", tissue, tissue_weight_source)
     v_aldh1a1 = michaelis_menten(
@@ -2010,20 +2016,21 @@ def _compute_aldehyde_flux(
         "flux": round(v_aldh1a1, entry_round["detoxification"]),
         "genotype_modifier": aldh1a1_gm,
         "tissue_weight": tw_aldh1a1,
-        "confidence": aldh1a1_p["confidence"],
+        "confidence": terms["ALDH1A1"].confidence,
     }
 
     total_detox = v_aldh2 + v_aldh1a1
 
     # Ethanol -> Acetaldehyde production
-    adh_p = aldehyde_data["pathways"]["ethanol_oxidation"]
     adh_gt = genotypes.get("ADH1B", "*1/*1")
     if adh_gt in ("*2/*2", "fast", "RM"):
-        adh_params = adh_p["ADH1B_star2"]
+        adh_params = terms["ADH1B_star2"].params
+        adh_confidence = terms["ADH1B_star2"].confidence
     else:
-        adh_params = adh_p["ADH1B_star1"]
+        adh_params = terms["ADH1B_star1"].params
+        adh_confidence = terms["ADH1B_star1"].confidence
 
-    eth_conc = params["metadata"]["exposure_defaults_uM"]["ethanol"]
+    eth_conc = active_engine.get_flux_metadata()["exposure_defaults_uM"]["ethanol"]
     v_adh = michaelis_menten(
         eth_conc, adh_params["Vmax_U_per_mg"], adh_params["Km_uM"]
     )
@@ -2036,7 +2043,7 @@ def _compute_aldehyde_flux(
                 "genotype": adh_gt,
                 "genotype_modifier": 1.0,
                 "tissue_weight": 1.0,
-                "confidence": adh_params["confidence"],
+                "confidence": adh_confidence,
             }
         },
         "detox_enzymes": detox_enzymes,
@@ -2204,10 +2211,12 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 
 # Proxy classes routed through the generic engine-contract loop.
 # Measured-kinetics classes routed through the generic mechanistic loop are
-# listed in _GENERIC_MECHANISTIC_FLUX_CLASSES below. The remaining entries in
-# _DISPATCH keep their hand-written functions: Aflatoxin and Aldehyde (whose
-# aggregation blocks carry a dedicated_function status note) plus Dioxin and
-# ChlorinatedSolvent, whose model structures are not term-sum proxies.
+# listed in _GENERIC_MECHANISTIC_FLUX_CLASSES below. Aflatoxin and Aldehyde
+# (in _DEDICATED_ENGINE_FLUX_CLASSES) keep hand-written control flow but
+# source their term parameters and aggregation blocks through the engine
+# contract. The remaining entries in _DISPATCH -- Dioxin and
+# ChlorinatedSolvent -- keep fully hand-written functions whose model
+# structures are not term-sum proxies.
 _GENERIC_PROXY_FLUX_CLASSES = frozenset(
     {"AromaticAmines", "EstrogenMetabolites", "NDEA", "VinylChloride", "UV_Radiation", "HeavyMetal"}
 )
@@ -2215,6 +2224,9 @@ _GENERIC_PROXY_FLUX_CLASSES = frozenset(
 # Measured-kinetics classes whose term evaluation and aggregation are fully
 # described by the per-class "aggregation" block in kinetic_parameters.json.
 _GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset({"PAH", "Nitrosamine", "NDMA", "HCA", "Benzene"})
+
+# Dedicated functions that still take the engine kwarg for their parameters.
+_DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"Aflatoxin", "Aldehyde"})
 
 _DISPATCH: dict[str, FluxCalculator] = {
     "PAH": partial(_compute_generic_mechanistic_flux, "PAH"),
@@ -2312,7 +2324,11 @@ def compute_pathway_flux(
         induction_factors,
         interaction_params=engine.get_interaction_parameters() if engine is not None else None,
     )
-    if cls_str in _GENERIC_PROXY_FLUX_CLASSES or cls_str in _GENERIC_MECHANISTIC_FLUX_CLASSES:
+    if (
+        cls_str in _GENERIC_PROXY_FLUX_CLASSES
+        or cls_str in _GENERIC_MECHANISTIC_FLUX_CLASSES
+        or cls_str in _DEDICATED_ENGINE_FLUX_CLASSES
+    ):
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source, engine=engine)
     else:
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
