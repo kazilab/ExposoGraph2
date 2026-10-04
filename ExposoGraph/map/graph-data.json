@@ -3859,6 +3859,28 @@
         }
       ]
     },
+    {
+      "id": "GSTA1",
+      "label": "GSTA1",
+      "type": "Enzyme",
+      "detail": "Cytosolic glutathione S-transferase alpha 1; alpha-class GSTs are the most abundantly expressed GSTs in human liver. GSTA1-1 conjugates electrophilic carcinogen epoxides -- including aflatoxin B1 exo-8,9-epoxide -- with glutathione; the alpha class also carries glutathione peroxidase activity.",
+      "phase": "II",
+      "role": "Detoxification",
+      "tissue": "liver, kidney",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "2938",
+          "citation": "NCBI Gene: GSTA1 glutathione S-transferase alpha 1",
+          "url": "https://www.ncbi.nlm.nih.gov/gene/2938"
+        },
+        {
+          "evidence": "Recombinant human GSTA1-1 catalyzes GSH conjugation of aflatoxin B1 exo-8,9-epoxide; among human GSTs the catalytic efficiency ranks M1-1 > T1-1 > A1-1 > P1-1 > A2-2 (PMID 9115980). NCBI Gene 2938 expression is biased toward liver (RPKM 342.4) and kidney (RPKM 288.3)."
+        }
+      ]
+    },
 
     {
       "id": "ADH1B",
@@ -7495,6 +7517,25 @@
       "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
+    },
+    {
+      "source": "AFB1_epoxide",
+      "target": "GSTA1",
+      "type": "DETOXIFIED_BY",
+      "carcinogen": "AFB1",
+      "evidence": "Recombinant human GSTA1-1 conjugates aflatoxin B1 exo-8,9-epoxide with glutathione to form the AFBO-GSH conjugate; among human GSTs the catalytic efficiency order is M1-1 > T1-1 > A1-1 > P1-1 > A2-2 (Johnson et al. 1997, PMID 9115980).",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "9115980",
+          "pmid": "9115980",
+          "evidence": "Kinetic analysis of rat and human GST-catalyzed GSH conjugation of AFB1 exo-8,9-epoxide; human GSTA1-1 is a demonstrated catalyst, with lower catalytic efficiency than GSTM1-1.",
+          "citation": "Johnson WW, Ueng YF, Widersten M, Mannervik B, Hayes JD, Sherratt PJ, Ketterer B, Guengerich FP. Conjugation of highly reactive aflatoxin B1 exo-8,9-epoxide catalyzed by rat and human glutathione transferases: estimation of kinetic parameters. Biochemistry. 1997;36(11):3056-3060. doi:10.1021/bi962537o",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/9115980/"
+        }
+      ]
     },
     {
       "source": "CYP17A1",

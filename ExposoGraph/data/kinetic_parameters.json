@@ -277,6 +277,7 @@
           },
           "GSTA1": {
             "substrate_node_id": "AFB1_epoxide",
+            "enzyme_node_id": "GSTA1",
             "rate_law": "michaelis_menten",
             "tissue_weight_gene": "GSTM1",
             "reaction": "AFBO → AFBO-GSH conjugate",
