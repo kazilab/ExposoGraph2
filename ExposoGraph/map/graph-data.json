@@ -12818,7 +12818,16 @@
       "carcinogen": "PhIP",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": [],
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "9855011",
+          "pmid": "9855011",
+          "evidence": "Kinetic comparison of PhIP metabolism by recombinant human CYP1A1, CYP1A2 and CYP1B1 (Sf9 expression); CYP1A1 N2-OH-PhIP formation Vmax 16 nmol/min/nmol P450, apparent Km 5.1 uM -- the values carried by the HCA/CYP1A1 flux term.",
+          "citation": "Crofts FG, Sutter TR, Strickland PT. Metabolism of 2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine by human cytochrome P4501A1, P4501A2 and P4501B1. Carcinogenesis. 1998;19(11):1969-1973. doi:10.1093/carcin/19.11.1969",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/9855011/"
+        }
+      ],
       "evidence": "PhIP is a metabolic substrate of CYP1A1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
@@ -13789,7 +13798,16 @@
       "evidence": "PhIP is a metabolic substrate of CYP1A2, which converts it to NOH_PhIP (see that edge for citation: N-hydroxylation).",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "9855011",
+          "pmid": "9855011",
+          "evidence": "Kinetic comparison of PhIP metabolism by recombinant human CYP1A1, CYP1A2 and CYP1B1 (Sf9 expression); CYP1A2 N2-OH-PhIP formation Vmax 90 nmol/min/nmol P450, apparent Km 79 uM -- the values carried by the HCA/CYP1A2 flux term.",
+          "citation": "Crofts FG, Sutter TR, Strickland PT. Metabolism of 2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine by human cytochrome P4501A1, P4501A2 and P4501B1. Carcinogenesis. 1998;19(11):1969-1973. doi:10.1093/carcin/19.11.1969",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/9855011/"
+        }
+      ]
     },
     {
       "source": "PhIP",
@@ -13809,7 +13827,7 @@
           "url": "https://pubmed.ncbi.nlm.nih.gov/9855011/"
         },
         {
-          "source_db": "PubMed",
+          "source_db": "Carcinogenesis",
           "record_id": "10.1093/carcin/18.9.1793",
           "evidence": "First demonstration that human CYP1B1 metabolizes PhIP (yeast-expressed enzyme): N2-OH-PhIP (mutagenic activation), 4'-OH-PhIP (detoxification, favored ~2-fold), and 2-OH-PhIP; apparent Km 5.7 uM for N2-OH-PhIP.",
           "citation": "Crofts FG, Strickland PT, Hayes CL, Sutter TR. Metabolism of 2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine (PhIP) by human cytochrome P4501B1. Carcinogenesis. 1997;18(9):1793-1798. doi:10.1093/carcin/18.9.1793",
