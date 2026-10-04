@@ -1695,14 +1695,17 @@ class GraphEngine:
 
         - **Binding edges (primary).** A term carrying both
           ``substrate_node_id`` and ``enzyme_node_id`` is edge-anchored
-          when the graph has an edge between those two nodes -- the same
-          criterion :meth:`_apply_flux_edge_kinetics` bakes payloads
-          under and :meth:`get_edge_flux_reactions` reads values from.
+          when an edge between those two nodes carries its baked flux
+          payload -- ``kinetics.flux_terms[cls][pathway][term_key]``, the
+          exact payload :meth:`_apply_flux_edge_kinetics` bakes and
+          :meth:`get_edge_flux_reactions` reads. Edge presence alone
+          (``binding_edge_present``) is necessary but not sufficient:
+          terms whose binding edge exists but carries no payload are
+          ``missing_flux_payloads``; terms with no bindings at all are
+          ``unbound_terms`` -- they need substrate-oriented annotations,
+          and most proxy/semi-quantitative rosters land there by design.
           Terms whose binding edge does not exist are the genuine
-          curation backlog (``missing_binding_edges``); terms with no
-          bindings at all are ``unbound_terms`` -- they need
-          substrate-oriented annotations, and most proxy/semi-quantitative
-          rosters land there by design.
+          curation backlog (``missing_binding_edges``).
         - **Class-carcinogen scope edges (secondary, legacy).** Whether
           any scope edge (``SUBSTRATE_OF`` / ``DETOXIFIED_BY`` /
           ``REPAIRED_BY``, either direction) connects the class's
@@ -1738,21 +1741,30 @@ class GraphEngine:
                 if data.get("type") == "Carcinogen" and data.get("group") == graph_group
             ]
 
-        def _binding_edge_types(reaction: FluxReaction) -> list[str] | None:
-            """Edge types between the term's binding nodes, ``None`` when unbound."""
+        def _binding_probe(reaction: FluxReaction) -> tuple[bool, bool, list[str]] | None:
+            """``(edge_present, payload_present, edge_types)`` for the term's
+            binding nodes; ``None`` when the term carries no bindings.
+
+            ``payload_present`` requires an edge between the binding nodes
+            to carry ``kinetics.flux_terms[cls][pathway][term_key]`` -- the
+            exact payload the edge-walk reader consumes. Edge presence
+            alone is necessary but not sufficient.
+            """
             substrate = reaction.params.get("substrate_node_id")
             enzyme = reaction.params.get("enzyme_node_id")
             if not substrate or not enzyme:
                 return None
             if not self.G.has_edge(substrate, enzyme):
-                return []
-            return sorted(
-                {
-                    str(data.get("type"))
-                    for data in self.G.get_edge_data(substrate, enzyme).values()
-                    if data.get("type")
-                }
-            )
+                return (False, False, [])
+            edge_types: set[str] = set()
+            payload_present = False
+            for data in self.G.get_edge_data(substrate, enzyme).values():
+                if data.get("type"):
+                    edge_types.add(str(data.get("type")))
+                flux_terms = (data.get("kinetics") or {}).get("flux_terms", {})
+                if reaction.term_key in flux_terms.get(cls, {}).get(reaction.pathway, {}):
+                    payload_present = True
+            return (True, payload_present, sorted(edge_types))
 
         def _class_carcinogen_edge_types(enzyme_id: str | None) -> list[str]:
             """Legacy scope-edge diagnostic between class carcinogens and the enzyme."""
@@ -1770,7 +1782,8 @@ class GraphEngine:
 
         def _row(reaction: FluxReaction) -> dict[str, Any]:
             resolved = reaction.enzyme_id is not None and reaction.enzyme_id in self.G
-            binding_types = _binding_edge_types(reaction)
+            probe = _binding_probe(reaction)
+            edge_present, payload_present, binding_types = probe if probe else (False, False, [])
             return {
                 "term_key": reaction.term_key,
                 "pathway": reaction.pathway,
@@ -1779,8 +1792,9 @@ class GraphEngine:
                 "enzyme_id": reaction.enzyme_id,
                 "substrate_node_id": reaction.params.get("substrate_node_id"),
                 "resolved": resolved,
-                "edge_anchored": bool(binding_types),
-                "binding_edge_types": binding_types or [],
+                "binding_edge_present": edge_present,
+                "binding_edge_types": binding_types,
+                "edge_anchored": payload_present,
                 "class_carcinogen_edge_types": _class_carcinogen_edge_types(reaction.enzyme_id),
             }
 
@@ -1788,6 +1802,7 @@ class GraphEngine:
         unresolved: list[str] = []
         unbound: list[str] = []
         missing_binding: list[str] = []
+        missing_payload: list[str] = []
         for reaction in reactions:
             row = _row(reaction)
             if not row["resolved"]:
@@ -1795,14 +1810,18 @@ class GraphEngine:
             rows.append(row)
 
         # Classify the resolved terms: unbound = no binding annotations;
-        # missing = bindings whose edge doesn't exist.
+        # missing_binding = bindings whose edge doesn't exist;
+        # missing_payload = binding edge exists but carries no baked
+        # flux_terms payload for this term.
         for reaction, row in zip(reactions, rows):
             if not row["resolved"]:
                 continue
             if not reaction.params.get("substrate_node_id") or not reaction.params.get("enzyme_node_id"):
                 unbound.append(reaction.term_key)
-            elif not row["edge_anchored"]:
+            elif not row["binding_edge_present"]:
                 missing_binding.append(reaction.term_key)
+            elif not row["edge_anchored"]:
+                missing_payload.append(reaction.term_key)
 
         shadowed = [r for r in self._flux_shadowed_reactions if r.carcinogen_class == cls]
         shadowed_rows = [_row(reaction) for reaction in shadowed]
@@ -1819,6 +1838,7 @@ class GraphEngine:
             "unbound_terms": unbound,
             "missing_binding_edges": missing_binding,
             "missing_scope_edges": missing_binding,
+            "missing_flux_payloads": missing_payload,
             "shadowed_reactions": shadowed_rows,
             "reactions": rows,
         }
