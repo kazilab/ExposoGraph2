@@ -1689,15 +1689,42 @@ class GraphEngine:
         return self._flux_proxy_provenance
 
     def get_flux_reaction_coverage(self, carcinogen_class: Any) -> dict[str, Any]:
-        """Compare a class's flux-reaction rosters against graph scope edges.
+        """Compare a class's flux-reaction roster against the graph.
 
-        For every flux-reaction term in the class, reports whether its
-        enzyme resolves to a graph node and whether any scope edge
-        (``SUBSTRATE_OF`` / ``DETOXIFIED_BY`` / ``REPAIRED_BY``, either
-        direction) connects the class's Carcinogen nodes to that enzyme.
-        Unresolved terms and missing scope edges form the curation backlog
-        for making flux scope graph-derived -- this getter is the driver of
-        that backlog, not a pass/fail check.
+        Two anchoring criteria are reported per roster term:
+
+        - **Binding edges (primary).** A term carrying both
+          ``substrate_node_id`` and ``enzyme_node_id`` is edge-anchored
+          when the graph has an edge between those two nodes -- the same
+          criterion :meth:`_apply_flux_edge_kinetics` bakes payloads
+          under and :meth:`get_edge_flux_reactions` reads values from.
+          Terms whose binding edge does not exist are the genuine
+          curation backlog (``missing_binding_edges``); terms with no
+          bindings at all are ``unbound_terms`` -- they need
+          substrate-oriented annotations, and most proxy/semi-quantitative
+          rosters land there by design.
+        - **Class-carcinogen scope edges (secondary, legacy).** Whether
+          any scope edge (``SUBSTRATE_OF`` / ``DETOXIFIED_BY`` /
+          ``REPAIRED_BY``, either direction) connects the class's
+          Carcinogen nodes to the enzyme. Metabolite-anchored bindings
+          (e.g. ``AFB1_epoxide → GSTA1``) legitimately have no such edge,
+          so this is a diagnostic, not the backlog.
+
+        For dual-source classes (ChlorinatedSolvent, Dioxin, HeavyMetal)
+        the roster carries the proxy entries; the shadowed kinetic
+        entries are reported separately in ``shadowed_reactions`` with
+        the same anchoring fields.
+
+        ``missing_scope_edges`` is kept as an alias of
+        ``missing_binding_edges`` for the established vocabulary.
+        ``edge_anchored_count`` is an independent axis from the
+        unresolved/unbound/missing taxonomy: an alias pseudo-term (e.g.
+        ``CYP2E1_with_b5``) can be edge-anchored via its binding while
+        still reporting an unresolved legacy ``enzyme_id``.
+        Requires the reference graph to be loaded to say anything
+        meaningful; on a bare engine every term reports unanchored.
+        This getter is the curation-backlog driver, not a pass/fail
+        check.
         """
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
@@ -1710,38 +1737,76 @@ class GraphEngine:
                 for node_id, data in self.G.nodes(data=True)
                 if data.get("type") == "Carcinogen" and data.get("group") == graph_group
             ]
-        rows: list[dict[str, Any]] = []
-        unresolved: list[str] = []
-        missing_edges: list[str] = []
-        for reaction in reactions:
-            resolved = reaction.enzyme_id is not None and reaction.enzyme_id in self.G
-            edge_types: set[str] = set()
-            if resolved and carcinogen_ids:
-                for carcinogen_id in carcinogen_ids:
-                    for source_id, target_id in (
-                        (carcinogen_id, reaction.enzyme_id),
-                        (reaction.enzyme_id, carcinogen_id),
-                    ):
-                        if not self.G.has_edge(source_id, target_id):
-                            continue
-                        for data in self.G.get_edge_data(source_id, target_id).values():
-                            if data.get("type") in _FLUX_SCOPE_EDGE_TYPES:
-                                edge_types.add(str(data.get("type")))
-            if not resolved:
-                unresolved.append(reaction.term_key)
-            elif not edge_types:
-                missing_edges.append(reaction.term_key)
-            rows.append(
+
+        def _binding_edge_types(reaction: FluxReaction) -> list[str] | None:
+            """Edge types between the term's binding nodes, ``None`` when unbound."""
+            substrate = reaction.params.get("substrate_node_id")
+            enzyme = reaction.params.get("enzyme_node_id")
+            if not substrate or not enzyme:
+                return None
+            if not self.G.has_edge(substrate, enzyme):
+                return []
+            return sorted(
                 {
-                    "term_key": reaction.term_key,
-                    "pathway": reaction.pathway,
-                    "role": reaction.role,
-                    "rate_law": reaction.rate_law,
-                    "enzyme_id": reaction.enzyme_id,
-                    "resolved": resolved,
-                    "scope_edge_types": sorted(edge_types),
+                    str(data.get("type"))
+                    for data in self.G.get_edge_data(substrate, enzyme).values()
+                    if data.get("type")
                 }
             )
+
+        def _class_carcinogen_edge_types(enzyme_id: str | None) -> list[str]:
+            """Legacy scope-edge diagnostic between class carcinogens and the enzyme."""
+            if not enzyme_id or not carcinogen_ids:
+                return []
+            edge_types: set[str] = set()
+            for carcinogen_id in carcinogen_ids:
+                for source_id, target_id in ((carcinogen_id, enzyme_id), (enzyme_id, carcinogen_id)):
+                    if not self.G.has_edge(source_id, target_id):
+                        continue
+                    for data in self.G.get_edge_data(source_id, target_id).values():
+                        if data.get("type") in _FLUX_SCOPE_EDGE_TYPES:
+                            edge_types.add(str(data.get("type")))
+            return sorted(edge_types)
+
+        def _row(reaction: FluxReaction) -> dict[str, Any]:
+            resolved = reaction.enzyme_id is not None and reaction.enzyme_id in self.G
+            binding_types = _binding_edge_types(reaction)
+            return {
+                "term_key": reaction.term_key,
+                "pathway": reaction.pathway,
+                "role": reaction.role,
+                "rate_law": reaction.rate_law,
+                "enzyme_id": reaction.enzyme_id,
+                "substrate_node_id": reaction.params.get("substrate_node_id"),
+                "resolved": resolved,
+                "edge_anchored": bool(binding_types),
+                "binding_edge_types": binding_types or [],
+                "class_carcinogen_edge_types": _class_carcinogen_edge_types(reaction.enzyme_id),
+            }
+
+        rows: list[dict[str, Any]] = []
+        unresolved: list[str] = []
+        unbound: list[str] = []
+        missing_binding: list[str] = []
+        for reaction in reactions:
+            row = _row(reaction)
+            if not row["resolved"]:
+                unresolved.append(reaction.term_key)
+            rows.append(row)
+
+        # Classify the resolved terms: unbound = no binding annotations;
+        # missing = bindings whose edge doesn't exist.
+        for reaction, row in zip(reactions, rows):
+            if not row["resolved"]:
+                continue
+            if not reaction.params.get("substrate_node_id") or not reaction.params.get("enzyme_node_id"):
+                unbound.append(reaction.term_key)
+            elif not row["edge_anchored"]:
+                missing_binding.append(reaction.term_key)
+
+        shadowed = [r for r in self._flux_shadowed_reactions if r.carcinogen_class == cls]
+        shadowed_rows = [_row(reaction) for reaction in shadowed]
+
         return {
             "carcinogen_class": cls,
             "graph_group": graph_group,
@@ -1749,9 +1814,12 @@ class GraphEngine:
             "sources": sorted(self._flux_class_sources.get(cls, set())),
             "reaction_count": len(reactions),
             "resolved_enzyme_count": len(reactions) - len(unresolved),
-            "with_scope_edge_count": len(reactions) - len(unresolved) - len(missing_edges),
+            "edge_anchored_count": sum(1 for row in rows if row["edge_anchored"]),
             "unresolved_terms": unresolved,
-            "missing_scope_edges": missing_edges,
+            "unbound_terms": unbound,
+            "missing_binding_edges": missing_binding,
+            "missing_scope_edges": missing_binding,
+            "shadowed_reactions": shadowed_rows,
             "reactions": rows,
         }
 
