@@ -465,7 +465,7 @@ def _resolve_induction_factors(
                 resolved[str(gene).upper()] = numeric
 
     return {
-        gene: _round_flux(factor)
+        gene: factor
         for gene, factor in sorted(resolved.items())
         if math.isfinite(factor) and factor > 0 and not math.isclose(factor, 1.0)
     }
@@ -1827,7 +1827,7 @@ def compute_pathway_flux(
         parameter_source=result.get("parameter_source", _KINETIC_PARAMETER_SOURCE),
         unit_note=result.get("unit_note", ""),
         warnings=warn_list,
-        induction_factors_used=resolved_induction,
+        induction_factors_used={gene: _round_flux(factor) for gene, factor in resolved_induction.items()},
         qivive_applied=qivive,
         qivive_context=qivive_used_context,
         steady_state_concentrations_uM=steady_state.concentrations_uM,
