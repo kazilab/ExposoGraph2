@@ -12,6 +12,7 @@ from .flux_engine import (
     PathwayFluxResult,
     compute_pathway_flux,
 )
+from ._app_shared import get_engine
 
 _DEFAULT_GENOTYPES = {
     "CYP1A1": "NM",
@@ -121,6 +122,7 @@ def render() -> None:
         tissue_weight_source=tissue_source,
         lifestyle=lifestyle,
         qivive=qivive,
+        engine=get_engine(),
     )
 
     metric_a, metric_b, metric_c, metric_d = st.columns(4)
