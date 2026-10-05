@@ -6620,7 +6620,8 @@
       "kinetics_model": "michaelis_menten + semi_quantitative_proxy",
       "flux_class_metadata": {
         "ChlorinatedSolvent": {
-          "model_kind": "semi_quantitative_proxy",
+          "model_kind": "michaelis_menten + semi_quantitative_proxy",
+          "index_carcinogen": "Trichloroethylene (TCE)",
           "exposure_defaults": {
             "source": "kinetic_parameters",
             "field": "TCE"
@@ -6649,7 +6650,8 @@
       "kinetics_model": "receptor_mediated + receptor_mediated_proxy",
       "flux_class_metadata": {
         "Dioxin": {
-          "model_kind": "receptor_mediated_proxy",
+          "model_kind": "receptor_mediated + receptor_mediated_proxy",
+          "index_carcinogen": "TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)",
           "exposure_defaults": {
             "source": "kinetic_parameters",
             "field": "TCDD"
@@ -6745,7 +6747,8 @@
       "kinetics_model": "semi_quantitative + semi_quantitative_proxy",
       "flux_class_metadata": {
         "HeavyMetal": {
-          "model_kind": "semi_quantitative_proxy",
+          "model_kind": "semi_quantitative + semi_quantitative_proxy",
+          "index_carcinogen": "Arsenic (inorganic)",
           "exposure_defaults": {
             "source": "kinetic_parameters",
             "field": "arsenic"
