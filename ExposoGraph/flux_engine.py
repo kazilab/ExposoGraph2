@@ -878,12 +878,23 @@ def _compute_proxy_repair_term(
     return activation_flux * float(term["scale"]) * gm * tw, gm, tw
 
 
-def _get_proxy_class_params(class_name: str) -> JsonDict:
-    """Return the proxy flux config for a class (served by GraphEngine)."""
-    cfg = _get_flux_contract_engine().get_flux_class_config(class_name)
+def _active_proxy_class_params(class_name: str, engine: "GraphEngine | None") -> JsonDict:
+    """Return the proxy flux config for a class via the active engine.
+
+    A loaded engine serves the class block graph-first (CarcinogenGroup
+    ``flux_class_metadata`` carrier, JSON fallback per field); a bare
+    engine (``None``) uses the module-level JSON-only contract engine.
+    """
+    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    cfg = active_engine.get_flux_class_config(class_name)
     if not cfg:
         raise KeyError(class_name)
     return cast(JsonDict, cfg)
+
+
+def _get_proxy_class_params(class_name: str) -> JsonDict:
+    """Return the proxy flux config for a class (bare JSON-served engine)."""
+    return _active_proxy_class_params(class_name, None)
 
 
 _FLUX_CONTRACT_ENGINE: "GraphEngine | None" = None
@@ -948,7 +959,7 @@ def _compute_generic_proxy_flux(
     """
     active_engine = engine if engine is not None else _get_flux_contract_engine()
     reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
-    cfg = _get_proxy_class_params(carcinogen_class)
+    cfg = _active_proxy_class_params(carcinogen_class, engine)
 
     def _entry(reaction: "FluxReaction", value: float, gm: float, tw: float) -> JsonDict:
         entry: JsonDict = {
@@ -1175,9 +1186,13 @@ def _compute_generic_mechanistic_flux(
     return result
 
 
-def _class_parameter_metadata(carcinogen_class: str) -> dict[str, str]:
+def _class_parameter_metadata(
+    carcinogen_class: str,
+    engine: "GraphEngine | None" = None,
+) -> dict[str, str]:
     """Return class-level parameter metadata for measured or proxy models."""
-    proxy_cfg = _get_flux_contract_engine().get_flux_class_config(carcinogen_class)
+    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    proxy_cfg = active_engine.get_flux_class_config(carcinogen_class)
     if not proxy_cfg:
         return {
             "model_kind": "measured_kinetics",
@@ -1194,9 +1209,10 @@ def _proxy_term_metadata(
     term_name: str,
     *,
     activation_term: bool,
+    engine: "GraphEngine | None" = None,
 ) -> JsonDict | None:
     """Return provenance metadata for a proxy-model term."""
-    cfg = _get_proxy_class_params(carcinogen_class)
+    cfg = _active_proxy_class_params(carcinogen_class, engine)
     sections = ("activation_terms",) if activation_term else ("detox_terms", "repair_terms")
 
     for section in sections:
@@ -1226,9 +1242,10 @@ def _proxy_term_metadata(
 def _annotate_flux_result_metadata(
     carcinogen_class: str,
     result: FluxResultDict,
+    engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
     """Attach class- and enzyme-level parameter metadata to a flux result."""
-    class_meta = _class_parameter_metadata(carcinogen_class)
+    class_meta = _class_parameter_metadata(carcinogen_class, engine)
     result.setdefault("model_kind", class_meta["model_kind"])
     result.setdefault("parameter_source", class_meta["parameter_source"])
 
@@ -1254,6 +1271,7 @@ def _annotate_flux_result_metadata(
                 carcinogen_class,
                 name,
                 activation_term=activation_term,
+                engine=engine,
             )
             if proxy_meta is None:
                 continue
@@ -1469,9 +1487,11 @@ def _compute_chlorinated_solvent_flux(
     tissue: str,
     S: float,
     tissue_weight_source: FluxTissueWeightSource,
+    *,
+    engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
     """Compute TCE-centered chlorinated-solvent bioactivation with proxy clearance."""
-    cfg = _get_proxy_class_params("ChlorinatedSolvent")
+    cfg = _active_proxy_class_params("ChlorinatedSolvent", engine)
     activation_enzymes: dict[str, Any] = {}
 
     oxidation_p = cfg["activation_terms"]["CYP2E1"]
@@ -1534,9 +1554,11 @@ def _compute_dioxin_flux(
     tissue: str,
     S: float,
     tissue_weight_source: FluxTissueWeightSource,
+    *,
+    engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
     """Compute receptor-mediated dioxin signaling as an induction burden score."""
-    cfg = _get_proxy_class_params("Dioxin")
+    cfg = _active_proxy_class_params("Dioxin", engine)
     signal_p = cfg["signal"]
     signal_strength, _, tissue_signal = _compute_proxy_hill_term(
         signal_p,
@@ -1635,6 +1657,11 @@ _GENERIC_PROXY_FLUX_CLASSES = frozenset(
 # Measured-kinetics classes whose term evaluation and aggregation are fully
 # described by the per-class "aggregation" block in kinetic_parameters.json.
 _GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset({"PAH", "Nitrosamine", "NDMA", "HCA", "Benzene"})
+
+# Dedicated proxy functions that now take the engine kwarg so their
+# class-config reads are served graph-first when a loaded engine is
+# passed (bare JSON fallback otherwise).
+_DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"ChlorinatedSolvent", "Dioxin"})
 
 # Dedicated functions that still take the engine kwarg for their parameters.
 _DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"Aflatoxin", "Aldehyde"})
@@ -1739,11 +1766,12 @@ def compute_pathway_flux(
         cls_str in _GENERIC_PROXY_FLUX_CLASSES
         or cls_str in _GENERIC_MECHANISTIC_FLUX_CLASSES
         or cls_str in _DEDICATED_ENGINE_FLUX_CLASSES
+        or cls_str in _DEDICATED_PROXY_ENGINE_FLUX_CLASSES
     ):
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source, engine=engine)
     else:
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
-    result = _annotate_flux_result_metadata(cls_str, result)
+    result = _annotate_flux_result_metadata(cls_str, result, engine=engine)
     result = _apply_induction_modifiers(result, resolved_induction)
 
     qivive_used_context: dict[str, float] = {}
