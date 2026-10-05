@@ -1,5 +1,7 @@
 import pytest
+from dataclasses import asdict
 
+from ExposoGraph.engine import GraphEngine
 from ExposoGraph.interaction_schema import (
     CompetitiveInteraction,
     ReactionRole,
@@ -80,11 +82,25 @@ def test_gsh_and_induction_provider_surfaces_are_read_only_scaffolds():
     assert all(rule.enzyme for rule in rules)
 
 
-def test_kg_provider_is_explicitly_deferred_scaffold():
-    provider = KGInteractionParameterProvider()
+def test_kg_provider_walks_baked_edge_kinetics():
+    """The hybrid provider reconstructs the JSON records from the graph walk."""
+    engine = GraphEngine()
+    engine.load_reference_graph()
+    provider = KGInteractionParameterProvider(engine)
 
-    with pytest.raises(NotImplementedError, match="Phase 3 scaffold"):
-        provider.get_competitive_interactions()
+    walked = {
+        (item.enzyme, item.substrate): asdict(item)
+        for item in provider.get_competitive_interactions()
+    }
+    expected = {
+        (item.enzyme, item.substrate): asdict(item)
+        for item in JSONInteractionParameterProvider().get_competitive_interactions()
+    }
+
+    assert walked == expected
+    # Non-kinetic surfaces stay JSON-served through inheritance.
+    assert provider.get_induction_rules()
+    assert provider.get_gsh_consumers()
 
 
 def test_reaction_role_draft_fields_are_representable_as_review_notes_only():
