@@ -15,7 +15,7 @@ import sys
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
 
 from .effective_burden import (
     EffectiveBurdenInput,
@@ -63,6 +63,9 @@ from .model_transparency import (
 )
 from .parameter_resolution import InhibitionResolutionStatus
 from .reaction_role_semantics import get_default_reaction_role_registry
+
+if TYPE_CHECKING:
+    from .engine import GraphEngine
 
 # ── Dataclasses ────────────────────────────────────────────────────────────
 
@@ -423,6 +426,25 @@ def _load_interaction_params() -> dict[str, Any]:
 def _get_interaction_params() -> dict[str, Any]:
     """Return the cached interaction parameters."""
     return _load_interaction_params()
+
+
+def _active_interaction_params(
+    interaction_params: Mapping[str, Any] | None,
+    engine: "GraphEngine | None" = None,
+) -> Mapping[str, Any]:
+    """Return the interaction-parameter document via the active source.
+
+    An explicit ``interaction_params`` document wins. Otherwise a loaded
+    engine serves its retained copy (``GraphEngine.get_interaction_parameters()``
+    -- the document the engine applied, so overlay documents passed to
+    ``load_reference_graph`` are honored); a bare call (neither given) falls
+    back to the bundled file loaded through ``_get_interaction_params``.
+    """
+    if interaction_params is not None:
+        return interaction_params
+    if engine is not None:
+        return engine.get_interaction_parameters()
+    return _get_interaction_params()
 
 
 def get_parameter_provenance() -> dict[str, Any]:
@@ -797,16 +819,20 @@ def _genotype_activity_multiplier(
     gene: str,
     phenotype: str | None,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> float:
     """Return the activity multiplier defined in the interaction JSON.
 
     ``interaction_params`` optionally supplies an engine-sourced parameter
     document (``GraphEngine.get_interaction_parameters()``); it defaults to
-    the bundled file loaded through ``_get_interaction_params``.
+    the bundled file loaded through ``_get_interaction_params``. Passing
+    ``engine`` instead lets a loaded ``GraphEngine`` serve that document
+    (honoring overlay documents applied at load time); bare calls keep the
+    bundled file.
     """
     if not phenotype:
         return 1.0
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     params = params_doc["genotype_modifiers"].get(gene, {})
     if phenotype in params:
         return float(params[phenotype].get("activity_multiplier", 1.0))
@@ -979,8 +1005,9 @@ def _compute_matrix_gsh_redox_status(
     tissue: str,
     inhibition_burdens: Mapping[str, _InhibitionBurdenResolution],
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> GSHStatus:
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     params = params_doc["gsh_depletion"]
     consumers = params["consumers"]
 
@@ -1130,9 +1157,10 @@ def _severity_sorted(interactions: list[CriticalInteraction]) -> list[CriticalIn
 def _make_inert_gsh_status(
     tissue: str,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> GSHStatus:
     """Return a GSHStatus representing an unperturbed GSH pool."""
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     params = params_doc.get("gsh_depletion", {})
     baseline = float(params.get("baseline_gsh_mM", 7.0))
     synthesis = float(params.get("synthesis_rate_umol_h_g", 1.0))
@@ -1184,6 +1212,7 @@ def enzyme_induction_modifier(
     lifestyle: Mapping[str, bool | int | float],
     *,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> EnzymeInductionProfile:
     """Return fold-induction multipliers for CYP enzymes based on lifestyle.
 
@@ -1193,9 +1222,12 @@ def enzyme_induction_modifier(
 
     ``interaction_params`` optionally supplies an engine-sourced parameter
     document (``GraphEngine.get_interaction_parameters()``); it defaults to
-    the bundled file loaded through ``_get_interaction_params``.
+    the bundled file loaded through ``_get_interaction_params``. Passing
+    ``engine`` instead lets a loaded ``GraphEngine`` serve that document
+    (honoring overlay documents applied at load time); bare calls keep the
+    bundled file.
     """
-    params = interaction_params if interaction_params is not None else _get_interaction_params()
+    params = _active_interaction_params(interaction_params, engine)
     induction = params["enzyme_induction"]
     enzyme_folds = {enzyme: 1.0 for enzyme in _collect_known_enzymes(params)}
     active_inducers: list[str] = []
@@ -1242,6 +1274,7 @@ def competitive_inhibition_flux(
     inhibition_contexts: Mapping[str, Any] | None = None,
     include_biological_outputs: bool = True,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> CompetitiveInhibitionResult:
     """Compute adjusted flux using the centralized reversible-inhibition resolver.
 
@@ -1252,9 +1285,12 @@ def competitive_inhibition_flux(
 
     ``interaction_params`` optionally supplies an engine-sourced parameter
     document (``GraphEngine.get_interaction_parameters()``); it defaults to
-    the bundled file loaded through ``_get_interaction_params``.
+    the bundled file loaded through ``_get_interaction_params``. Passing
+    ``engine`` instead lets a loaded ``GraphEngine`` serve that document
+    (honoring overlay documents applied at load time); bare calls keep the
+    bundled file.
     """
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     params = params_doc["competitive_inhibition"]
     if enzyme not in params or enzyme.startswith("_"):
         raise ValueError(f"Unknown enzyme for competitive inhibition: {enzyme}")
@@ -1873,8 +1909,9 @@ def _competitive_substrate_parameters(
     enzyme: str,
     substrate: str,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> Mapping[str, Any]:
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     enzyme_data = params_doc["competitive_inhibition"].get(enzyme, {})
     param_substrates = enzyme_data.get("substrates", {})
     return param_substrates.get(
@@ -2018,11 +2055,12 @@ def _resolve_live_gsh_relevance(
     substrate: str,
     substrate_parameters: Mapping[str, Any],
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> dict[str, Any]:
     product = str(substrate_parameters.get("product", ""))
     notes = str(substrate_parameters.get("notes", ""))
     combined = " ".join([enzyme, substrate, product, notes]).lower()
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     consumers = params_doc.get("gsh_depletion", {}).get("consumers", {})
 
     ignored_consumer_tokens = {"and", "from", "gsh", "gst", "cyp2e1", "cyp1a1", "cyp1a2"}
@@ -2090,6 +2128,7 @@ def _compute_live_mechanism_attribution(
     lifestyle: Mapping[str, bool | int | float],
     param_perturbations: dict[str, dict[str, float]] | None,
     expression_perturbations: dict[str, float] | None,
+    engine: "GraphEngine | None" = None,
 ) -> dict[str, Any]:
     state_values = []
     unresolved_states: list[str] = []
@@ -2105,6 +2144,7 @@ def _compute_live_mechanism_attribution(
             param_perturbations=param_perturbations,
             expression_perturbations=expression_perturbations,
             include_biological_outputs=False,
+            engine=engine,
         )
         state_values.append((state, state_result.total_interaction_risk))
         if state.competition and _result_has_unresolved_inhibition(state_result):
@@ -2157,6 +2197,7 @@ def gsh_depletion_model(
     *,
     tissue: str = "Liver",
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> GSHStatus:
     """Model glutathione pool dynamics under multi-carcinogen exposure.
 
@@ -2166,9 +2207,12 @@ def gsh_depletion_model(
 
     ``interaction_params`` optionally supplies an engine-sourced parameter
     document (``GraphEngine.get_interaction_parameters()``); it defaults to
-    the bundled file loaded through ``_get_interaction_params``.
+    the bundled file loaded through ``_get_interaction_params``. Passing
+    ``engine`` instead lets a loaded ``GraphEngine`` serve that document
+    (honoring overlay documents applied at load time); bare calls keep the
+    bundled file.
     """
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     params = params_doc["gsh_depletion"]
     consumers = params["consumers"]
 
@@ -2278,6 +2322,7 @@ def gsh_depletion_biology_model(
     tissue: str = "Liver",
     synthesis_scale: float = 1.0,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> GSHStatus:
     """Sigmoidal GSH steady state with feedback synthesis + saturable consumption.
 
@@ -2309,7 +2354,7 @@ def gsh_depletion_biology_model(
       below the critical threshold from baseline. ``None`` if the steady
       state is above the threshold.
     """
-    params_doc = interaction_params if interaction_params is not None else _get_interaction_params()
+    params_doc = _active_interaction_params(interaction_params, engine)
     params = params_doc["gsh_depletion"]
     biology_params = params.get("biology_model")
     if biology_params is None:
@@ -2732,6 +2777,7 @@ def compute_interaction_matrix(
     expression_perturbations: dict[str, float] | None = None,
     include_biological_outputs: bool = True,
     interaction_params: Mapping[str, Any] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> InteractionMatrixResult:
     """Combine induction, competition, and GSH depletion into risk scoring.
 
@@ -2743,22 +2789,25 @@ def compute_interaction_matrix(
 
     ``interaction_params`` optionally supplies an engine-sourced parameter
     document (``GraphEngine.get_interaction_parameters()``); it defaults to
-    the bundled file loaded through ``_get_interaction_params``.
+    the bundled file loaded through ``_get_interaction_params``. Passing
+    ``engine`` instead lets a loaded ``GraphEngine`` serve that document
+    (honoring overlay documents applied at load time); bare calls keep the
+    bundled file.
     """
     genotypes = dict(genotypes or {})
     lifestyle = dict(lifestyle or {})
     expression_perturbations = expression_perturbations or {}
     normalized_exposure = _normalize_exposure_profile(exposure_profile)
-    params = interaction_params if interaction_params is not None else _get_interaction_params()
+    params = _active_interaction_params(interaction_params, engine)
     rules = params["interaction_rules"]
 
     if enable_induction:
-        induction_effects = enzyme_induction_modifier(lifestyle, interaction_params=params)
+        induction_effects = enzyme_induction_modifier(lifestyle, interaction_params=params, engine=engine)
     else:
         induction_effects = EnzymeInductionProfile(enzyme_folds={}, active_inducers=[])
 
     genotype_activity = {
-        enzyme: _genotype_activity_multiplier(enzyme, genotypes.get(enzyme), interaction_params)
+        enzyme: _genotype_activity_multiplier(enzyme, genotypes.get(enzyme), interaction_params, engine=engine)
         for enzyme in ("CYP1A2", "CYP2E1", "CYP3A4")
     }
     combined_enzyme_activity = {
@@ -2794,6 +2843,7 @@ def compute_interaction_matrix(
                 param_perturbations=param_perturbations,
                 include_biological_outputs=False,
                 interaction_params=params,
+                engine=engine,
             )
 
     induction_multipliers: dict[str, float] = {}
@@ -2827,9 +2877,10 @@ def compute_interaction_matrix(
             tissue=tissue,
             inhibition_burdens=inhibition_burdens,
             interaction_params=params,
+            engine=engine,
         )
     else:
-        gsh_status = _make_inert_gsh_status(tissue, interaction_params)
+        gsh_status = _make_inert_gsh_status(tissue, interaction_params, engine=engine)
 
     mechanism_resolved_risks: dict[str, MechanismResolvedRisk] = {}
     interaction_adjusted_risks: dict[str, float] = {}
@@ -2963,6 +3014,7 @@ def compute_interaction_matrix(
             lifestyle=lifestyle,
             param_perturbations=param_perturbations,
             expression_perturbations=expression_perturbations,
+            engine=engine,
         )
 
     return InteractionMatrixResult(
@@ -3194,6 +3246,7 @@ def _compute_synergy_state_results(
     lifestyle: Mapping[str, bool | int | float] | None,
     param_perturbations: dict[str, dict[str, float]] | None = None,
     expression_perturbations: dict[str, float] | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> dict[str, InteractionMatrixResult]:
     state_results: dict[str, InteractionMatrixResult] = {}
     for state in generate_mechanism_states():
@@ -3208,6 +3261,7 @@ def _compute_synergy_state_results(
             param_perturbations=param_perturbations,
             expression_perturbations=expression_perturbations,
             include_biological_outputs=False,
+            engine=engine,
         )
     return state_results
 
@@ -3304,6 +3358,7 @@ def decompose_synergy(
     expression_perturbations: dict[str, float] | None = None,
     include_biological_outputs: bool = False,
     tolerance: float = 1e-9,
+    engine: "GraphEngine | None" = None,
 ) -> dict[str, SynergyDecomposition]:
     """Decompose pairwise synergy with the eight-state attribution layer."""
     _ = include_biological_outputs
@@ -3314,6 +3369,7 @@ def decompose_synergy(
         lifestyle=lifestyle,
         param_perturbations=param_perturbations,
         expression_perturbations=expression_perturbations,
+        engine=engine,
     )
     full_result = state_results["induction+competition+gsh"]
     return {
@@ -3332,6 +3388,7 @@ def monte_carlo_synergy_ci(
     km_sigma: float = 0.5,
     expression_sigma: float = 0.3,
     seed: int | None = None,
+    engine: "GraphEngine | None" = None,
 ) -> dict[str, SynergyConfidenceInterval]:
     """Bootstrap 95% CIs for pairwise synergy factors and singleton effects.
 
@@ -3347,7 +3404,7 @@ def monte_carlo_synergy_ci(
     import random
 
     rng = random.Random(seed)
-    params = _get_interaction_params()
+    params = _active_interaction_params(None, engine)
     competitive = params.get("competitive_inhibition", {})
     substrate_names: set[str] = set()
     for enzyme, entry in competitive.items():
@@ -3383,6 +3440,7 @@ def monte_carlo_synergy_ci(
             param_perturbations=param_perturbations,
             expression_perturbations=expression_perturbations,
             include_biological_outputs=False,
+            engine=engine,
         )
 
         for pair, decomposition in decomposed.items():

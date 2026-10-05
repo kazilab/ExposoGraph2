@@ -260,6 +260,7 @@ def sobol_for_synergy_score(
     carcinogen_pair: tuple[str, str] | None = None,
     tissue: str = "Liver",
     lifestyle: dict[str, Any] | None = None,
+    engine: Any | None = None,
 ) -> SobolResult:
     """Run Sobol sensitivity on the interaction-engine synergy score.
 
@@ -300,6 +301,7 @@ def sobol_for_synergy_score(
                 lifestyle=lifestyle,
                 param_perturbations=param_perturbations or None,
                 expression_perturbations=expression_perturbations or None,
+                engine=engine,
             )
         except Exception:
             return 1.0
