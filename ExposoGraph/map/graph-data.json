@@ -14916,924 +14916,462 @@
       "target": "Ethanol",
       "type": "INCLUDES",
       "label": "Group membership: Alcohols",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alcohols",
-          "evidence": "Member of the Alcohols carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alcohols",
       "target": "Urethane",
       "type": "INCLUDES",
       "label": "Group membership: Alcohols",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alcohols",
-          "evidence": "Member of the Alcohols carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aldehydes",
       "target": "Acetaldehyde",
       "type": "INCLUDES",
       "label": "Group membership: Aldehydes",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aldehydes",
-          "evidence": "Member of the Aldehydes carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aldehydes",
       "target": "Acrolein",
       "type": "INCLUDES",
       "label": "Group membership: Aldehydes",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aldehydes",
-          "evidence": "Member of the Aldehydes carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aldehydes",
       "target": "Crotonaldehyde",
       "type": "INCLUDES",
       "label": "Group membership: Aldehydes",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aldehydes",
-          "evidence": "Member of the Aldehydes carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aldehydes",
       "target": "Formaldehyde",
       "type": "INCLUDES",
       "label": "Group membership: Aldehydes",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aldehydes",
-          "evidence": "Member of the Aldehydes carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aldehydes",
       "target": "Furfural",
       "type": "INCLUDES",
       "label": "Group membership: Aldehydes",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aldehydes",
-          "evidence": "Member of the Aldehydes carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aldehydes",
       "target": "MDA",
       "type": "INCLUDES",
       "label": "Group membership: Aldehydes",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aldehydes",
-          "evidence": "Member of the Aldehydes carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "Acrylamide",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "Busulfan",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "Chlorambucil",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "Cyclophosphamide",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "EthyleneOxide",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "MNU",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_alkylating_agents",
       "target": "Sulfur_mustard",
       "type": "INCLUDES",
       "label": "Group membership: Alkylating Agents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Alkylating Agents",
-          "evidence": "Member of the Alkylating Agents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_androgen",
       "target": "AndrogenicAnabolicSteroids",
       "type": "INCLUDES",
       "label": "Group membership: Androgen",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Androgen",
-          "evidence": "Member of the Androgen carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aromatic_amines",
       "target": "4ABP",
       "type": "INCLUDES",
       "label": "Group membership: Aromatic Amines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aromatic Amines",
-          "evidence": "Member of the Aromatic Amines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_aromatic_amines",
       "target": "Benzidine",
       "type": "INCLUDES",
       "label": "Group membership: Aromatic Amines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Aromatic Amines",
-          "evidence": "Member of the Aromatic Amines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_benzene",
       "target": "Benzene",
       "type": "INCLUDES",
       "label": "Group membership: Benzene",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Benzene",
-          "evidence": "Member of the Benzene carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_chlorinated_solvents",
       "target": "PCE",
       "type": "INCLUDES",
       "label": "Group membership: Chlorinated Solvents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Chlorinated Solvents",
-          "evidence": "Member of the Chlorinated Solvents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_chlorinated_solvents",
       "target": "TCE",
       "type": "INCLUDES",
       "label": "Group membership: Chlorinated Solvents",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Chlorinated Solvents",
-          "evidence": "Member of the Chlorinated Solvents carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_dioxins",
       "target": "PeCDF_23478",
       "type": "INCLUDES",
       "label": "Group membership: Dioxins",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Dioxins",
-          "evidence": "Member of the Dioxins carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_dioxins",
       "target": "TCDD",
       "type": "INCLUDES",
       "label": "Group membership: Dioxins",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Dioxins",
-          "evidence": "Member of the Dioxins carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_estrogen",
       "target": "EstrogenProgestogenTherapy",
       "type": "INCLUDES",
       "label": "Group membership: Estrogen",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Estrogen",
-          "evidence": "Member of the Estrogen carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_hcas",
       "target": "MeIQx",
       "type": "INCLUDES",
       "label": "Group membership: HCAs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "HCAs",
-          "evidence": "Member of the HCAs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_hcas",
       "target": "PhIP",
       "type": "INCLUDES",
       "label": "Group membership: HCAs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "HCAs",
-          "evidence": "Member of the HCAs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "AntimonyTrivalent",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "ArsenicInorganic",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "Be",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "Cd",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "CobaltMetal",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "CobaltOxide",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "CrVI",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "LeadInorganicCompounds",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "LeadMetallic",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "LeadOrganicCompounds",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "MercuryInorganicCompounds",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "MethylmercuryCompounds",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "NickelCompounds",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_heavy_metals",
       "target": "NickelMetallic",
       "type": "INCLUDES",
       "label": "Group membership: Heavy Metals",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Heavy Metals",
-          "evidence": "Member of the Heavy Metals carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_ionizing_radiation",
       "target": "IonizingRadiation",
       "type": "INCLUDES",
       "label": "Group membership: Ionizing Radiation",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Ionizing Radiation",
-          "evidence": "Member of the Ionizing Radiation carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_ionizing_radiation",
       "target": "Radon",
       "type": "INCLUDES",
       "label": "Group membership: Ionizing Radiation",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Ionizing Radiation",
-          "evidence": "Member of the Ionizing Radiation carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_mycotoxins",
       "target": "AFB1",
       "type": "INCLUDES",
       "label": "Group membership: Mycotoxins",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Mycotoxins",
-          "evidence": "Member of the Mycotoxins carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_nitrosamines",
       "target": "NDEA",
       "type": "INCLUDES",
       "label": "Group membership: Nitrosamines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Nitrosamines",
-          "evidence": "Member of the Nitrosamines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_nitrosamines",
       "target": "NDMA",
       "type": "INCLUDES",
       "label": "Group membership: Nitrosamines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Nitrosamines",
-          "evidence": "Member of the Nitrosamines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_nitrosamines",
       "target": "NNK",
       "type": "INCLUDES",
       "label": "Group membership: Nitrosamines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Nitrosamines",
-          "evidence": "Member of the Nitrosamines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "Chlordane",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "DDT",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "HCB",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "Heptachlor",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "Lindane",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "PCP",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_organochlorines",
       "target": "Toxaphene",
       "type": "INCLUDES",
       "label": "Group membership: Organochlorines",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Organochlorines",
-          "evidence": "Member of the Organochlorines carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pahs",
       "target": "BaP",
       "type": "INCLUDES",
       "label": "Group membership: PAHs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PAHs",
-          "evidence": "Member of the PAHs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pahs",
       "target": "Benz_a_anthracene",
       "type": "INCLUDES",
       "label": "Group membership: PAHs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PAHs",
-          "evidence": "Member of the PAHs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pahs",
       "target": "Benzo_b_fluoranthene",
       "type": "INCLUDES",
       "label": "Group membership: PAHs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PAHs",
-          "evidence": "Member of the PAHs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pahs",
       "target": "Chrysene",
       "type": "INCLUDES",
       "label": "Group membership: PAHs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PAHs",
-          "evidence": "Member of the PAHs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pahs",
       "target": "Dibenz_ah_anthracene",
       "type": "INCLUDES",
       "label": "Group membership: PAHs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PAHs",
-          "evidence": "Member of the PAHs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pahs",
       "target": "Naphthalene",
       "type": "INCLUDES",
       "label": "Group membership: PAHs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PAHs",
-          "evidence": "Member of the PAHs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pcbs",
       "target": "PCB_dioxin_like",
       "type": "INCLUDES",
       "label": "Group membership: PCBs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PCBs",
-          "evidence": "Member of the PCBs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pcbs",
       "target": "PCB_non_dioxin",
       "type": "INCLUDES",
       "label": "Group membership: PCBs",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PCBs",
-          "evidence": "Member of the PCBs carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pfas",
       "target": "PFOA",
       "type": "INCLUDES",
       "label": "Group membership: PFAS",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PFAS",
-          "evidence": "Member of the PFAS carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_pfas",
       "target": "PFOS",
       "type": "INCLUDES",
       "label": "Group membership: PFAS",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "PFAS",
-          "evidence": "Member of the PFAS carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_plant_alkaloids",
       "target": "AristolochicAcid",
       "type": "INCLUDES",
       "label": "Group membership: Plant Alkaloids",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Plant Alkaloids",
-          "evidence": "Member of the Plant Alkaloids carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_uv_radiation",
       "target": "UVRadiation",
       "type": "INCLUDES",
       "label": "Group membership: UV Radiation",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "UV Radiation",
-          "evidence": "Member of the UV Radiation carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     },
     {
       "source": "group_vinyl_chloride",
       "target": "VinylChloride",
       "type": "INCLUDES",
       "label": "Group membership: Vinyl Chloride",
-      "evidence": "Carcinogen group membership derived from the member node's group value.",
-      "provenance": [
-        {
-          "source_db": "Curated showcase",
-          "record_id": "Vinyl Chloride",
-          "evidence": "Member of the Vinyl Chloride carcinogen group."
-        }
-      ]
+      "evidence": "Carcinogen group membership derived from the member node's group value."
     }
   ]
 }
