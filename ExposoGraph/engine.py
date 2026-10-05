@@ -1699,10 +1699,12 @@ class GraphEngine:
         class-level fields (``model_kind``, ``exposure_default``) are
         served from the class's CarcinogenGroup node when the reference
         graph is loaded, falling back to the proxy JSON on a bare engine;
-        the per-term blocks (``activation_terms`` / ``detox_terms`` /
-        ``repair_terms``) always come from the proxy JSON -- they have no
-        group-node carrier until the proxy-class annotation backlog gives
-        them graph anchors. Also serves unit notes and signal
+        non-enzyme class-level terms (driver/proxy terms with no edge
+        binding, e.g. ``general_ROS``) are likewise served graph-first
+        from the group node's ``flux_class_metadata[cls].class_level_terms``
+        carrier, falling back to the proxy JSON; enzyme terms keep
+        coming from the proxy JSON until the anchoring backlog gives
+        them graph edges. Also serves unit notes and signal
         configuration for the proxy flux classes.
         """
         self._ensure_flux_index()
@@ -1715,6 +1717,16 @@ class GraphEngine:
                     cfg["model_kind"] = entry["model_kind"]
                 if isinstance(entry.get("exposure_defaults"), dict):
                     cfg["exposure_default"] = dict(entry["exposure_defaults"])
+                carried = entry.get("class_level_terms")
+                if isinstance(carried, dict):
+                    for section, terms in carried.items():
+                        if not isinstance(terms, dict) or not terms:
+                            continue
+                        merged = dict(cfg.get(section, {}))
+                        for term_key, term in terms.items():
+                            if isinstance(term, dict):
+                                merged[term_key] = dict(term)
+                        cfg[section] = merged
         return cfg
 
     def get_flux_provenance_entry(self, ref: str) -> dict[str, Any]:
@@ -1875,6 +1887,17 @@ class GraphEngine:
         shadowed = [r for r in self._flux_shadowed_reactions if r.carcinogen_class == cls]
         shadowed_rows = [_row(reaction) for reaction in shadowed]
 
+        # Terms whose config blocks are carried on the class's
+        # CarcinogenGroup node (``flux_class_metadata[cls].class_level_terms``
+        # -- graph-first serving with the proxy JSON as fallback). These
+        # stay class-level by design: they have no edge binding.
+        carried_terms: set[str] = set()
+        carried_entry = self._flux_group_class_md().get(cls) or {}
+        for _section, _terms in (carried_entry.get("class_level_terms") or {}).items():
+            if isinstance(_terms, dict):
+                carried_terms.update(_terms)
+        group_carried = [r.term_key for r in reactions if r.term_key in carried_terms]
+
         return {
             "carcinogen_class": cls,
             "graph_group": graph_group,
@@ -1885,6 +1908,7 @@ class GraphEngine:
             "edge_anchored_count": sum(1 for row in rows if row["edge_anchored"]),
             "unresolved_terms": unresolved,
             "unbound_terms": unbound,
+            "group_carried_terms": group_carried,
             "missing_binding_edges": missing_binding,
             "missing_scope_edges": missing_binding,
             "missing_flux_payloads": missing_payload,

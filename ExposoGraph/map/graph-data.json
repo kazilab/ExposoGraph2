@@ -6607,7 +6607,20 @@
             "source": "kinetic_parameters",
             "field": "TCE"
           }
-        }
+        ,
+          "class_level_terms": {
+              "detox_terms": {
+                "non_genotoxic_clearance_proxy": {
+                  "rate_law": "derived_scale",
+                  "graph_node_id": null,
+                  "scale_of": "CYP2E1",
+                  "scale": 0.6,
+                  "confidence": "estimated",
+                  "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
+                  "provenance_ref": "classes.ChlorinatedSolvent.detox_terms.non_genotoxic_clearance_proxy"
+                }
+              }
+            }}
       },
       "provenance": [
         {
@@ -6727,7 +6740,41 @@
             "source": "kinetic_parameters",
             "field": "arsenic"
           }
-        }
+        ,
+          "class_level_terms": {
+              "activation_terms": {
+                "general_ROS": {
+                  "graph_node_id": null,
+                  "equation": "saturating",
+                  "scale": 5.0,
+                  "km": 1.0,
+                  "confidence": "estimated",
+                  "note": "Indirect genotoxicity proxy for oxidative DNA damage burden.",
+                  "supported_tissues": [
+                    "bladder",
+                    "lung",
+                    "skin",
+                    "liver"
+                  ],
+                  "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
+                },
+                "cadmium_stress_proxy": {
+                  "graph_node_id": null,
+                  "equation": "saturating",
+                  "scale": 2.0,
+                  "km": 0.5,
+                  "confidence": "estimated",
+                  "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure.",
+                  "supported_tissues": [
+                    "kidney",
+                    "liver",
+                    "lung",
+                    "prostate"
+                  ],
+                  "provenance_ref": "classes.HeavyMetal.activation_terms.cadmium_stress_proxy"
+                }
+              }
+            }}
       },
       "provenance": [
         {
