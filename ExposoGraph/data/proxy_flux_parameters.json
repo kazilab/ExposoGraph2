@@ -380,6 +380,8 @@
       "unit_note": "Relative UV damage burden (general-population default = 1.0 DNA-damage unit) versus NER/BER repair capacity.",
       "activation_terms": {
         "UVB_photoproduct_burden": {
+          "source_node_id": "UVRadiation",
+          "target_node_id": "CPD",
           "graph_node_id": null,
           "equation": "hill",
           "vmax": 14.0,
@@ -391,6 +393,8 @@
           "provenance_ref": "classes.UV_Radiation.activation_terms.UVB_photoproduct_burden"
         },
         "UVA_oxidative_tail": {
+          "source_node_id": "UVRadiation",
+          "target_node_id": "8_OHdG",
           "graph_node_id": null,
           "equation": "hill",
           "vmax": 5.0,
@@ -536,6 +540,8 @@
       },
       "detox_terms": {
         "AHRR_feedback": {
+          "source_node_id": "AHRR",
+          "target_node_id": "AHR",
           "rate_law": "receptor",
           "graph_node_id": null,
           "scale_of_signal": 8.0,
