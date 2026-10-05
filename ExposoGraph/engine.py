@@ -17,7 +17,12 @@ from .config import GraphMode
 from .grounding import prepare_knowledge_graph
 from .interaction_schema import GSHConsumer, InductionRule
 from .models import Edge, KnowledgeGraph, Node
-from .parameter_provider import JSONInteractionParameterProvider
+from .parameter_provider import (
+    INTERACTION_BLOCK_MARKER,
+    INTERACTION_ENZYME_MARKER,
+    INTERACTION_SUBSTRATE_MARKER,
+    JSONInteractionParameterProvider,
+)
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
@@ -582,7 +587,11 @@ class GraphEngine:
         The entry's remaining fields (Km_uM, Vmax_relative, Ki_uM, product,
         product_carcinogenic, ...) are set, unchanged, as ``kinetics`` on
         every existing edge whose ``source`` **or** ``target`` is that enzyme
-        and whose ``carcinogen`` attribute equals ``graph_node_id``. Matching
+        and whose ``carcinogen`` attribute equals ``graph_node_id``, plus
+        three self-description markers (``interaction_enzyme``,
+        ``interaction_substrate``, ``interaction_block``) identifying the
+        JSON enzyme key, substrate key, and source block so a graph walk can
+        reconstruct typed records without re-reading the JSON. Matching
         both endpoints covers the two edge directions the graph now uses for
         the same enzyme/substrate relationship: legacy-style
         ``Enzyme -> Metabolite`` ``PRODUCES`` edges (enzyme as source) and the
@@ -642,6 +651,16 @@ class GraphEngine:
                         )
                         continue
                     kinetics = {k: v for k, v in params.items() if k != "graph_node_id"}
+                    # Self-description markers so the graph-walk provider
+                    # (KGInteractionParameterProvider) can reconstruct
+                    # typed records from the edge kinetics without
+                    # re-reading the JSON document: the substrate key and
+                    # source block are not recoverable from node identity
+                    # alone, and the enzyme endpoint of a carrier edge is
+                    # ambiguous without the name.
+                    kinetics[INTERACTION_ENZYME_MARKER] = enzyme_id
+                    kinetics[INTERACTION_SUBSTRATE_MARKER] = substrate_key
+                    kinetics[INTERACTION_BLOCK_MARKER] = block_name
                     pending[(enzyme_id, resolved)] = kinetics
                     pending_block[(enzyme_id, resolved)] = block_name
 

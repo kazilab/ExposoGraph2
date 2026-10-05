@@ -29,9 +29,25 @@ from .interaction_schema import (
 )
 
 
+#: Edge-kinetics marker fields written by
+#: ``GraphEngine._apply_interaction_parameters``. The graph-walk provider
+#: (``KGInteractionParameterProvider``) reconstructs typed records from these
+#: markers: the JSON substrate key and source block are not recoverable from
+#: node identity alone (aliases such as ``trichloroethylene`` -> ``TCE``),
+#: and the enzyme endpoint of a carrier edge is ambiguous without the name.
+INTERACTION_ENZYME_MARKER = "interaction_enzyme"
+INTERACTION_SUBSTRATE_MARKER = "interaction_substrate"
+INTERACTION_BLOCK_MARKER = "interaction_block"
+
+_KINETIC_MARKER_FIELDS = (
+    INTERACTION_ENZYME_MARKER,
+    INTERACTION_SUBSTRATE_MARKER,
+    INTERACTION_BLOCK_MARKER,
+)
+
+
 class InteractionParameterProvider(ABC):
     """Abstract access layer for mechanism-resolved interaction parameters."""
-
     @abstractmethod
     def get_competitive_interactions(self, enzyme: str | None = None) -> list[CompetitiveInteraction]:
         raise NotImplementedError
