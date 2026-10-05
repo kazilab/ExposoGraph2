@@ -316,38 +316,72 @@ class JSONInteractionParameterProvider(InteractionParameterProvider):
             return None
 
 
-class KGInteractionParameterProvider(InteractionParameterProvider):
-    """Scaffold for future KG-backed parameter population.
+class KGInteractionParameterProvider(JSONInteractionParameterProvider):
+    """Hybrid graph-backed interaction-parameter provider.
 
-    Phase 3 must not traverse graph internals. These methods fail explicitly so
-    callers cannot mistake the scaffold for an implemented provider.
+    Kinetic records (``get_competitive_interactions`` and the two reaction
+    getters it feeds) are reconstructed by walking the flat interaction
+    kinetics that ``GraphEngine._apply_interaction_parameters`` baked onto
+    enzyme-adjacent edges: one record per (enzyme, substrate) pair, deduplicated
+    across the multiple edges a pair may ride, in (enzyme, substrate) sorted
+    order rather than JSON file order. Records are field-identical to the
+    JSON provider's by construction -- the bake writes the substrate entry's
+    fields verbatim, and the walk re-attaches ``graph_node_id`` from the edge's
+    ``carcinogen`` attribute -- so consumers can be handed this provider as a
+    drop-in replacement.
+
+    Everything without graph carriage is inherited from the JSON provider:
+    induction rules, GSH consumers, and parameter evidence
+    (``parameter_provenance.json`` has no graph carrier). Constructing this
+    provider requires an engine whose reference graph is loaded (so the
+    interaction kinetics are baked); bare engines must keep the JSON
+    provider. ``engine`` is typed ``Any`` to avoid an import cycle.
     """
 
-    _MESSAGE = "KGInteractionParameterProvider is a Phase 3 scaffold; KG traversal is reserved for later phases."
+    def __init__(self, engine: Any, data_dir: str | Path | None = None) -> None:
+        super().__init__(data_dir)
+        self._kg_engine = engine
 
-    def _not_implemented(self) -> None:
-        raise NotImplementedError(self._MESSAGE)
+    def _walk_pairs(self) -> dict[tuple[str, str], dict[str, Any]]:
+        """Walk baked edge kinetics, deduplicated per (enzyme, substrate) pair."""
+        graph = self._kg_engine.G
+        pairs: dict[tuple[str, str], dict[str, Any]] = {}
+        for _source_id, _target_id, edge_data in graph.edges(data=True):
+            kinetics = edge_data.get("kinetics")
+            if not isinstance(kinetics, dict):
+                continue
+            if kinetics.get(INTERACTION_BLOCK_MARKER) != "competitive_inhibition":
+                # Phase 2 conjugation pairs stay engine-side for now: the
+                # JSON provider never exposed them, and adding a provider
+                # surface for them is a separate contract decision.
+                continue
+            enzyme = kinetics.get(INTERACTION_ENZYME_MARKER)
+            substrate = kinetics.get(INTERACTION_SUBSTRATE_MARKER)
+            if not enzyme or not substrate:
+                continue
+            key = (enzyme, substrate)
+            if key in pairs:
+                # Identical by construction: one pending entry per pair is
+                # baked onto every matching edge.
+                continue
+            payload = {
+                name: value
+                for name, value in kinetics.items()
+                if name != "flux_terms" and name not in _KINETIC_MARKER_FIELDS
+            }
+            payload["graph_node_id"] = edge_data.get("carcinogen")
+            pairs[key] = payload
+        return pairs
 
     def get_competitive_interactions(self, enzyme: str | None = None) -> list[CompetitiveInteraction]:
-        del enzyme
-        self._not_implemented()
-
-    def get_reactions_for_enzyme(self, enzyme: str) -> list[MetabolicReaction]:
-        del enzyme
-        self._not_implemented()
-
-    def get_reactions_for_carcinogen(self, carcinogen: str, tissue: str | None = None) -> list[MetabolicReaction]:
-        del carcinogen, tissue
-        self._not_implemented()
-
-    def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
-        del tissue
-        self._not_implemented()
-
-    def get_induction_rules(self, tissue: str | None = None) -> list[InductionRule]:
-        del tissue
-        self._not_implemented()
-
-    def get_parameter_evidence(self, enzyme: str, substrate: str) -> EvidenceRecord | None:
-        del enzyme, substrate
-        self._not_implemented()
+        interactions: list[CompetitiveInteraction] = []
+        for (enzyme_name, substrate), payload in sorted(self._walk_pairs().items()):
+            interactions.append(
+                self._build_competitive_interaction(enzyme_name, substrate, payload)
+            )
+        if enzyme is not None:
+            wanted = enzyme.lower()
+            interactions = [
+                item for item in interactions if item.enzyme.lower() == wanted
+            ]
+        return interactions
