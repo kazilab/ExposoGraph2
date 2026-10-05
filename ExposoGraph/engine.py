@@ -1850,6 +1850,18 @@ class GraphEngine:
                             edge_types.add(str(data.get("type")))
             return sorted(edge_types)
 
+        # Terms whose config blocks are carried on the class's
+        # CarcinogenGroup node (``flux_class_metadata[cls].class_level_terms``
+        # -- graph-first serving with the proxy JSON as fallback). These
+        # stay class-level by design: they have no edge binding, so they are
+        # excluded from the unresolved/unbound/missing backlog below and
+        # reported separately as a resolved carrier state.
+        carried_terms: set[str] = set()
+        carried_entry = self._flux_group_class_md().get(cls) or {}
+        for _section, _terms in (carried_entry.get("class_level_terms") or {}).items():
+            if isinstance(_terms, dict):
+                carried_terms.update(_terms)
+
         def _row(reaction: FluxReaction) -> dict[str, Any]:
             resolved = reaction.enzyme_id is not None and reaction.enzyme_id in self.G
             probe = _binding_probe(reaction)
@@ -1866,6 +1878,7 @@ class GraphEngine:
                 "binding_edge_present": edge_present,
                 "binding_edge_types": binding_types,
                 "edge_anchored": payload_present,
+                "group_carried": reaction.term_key in carried_terms,
                 "class_carcinogen_edge_types": _class_carcinogen_edge_types(reaction.enzyme_id),
             }
 
@@ -1876,16 +1889,17 @@ class GraphEngine:
         missing_payload: list[str] = []
         for reaction in reactions:
             row = _row(reaction)
-            if not row["resolved"]:
+            if not row["resolved"] and reaction.term_key not in carried_terms:
                 unresolved.append(reaction.term_key)
             rows.append(row)
 
         # Classify the resolved terms: unbound = no binding annotations;
         # missing_binding = bindings whose edge doesn't exist;
         # missing_payload = binding edge exists but carries no baked
-        # flux_terms payload for this term.
+        # flux_terms payload for this term. Group-carried terms are a
+        # resolved carrier state and are excluded from all three.
         for reaction, row in zip(reactions, rows):
-            if not row["resolved"]:
+            if not row["resolved"] or reaction.term_key in carried_terms:
                 continue
             if not (
                 reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
@@ -1901,15 +1915,6 @@ class GraphEngine:
         shadowed = [r for r in self._flux_shadowed_reactions if r.carcinogen_class == cls]
         shadowed_rows = [_row(reaction) for reaction in shadowed]
 
-        # Terms whose config blocks are carried on the class's
-        # CarcinogenGroup node (``flux_class_metadata[cls].class_level_terms``
-        # -- graph-first serving with the proxy JSON as fallback). These
-        # stay class-level by design: they have no edge binding.
-        carried_terms: set[str] = set()
-        carried_entry = self._flux_group_class_md().get(cls) or {}
-        for _section, _terms in (carried_entry.get("class_level_terms") or {}).items():
-            if isinstance(_terms, dict):
-                carried_terms.update(_terms)
         group_carried = [r.term_key for r in reactions if r.term_key in carried_terms]
 
         return {
