@@ -121,14 +121,11 @@
         "exposure_default_field": "BaP",
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450", "detoxification": "kcat_s"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 4, "detoxification": 6},
-        "total_round": {"activation": 4, "detoxification": 4},
         "unit_note": "Activation in pmol/min/pmolP450; detox scaled via CLint normalization",
         "activation_efficiency_term": {
           "term": "EPHX1",
           "reference_CLint": 40.0,
-          "output_field": "ephx1_efficiency",
-          "output_round": 3
+          "output_field": "ephx1_efficiency"
         },
         "detox_total_scale": 764.0
       },
@@ -218,9 +215,6 @@
         "exposure_default_field": "AFB1",
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450", "detoxification": "Vmax_pmol_min_pmolP450"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 4, "detoxification": 4},
-        "entry_round_overrides": {"GSTA1_conjugation": 6},
-        "total_round": {"activation": 4, "detoxification": 6},
         "unit_note": "All fluxes in pmol/min/pmolP450; GSTA1 Vmax is estimated",
         "status": "dedicated_function",
         "notes": "Dedicated function: term-factor sharing (CYP3A4_AFQ1 reuses CYP3A4 gm/tw) is model-specific. Term kinetics, estimates, fraction contributions, and the GSTA1 tissue-weight proxy live on the terms; entry/total rounding and the unit note are read from this block."
@@ -306,9 +300,6 @@
         "exposure_default_field": "acetaldehyde",
         "vmax_field": {"detoxification": "Vmax_U_per_mg", "ethanol_oxidation": "Vmax_U_per_mg"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 6, "detoxification": 6},
-        "extras_round": {"CLint": 4},
-        "total_round": {"activation": 6, "detoxification": 6},
         "unit_note": "Flux in U/mg; ratio dimensionally consistent",
         "status": "dedicated_function",
         "notes": "Hand-rolled: diplotype-driven parameter-row selection (ALDH2/ADH1B) and the ethanol substrate override (metadata exposure default, no gm/tw scaling) are model-specific."
@@ -435,8 +426,6 @@
         "exposure_default_field": "NNK",
         "vmax_field": {"activation": "Vmax_pmol_min_pmolP450"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 6},
-        "total_round": {"activation": 6, "detoxification": 6},
         "unit_note": "Flux in pmol/min/pmolP450",
         "derived_terms": {
           "CYP2A6": {
@@ -514,8 +503,6 @@
         "exposure_default_field": "NDMA",
         "vmax_field": {"activation": "Vmax_pmol_min_mg"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 4},
-        "total_round": {"activation": 4, "detoxification": null},
         "unit_note": "Flux in pmol/min/mg microsomal protein",
         "detox_fraction_of_activation": 0.1,
         "detox_entries": false
@@ -574,8 +561,6 @@
         "exposure_default_field": "PhIP",
         "vmax_field": {"activation": "Vmax_nmol_min_nmolP450"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 6},
-        "total_round": {"activation": 6, "detoxification": 6},
         "unit_note": "Flux in nmol/min/nmolP450",
         "detox_fraction_of_activation": 0.2,
         "detox_entry": {"name": "estimated_detox_fraction", "confidence": "estimated"}
@@ -657,8 +642,6 @@
         "exposure_default_field": "benzene",
         "vmax_field": {"activation": "Vmax_pmol_min_mg_estimated"},
         "km_field": "Km_uM",
-        "entry_round": {"activation": 4, "detoxification": 4},
-        "total_round": {"activation": 4, "detoxification": 4},
         "unit_note": "Flux in pmol/min/mg (estimated Vmax)",
         "entry_names": {"CYP2E1_liver": "CYP2E1"},
         "derived_terms": {

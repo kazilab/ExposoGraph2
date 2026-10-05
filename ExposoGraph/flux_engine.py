@@ -194,6 +194,19 @@ class SensitivityResult:
 
 _KINETIC_PARAMETER_SOURCE = "kinetic_parameters.json"
 _PROXY_PARAMETER_SOURCE = "proxy_flux_parameters.json"
+# Global output precision (significant figures) for flux entries, derived
+# terms, and totals -- replaces the former per-class entry_round/total_round
+# aggregation syntax. Significant figures (rather than decimal places) keep
+# uniform relative precision across flux magnitudes spanning ~1e-5 to ~100.
+_FLUX_SIGNIFICANT_FIGURES: int = 4
+
+
+def _round_flux(value: float) -> float:
+    """Round a flux output to ``_FLUX_SIGNIFICANT_FIGURES`` significant figures."""
+    if value == 0 or not math.isfinite(value):
+        return value
+    exponent = math.floor(math.log10(abs(value)))
+    return round(value, _FLUX_SIGNIFICANT_FIGURES - 1 - exponent)
 
 
 # ── Core kinetic equations ─────────────────────────────────────────────────
@@ -477,7 +490,7 @@ def _rescale_flux_section_for_induction(
         new_flux = old_flux * factor
         edata["induction_modifier"] = round(factor, 6)
         if not math.isclose(factor, 1.0):
-            edata["flux"] = round(new_flux, 6)
+            edata["flux"] = _round_flux(new_flux)
         old_sum += old_flux
         new_sum += new_flux
     return old_sum, new_sum
@@ -500,7 +513,7 @@ def _apply_induction_modifiers(
             continue
         old_sum, new_sum = _rescale_flux_section_for_induction(enzymes, induction_factors)
         if old_sum > 0 and total_name in result:
-            result[total_name] = round(float(result[total_name]) * new_sum / old_sum, 6)
+            result[total_name] = float(result[total_name]) * new_sum / old_sum
 
     return result
 
@@ -549,11 +562,11 @@ def _apply_qivive_scale(result: FluxResultDict, qivive_context: Mapping[str, flo
                 continue
             edata["qivive_scale"] = round(scale, 6)
             if "flux" in edata:
-                edata["flux"] = round(float(edata["flux"]) * scale, 6)
+                edata["flux"] = _round_flux(float(edata["flux"]) * scale)
 
     for key in ("total_activation", "total_detox"):
         if key in result:
-            result[key] = round(float(result[key]) * scale, 6)
+            result[key] = float(result[key]) * scale
 
     note = str(result.get("unit_note", "")).strip()
     qivive_note = (
@@ -939,7 +952,7 @@ def _compute_generic_proxy_flux(
 
     def _entry(reaction: "FluxReaction", value: float, gm: float, tw: float) -> JsonDict:
         entry: JsonDict = {
-            "flux": round(value, 6),
+            "flux": _round_flux(value),
             "genotype_modifier": gm,
             "tissue_weight": tw,
             "confidence": reaction.confidence,
@@ -987,8 +1000,8 @@ def _compute_generic_proxy_flux(
     return {
         "activation_enzymes": activation_enzymes,
         "detox_enzymes": detox_enzymes,
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(total_detox, 6),
+        "total_activation": total_activation,
+        "total_detox": total_detox,
         "unit_note": cfg["unit_note"],
     }
 
@@ -1022,8 +1035,6 @@ def _compute_generic_mechanistic_flux(
     agg = active_engine.get_flux_aggregation(carcinogen_class)
     vmax_fields: dict[str, Any] = dict(agg.get("vmax_field", {}))
     km_field = str(agg.get("km_field", "Km_uM"))
-    entry_round: dict[str, Any] = dict(agg.get("entry_round", {}))
-    total_round: dict[str, Any] = dict(agg.get("total_round", {}))
     derived_specs: dict[str, Any] = dict(agg.get("derived_terms", {}))
     entry_names: dict[str, str] = dict(agg.get("entry_names", {}))
     efficiency_spec: JsonDict | None = agg.get("activation_efficiency_term")
@@ -1035,9 +1046,8 @@ def _compute_generic_mechanistic_flux(
         return str(reaction.enzyme_id or reaction.term_key)
 
     def _entry(value: float, gm: float, tw: float, role: str, confidence: str) -> JsonDict:
-        rnd = entry_round.get(role)
         return {
-            "flux": round(value, rnd) if rnd is not None else value,
+            "flux": _round_flux(value),
             "genotype_modifier": gm,
             "tissue_weight": tw,
             "confidence": confidence,
@@ -1153,19 +1163,14 @@ def _compute_generic_mechanistic_flux(
     if detox_scale is not None:
         total_detox = total_detox * float(detox_scale)
 
-    def _round_total(value: float, spec: Any) -> Any:
-        return value if spec is None else round(value, spec)
-
     result: FluxResultDict = {
         "activation_enzymes": activation_entries,
         "detox_enzymes": detox_entries,
-        "total_activation": _round_total(total_activation, total_round.get("activation")),
-        "total_detox": _round_total(total_detox, total_round.get("detoxification")),
+        "total_activation": total_activation,
+        "total_detox": total_detox,
     }
     if efficiency_spec is not None:
-        result[str(efficiency_spec["output_field"])] = round(
-            efficiency, int(efficiency_spec.get("output_round", 3))
-        )
+        result[str(efficiency_spec["output_field"])] = _round_flux(efficiency)
     result["unit_note"] = str(agg.get("unit_note", ""))
     return result
 
@@ -1272,9 +1277,6 @@ def _compute_aflatoxin_flux(
     active_engine = engine if engine is not None else _get_flux_contract_engine()
     terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("Aflatoxin")}
     agg = active_engine.get_flux_aggregation("Aflatoxin")
-    entry_round = agg["entry_round"]
-    entry_round_overrides = agg.get("entry_round_overrides", {})
-    total_round = agg["total_round"]
     activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
 
@@ -1289,7 +1291,7 @@ def _compute_aflatoxin_flux(
         cyp3a4_p["hill_n"],
     )
     activation_enzymes["CYP3A4"] = {
-        "flux": round(v_cyp3a4, entry_round["activation"]),
+        "flux": _round_flux(v_cyp3a4),
         "kinetics": "hill",
         "n": cyp3a4_p["hill_n"],
         "genotype_modifier": gm3a4,
@@ -1308,7 +1310,7 @@ def _compute_aflatoxin_flux(
         cyp1a2_p["Km_uM"],
     )
     activation_enzymes["CYP1A2"] = {
-        "flux": round(v_cyp1a2, entry_round["activation"]),
+        "flux": _round_flux(v_cyp1a2),
         "kinetics": "michaelis_menten",
         "genotype_modifier": gm1a2,
         "tissue_weight": tw1a2,
@@ -1327,7 +1329,7 @@ def _compute_aflatoxin_flux(
         afq1_p["hill_n"],
     )
     detox_enzymes["CYP3A4_AFQ1"] = {
-        "flux": round(v_afq1, entry_round["detoxification"]),
+        "flux": _round_flux(v_afq1),
         "genotype_modifier": gm3a4,
         "tissue_weight": tw3a4,
         "confidence": terms["CYP3A4_AFQ1"].confidence,
@@ -1345,10 +1347,7 @@ def _compute_aflatoxin_flux(
         gsta1_p["Km_uM"],
     )
     detox_enzymes["GSTA1_conjugation"] = {
-        "flux": round(
-            v_gsta1,
-            entry_round_overrides.get("GSTA1_conjugation", entry_round["detoxification"]),
-        ),
+        "flux": _round_flux(v_gsta1),
         "genotype_modifier": gsta1_gm,
         "tissue_weight": gsta1_tw,
         "confidence": terms["GSTA1"].confidence,
@@ -1359,8 +1358,8 @@ def _compute_aflatoxin_flux(
     return {
         "activation_enzymes": activation_enzymes,
         "detox_enzymes": detox_enzymes,
-        "total_activation": round(total_activation, total_round["activation"]),
-        "total_detox": round(total_detox, total_round["detoxification"]),
+        "total_activation": total_activation,
+        "total_detox": total_detox,
         "unit_note": agg["unit_note"],
     }
 
@@ -1377,9 +1376,6 @@ def _compute_aldehyde_flux(
     active_engine = engine if engine is not None else _get_flux_contract_engine()
     terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("Aldehyde")}
     agg = active_engine.get_flux_aggregation("Aldehyde")
-    entry_round = agg["entry_round"]
-    total_round = agg["total_round"]
-    extras_round = agg.get("extras_round", {})
     detox_enzymes: dict[str, Any] = {}
 
     # Determine ALDH2 genotype
@@ -1412,11 +1408,11 @@ def _compute_aldehyde_flux(
     tw_aldh2 = get_flux_tissue_weight("ALDH2", tissue, tissue_weight_source)
     v_aldh2 = michaelis_menten(S, aldh2_vmax * aldh2_gm * tw_aldh2, aldh2_km)
     detox_enzymes["ALDH2"] = {
-        "flux": round(v_aldh2, entry_round["detoxification"]),
+        "flux": _round_flux(v_aldh2),
         "genotype": aldh2_gt,
         "genotype_modifier": aldh2_gm,
         "tissue_weight": tw_aldh2,
-        "CLint": round((aldh2_vmax * aldh2_gm * tw_aldh2) / aldh2_km, extras_round["CLint"]),
+        "CLint": _round_flux((aldh2_vmax * aldh2_gm * tw_aldh2) / aldh2_km),
         "confidence": aldh2_term.confidence,
     }
 
@@ -1428,7 +1424,7 @@ def _compute_aldehyde_flux(
         S, aldh1a1_p["Vmax_U_per_mg"] * aldh1a1_gm * tw_aldh1a1, aldh1a1_p["Km_uM"]
     )
     detox_enzymes["ALDH1A1"] = {
-        "flux": round(v_aldh1a1, entry_round["detoxification"]),
+        "flux": _round_flux(v_aldh1a1),
         "genotype_modifier": aldh1a1_gm,
         "tissue_weight": tw_aldh1a1,
         "confidence": terms["ALDH1A1"].confidence,
@@ -1454,7 +1450,7 @@ def _compute_aldehyde_flux(
         "activation_enzymes": {
             "ADH1B": {
                 "reaction": "Ethanol -> Acetaldehyde",
-                "flux": round(v_adh, entry_round["activation"]),
+                "flux": _round_flux(v_adh),
                 "genotype": adh_gt,
                 "genotype_modifier": 1.0,
                 "tissue_weight": 1.0,
@@ -1462,8 +1458,8 @@ def _compute_aldehyde_flux(
             }
         },
         "detox_enzymes": detox_enzymes,
-        "total_activation": round(v_adh, total_round["activation"]),
-        "total_detox": round(total_detox, total_round["detoxification"]),
+        "total_activation": v_adh,
+        "total_detox": total_detox,
         "unit_note": agg["unit_note"],
     }
 
@@ -1487,7 +1483,7 @@ def _compute_chlorinated_solvent_flux(
         tissue_weight_source,
     )
     activation_enzymes["CYP2E1"] = {
-        "flux": round(v_oxidation, 6),
+        "flux": _round_flux(v_oxidation),
         "genotype_modifier": gm2e1,
         "tissue_weight": tw2e1,
         "confidence": oxidation_p["confidence"],
@@ -1503,7 +1499,7 @@ def _compute_chlorinated_solvent_flux(
         tissue_weight_source,
     )
     activation_enzymes["GSTT1"] = {
-        "flux": round(v_gsh, 6),
+        "flux": _round_flux(v_gsh),
         "genotype_modifier": gm_gstt1,
         "tissue_weight": tw_gstt1,
         "confidence": gsh_p["confidence"],
@@ -1514,7 +1510,7 @@ def _compute_chlorinated_solvent_flux(
     v_clearance = v_oxidation * float(detox_p["scale"])
     detox_enzymes = {
         "non_genotoxic_clearance_proxy": {
-            "flux": round(v_clearance, 6),
+            "flux": _round_flux(v_clearance),
             "genotype_modifier": 1.0,
             "tissue_weight": max(tw2e1, 0.2),
             "confidence": detox_p["confidence"],
@@ -1527,8 +1523,8 @@ def _compute_chlorinated_solvent_flux(
     return {
         "activation_enzymes": activation_enzymes,
         "detox_enzymes": detox_enzymes,
-        "total_activation": round(total_activation, 6),
-        "total_detox": round(v_clearance, 6),
+        "total_activation": total_activation,
+        "total_detox": v_clearance,
         "unit_note": cfg["unit_note"],
     }
 
@@ -1566,7 +1562,7 @@ def _compute_dioxin_flux(
     return {
         "activation_enzymes": {
             "CYP1A1": {
-                "flux": round(v1a1, 6),
+                "flux": _round_flux(v1a1),
                 "genotype_modifier": gm1a1,
                 "tissue_weight": tw1a1,
                 "confidence": act1_p["confidence"],
@@ -1574,7 +1570,7 @@ def _compute_dioxin_flux(
                 "note": act1_p["note"],
             },
             "CYP1B1": {
-                "flux": round(v1b1, 6),
+                "flux": _round_flux(v1b1),
                 "genotype_modifier": gm1b1,
                 "tissue_weight": tw1b1,
                 "confidence": act2_p["confidence"],
@@ -1584,7 +1580,7 @@ def _compute_dioxin_flux(
         },
         "detox_enzymes": {
             "AHRR_feedback": {
-                "flux": round(v_feedback, 6),
+                "flux": _round_flux(v_feedback),
                 "genotype_modifier": 1.0,
                 "tissue_weight": tissue_signal,
                 "confidence": feedback_p["confidence"],
@@ -1592,8 +1588,8 @@ def _compute_dioxin_flux(
                 "note": feedback_p["note"],
             }
         },
-        "total_activation": round(v1a1 + v1b1, 6),
-        "total_detox": round(v_feedback, 6),
+        "total_activation": v1a1 + v1b1,
+        "total_detox": v_feedback,
         "unit_note": cfg["unit_note"],
     }
 
@@ -1823,9 +1819,9 @@ def compute_pathway_flux(
         genotypes_used=genotypes,
         activation_enzymes=act_enzymes,
         detox_enzymes=det_enzymes,
-        total_activation=round(act, 6),
-        total_detox=round(det, 6),
-        net_ratio=round(net_ratio, 4),
+        total_activation=_round_flux(act),
+        total_detox=_round_flux(det),
+        net_ratio=_round_flux(net_ratio),
         susceptibility_score_log2=susceptibility_score,
         risk_classification=risk,
         tissue_weight_source=weight_source,
