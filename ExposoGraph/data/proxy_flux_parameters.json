@@ -265,6 +265,8 @@
       },
       "repair_terms": {
         "MGMT": {
+          "substrate_node_id": "O6_ethyl_dG",
+          "enzyme_node_id": "MGMT",
           "rate_law": "repair",
           "gene": "MGMT",
           "scale": 0.45,
@@ -435,6 +437,8 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.OGG1"
         },
         "POLH": {
+          "substrate_node_id": "CPD",
+          "enzyme_node_id": "POLH",
           "rate_law": "repair",
           "gene": "POLH",
           "scale": 0.1,

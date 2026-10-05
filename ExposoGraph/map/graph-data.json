@@ -7050,6 +7050,58 @@
           "url": "https://pubmed.ncbi.nlm.nih.gov/12922923/"
         }
       ]
+    },
+    {
+      "id": "O6_ethyl_dG",
+      "label": "O6-ethyl-dG",
+      "type": "DNA_Adduct",
+      "detail": "Representative NDEA-derived ethyl DNA adduct (O6-ethylguanine). Formed via CYP-mediated alpha-hydroxylation of N-nitrosodiethylamine; removed by MGMT, with lower repair efficiency than the methyl adduct. Distinct from the NDMA/NNK-derived O6-methyl-dG.",
+      "source_db": "PubMed",
+      "evidence": "NDEA alpha-hydroxylation forms ethylated DNA bases including O6-EtG; MGMT removes O6-alkyl adducts including ethyl (Fahrer & Christmann 2023, doi:10.3390/ijms24054684).",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "O6_ethyl_dG",
+      "canonical_label": "O6-ethyl-dG",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "10.3390/ijms24054684",
+          "evidence": "NDEA activation via alpha-hydroxylation leads to formation of ethylated DNA bases including O6-EtG; MGMT removes O6-position alkyl adducts, including ethyl adducts, with decreasing efficiency as alkyl size increases.",
+          "citation": "Fahrer J, Christmann M. DNA Alkylation Damage by Nitrosamines and Relevant DNA Repair Pathways. Int J Mol Sci. 2023;24(5):4684. doi:10.3390/ijms24054684",
+          "url": "https://www.mdpi.com/1422-0067/24/5/4684"
+        }
+      ]
+    },
+    {
+      "id": "POLH",
+      "label": "POLH",
+      "type": "Enzyme",
+      "detail": "DNA polymerase eta; Y-family translesion synthesis polymerase that bypasses UV-induced cyclobutane pyrimidine (thymine) dimers error-free. Germline defects cause xeroderma pigmentosum variant (XP-V).",
+      "role": "Repair",
+      "tier": 2,
+      "source_db": "NCBI Gene; PubMed",
+      "evidence": "XPV gene product; bypasses UV-induced thymine dimers (Masutani et al. 1999, PMID:10385124).",
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "POLH",
+      "canonical_label": "POLH",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "5429",
+          "evidence": "Canonical human gene identifier and nomenclature.",
+          "citation": "NCBI Gene record for POLH (Homo sapiens)",
+          "url": "https://www.ncbi.nlm.nih.gov/gene/5429"
+        },
+        {
+          "source_db": "PubMed",
+          "record_id": "10385124",
+          "pmid": "10385124",
+          "evidence": "Recombinant human DNA polymerase eta corrects the inability of XP-V cell extracts to carry out DNA replication by bypassing thymine (cyclobutane pyrimidine) dimers on damaged DNA.",
+          "citation": "Masutani C, Kusumoto R, Yamada A, Dohmae N, Yokoi M, Yuasa M, Araki M, Iwai S, Takio K, Hanaoka F. The XPV (xeroderma pigmentosum variant) gene encodes human DNA polymerase eta. Nature. 1999;399(6737):700-704. doi:10.1038/21447",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/10385124/"
+        }
+      ]
     }
   ],
   "edges": [
@@ -15524,6 +15576,45 @@
           "evidence": "SULT1E1 catalyzes the sulfate conjugation of estradiol, catecholestrogens, and related steroids with the lowest Km values (nM range) of the 10 known human SULT isoforms.",
           "citation": "Adjei AA, Thomae BA, Prondzinski JL, Eckloff BW, Wieben ED, Weinshilboum RM. Human estrogen sulfotransferase (SULT1E1) pharmacogenomics: gene resequencing and functional genomics. Br J Pharmacol. 2003;139(8):1373-1382. doi:10.1038/sj.bjp.0705369",
           "url": "https://pubmed.ncbi.nlm.nih.gov/12922923/"
+        }
+      ]
+    },
+    {
+      "source": "O6_ethyl_dG",
+      "target": "MGMT",
+      "type": "REPAIRED_BY",
+      "label": "ethyl transfer",
+      "carcinogen": "O6_ethyl_dG",
+      "evidence": "MGMT removes O6-ethylguanine by direct alkyl transfer, with lower efficiency than O6-methylguanine (Fahrer & Christmann 2023, doi:10.3390/ijms24054684).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "10.3390/ijms24054684",
+          "evidence": "NDEA activation via alpha-hydroxylation leads to formation of ethylated DNA bases including O6-EtG; MGMT removes O6-position alkyl adducts, including ethyl adducts, with decreasing efficiency as alkyl size increases.",
+          "citation": "Fahrer J, Christmann M. DNA Alkylation Damage by Nitrosamines and Relevant DNA Repair Pathways. Int J Mol Sci. 2023;24(5):4684. doi:10.3390/ijms24054684",
+          "url": "https://www.mdpi.com/1422-0067/24/5/4684"
+        }
+      ]
+    },
+    {
+      "source": "CPD",
+      "target": "POLH",
+      "type": "REPAIRED_BY",
+      "label": "translesion bypass",
+      "carcinogen": "CPD",
+      "evidence": "DNA polymerase eta performs error-free translesion synthesis across UV-induced cyclobutane pyrimidine dimers; XP-V cell extracts lacking it cannot replicate thymine-dimer-containing DNA (Masutani et al. 1999, PMID:10385124).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "10385124",
+          "pmid": "10385124",
+          "evidence": "Recombinant human DNA polymerase eta corrects the inability of XP-V cell extracts to carry out DNA replication by bypassing thymine (cyclobutane pyrimidine) dimers on damaged DNA.",
+          "citation": "Masutani C, Kusumoto R, Yamada A, Dohmae N, Yokoi M, Yuasa M, Araki M, Iwai S, Takio K, Hanaoka F. The XPV (xeroderma pigmentosum variant) gene encodes human DNA polymerase eta. Nature. 1999;399(6737):700-704. doi:10.1038/21447",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/10385124/"
         }
       ]
     }
