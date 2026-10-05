@@ -13,6 +13,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 
 class NodeType(str, Enum):
     CARCINOGEN = "Carcinogen"
+    CARCINOGEN_GROUP = "CarcinogenGroup"
     ENZYME = "Enzyme"
     RECEPTOR = "Receptor"
     GENE = "Gene"
@@ -48,6 +49,9 @@ class EdgeType(str, Enum):
     AGONIZES = "AGONIZES"
     TRANSFORMS_SPONTANEOUSLY = "TRANSFORMS_SPONTANEOUSLY"
     MECHANISM_UNCLEAR = "MECHANISM_UNCLEAR"
+    # CarcinogenGroup -> Carcinogen membership (structural, hidden from the
+    # Reference Map viewer like Substrate nodes)
+    INCLUDES = "INCLUDES"
 
 
 class CurationStatus(str, Enum):
@@ -188,6 +192,14 @@ class Node(BaseModel):
     tissue_weights_raw: Optional[dict[str, float]] = None
     exposure_scenarios: Optional[dict[str, Any]] = None
     tier: Optional[int] = None
+    # CarcinogenGroup-node fields: class-level flux model metadata carrier.
+    # kinetics_model summarizes the model kinds active for the group
+    # (e.g. "michaelis_menten", "semi_quantitative_proxy", or both joined
+    # by " + "); flux_class_metadata is keyed by flux class name, each
+    # entry holding that class's model_kind, index_carcinogen, aggregation,
+    # exposure_defaults, and epidemiological_validation as available.
+    kinetics_model: Optional[str] = None
+    flux_class_metadata: Optional[dict[str, Any]] = None
     origin: RecordOrigin = RecordOrigin.IMPORTED
     match_status: MatchStatus = MatchStatus.UNKNOWN
     canonical_id: Optional[str] = None
