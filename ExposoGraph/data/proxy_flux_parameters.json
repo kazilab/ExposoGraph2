@@ -84,6 +84,8 @@
       },
       "repair_terms": {
         "XPC": {
+          "substrate_node_id": "Benzidine_dG",
+          "enzyme_node_id": "XPC",
           "rate_law": "repair",
           "gene": "XPC",
           "scale": 0.35,
@@ -93,6 +95,8 @@
           "provenance_ref": "classes.AromaticAmines.repair_terms.XPC"
         },
         "ERCC2": {
+          "substrate_node_id": "Benzidine_dG",
+          "enzyme_node_id": "ERCC2",
           "rate_law": "repair",
           "gene": "ERCC2",
           "scale": 0.2,
@@ -144,6 +148,8 @@
       },
       "detox_terms": {
         "COMT": {
+          "substrate_node_id": "estradiol_2_OH",
+          "enzyme_node_id": "COMT",
           "gene": "COMT",
           "equation": "michaelis_menten",
           "vmax": 16.0,
@@ -164,6 +170,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.detox_terms.SULT1E1"
         },
         "UGT2B7": {
+          "substrate_node_id": "estradiol_2_OH",
+          "enzyme_node_id": "UGT2B7",
           "gene": "UGT2B7",
           "equation": "michaelis_menten",
           "vmax": 10.0,
@@ -174,6 +182,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.detox_terms.UGT2B7"
         },
         "GSTP1": {
+          "substrate_node_id": "E2_quinone",
+          "enzyme_node_id": "GSTP1",
           "gene": "GSTP1",
           "equation": "michaelis_menten",
           "vmax": 6.0,

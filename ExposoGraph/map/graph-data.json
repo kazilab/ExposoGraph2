@@ -15312,6 +15312,106 @@
       "type": "INCLUDES",
       "label": "Group membership: Vinyl Chloride",
       "evidence": "Carcinogen group membership derived from the member node's group value."
+    },
+    {
+      "source": "Benzidine_dG",
+      "target": "XPC",
+      "type": "REPAIRED_BY",
+      "label": "NER recognition",
+      "carcinogen": "Benzidine",
+      "evidence": "XPC is the global-genome NER damage sensor that recognizes helix-distorting bulky DNA adducts, the lesion class covering arylamine-dG adducts such as the benzidine-derived dG-C8 lesion (Kim et al. 2023, PMID:37076618).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "37076618",
+          "pmid": "37076618",
+          "evidence": "XPC initiates global-genome nucleotide excision repair by recognizing bulky DNA adducts.",
+          "citation": "Kim J, Li CL, Chen X, Cui Y, Golebiowski FM, Wang H, Hanaoka F, Sugasawa K, Yang W. Lesion recognition by XPC, TFIIH and XPA in DNA excision repair. Nature. 2023;617(7959):170-175. doi:10.1038/s41586-023-05959-z",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/37076618/"
+        }
+      ]
+    },
+    {
+      "source": "Benzidine_dG",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
+      "label": "NER lesion verification",
+      "carcinogen": "Benzidine",
+      "evidence": "ERCC2/XPD is the TFIIH 5'-to-3' helicase that verifies XPC-recognized bulky adducts, including arylamine-dG lesions, during nucleotide excision repair (Kim et al. 2023, PMID:37076618).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "37076618",
+          "pmid": "37076618",
+          "evidence": "TFIIH, containing the ERCC2/XPD helicase, verifies lesions recognized by XPC in nucleotide excision repair.",
+          "citation": "Kim J, Li CL, Chen X, Cui Y, Golebiowski FM, Wang H, Hanaoka F, Sugasawa K, Yang W. Lesion recognition by XPC, TFIIH and XPA in DNA excision repair. Nature. 2023;617(7959):170-175. doi:10.1038/s41586-023-05959-z",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/37076618/"
+        }
+      ]
+    },
+    {
+      "source": "estradiol_2_OH",
+      "target": "COMT",
+      "type": "DETOXIFIED_BY",
+      "label": "O-methylation",
+      "carcinogen": "estradiol_2_OH",
+      "evidence": "COMT catalyzes O-methylation of 2-hydroxyestradiol at the 2-OH and 3-OH positions, inactivating catechol estrogens and lowering quinone formation (Yager 2012, PMID:23734165).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "23734165",
+          "pmid": "23734165",
+          "evidence": "COMT catalyzes O-methylation of 2-OHE2/E1 at the 2-OH and 3-OH positions.",
+          "citation": "Yager JD. Catechol-O-methyltransferase: characteristics, polymorphisms and role in breast cancer. Drug Discov Today Dis Mech. 2012;9(1-2):e41-e46. doi:10.1016/j.ddmec.2012.10.002",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/23734165/"
+        }
+      ]
+    },
+    {
+      "source": "estradiol_2_OH",
+      "target": "UGT2B7",
+      "type": "DETOXIFIED_BY",
+      "label": "glucuronidation",
+      "carcinogen": "estradiol_2_OH",
+      "evidence": "UGT2B7 glucuronidates estrogens and catechol estrogens more efficiently than any other human UGT2B isoform (Turgeon et al. 2001, PMID:11159850).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "11159850",
+          "pmid": "11159850",
+          "evidence": "UGT2B7 was demonstrated to glucuronidate estrogens, catechol estrogens, and androstane-3alpha,17beta-diol more efficiently than any other human UGT2B isoform.",
+          "citation": "Turgeon D, Carrier JS, Levesque E, Hum DW, Belanger A. Relative enzymatic activity, protein stability, and tissue distribution of human steroid-metabolizing UGT2B subfamily members. Endocrinology. 2001;142(2):778-787. doi:10.1210/endo.142.2.7958",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/11159850/"
+        }
+      ]
+    },
+    {
+      "source": "E2_quinone",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
+      "label": "GSH conjugation",
+      "carcinogen": "E2_quinone",
+      "evidence": "Estrogen quinones undergo conjugation with glutathione via the catalytic action of GSTP1, preventing depurinating DNA-adduct formation (Parl et al. 2009, PMID:19250193).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "19250193",
+          "pmid": "19250193",
+          "evidence": "The estrogen quinones undergo conjugation with glutathione (GSH) via the catalytic action of GSTP1.",
+          "citation": "Parl FF, Dawling S, Roodi N, Crooke PS. Estrogen metabolism and breast cancer: a risk model. Ann N Y Acad Sci. 2009;1155:68-75. doi:10.1111/j.1749-6632.2008.03676.x",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/19250193/"
+        }
+      ]
     }
   ]
 }
