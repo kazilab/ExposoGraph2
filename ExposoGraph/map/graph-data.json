@@ -14258,6 +14258,26 @@
           "evidence": "N-OH-PhIP is a metabolic substrate of SULT1A1; O-sulfonation yields the DNA-reactive sulfonyloxy ester, i.e. bioactivation not detoxification (PMID:7852185; DOI:10.1111/J.1349-7006.1994.TB02933.X)"
         }
       ]
+    },
+    {
+      "source": "NOH_PhIP",
+      "target": "NAT2",
+      "type": "SUBSTRATE_OF",
+      "label": "N,O-acetylation",
+      "carcinogen": "PhIP",
+      "evidence": "NAT2 catalyzes O-acetylation of N-hydroxy-PhIP to the DNA-reactive N-acetoxy ester, further activating the CYP1A2-generated N-hydroxy metabolite (Hein et al. 2006, PMID:16570281).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "16570281",
+          "pmid": "16570281",
+          "evidence": "Recombinant human NAT2 O-acetylates N-hydroxy-PhIP to DNA-binding metabolites; NAT2 SNPs alter this metabolic activation.",
+          "citation": "Hein DW, Fretland AJ, Doll MA. Effects of single nucleotide polymorphisms in human N-acetyltransferase 2 on metabolic activation (O-acetylation) of heterocyclic amine carcinogens. Int J Cancer. 2006;119(5):1208-1211. doi:10.1002/ijc.21957",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/16570281/"
+        }
+      ]
     }
   ]
 }

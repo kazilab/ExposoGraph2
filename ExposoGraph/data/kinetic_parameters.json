@@ -620,6 +620,17 @@
             "confidence": "high",
             "sources": ["PMC1829392"],
             "tissue_expression": ["prostate", "breast", "colon", "lung"]
+          },
+          "NAT2": {
+            "substrate_node_id": "NOH_PhIP",
+            "enzyme_node_id": "NAT2",
+            "dormant": true,
+            "reaction": "N-OH-PhIP → N-acetoxy-PhIP (N,O-acetylation; further activation)",
+            "CLint_relative": "moderate",
+            "confidence": "low",
+            "notes": "NAT2 O-acetylates N-hydroxy-PhIP to the DNA-reactive N-acetoxy ester (Hein et al. 2006, Int J Cancer, PMID:16570281); NAT2 genotype modulates PhIP-DNA adduct formation in vivo (Fretland et al. 2001, Toxicol Sci 59(2):226-230)",
+            "sources": ["Hein DW, Fretland AJ, Doll MA. Int J Cancer. 2006;119(5):1208-1211 (PMID:16570281)", "Fretland AJ, Devanaboyina US, Feng Y, Leff MA, Xiao GH, Webb SJ, Hein DW. Toxicol Sci. 2001;59(2):226-230"],
+            "tissue_expression": ["liver", "colon"]
           }
         },
         "detoxification": {
@@ -633,17 +644,6 @@
             "notes": "Sulfotransferases can both activate (N-O-sulfonylation) and detoxify N-OH-PhIP depending on tissue context; numerical kinetics not well established for human enzymes",
             "sources": ["Literature estimates"],
             "tissue_expression": ["liver", "colon", "prostate"]
-          },
-          "NAT2": {
-            "substrate_node_id": "PhIP",
-            "enzyme_node_id": "NAT2",
-            "dormant": true,
-            "reaction": "PhIP → PhIP-N-acetate (competing N-acetylation pathway)",
-            "CLint_relative": "moderate",
-            "confidence": "low",
-            "notes": "NAT2 genotype modulates PhIP carcinogenicity — slow acetylators may have altered risk",
-            "sources": ["HCA literature"],
-            "tissue_expression": ["liver", "colon"]
           }
         }
       }
