@@ -7056,7 +7056,7 @@
       "label": "O6-ethyl-dG",
       "type": "DNA_Adduct",
       "detail": "Representative NDEA-derived ethyl DNA adduct (O6-ethylguanine). Formed via CYP-mediated alpha-hydroxylation of N-nitrosodiethylamine; removed by MGMT, with lower repair efficiency than the methyl adduct. Distinct from the NDMA/NNK-derived O6-methyl-dG.",
-      "source_db": "PubMed",
+      "source_db": "Int J Mol Sci",
       "evidence": "NDEA alpha-hydroxylation forms ethylated DNA bases including O6-EtG; MGMT removes O6-alkyl adducts including ethyl (Fahrer & Christmann 2023, doi:10.3390/ijms24054684).",
       "origin": "imported",
       "match_status": "canonical",
@@ -7064,7 +7064,7 @@
       "canonical_label": "O6-ethyl-dG",
       "provenance": [
         {
-          "source_db": "PubMed",
+          "source_db": "Int J Mol Sci",
           "record_id": "10.3390/ijms24054684",
           "evidence": "NDEA activation via alpha-hydroxylation leads to formation of ethylated DNA bases including O6-EtG; MGMT removes O6-position alkyl adducts, including ethyl adducts, with decreasing efficiency as alkyl size increases.",
           "citation": "Fahrer J, Christmann M. DNA Alkylation Damage by Nitrosamines and Relevant DNA Repair Pathways. Int J Mol Sci. 2023;24(5):4684. doi:10.3390/ijms24054684",
@@ -15590,7 +15590,7 @@
       "match_status": "unmatched",
       "provenance": [
         {
-          "source_db": "PubMed",
+          "source_db": "Int J Mol Sci",
           "record_id": "10.3390/ijms24054684",
           "evidence": "NDEA activation via alpha-hydroxylation leads to formation of ethylated DNA bases including O6-EtG; MGMT removes O6-position alkyl adducts, including ethyl adducts, with decreasing efficiency as alkyl size increases.",
           "citation": "Fahrer J, Christmann M. DNA Alkylation Damage by Nitrosamines and Relevant DNA Repair Pathways. Int J Mol Sci. 2023;24(5):4684. doi:10.3390/ijms24054684",
