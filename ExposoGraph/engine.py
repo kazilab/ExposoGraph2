@@ -266,6 +266,8 @@ class GraphEngine:
         self._flux_genotype_modifiers: dict[str, Any] | None = None
         self._flux_proxy_exposure_defaults: dict[str, dict[str, Any]] = {}
         self._flux_proxy_class_cfg: dict[str, dict[str, Any]] = {}
+        self._flux_group_class_md_cache: dict[str, dict[str, Any]] | None = None
+        self._flux_group_class_md_graph: Any = None
         self._flux_proxy_provenance: dict[str, Any] | None = None
         self._exposure_database: dict[str, Any] | None = None
         self._tissue_expression_raw: dict[str, dict[str, float]] | None = None
@@ -372,6 +374,8 @@ class GraphEngine:
         self._flux_genotype_modifiers = None
         self._flux_proxy_exposure_defaults = {}
         self._flux_proxy_class_cfg = {}
+        self._flux_group_class_md_cache = None
+        self._flux_group_class_md_graph = None
         self._flux_proxy_provenance = None
         self._exposure_database = None
         self._tissue_expression_raw = None
@@ -1098,18 +1102,44 @@ class GraphEngine:
         self._ensure_flux_index()
         return list(self._flux_reactions_by_class)
 
-    def get_flux_aggregation(self, carcinogen_class: Any) -> dict[str, Any]:
-        """Return the per-class flux aggregation spec from the kinetic JSON.
+    def _flux_group_class_md(self) -> dict[str, dict[str, Any]]:
+        """Map flux class name -> its CarcinogenGroup node's metadata entry.
 
-        The aggregation block (see the ``aggregation`` key of a class in
-        ``kinetic_parameters.json``) names how a class's reaction terms
-        combine: per-role vmax fields, derived terms, detox fractions,
-        total scaling, rounding, and unit notes. Classes without a block
-        (proxy classes, or mechanistic classes pending annotation) return
-        an empty dict.
+        Built lazily from the loaded reference graph and rebuilt whenever
+        the underlying graph object changes (e.g. a reload), so class-level
+        reads can prefer the graph over the bundled parameter files.
+        Empty on a bare engine (no graph loaded) -- callers fall back to
+        the JSON-sourced side index.
+        """
+        if self._flux_group_class_md_cache is None or self._flux_group_class_md_graph is not self.G:
+            md: dict[str, dict[str, Any]] = {}
+            for _, data in self.G.nodes(data=True):
+                if data.get("type") != "CarcinogenGroup":
+                    continue
+                for cls, entry in (data.get("flux_class_metadata") or {}).items():
+                    if isinstance(entry, dict):
+                        md[str(cls)] = entry
+            self._flux_group_class_md_cache = md
+            self._flux_group_class_md_graph = self.G
+        return self._flux_group_class_md_cache
+
+    def get_flux_aggregation(self, carcinogen_class: Any) -> dict[str, Any]:
+        """Return the per-class flux aggregation spec, graph-first.
+
+        Prefers the aggregation block carried on the class's CarcinogenGroup
+        node (``flux_class_metadata[cls].aggregation`` in the loaded
+        reference graph) and falls back to the kinetic JSON's side index on
+        a bare engine. The aggregation block names how a class's reaction
+        terms combine: per-role vmax fields, derived terms, detox
+        fractions, total scaling, rounding, and unit notes. Classes
+        without a block (proxy classes, or mechanistic classes pending
+        annotation) return an empty dict.
         """
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
+        entry = self._flux_group_class_md().get(cls)
+        if entry and isinstance(entry.get("aggregation"), dict) and entry["aggregation"]:
+            return entry["aggregation"]
         return self._flux_aggregation_by_class.get(cls, {})
 
     def get_flux_metadata(self) -> dict[str, Any]:
@@ -1624,6 +1654,9 @@ class GraphEngine:
                 return float(value)
 
         spec = self._flux_proxy_exposure_defaults.get(cls)
+        entry = self._flux_group_class_md().get(cls)
+        if entry and isinstance(entry.get("exposure_defaults"), dict):
+            spec = entry["exposure_defaults"]
         if isinstance(spec, dict):
             source = spec.get("source")
             if source == "kinetic_parameters":
@@ -1658,15 +1691,31 @@ class GraphEngine:
 
 
     def get_flux_class_config(self, carcinogen_class: Any) -> dict[str, Any]:
-        """Return a class's raw proxy config block from proxy_flux_parameters.json.
+        """Return a class's proxy config block, class-level fields graph-first.
 
-        Empty dict for classes that only have kinetic-parameters entries.
-        Serves model_kind, unit notes, per-term blocks, and signal
+        Empty dict for classes that only have kinetic-parameters entries
+        (this emptiness is load-bearing -- callers use it to distinguish
+        measured-kinetics from proxy classes). For proxy classes the
+        class-level fields (``model_kind``, ``exposure_default``) are
+        served from the class's CarcinogenGroup node when the reference
+        graph is loaded, falling back to the proxy JSON on a bare engine;
+        the per-term blocks (``activation_terms`` / ``detox_terms`` /
+        ``repair_terms``) always come from the proxy JSON -- they have no
+        group-node carrier until the proxy-class annotation backlog gives
+        them graph anchors. Also serves unit notes and signal
         configuration for the proxy flux classes.
         """
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
-        return self._flux_proxy_class_cfg.get(cls, {})
+        cfg = dict(self._flux_proxy_class_cfg.get(cls, {}))
+        if cfg:
+            entry = self._flux_group_class_md().get(cls)
+            if entry:
+                if entry.get("model_kind"):
+                    cfg["model_kind"] = entry["model_kind"]
+                if isinstance(entry.get("exposure_defaults"), dict):
+                    cfg["exposure_default"] = dict(entry["exposure_defaults"])
+        return cfg
 
     def get_flux_provenance_entry(self, ref: str) -> dict[str, Any]:
         """Resolve a dotted ``provenance_ref`` into proxy_flux_provenance.json."""
