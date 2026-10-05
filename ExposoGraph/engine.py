@@ -824,14 +824,21 @@ class GraphEngine:
         return warnings
 
     def _apply_flux_edge_kinetics(self) -> list[str]:
-        """Bake substrate-bound flux terms onto their substrate→enzyme edges.
+        """Bake edge-bound flux terms onto their source→target edges.
 
         Iterates the flux-reaction index built by
-        :meth:`_apply_flux_parameters` and, for every term carrying both a
-        ``substrate_node_id`` and an ``enzyme_node_id`` binding, attaches the
+        :meth:`_apply_flux_parameters` and, for every term carrying both
+        a ``source_node_id`` and a ``target_node_id`` binding, attaches the
         term's verbatim parameter payload to the graph edge between those
         two nodes, under ``Edge.kinetics["flux_terms"]``, nested as
-        ``flux_terms[carcinogen_class][pathway][term_key]``. The nesting is
+        ``flux_terms[carcinogen_class][pathway][term_key]``. The binding is
+        endpoint-generic by design: the legacy
+        ``substrate_node_id``/``enzyme_node_id`` field pair (still honored
+        as a fallback) presumes a substrate→enzyme reaction edge, while
+        the generic names also bind non-enzymatic terms -- formation /
+        driver terms anchored on ``carcinogen --FORMS_ADDUCT--> lesion``
+        edges, receptor-feedback terms on ``INHIBITS`` edges, and so on.
+        The nesting is
         required because several edges carry multiple terms -- diplotype
         variants (``ALDH2_star1`` / ``ALDH2_star1_star2`` with different
         kinetics) and competing reaction channels catalyzed by one enzyme
@@ -876,17 +883,17 @@ class GraphEngine:
         ]
         all_reactions.extend(self._flux_shadowed_reactions)
         for reaction in all_reactions:
-            substrate = reaction.params.get("substrate_node_id")
-            enzyme = reaction.params.get("enzyme_node_id")
-            if not substrate or not enzyme:
+            source = reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
+            target = reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
+            if not source or not target:
                 continue
-            if not self.G.has_edge(substrate, enzyme):
+            if not self.G.has_edge(source, target):
                 warnings.append(
                     f"No edge for flux binding: {reaction.carcinogen_class}/{reaction.term_key} "
-                    f"({substrate} -> {enzyme})"
+                    f"({source} -> {target})"
                 )
                 continue
-            edge_view = self.G[substrate][enzyme]
+            edge_view = self.G[source][target]
             edge_data = next(iter(edge_view.values()))
             kinetics = edge_data.setdefault("kinetics", {})
             flux_terms = kinetics.setdefault("flux_terms", {})
@@ -1755,8 +1762,10 @@ class GraphEngine:
         Two anchoring criteria are reported per roster term:
 
         - **Binding edges (primary).** A term carrying both
-          ``substrate_node_id`` and ``enzyme_node_id`` is edge-anchored
-          when an edge between those two nodes carries its baked flux
+          ``source_node_id`` and ``target_node_id`` (legacy
+          ``substrate_node_id``/``enzyme_node_id`` still honored) is
+          edge-anchored when an edge between those two nodes carries its
+          baked flux
           payload -- ``kinetics.flux_terms[cls][pathway][term_key]``, the
           exact payload :meth:`_apply_flux_edge_kinetics` bakes and
           :meth:`get_edge_flux_reactions` reads. Edge presence alone
@@ -1811,8 +1820,8 @@ class GraphEngine:
             exact payload the edge-walk reader consumes. Edge presence
             alone is necessary but not sufficient.
             """
-            substrate = reaction.params.get("substrate_node_id")
-            enzyme = reaction.params.get("enzyme_node_id")
+            substrate = reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
+            enzyme = reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
             if not substrate or not enzyme:
                 return None
             if not self.G.has_edge(substrate, enzyme):
@@ -1851,7 +1860,8 @@ class GraphEngine:
                 "role": reaction.role,
                 "rate_law": reaction.rate_law,
                 "enzyme_id": reaction.enzyme_id,
-                "substrate_node_id": reaction.params.get("substrate_node_id"),
+                "substrate_node_id": reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id"),
+                "target_node_id": reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id"),
                 "resolved": resolved,
                 "binding_edge_present": edge_present,
                 "binding_edge_types": binding_types,
@@ -1877,7 +1887,11 @@ class GraphEngine:
         for reaction, row in zip(reactions, rows):
             if not row["resolved"]:
                 continue
-            if not reaction.params.get("substrate_node_id") or not reaction.params.get("enzyme_node_id"):
+            if not (
+                reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
+            ) or not (
+                reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
+            ):
                 unbound.append(reaction.term_key)
             elif not row["binding_edge_present"]:
                 missing_binding.append(reaction.term_key)
