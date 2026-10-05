@@ -21,7 +21,9 @@ from .parameter_provider import (
     INTERACTION_BLOCK_MARKER,
     INTERACTION_ENZYME_MARKER,
     INTERACTION_SUBSTRATE_MARKER,
+    InteractionParameterProvider,
     JSONInteractionParameterProvider,
+    KGInteractionParameterProvider,
 )
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
@@ -263,6 +265,7 @@ class GraphEngine:
         self.G: nx.MultiDiGraph = nx.MultiDiGraph()
         self._interaction_parameters: dict[str, Any] | None = None
         self._parameter_provider: JSONInteractionParameterProvider | None = None
+        self._kg_parameter_provider: InteractionParameterProvider | None = None
         self._flux_reactions_by_class: dict[str, list[FluxReaction]] | None = None
         self._flux_class_sources: dict[str, set[str]] | None = None
         self._flux_shadowed_reactions: list[FluxReaction] = []
@@ -371,6 +374,7 @@ class GraphEngine:
         self.G.clear()
         self._interaction_parameters = None
         self._parameter_provider = None
+        self._kg_parameter_provider = None
         self._flux_reactions_by_class = None
         self._flux_class_sources = None
         self._flux_shadowed_reactions = []
@@ -961,18 +965,46 @@ class GraphEngine:
             )
         return self._interaction_parameters
 
-    def get_parameter_provider(self) -> JSONInteractionParameterProvider:
+    def _has_baked_interaction_kinetics(self) -> bool:
+        """Return True if edge kinetics carry an interaction-parameter bake.
+
+        ``G.number_of_edges()`` alone is not a safe gate: a graph merged or
+        loaded by other means can have edges without the interaction bake,
+        and a KG provider over it would silently serve an empty (or
+        partial) kinetic roster. The bake's block marker is the actual
+        invariant ``get_parameter_provider`` needs.
+        """
+        for _source_id, _target_id, edge_data in self.G.edges(data=True):
+            kinetics = edge_data.get("kinetics")
+            if (
+                isinstance(kinetics, dict)
+                and kinetics.get(INTERACTION_BLOCK_MARKER) == "competitive_inhibition"
+            ):
+                return True
+        return False
+
+    def get_parameter_provider(self) -> InteractionParameterProvider:
         """Return the typed interaction-parameter provider owned by the engine.
 
-        The provider offers the typed record layer (``CompetitiveInteraction``,
-        ``MetabolicReaction``, ``GSHConsumer``, ``InductionRule``,
-        ``EvidenceRecord``) over the same parameter document the engine
-        applied. Consumers needing typed records should take the provider
-        from here rather than constructing their own, so the whole
-        application reads one copy of the parameter data.
+        With the reference graph loaded, this is the hybrid
+        ``KGInteractionParameterProvider``: kinetic records (competitive
+        interactions, per-enzyme and per-carcinogen reactions) are
+        reconstructed from the edge kinetics this engine baked, while
+        induction rules, GSH consumers, and parameter evidence fall
+        through to the JSON document the engine applied. A bare engine (no
+        graph loaded) returns the JSON provider unchanged. Consumers
+        needing typed records should take the provider from here rather
+        than constructing their own, so the whole application reads one
+        copy of the parameter data.
         """
         if self._parameter_provider is None:
             self._parameter_provider = JSONInteractionParameterProvider()
+        if self._has_baked_interaction_kinetics():
+            if self._kg_parameter_provider is None:
+                self._kg_parameter_provider = KGInteractionParameterProvider(
+                    self, data_dir=self._parameter_provider.data_dir
+                )
+            return self._kg_parameter_provider
         return self._parameter_provider
 
     def get_induction_rules(
