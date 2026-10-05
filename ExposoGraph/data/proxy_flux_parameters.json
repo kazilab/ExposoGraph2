@@ -119,6 +119,8 @@
       "unit_note": "Semi-quantitative estrogen-quinone burden proxy using CYP1B1-centered activation and COMT/SULT1E1/UGT detoxification.",
       "activation_terms": {
         "CYP1B1": {
+          "substrate_node_id": "E2",
+          "enzyme_node_id": "CYP1B1",
           "gene": "CYP1B1",
           "equation": "michaelis_menten",
           "vmax": 18.0,
@@ -128,6 +130,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1B1"
         },
         "CYP1A1": {
+          "substrate_node_id": "E2",
+          "enzyme_node_id": "CYP1A1",
           "gene": "CYP1A1",
           "equation": "michaelis_menten",
           "vmax": 8.0,
@@ -137,6 +141,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1A1"
         },
         "CYP1A2": {
+          "substrate_node_id": "E2",
+          "enzyme_node_id": "CYP1A2",
           "gene": "CYP1A2",
           "equation": "michaelis_menten",
           "vmax": 4.0,
@@ -160,6 +166,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.detox_terms.COMT"
         },
         "SULT1E1": {
+          "substrate_node_id": "E2",
+          "enzyme_node_id": "SULT1E1",
           "gene": "SULT1E1",
           "equation": "michaelis_menten",
           "vmax": 12.0,

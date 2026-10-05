@@ -7016,6 +7016,40 @@
           "evidence": "Proxy flux class metadata for the VinylChloride class mirrored from proxy_flux_parameters.json."
         }
       ]
+    },
+    {
+      "id": "SULT1E1",
+      "label": "SULT1E1",
+      "type": "Enzyme",
+      "detail": "High-affinity estrogen sulfotransferase; sulfation and inactivation of estradiol and catechol estrogens",
+      "phase": "II",
+      "role": "Detoxification",
+      "source_db": "NCBI Gene",
+      "evidence": "Canonical human gene identifier and nomenclature.",
+      "tissue": "liver, endometrium, breast, placenta",
+      "tier": 2,
+      "origin": "imported",
+      "match_status": "canonical",
+      "canonical_id": "SULT1E1",
+      "canonical_label": "SULT1E1",
+      "canonical_namespace": "reference_panel",
+      "provenance": [
+        {
+          "source_db": "NCBI Gene",
+          "record_id": "6783",
+          "evidence": "Canonical human gene identifier and nomenclature.",
+          "citation": "NCBI Gene record for SULT1E1 (Homo sapiens)",
+          "url": "https://www.ncbi.nlm.nih.gov/gene/6783"
+        },
+        {
+          "source_db": "PubMed",
+          "record_id": "12922923",
+          "pmid": "12922923",
+          "evidence": "SULT1E1 catalyzes sulfate conjugation of estradiol and catecholestrogens with nM-range Km values.",
+          "citation": "Adjei AA, Thomae BA, Prondzinski JL, Eckloff BW, Wieben ED, Weinshilboum RM. Human estrogen sulfotransferase (SULT1E1) pharmacogenomics: gene resequencing and functional genomics. Br J Pharmacol. 2003;139(8):1373-1382. doi:10.1038/sj.bjp.0705369",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12922923/"
+        }
+      ]
     }
   ],
   "edges": [
@@ -15410,6 +15444,86 @@
           "evidence": "The estrogen quinones undergo conjugation with glutathione (GSH) via the catalytic action of GSTP1.",
           "citation": "Parl FF, Dawling S, Roodi N, Crooke PS. Estrogen metabolism and breast cancer: a risk model. Ann N Y Acad Sci. 2009;1155:68-75. doi:10.1111/j.1749-6632.2008.03676.x",
           "url": "https://pubmed.ncbi.nlm.nih.gov/19250193/"
+        }
+      ]
+    },
+    {
+      "source": "E2",
+      "target": "CYP1A1",
+      "type": "SUBSTRATE_OF",
+      "label": "2-hydroxylation",
+      "carcinogen": "E2",
+      "evidence": "CYP1A1 catalyzes C2 hydroxylation of 17beta-estradiol to 2-hydroxyestradiol (Samavat & Kurzer 2014, PMID:24784887).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "24784887",
+          "pmid": "24784887",
+          "evidence": "CYP1A1 and CYP1B1, along with CYP1A2, catalyze the C2 hydroxylation of parent estrogens to their respective catechol estrogens.",
+          "citation": "Samavat H, Kurzer MS. Estrogen Metabolism and Breast Cancer. Cancer Lett. 2014;356(2):231-243. doi:10.1016/j.canlet.2014.04.018",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/24784887/"
+        }
+      ]
+    },
+    {
+      "source": "E2",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "label": "2-hydroxylation",
+      "carcinogen": "E2",
+      "evidence": "CYP1A2 catalyzes C2 hydroxylation of 17beta-estradiol to 2-hydroxyestradiol (Samavat & Kurzer 2014, PMID:24784887).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "24784887",
+          "pmid": "24784887",
+          "evidence": "CYP1A1 and CYP1B1, along with CYP1A2, catalyze the C2 hydroxylation of parent estrogens to their respective catechol estrogens.",
+          "citation": "Samavat H, Kurzer MS. Estrogen Metabolism and Breast Cancer. Cancer Lett. 2014;356(2):231-243. doi:10.1016/j.canlet.2014.04.018",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/24784887/"
+        }
+      ]
+    },
+    {
+      "source": "E2",
+      "target": "SULT1E1",
+      "type": "DETOXIFIED_BY",
+      "label": "sulfation",
+      "carcinogen": "E2",
+      "evidence": "SULT1E1 sulfates 17beta-estradiol with nM-range Km, inactivating it (Adjei et al. 2003, PMID:12922923).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "12922923",
+          "pmid": "12922923",
+          "evidence": "SULT1E1 catalyzes the sulfate conjugation of estradiol, catecholestrogens, and related steroids with the lowest Km values (nM range) of the 10 known human SULT isoforms.",
+          "citation": "Adjei AA, Thomae BA, Prondzinski JL, Eckloff BW, Wieben ED, Weinshilboum RM. Human estrogen sulfotransferase (SULT1E1) pharmacogenomics: gene resequencing and functional genomics. Br J Pharmacol. 2003;139(8):1373-1382. doi:10.1038/sj.bjp.0705369",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12922923/"
+        }
+      ]
+    },
+    {
+      "source": "estradiol_2_OH",
+      "target": "SULT1E1",
+      "type": "DETOXIFIED_BY",
+      "label": "sulfation",
+      "carcinogen": "estradiol_2_OH",
+      "evidence": "SULT1E1 catalyzes sulfate conjugation of catecholestrogens with nM-range Km (Adjei et al. 2003, PMID:12922923).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "12922923",
+          "pmid": "12922923",
+          "evidence": "SULT1E1 catalyzes the sulfate conjugation of estradiol, catecholestrogens, and related steroids with the lowest Km values (nM range) of the 10 known human SULT isoforms.",
+          "citation": "Adjei AA, Thomae BA, Prondzinski JL, Eckloff BW, Wieben ED, Weinshilboum RM. Human estrogen sulfotransferase (SULT1E1) pharmacogenomics: gene resequencing and functional genomics. Br J Pharmacol. 2003;139(8):1373-1382. doi:10.1038/sj.bjp.0705369",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/12922923/"
         }
       ]
     }
