@@ -1022,34 +1022,29 @@ class GraphEngine:
         return reactions
 
     def get_edge_flux_reactions(self, carcinogen_class: Any) -> list[FluxReaction]:
-        """Return flux-reaction terms with their parameters read from edges.
+        """Return flux-reaction terms with their parameters read from the graph.
 
         Graph-walking counterpart to :meth:`get_flux_reactions`: walks every
         edge of the loaded graph, collects the
         ``Edge.kinetics["flux_terms"]`` payloads baked by
         :meth:`_apply_flux_edge_kinetics` for *carcinogen_class*, and returns
         the class's reaction roster with each edge-anchored term's record
-        reconstructed from its edge payload. The roster and its order are
-        still taken from the side index (the JSON files' pathway/term
-        order), so the returned list is identical to
+        reconstructed from its edge payload. Terms carried on the class's
+        CarcinogenGroup node
+        (``flux_class_metadata[cls].class_level_terms``) are likewise
+        reconstructed from the group-node payload. The roster and its
+        order are still taken from the side index (the JSON files'
+        pathway/term order), so the returned list is identical to
         ``get_flux_reactions`` by construction -- only the *source of the
         values* differs.
 
         Fallbacks, all visible in the returned records' ``source``/params:
 
-        - Terms whose bindings have no edge yet (``HCA/CYP1B1``, pending
-          the ``PhIP → CYP1B1`` scope edge; ``Aflatoxin/GSTA1``, pending a
-          GSTA1 node) keep their side-index record.
-        - Binding-less terms (proxy entries, substrate-only terms,
-          non-enzymatic drivers) are never baked and keep their index
-          record.
-        - With a bare engine (no graph loaded) there are no edges to walk,
-          so this degrades to ``get_flux_reactions`` unchanged.
-
-        Dual-source classes: only their shadowed kinetic entries are
-        baked; the proxy entries the roster carries are returned as index
-        records, so this method is not useful for them (flux dispatch for
-        those classes does not consult reaction terms).
+        - Terms whose bindings have no edge yet and no group carrier
+          keep their side-index record.
+        - With a bare engine (no graph loaded) there are no edges or
+          carriers to walk, so this degrades to ``get_flux_reactions``
+          unchanged.
         """
         cls = getattr(carcinogen_class, "value", carcinogen_class)
         roster = self.get_flux_reactions(cls)
@@ -1091,6 +1086,60 @@ class GraphEngine:
                         source=str(payload.get("source", "")),
                         sources=list(payload["sources"]) if isinstance(payload.get("sources"), list) else None,
                         notes=str(payload["notes"]) if payload.get("notes") is not None else None,
+                    )
+        # Graph-carried class-level terms (CarcinogenGroup
+        # ``flux_class_metadata[cls].class_level_terms``): rebuild their
+        # records from the group-node payload, mirroring the index build's
+        # field resolution so the records are identical by construction --
+        # only the source of the values differs (``source`` marks the
+        # carrier so the reconstruction is auditable).
+        carried_entry = self._flux_group_class_md().get(cls) or {}
+        carried = carried_entry.get("class_level_terms")
+        if isinstance(carried, dict) and carried:
+            class_data = self._flux_proxy_class_cfg.get(cls, {})
+            for section, terms in carried.items():
+                if not isinstance(terms, dict):
+                    continue
+                for term_key, term in terms.items():
+                    if not isinstance(term, dict):
+                        continue
+                    graph_node_id = term.get("graph_node_id")
+                    enzyme_id: str | None = None
+                    if graph_node_id:
+                        enzyme_id = str(graph_node_id)
+                    elif term_key in self.G:
+                        enzyme_id = term_key
+                    gene = term.get("gene")
+                    if enzyme_id is None and isinstance(gene, str) and gene in self.G:
+                        enzyme_id = gene
+                    declared_group = class_data.get("graph_group")
+                    walked[(section, term_key)] = FluxReaction(
+                        carcinogen_class=cls,
+                        term_key=term_key,
+                        pathway=section,
+                        role=_FLUX_ROLE_KINDS.get(section, "other"),
+                        rate_law=str(
+                            term.get("rate_law")
+                            or term.get("equation")
+                            or class_data.get("kinetics_model")
+                            or ""
+                        ),
+                        params={
+                            key: value
+                            for key, value in term.items()
+                            if key not in _FLUX_RESERVED_TERM_FIELDS
+                        },
+                        confidence=str(
+                            term.get("confidence") or class_data.get("confidence_overall") or ""
+                        ),
+                        provenance_ref=str(
+                            term.get("provenance_ref") or f"classes.{cls}.{section}.{term_key}"
+                        ),
+                        enzyme_id=enzyme_id,
+                        graph_group=str(declared_group) if declared_group else _FLUX_CLASS_GRAPH_GROUPS.get(cls),
+                        source="graph_class_level_carrier",
+                        sources=list(term["sources"]) if isinstance(term.get("sources"), list) else None,
+                        notes=str(term["notes"]) if term.get("notes") is not None else None,
                     )
         if not walked:
             return roster
