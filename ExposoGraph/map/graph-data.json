@@ -6542,7 +6542,20 @@
             "scenario": "general_population",
             "field": "estimated_tissue_conc_uM"
           }
-        }
+        ,
+          "class_level_terms": {
+              "detox_terms": {
+                "GSTP1": {
+                  "gene": "GSTP1",
+                  "equation": "michaelis_menten",
+                  "vmax": 7.0,
+                  "km": 0.02,
+                  "confidence": "estimated",
+                  "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling.",
+                  "provenance_ref": "classes.AromaticAmines.detox_terms.GSTP1"
+                }
+              }
+            }}
       },
       "provenance": [
         {
@@ -7096,6 +7109,34 @@
                     "lung"
                   ],
                   "provenance_ref": "classes.VinylChloride.detox_terms.EPHX1"
+                },
+                "ALDH2": {
+                  "gene": "ALDH2",
+                  "equation": "michaelis_menten",
+                  "vmax": 5.0,
+                  "km": 50.0,
+                  "confidence": "estimated",
+                  "note": "Aldehyde-handling proxy for downstream chloroacetaldehyde burden.",
+                  "supported_tissues": [
+                    "liver",
+                    "lung"
+                  ],
+                  "provenance_ref": "classes.VinylChloride.detox_terms.ALDH2"
+                }
+              },
+              "repair_terms": {
+                "ERCC2": {
+                  "rate_law": "repair",
+                  "gene": "ERCC2",
+                  "scale": 0.35,
+                  "confidence": "estimated",
+                  "note": "NER proxy for etheno-adduct repair burden.",
+                  "supported_tissues": [
+                    "liver",
+                    "brain",
+                    "lung"
+                  ],
+                  "provenance_ref": "classes.VinylChloride.repair_terms.ERCC2"
                 }
               }
             }}
