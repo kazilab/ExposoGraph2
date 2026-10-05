@@ -938,14 +938,16 @@ def _compute_generic_proxy_flux(
     Replaces the six hand-written proxy-class functions (AromaticAmines,
     EstrogenMetabolites, NDEA, VinylChloride, UV_Radiation, HeavyMetal).
     Enzyme scope, role, and rate law come from
-    ``GraphEngine.get_flux_reactions`` -- the flux contract -- and the
+    ``GraphEngine.get_edge_flux_reactions`` -- the graph-walk flux
+    contract, reading term parameters off baked edge payloads and
+    CarcinogenGroup class_level_terms carriers -- and the
     per-term parameters ride on the reaction records. Dioxin
     (receptor/signaling model) and ChlorinatedSolvent (derived clearance)
     keep their dedicated functions: their model structures are not
     term-sum proxies.
     """
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    reactions = active_engine.get_flux_reactions(carcinogen_class)
+    reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
     cfg = _get_proxy_class_params(carcinogen_class)
 
     def _entry(reaction: "FluxReaction", value: float, gm: float, tw: float) -> JsonDict:
