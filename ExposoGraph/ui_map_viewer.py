@@ -23,11 +23,14 @@ from .models import NodeType
 _MAP_DIR = Path(__file__).resolve().parent / "map"
 _MAP_TEMPLATE = _MAP_DIR / "index.html"
 
-# Substrate nodes are part of the underlying knowledge graph but must never
-# appear in this viewer (they're intermediate bookkeeping, not something a
-# reader needs to see on the map) -- so they're never offered as a selectable
-# node-type option, and GraphEngine excludes them by default regardless.
-_SELECTABLE_NODE_TYPES = [t.value for t in NodeType if t is not NodeType.SUBSTRATE]
+# Substrate and CarcinogenGroup nodes are part of the underlying knowledge
+# graph but must never appear in this viewer (they're intermediate bookkeeping
+# and structural metadata, not something a reader needs to see on the map) --
+# so they're never offered as a selectable node-type option, and
+# GraphEngine excludes them by default regardless.
+_SELECTABLE_NODE_TYPES = [
+    t.value for t in NodeType if t not in (NodeType.SUBSTRATE, NodeType.CARCINOGEN_GROUP)
+]
 
 _NO_TISSUE_OPTION = "(none — no tissue dimming)"
 

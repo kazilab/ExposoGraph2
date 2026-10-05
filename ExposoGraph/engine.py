@@ -2065,7 +2065,7 @@ class GraphEngine:
     #: Node types hidden from viewer-facing subgraphs by default (they
     #: remain in the underlying graph for callers that bypass this method,
     #: e.g. the flux engine) -- see :meth:`subgraph_by_node_types`.
-    _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES: tuple[str, ...] = ("Substrate",)
+    _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES: tuple[str, ...] = ("Substrate", "CarcinogenGroup")
 
     def subgraph_by_node_types(
         self,
