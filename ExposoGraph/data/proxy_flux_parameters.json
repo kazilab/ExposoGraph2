@@ -195,6 +195,8 @@
       },
       "repair_terms": {
         "XRCC1": {
+          "substrate_node_id": "8_OHdG",
+          "enzyme_node_id": "XRCC1",
           "rate_law": "repair",
           "gene": "XRCC1",
           "scale": 0.25,
@@ -414,6 +416,8 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.ERCC2"
         },
         "OGG1": {
+          "substrate_node_id": "8_OHdG",
+          "enzyme_node_id": "OGG1",
           "rate_law": "repair",
           "gene": "OGG1",
           "scale": 0.15,
