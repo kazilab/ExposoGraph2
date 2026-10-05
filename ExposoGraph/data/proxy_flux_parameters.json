@@ -522,6 +522,8 @@
       },
       "activation_terms": {
         "CYP1A1": {
+          "source_node_id": "AHR",
+          "target_node_id": "CYP1A1",
           "rate_law": "receptor",
           "gene": "CYP1A1",
           "induction_factor": 50.0,
@@ -530,6 +532,8 @@
           "provenance_ref": "classes.Dioxin.activation_terms.CYP1A1"
         },
         "CYP1B1": {
+          "source_node_id": "AHR",
+          "target_node_id": "CYP1B1",
           "rate_law": "receptor",
           "gene": "CYP1B1",
           "induction_factor": 20.0,
