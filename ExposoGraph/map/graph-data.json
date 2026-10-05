@@ -6724,7 +6724,7 @@
             "unit_note": "Flux in nmol/min/nmolP450",
             "detox_fraction_of_activation": 0.2,
             "detox_entry": {
-              "name": "NAT2_acetylation",
+              "name": "estimated_detox_fraction",
               "confidence": "estimated"
             }
           }

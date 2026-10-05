@@ -327,8 +327,9 @@ def _add_metadata_sheet(wb: Workbook) -> None:
         ),
         (
             "HCA caveat",
-            "The HCA measured-kinetics model currently sets NAT2_acetylation as a fixed "
-            "20% of activation, so NAT2 genotype does not alter the HCA net ratio. "
+            "The HCA measured-kinetics model currently sets the detox fraction as a fixed "
+            "estimated 20% of activation (no enzyme-attributed detox term), so NAT2 "
+            "genotype does not alter the HCA net ratio. "
             "Use AromaticAmines for the current NAT2-sensitive proxy.",
         ),
     ]
