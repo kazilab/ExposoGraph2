@@ -465,7 +465,7 @@ def _resolve_induction_factors(
                 resolved[str(gene).upper()] = numeric
 
     return {
-        gene: round(factor, 6)
+        gene: _round_flux(factor)
         for gene, factor in sorted(resolved.items())
         if math.isfinite(factor) and factor > 0 and not math.isclose(factor, 1.0)
     }
@@ -488,7 +488,7 @@ def _rescale_flux_section_for_induction(
         gene = _term_gene_name(term_name)
         factor = float(induction_factors.get(gene or "", 1.0))
         new_flux = old_flux * factor
-        edata["induction_modifier"] = round(factor, 6)
+        edata["induction_modifier"] = _round_flux(factor)
         if not math.isclose(factor, 1.0):
             edata["flux"] = _round_flux(new_flux)
         old_sum += old_flux
@@ -560,7 +560,7 @@ def _apply_qivive_scale(result: FluxResultDict, qivive_context: Mapping[str, flo
         for edata in enzymes.values():
             if not isinstance(edata, dict):
                 continue
-            edata["qivive_scale"] = round(scale, 6)
+            edata["qivive_scale"] = _round_flux(scale)
             if "flux" in edata:
                 edata["flux"] = _round_flux(float(edata["flux"]) * scale)
 
@@ -584,12 +584,10 @@ def _susceptibility_score_log2(net_ratio: float) -> float:
 
 
 def _round_steady_state_value(value: float) -> float:
-    """Round steady-state outputs without hiding very small non-zero values."""
+    """Clamp invalid steady-state outputs; round valid ones to flux precision."""
     if not math.isfinite(value) or value < 0:
         return 0.0
-    if value == 0:
-        return 0.0
-    return round(value, 8 if abs(value) < 1e-4 else 6)
+    return _round_flux(value)
 
 
 def _steady_state_context_for_tissue(
