@@ -6890,7 +6890,20 @@
             "scenario": "general_population",
             "field": "estimated_tissue_conc_uM"
           }
-        }
+        ,
+          "class_level_terms": {
+              "detox_terms": {
+                "GSTP1": {
+                  "gene": "GSTP1",
+                  "equation": "michaelis_menten",
+                  "vmax": 8.0,
+                  "km": 0.02,
+                  "confidence": "estimated",
+                  "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
+                  "provenance_ref": "classes.NDEA.detox_terms.GSTP1"
+                }
+              }
+            }}
       },
       "provenance": [
         {
@@ -7054,7 +7067,38 @@
             "scenario": "general_population",
             "field": "estimated_tissue_conc_uM"
           }
-        }
+        ,
+          "class_level_terms": {
+              "detox_terms": {
+                "GSTM1": {
+                  "gene": "GSTM1",
+                  "equation": "michaelis_menten",
+                  "vmax": 9.0,
+                  "km": 30.0,
+                  "confidence": "estimated",
+                  "note": "Secondary GST detoxification proxy for vinyl-chloride metabolites.",
+                  "supported_tissues": [
+                    "liver",
+                    "lung",
+                    "kidney"
+                  ],
+                  "provenance_ref": "classes.VinylChloride.detox_terms.GSTM1"
+                },
+                "EPHX1": {
+                  "gene": "EPHX1",
+                  "equation": "michaelis_menten",
+                  "vmax": 7.0,
+                  "km": 20.0,
+                  "confidence": "estimated",
+                  "note": "Epoxide hydrolysis proxy for reactive vinyl-chloride intermediates.",
+                  "supported_tissues": [
+                    "liver",
+                    "lung"
+                  ],
+                  "provenance_ref": "classes.VinylChloride.detox_terms.EPHX1"
+                }
+              }
+            }}
       },
       "provenance": [
         {
