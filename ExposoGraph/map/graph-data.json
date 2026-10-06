@@ -6879,6 +6879,30 @@
               "name": "NNAL_reduction",
               "confidence": "estimated"
             }
+          },
+          "class_level_terms": {
+            "detoxification": {
+              "carbonyl_reduction": {
+                "rate_law": "michaelis_menten",
+                "substrate_node_id": "NNK",
+                "dormant": true,
+                "reaction": "NNK → NNAL (reduction, detoxification product)",
+                "Km_uM": null,
+                "CLint_relative": "moderate",
+                "tissue_expression": [
+                  "liver",
+                  "lung",
+                  "blood"
+                ],
+                "confidence": "low",
+                "provenance_ref": "carcinogen_classes.Nitrosamine.pathways.detoxification.carbonyl_reduction",
+                "sources": [
+                  "Hecht SS nitrosamine review",
+                  "PMID:29788210 (Ashmore et al., Carcinogenesis 2018;39(8):1079-1088 — NNK carbonyl-reduction enzyme attribution)"
+                ],
+                "notes": "Carbonyl reduction to NNAL (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanol) — major competing pathway; exact kinetics not provided. Deliberately enzyme-less: the pathway is a multi-enzyme aggregate (cytosolic CBR1/AKR1C1–C4 forming (S)-NNAL, microsomal HSD17B12/HSD11B1 forming (R)-NNAL; Ashmore et al., Carcinogenesis 2018;39(8):1079-1088, PMID 29788210), carried at class level rather than bound to a single reductase."
+              }
+            }
           }
         },
         "NDMA": {
