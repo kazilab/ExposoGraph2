@@ -215,7 +215,9 @@ def _round_flux(value: float) -> float:
 # Michaelis-Menten, Hill, and finite-input equations live in flux_equations.py.
 
 
-def apply_kinetic_modifier_once(baseline_flux: float, kinetic_modifier: float) -> KineticFluxApplication:
+def apply_kinetic_modifier_once(
+    baseline_flux: float, kinetic_modifier: float
+) -> KineticFluxApplication:
     """Apply one resolved kinetic modifier to a non-negative baseline flux."""
 
     baseline = _finite_nonnegative(baseline_flux, "baseline_flux")
@@ -296,7 +298,6 @@ _TISSUE_ALIASES: dict[str, str] = {
 }
 
 
-
 def _normalize_tissue(tissue: str) -> str:
     """Normalize a tissue name string to a canonical key."""
     return _TISSUE_ALIASES.get(tissue.lower().strip(), tissue.lower().strip())
@@ -316,7 +317,10 @@ def _normalize_tissue_weight_source(
         return FluxTissueWeightSource.GTEX
 
     normalized = str(tissue_weight_source).strip().lower()
-    if normalized in (FluxTissueWeightSource.CURATED.value, FluxTissueWeightSource.GTEX.value):
+    if normalized in (
+        FluxTissueWeightSource.CURATED.value,
+        FluxTissueWeightSource.GTEX.value,
+    ):
         return FluxTissueWeightSource.GTEX
     raise ValueError(
         f"Unknown tissue_weight_source '{tissue_weight_source}'. "
@@ -374,7 +378,9 @@ def tissue_weight(
     tissue_weight_source: FluxTissueWeightSource | str = FluxTissueWeightSource.CURATED,
 ) -> float:
     """Source-compatible alias for :func:`get_flux_tissue_weight`."""
-    return get_flux_tissue_weight(gene, tissue, tissue_weight_source=tissue_weight_source)
+    return get_flux_tissue_weight(
+        gene, tissue, tissue_weight_source=tissue_weight_source
+    )
 
 
 # ── Risk classification ────────────────────────────────────────────────────
@@ -392,7 +398,7 @@ def classify_risk(net_ratio: float) -> RiskClassification:
         return RiskClassification.LOW
     elif net_ratio < 2.0:
         return RiskClassification.MODERATE
-    elif net_ratio < 5.0:
+    elif net_ratio < 4.0:
         return RiskClassification.ELEVATED
     else:
         return RiskClassification.HIGH
@@ -408,17 +414,48 @@ def _classify_risk(net_ratio: float) -> str:
 
 def _get_default_concentration(carcinogen_class: str) -> float:
     """Return default environmental exposure concentration in uM."""
-    return float(_get_flux_contract_engine().get_default_concentration(carcinogen_class))
+    return float(
+        _get_flux_contract_engine().get_default_concentration(carcinogen_class)
+    )
 
 
 _KNOWN_FLUX_GENE_PREFIXES = tuple(
     sorted(
         {
-            "ABCB1", "ABCC2", "ABCG2", "ADH1B", "ADH5", "AHRR", "ALDH1A1", "ALDH2",
-            "AS3MT", "COMT", "CYP1A1", "CYP1A2", "CYP1B1", "CYP2A6", "CYP2A13",
-            "CYP2D6", "CYP2E1", "CYP3A4", "EPHX1", "ERCC2", "GSTA1", "GSTM1",
-            "GSTP1", "GSTT1", "MGMT", "NAT1", "NAT2", "NQO1", "OGG1", "POLH",
-            "SULT1E1", "UGT2B7", "XPC", "XRCC1",
+            "ABCB1",
+            "ABCC2",
+            "ABCG2",
+            "ADH1B",
+            "ADH5",
+            "AHRR",
+            "ALDH1A1",
+            "ALDH2",
+            "AS3MT",
+            "COMT",
+            "CYP1A1",
+            "CYP1A2",
+            "CYP1B1",
+            "CYP2A6",
+            "CYP2A13",
+            "CYP2D6",
+            "CYP2E1",
+            "CYP3A4",
+            "EPHX1",
+            "ERCC2",
+            "GSTA1",
+            "GSTM1",
+            "GSTP1",
+            "GSTT1",
+            "MGMT",
+            "NAT1",
+            "NAT2",
+            "NQO1",
+            "OGG1",
+            "POLH",
+            "SULT1E1",
+            "UGT2B7",
+            "XPC",
+            "XRCC1",
         },
         key=len,
         reverse=True,
@@ -447,7 +484,9 @@ def _resolve_induction_factors(
             from .interaction_engine import enzyme_induction_modifier
 
             resolved.update(
-                enzyme_induction_modifier(lifestyle, interaction_params=interaction_params).enzyme_folds
+                enzyme_induction_modifier(
+                    lifestyle, interaction_params=interaction_params
+                ).enzyme_folds
             )
         except Exception as exc:
             warnings.warn(
@@ -511,7 +550,9 @@ def _apply_induction_modifiers(
         enzymes = result.get(section_name, {})
         if not isinstance(enzymes, dict):
             continue
-        old_sum, new_sum = _rescale_flux_section_for_induction(enzymes, induction_factors)
+        old_sum, new_sum = _rescale_flux_section_for_induction(
+            enzymes, induction_factors
+        )
         if old_sum > 0 and total_name in result:
             result[total_name] = float(result[total_name]) * new_sum / old_sum
 
@@ -544,10 +585,14 @@ def _qivive_context_for_tissue(
     overrides: Mapping[str, float] | None = None,
 ) -> dict[str, float]:
     """Return MPPGL/organ-weight context for optional QIVIVE flux scaling."""
-    return _get_flux_contract_engine().get_qivive_context(_normalize_tissue(tissue), overrides)
+    return _get_flux_contract_engine().get_qivive_context(
+        _normalize_tissue(tissue), overrides
+    )
 
 
-def _apply_qivive_scale(result: FluxResultDict, qivive_context: Mapping[str, float]) -> FluxResultDict:
+def _apply_qivive_scale(
+    result: FluxResultDict, qivive_context: Mapping[str, float]
+) -> FluxResultDict:
     """Apply a common tissue-level QIVIVE scale to reported flux magnitudes."""
     scale = float(qivive_context.get("scale", 1.0))
     if math.isclose(scale, 1.0):
@@ -595,7 +640,9 @@ def _steady_state_context_for_tissue(
     overrides: Mapping[str, float] | None = None,
 ) -> dict[str, float]:
     """Return validated defaults for the flux-coupled steady-state solver."""
-    return _get_flux_contract_engine().get_steady_state_context(_normalize_tissue(tissue), overrides)
+    return _get_flux_contract_engine().get_steady_state_context(
+        _normalize_tissue(tissue), overrides
+    )
 
 
 def solve_flux_steady_state(
@@ -640,13 +687,16 @@ def solve_flux_steady_state(
     metabolic_rate = activation_rate + detox_rate
     intrinsic_clearance_l_per_day = metabolic_rate * tissue_volume_l
     extraction_ratio = (
-        intrinsic_clearance_l_per_day / (tissue_flow_l_per_day + intrinsic_clearance_l_per_day)
+        intrinsic_clearance_l_per_day
+        / (tissue_flow_l_per_day + intrinsic_clearance_l_per_day)
         if tissue_flow_l_per_day + intrinsic_clearance_l_per_day > 0
         else 0.0
     )
     tissue_clearance_l_per_day = tissue_flow_l_per_day * extraction_ratio
     background_clearance_l_per_day = background_clearance_rate * central_volume_l
-    total_clearance_l_per_day = background_clearance_l_per_day + tissue_clearance_l_per_day
+    total_clearance_l_per_day = (
+        background_clearance_l_per_day + tissue_clearance_l_per_day
+    )
 
     input_rate_umol_per_day = (
         substrate_conc_uM
@@ -660,12 +710,16 @@ def solve_flux_steady_state(
         else 0.0
     )
     tissue_conc = (
-        partition * central_conc * tissue_flow_l_per_day
+        partition
+        * central_conc
+        * tissue_flow_l_per_day
         / (tissue_flow_l_per_day + intrinsic_clearance_l_per_day)
         if tissue_flow_l_per_day + intrinsic_clearance_l_per_day > 0
         else partition * central_conc
     )
-    reactive_loss_rate = solver_context["reactive_intermediate_loss_rate_per_day"] + detox_rate
+    reactive_loss_rate = (
+        solver_context["reactive_intermediate_loss_rate_per_day"] + detox_rate
+    )
     detoxified_loss_rate = solver_context["detoxified_metabolite_loss_rate_per_day"]
     reactive_conc = (
         tissue_conc * activation_rate / reactive_loss_rate
@@ -678,7 +732,9 @@ def solve_flux_steady_state(
         else 0.0
     )
 
-    central_rate = total_clearance_l_per_day / central_volume_l if central_volume_l > 0 else 0.0
+    central_rate = (
+        total_clearance_l_per_day / central_volume_l if central_volume_l > 0 else 0.0
+    )
     tissue_exchange_rate = (
         tissue_flow_l_per_day / (tissue_volume_l * partition) + metabolic_rate
         if tissue_volume_l > 0 and partition > 0
@@ -711,10 +767,16 @@ def solve_flux_steady_state(
         "background_clearance_l_per_day": _round_steady_state_value(
             background_clearance_l_per_day
         ),
-        "tissue_clearance_l_per_day": _round_steady_state_value(tissue_clearance_l_per_day),
-        "total_clearance_l_per_day": _round_steady_state_value(total_clearance_l_per_day),
+        "tissue_clearance_l_per_day": _round_steady_state_value(
+            tissue_clearance_l_per_day
+        ),
+        "total_clearance_l_per_day": _round_steady_state_value(
+            total_clearance_l_per_day
+        ),
         "extraction_ratio": _round_steady_state_value(extraction_ratio),
-        "time_to_steady_state_days": _round_steady_state_value(time_to_steady_state_days),
+        "time_to_steady_state_days": _round_steady_state_value(
+            time_to_steady_state_days
+        ),
         **{
             key: _round_steady_state_value(value)
             for key, value in solver_context.items()
@@ -731,7 +793,9 @@ def _steady_state_concentration_proxy(
     context: Mapping[str, float] | None = None,
 ) -> dict[str, float]:
     """Deprecated compatibility alias for historical proxy-shaped payloads."""
-    steady_state = solve_flux_steady_state(substrate_conc_uM, act, det, tissue, context=context)
+    steady_state = solve_flux_steady_state(
+        substrate_conc_uM, act, det, tissue, context=context
+    )
     return {
         "reactive_intermediate_proxy_uM": steady_state.concentrations_uM[
             "reactive_intermediate_uM"
@@ -878,7 +942,9 @@ def _compute_proxy_repair_term(
     return activation_flux * float(term["scale"]) * gm * tw, gm, tw
 
 
-def _active_proxy_class_params(class_name: str, engine: "GraphEngine | None") -> JsonDict:
+def _active_proxy_class_params(
+    class_name: str, engine: "GraphEngine | None"
+) -> JsonDict:
     """Return the proxy flux config for a class via the active engine.
 
     A loaded engine serves the class block graph-first (CarcinogenGroup
@@ -933,7 +999,9 @@ _PROXY_TERM_KINETICS_LABELS: dict[str, str] = {
 # activation entries, so _enzyme_flux_from_dict defaulted those to
 # "michaelis_menten". Preserved so the generic loop is output-identical;
 # drop when output normalization is accepted as a deliberate change.
-_PROXY_ACTIVATION_WITHOUT_KINETICS = frozenset({"NDEA", "VinylChloride", "ChlorinatedSolvent"})
+_PROXY_ACTIVATION_WITHOUT_KINETICS = frozenset(
+    {"NDEA", "VinylChloride", "ChlorinatedSolvent"}
+)
 
 
 def _compute_generic_proxy_flux(
@@ -965,30 +1033,49 @@ def _compute_generic_proxy_flux(
     reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
     cfg = _active_proxy_class_params(carcinogen_class, engine)
 
-    def _entry(reaction: "FluxReaction", value: float, gm: float, tw: float) -> JsonDict:
+    def _entry(
+        reaction: "FluxReaction", value: float, gm: float, tw: float
+    ) -> JsonDict:
         entry: JsonDict = {
             "flux": _round_flux(value),
             "genotype_modifier": gm,
             "tissue_weight": tw,
             "confidence": reaction.confidence,
         }
-        if reaction.role != "activation" or carcinogen_class not in _PROXY_ACTIVATION_WITHOUT_KINETICS:
-            entry["kinetics"] = _PROXY_TERM_KINETICS_LABELS.get(reaction.rate_law, "semi_quantitative")
+        if (
+            reaction.role != "activation"
+            or carcinogen_class not in _PROXY_ACTIVATION_WITHOUT_KINETICS
+        ):
+            entry["kinetics"] = _PROXY_TERM_KINETICS_LABELS.get(
+                reaction.rate_law, "semi_quantitative"
+            )
         entry["note"] = str(reaction.params.get("note", ""))
         return entry
 
-    def _evaluate(reaction: "FluxReaction", activation_base: float | None = None) -> tuple[float, float, float]:
+    def _evaluate(
+        reaction: "FluxReaction", activation_base: float | None = None
+    ) -> tuple[float, float, float]:
         term = reaction.params
         if reaction.rate_law == "repair":
             if activation_base is None:
-                raise ValueError(f"Repair term {reaction.term_key} evaluated without an activation base")
-            return _compute_proxy_repair_term(activation_base, term, genotypes, tissue, tissue_weight_source)
+                raise ValueError(
+                    f"Repair term {reaction.term_key} evaluated without an activation base"
+                )
+            return _compute_proxy_repair_term(
+                activation_base, term, genotypes, tissue, tissue_weight_source
+            )
         if reaction.rate_law == "michaelis_menten":
-            return _compute_proxy_mm_term(term, genotypes, tissue, S, tissue_weight_source)
+            return _compute_proxy_mm_term(
+                term, genotypes, tissue, S, tissue_weight_source
+            )
         if reaction.rate_law == "hill":
-            return _compute_proxy_hill_term(term, genotypes, tissue, S, tissue_weight_source)
+            return _compute_proxy_hill_term(
+                term, genotypes, tissue, S, tissue_weight_source
+            )
         if reaction.rate_law == "saturating":
-            return _compute_proxy_saturating_term(term, genotypes, tissue, S, tissue_weight_source)
+            return _compute_proxy_saturating_term(
+                term, genotypes, tissue, S, tissue_weight_source
+            )
         if reaction.rate_law == "derived_scale":
             # Detox term derived from a named activation term's computed
             # value (e.g. ChlorinatedSolvent's non-genotoxic clearance,
@@ -1079,7 +1166,9 @@ def _compute_generic_mechanistic_flux(
             return gene
         return str(reaction.enzyme_id or reaction.term_key)
 
-    def _entry(value: float, gm: float, tw: float, role: str, confidence: str) -> JsonDict:
+    def _entry(
+        value: float, gm: float, tw: float, role: str, confidence: str
+    ) -> JsonDict:
         return {
             "flux": _round_flux(value),
             "genotype_modifier": gm,
@@ -1115,7 +1204,10 @@ def _compute_generic_mechanistic_flux(
         if reaction.term_key in derived_specs or reaction.params.get("dormant"):
             continue
         if reaction.rate_law == "clint_ceiling":
-            if efficiency_spec is None or efficiency_spec.get("term") != reaction.term_key:
+            if (
+                efficiency_spec is None
+                or efficiency_spec.get("term") != reaction.term_key
+            ):
                 raise ValueError(
                     f"clint_ceiling term {carcinogen_class}/{reaction.term_key} "
                     "has no activation_efficiency_term spec"
@@ -1151,7 +1243,9 @@ def _compute_generic_mechanistic_flux(
             raise ValueError(f"Unsupported derived form {form!r} for {name}")
         role = next((r.role for r in reactions if r.term_key == name), None)
         if role not in ("activation", "detoxification"):
-            raise ValueError(f"Derived term {name!r} has no activation/detoxification role")
+            raise ValueError(
+                f"Derived term {name!r} has no activation/detoxification role"
+            )
         computed[name] = (value, gm, tw)
         term_roles[name] = role
         entries = activation_entries if role == "activation" else detox_entries
@@ -1169,13 +1263,18 @@ def _compute_generic_mechanistic_flux(
             total_detox += value
 
     if efficiency_spec is not None:
-        eff_reaction = next(r for r in reactions if r.term_key == efficiency_spec["term"])
+        eff_reaction = next(
+            r for r in reactions if r.term_key == efficiency_spec["term"]
+        )
         gene = _gene(eff_reaction)
         eff_gm = genotype_modifier(genotypes.get(gene, "NM"), gene)
         eff_tw = get_flux_tissue_weight(gene, tissue, tissue_weight_source)
         efficiency = min(
             1.0,
-            (float(eff_reaction.params["CLint"]) / float(efficiency_spec["reference_CLint"]))
+            (
+                float(eff_reaction.params["CLint"])
+                / float(efficiency_spec["reference_CLint"])
+            )
             * eff_gm
             * eff_tw,
         )
@@ -1236,7 +1335,9 @@ def _proxy_term_metadata(
 ) -> JsonDict | None:
     """Return provenance metadata for a proxy-model term."""
     cfg = _active_proxy_class_params(carcinogen_class, engine)
-    sections = ("activation_terms",) if activation_term else ("detox_terms", "repair_terms")
+    sections = (
+        ("activation_terms",) if activation_term else ("detox_terms", "repair_terms")
+    )
 
     for section in sections:
         term_cfg = cfg.get(section, {}).get(term_name)
@@ -1483,9 +1584,7 @@ def _compute_aldehyde_flux(
         adh_confidence = terms["ADH1B_star1"].confidence
 
     eth_conc = active_engine.get_flux_metadata()["exposure_defaults_uM"]["ethanol"]
-    v_adh = michaelis_menten(
-        eth_conc, adh_params["Vmax_U_per_mg"], adh_params["Km_uM"]
-    )
+    v_adh = michaelis_menten(eth_conc, adh_params["Vmax_U_per_mg"], adh_params["Km_uM"])
 
     return {
         "activation_enzymes": {
@@ -1609,12 +1708,22 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 # it gained the ``derived_scale`` rate law (its only structural wrinkle,
 # the GSTT1 bioactivation inversion being a role annotation, not code).
 _GENERIC_PROXY_FLUX_CLASSES = frozenset(
-    {"AromaticAmines", "EstrogenMetabolites", "NDEA", "VinylChloride", "UV_Radiation", "HeavyMetal", "ChlorinatedSolvent"}
+    {
+        "AromaticAmines",
+        "EstrogenMetabolites",
+        "NDEA",
+        "VinylChloride",
+        "UV_Radiation",
+        "HeavyMetal",
+        "ChlorinatedSolvent",
+    }
 )
 
 # Measured-kinetics classes whose term evaluation and aggregation are fully
 # described by the per-class "aggregation" block in kinetic_parameters.json.
-_GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset({"PAH", "Nitrosamine", "NDMA", "HCA", "Benzene"})
+_GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset(
+    {"PAH", "Nitrosamine", "NDMA", "HCA", "Benzene"}
+)
 
 # Dedicated proxy functions that now take the engine kwarg so their
 # class-config reads are served graph-first when a loaded engine is
@@ -1690,7 +1799,11 @@ def compute_pathway_flux(
         ``model_kind`` / ``parameter_source`` at the class level, while
         proxy-backed enzyme terms include resolved provenance metadata.
     """
-    cls_str = carcinogen_class.value if isinstance(carcinogen_class, CarcinogenClass) else carcinogen_class
+    cls_str = (
+        carcinogen_class.value
+        if isinstance(carcinogen_class, CarcinogenClass)
+        else carcinogen_class
+    )
     weight_source = _normalize_tissue_weight_source(tissue_weight_source)
 
     if cls_str not in _DISPATCH:
@@ -1718,7 +1831,9 @@ def compute_pathway_flux(
     resolved_induction = _resolve_induction_factors(
         lifestyle,
         induction_factors,
-        interaction_params=engine.get_interaction_parameters() if engine is not None else None,
+        interaction_params=(
+            engine.get_interaction_parameters() if engine is not None else None
+        ),
     )
     if (
         cls_str in _GENERIC_PROXY_FLUX_CLASSES
@@ -1726,7 +1841,9 @@ def compute_pathway_flux(
         or cls_str in _DEDICATED_ENGINE_FLUX_CLASSES
         or cls_str in _DEDICATED_PROXY_ENGINE_FLUX_CLASSES
     ):
-        result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source, engine=engine)
+        result = _DISPATCH[cls_str](
+            genotypes, tissue, substrate_conc_uM, weight_source, engine=engine
+        )
     else:
         result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
     result = _annotate_flux_result_metadata(cls_str, result, engine=engine)
@@ -1815,7 +1932,9 @@ def compute_pathway_flux(
         parameter_source=result.get("parameter_source", _KINETIC_PARAMETER_SOURCE),
         unit_note=result.get("unit_note", ""),
         warnings=warn_list,
-        induction_factors_used={gene: _round_flux(factor) for gene, factor in resolved_induction.items()},
+        induction_factors_used={
+            gene: _round_flux(factor) for gene, factor in resolved_induction.items()
+        },
         qivive_applied=qivive,
         qivive_context=qivive_used_context,
         steady_state_concentrations_uM=steady_state.concentrations_uM,
@@ -1875,10 +1994,13 @@ def compute_full_profile(
     elevated = [
         c
         for c, r in results.items()
-        if r.risk_classification in (RiskClassification.ELEVATED, RiskClassification.HIGH)
+        if r.risk_classification
+        in (RiskClassification.ELEVATED, RiskClassification.HIGH)
     ]
     moderate = [
-        c for c, r in results.items() if r.risk_classification == RiskClassification.MODERATE
+        c
+        for c, r in results.items()
+        if r.risk_classification == RiskClassification.MODERATE
     ]
 
     return FullProfileResult(
@@ -1914,18 +2036,46 @@ def sensitivity_analysis(
     Returns:
         :class:`SensitivityResult` with per-phenotype ratios.
     """
-    cls_str = carcinogen_class.value if isinstance(carcinogen_class, CarcinogenClass) else carcinogen_class
+    cls_str = (
+        carcinogen_class.value
+        if isinstance(carcinogen_class, CarcinogenClass)
+        else carcinogen_class
+    )
     weight_source = _normalize_tissue_weight_source(tissue_weight_source)
 
     base_genotypes = {
         g: "NM"
         for g in [
-            "CYP1A1", "CYP1B1", "CYP1A2", "CYP3A4", "CYP3A5",
-            "CYP2A13", "CYP2A6", "CYP2E1", "EPHX1",
-            "GSTM1", "GSTT1", "GSTP1", "ALDH2", "ALDH1A1", "ADH1B",
-            "NQO1", "CYP2D6", "CYP2B6", "NAT1", "NAT2",
-            "COMT", "SULT1E1", "UGT2B7", "AS3MT",
-            "XPC", "ERCC2", "XRCC1", "OGG1", "MGMT", "POLH",
+            "CYP1A1",
+            "CYP1B1",
+            "CYP1A2",
+            "CYP3A4",
+            "CYP3A5",
+            "CYP2A13",
+            "CYP2A6",
+            "CYP2E1",
+            "EPHX1",
+            "GSTM1",
+            "GSTT1",
+            "GSTP1",
+            "ALDH2",
+            "ALDH1A1",
+            "ADH1B",
+            "NQO1",
+            "CYP2D6",
+            "CYP2B6",
+            "NAT1",
+            "NAT2",
+            "COMT",
+            "SULT1E1",
+            "UGT2B7",
+            "AS3MT",
+            "XPC",
+            "ERCC2",
+            "XRCC1",
+            "OGG1",
+            "MGMT",
+            "POLH",
         ]
     }
 
@@ -2068,23 +2218,72 @@ Examples:
   python -m ExposoGraph.flux_engine --validate
         """,
     )
-    parser.add_argument("--genotypes", type=str, default="{}", help="JSON string of gene-to-phenotype mappings")
+    parser.add_argument(
+        "--genotypes",
+        type=str,
+        default="{}",
+        help="JSON string of gene-to-phenotype mappings",
+    )
     parser.add_argument("--tissue", type=str, default="Liver", help="Target tissue")
-    parser.add_argument("--carcinogen", type=str, default=None, help="Carcinogen class to model")
-    parser.add_argument("--concentration", type=float, default=None, help="Substrate concentration in uM")
-    parser.add_argument("--full-profile", action="store_true", help="Compute all carcinogen classes")
-    parser.add_argument("--validate", action="store_true", help="Run built-in validation cases")
-    parser.add_argument("--sensitivity", action="store_true", help="Run sensitivity analysis for one gene")
-    parser.add_argument("--gene", type=str, default=None, help="Gene to vary for sensitivity analysis")
+    parser.add_argument(
+        "--carcinogen", type=str, default=None, help="Carcinogen class to model"
+    )
+    parser.add_argument(
+        "--concentration",
+        type=float,
+        default=None,
+        help="Substrate concentration in uM",
+    )
+    parser.add_argument(
+        "--full-profile", action="store_true", help="Compute all carcinogen classes"
+    )
+    parser.add_argument(
+        "--validate", action="store_true", help="Run built-in validation cases"
+    )
+    parser.add_argument(
+        "--sensitivity",
+        action="store_true",
+        help="Run sensitivity analysis for one gene",
+    )
+    parser.add_argument(
+        "--gene", type=str, default=None, help="Gene to vary for sensitivity analysis"
+    )
     parser.add_argument("--output-json", action="store_true", help="Output JSON")
-    parser.add_argument("--lifestyle", type=str, default="{}", help="JSON lifestyle/co-exposure flags for induction modeling")
-    parser.add_argument("--induction-factors", type=str, default="{}", help="JSON per-gene explicit Vmax induction factors")
-    parser.add_argument("--qivive", action="store_true", help="Apply MPPGL/organ-weight QIVIVE scaling to flux magnitudes")
-    parser.add_argument("--mppgl", type=float, default=None, help="QIVIVE override: microsomal protein mg/g tissue")
-    parser.add_argument("--organ-weight-g", type=float, default=None, help="QIVIVE override: organ weight in grams")
+    parser.add_argument(
+        "--lifestyle",
+        type=str,
+        default="{}",
+        help="JSON lifestyle/co-exposure flags for induction modeling",
+    )
+    parser.add_argument(
+        "--induction-factors",
+        type=str,
+        default="{}",
+        help="JSON per-gene explicit Vmax induction factors",
+    )
+    parser.add_argument(
+        "--qivive",
+        action="store_true",
+        help="Apply MPPGL/organ-weight QIVIVE scaling to flux magnitudes",
+    )
+    parser.add_argument(
+        "--mppgl",
+        type=float,
+        default=None,
+        help="QIVIVE override: microsomal protein mg/g tissue",
+    )
+    parser.add_argument(
+        "--organ-weight-g",
+        type=float,
+        default=None,
+        help="QIVIVE override: organ weight in grams",
+    )
     parser.add_argument(
         "--tissue-weight-source",
-        choices=[FluxTissueWeightSource.CURATED.value, FluxTissueWeightSource.GTEX.value],
+        choices=[
+            FluxTissueWeightSource.CURATED.value,
+            FluxTissueWeightSource.GTEX.value,
+        ],
         default=FluxTissueWeightSource.CURATED.value,
         help="Use curated source-parity tissue weights (default) or GTEx quantitative weights.",
     )
@@ -2109,7 +2308,9 @@ Examples:
     try:
         induction_factors = json.loads(args.induction_factors)
     except json.JSONDecodeError as exc:
-        print(f"ERROR: Could not parse --induction-factors JSON: {exc}", file=sys.stderr)
+        print(
+            f"ERROR: Could not parse --induction-factors JSON: {exc}", file=sys.stderr
+        )
         return 1
 
     qivive_context = {}
