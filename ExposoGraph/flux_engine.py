@@ -925,14 +925,15 @@ _PROXY_TERM_KINETICS_LABELS: dict[str, str] = {
     "hill": "damage_proxy",
     "saturating": "semi_quantitative",
     "repair": "repair_proxy",
+    "derived_scale": "semi_quantitative",
 }
 
-# Legacy output-shape compatibility: the hand-written NDEA and VinylChloride
-# functions omitted the "kinetics" label on activation entries, so
-# _enzyme_flux_from_dict defaulted those to "michaelis_menten". Preserved so
-# the generic loop is output-identical; drop when output normalization is
-# accepted as a deliberate change.
-_PROXY_ACTIVATION_WITHOUT_KINETICS = frozenset({"NDEA", "VinylChloride"})
+# Legacy output-shape compatibility: the hand-written NDEA, VinylChloride,
+# and ChlorinatedSolvent functions omitted the "kinetics" label on
+# activation entries, so _enzyme_flux_from_dict defaulted those to
+# "michaelis_menten". Preserved so the generic loop is output-identical;
+# drop when output normalization is accepted as a deliberate change.
+_PROXY_ACTIVATION_WITHOUT_KINETICS = frozenset({"NDEA", "VinylChloride", "ChlorinatedSolvent"})
 
 
 def _compute_generic_proxy_flux(
@@ -946,16 +947,19 @@ def _compute_generic_proxy_flux(
 ) -> FluxResultDict:
     """Compute a semi-quantitative proxy flux from engine FluxReaction records.
 
-    Replaces the six hand-written proxy-class functions (AromaticAmines,
-    EstrogenMetabolites, NDEA, VinylChloride, UV_Radiation, HeavyMetal).
-    Enzyme scope, role, and rate law come from
+    Replaces the seven hand-written proxy-class functions (AromaticAmines,
+    EstrogenMetabolites, NDEA, VinylChloride, UV_Radiation, HeavyMetal, and
+    ChlorinatedSolvent). Enzyme scope, role, and rate law come from
     ``GraphEngine.get_edge_flux_reactions`` -- the graph-walk flux
     contract, reading term parameters off baked edge payloads and
     CarcinogenGroup class_level_terms carriers -- and the
-    per-term parameters ride on the reaction records. Dioxin
-    (receptor/signaling model) and ChlorinatedSolvent (derived clearance)
-    keep their dedicated functions: their model structures are not
-    term-sum proxies.
+    per-term parameters ride on the reaction records. ``derived_scale``
+    detox terms scale a named activation term's computed value (the
+    ChlorinatedSolvent non-genotoxic clearance: ``v_oxidation x scale``
+    with a tissue-weight floor), the detox-direction analogue of how
+    repair terms consume the activation total. Dioxin
+    (receptor/signaling model) keeps its dedicated function: its model
+    structure is not a term-sum proxy.
     """
     active_engine = engine if engine is not None else _get_flux_contract_engine()
     reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
@@ -985,6 +989,23 @@ def _compute_generic_proxy_flux(
             return _compute_proxy_hill_term(term, genotypes, tissue, S, tissue_weight_source)
         if reaction.rate_law == "saturating":
             return _compute_proxy_saturating_term(term, genotypes, tissue, S, tissue_weight_source)
+        if reaction.rate_law == "derived_scale":
+            # Detox term derived from a named activation term's computed
+            # value (e.g. ChlorinatedSolvent's non-genotoxic clearance,
+            # v_oxidation x scale with a tissue-weight floor): the
+            # detox-direction analogue of the repair term's coupling to
+            # the activation total. The activation pass runs first, so the
+            # base term's value and tissue weight are already recorded.
+            base_key = str(term.get("scale_of", ""))
+            base = computed_activation.get(base_key)
+            if base is None:
+                raise ValueError(
+                    f"derived_scale term {reaction.term_key} references unknown "
+                    f"activation term {base_key!r} for {carcinogen_class}"
+                )
+            base_value, base_tw = base
+            floor = float(term.get("tissue_weight_floor", 0.0))
+            return base_value * float(term["scale"]), 1.0, max(base_tw, floor)
         raise ValueError(
             f"Unsupported proxy rate law {reaction.rate_law!r} for "
             f"{carcinogen_class}/{reaction.term_key}"
@@ -992,11 +1013,13 @@ def _compute_generic_proxy_flux(
 
     activation_enzymes: dict[str, Any] = {}
     total_activation = 0.0
+    computed_activation: dict[str, tuple[float, float]] = {}
     for reaction in reactions:
         if reaction.role != "activation":
             continue
         value, gm, tw = _evaluate(reaction)
         total_activation += value
+        computed_activation[reaction.term_key] = (value, tw)
         activation_enzymes[reaction.term_key] = _entry(reaction, value, gm, tw)
 
     detox_enzymes: dict[str, Any] = {}
@@ -1482,73 +1505,6 @@ def _compute_aldehyde_flux(
     }
 
 
-def _compute_chlorinated_solvent_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-    *,
-    engine: "GraphEngine | None" = None,
-) -> FluxResultDict:
-    """Compute TCE-centered chlorinated-solvent bioactivation with proxy clearance."""
-    cfg = _active_proxy_class_params("ChlorinatedSolvent", engine)
-    activation_enzymes: dict[str, Any] = {}
-
-    oxidation_p = cfg["activation_terms"]["CYP2E1"]
-    v_oxidation, gm2e1, tw2e1 = _compute_proxy_mm_term(
-        oxidation_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-    activation_enzymes["CYP2E1"] = {
-        "flux": _round_flux(v_oxidation),
-        "genotype_modifier": gm2e1,
-        "tissue_weight": tw2e1,
-        "confidence": oxidation_p["confidence"],
-        "note": oxidation_p["note"],
-    }
-
-    gsh_p = cfg["activation_terms"]["GSTT1"]
-    v_gsh, gm_gstt1, tw_gstt1 = _compute_proxy_mm_term(
-        gsh_p,
-        genotypes,
-        tissue,
-        S,
-        tissue_weight_source,
-    )
-    activation_enzymes["GSTT1"] = {
-        "flux": _round_flux(v_gsh),
-        "genotype_modifier": gm_gstt1,
-        "tissue_weight": tw_gstt1,
-        "confidence": gsh_p["confidence"],
-        "note": gsh_p["note"],
-    }
-
-    detox_p = cfg["detox_terms"]["non_genotoxic_clearance_proxy"]
-    v_clearance = v_oxidation * float(detox_p["scale"])
-    detox_enzymes = {
-        "non_genotoxic_clearance_proxy": {
-            "flux": _round_flux(v_clearance),
-            "genotype_modifier": 1.0,
-            "tissue_weight": max(tw2e1, 0.2),
-            "confidence": detox_p["confidence"],
-            "note": detox_p["note"],
-        }
-    }
-
-    total_activation = v_oxidation + v_gsh
-
-    return {
-        "activation_enzymes": activation_enzymes,
-        "detox_enzymes": detox_enzymes,
-        "total_activation": total_activation,
-        "total_detox": v_clearance,
-        "unit_note": cfg["unit_note"],
-    }
-
-
 def _compute_dioxin_flux(
     genotypes: GenotypeMap,
     tissue: str,
@@ -1647,11 +1603,13 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 # listed in _GENERIC_MECHANISTIC_FLUX_CLASSES below. Aflatoxin and Aldehyde
 # (in _DEDICATED_ENGINE_FLUX_CLASSES) keep hand-written control flow but
 # source their term parameters and aggregation blocks through the engine
-# contract. The remaining entries in _DISPATCH -- Dioxin and
-# ChlorinatedSolvent -- keep fully hand-written functions whose model
-# structures are not term-sum proxies.
+# contract. Dioxin keeps a fully hand-written function: its
+# receptor-mediated model (latent AHR signal gating induced terms) is not
+# a term-sum proxy. ChlorinatedSolvent collapsed into the generic loop when
+# it gained the ``derived_scale`` rate law (its only structural wrinkle,
+# the GSTT1 bioactivation inversion being a role annotation, not code).
 _GENERIC_PROXY_FLUX_CLASSES = frozenset(
-    {"AromaticAmines", "EstrogenMetabolites", "NDEA", "VinylChloride", "UV_Radiation", "HeavyMetal"}
+    {"AromaticAmines", "EstrogenMetabolites", "NDEA", "VinylChloride", "UV_Radiation", "HeavyMetal", "ChlorinatedSolvent"}
 )
 
 # Measured-kinetics classes whose term evaluation and aggregation are fully
@@ -1661,7 +1619,7 @@ _GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset({"PAH", "Nitrosamine", "NDMA", "HC
 # Dedicated proxy functions that now take the engine kwarg so their
 # class-config reads are served graph-first when a loaded engine is
 # passed (bare JSON fallback otherwise).
-_DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"ChlorinatedSolvent", "Dioxin"})
+_DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"Dioxin"})
 
 # Dedicated functions that still take the engine kwarg for their parameters.
 _DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"Aflatoxin", "Aldehyde"})
@@ -1678,7 +1636,7 @@ _DISPATCH: dict[str, FluxCalculator] = {
     "EstrogenMetabolites": partial(_compute_generic_proxy_flux, "EstrogenMetabolites"),
     "Benzene": partial(_compute_generic_mechanistic_flux, "Benzene"),
     "VinylChloride": partial(_compute_generic_proxy_flux, "VinylChloride"),
-    "ChlorinatedSolvent": _compute_chlorinated_solvent_flux,
+    "ChlorinatedSolvent": partial(_compute_generic_proxy_flux, "ChlorinatedSolvent"),
     "UV_Radiation": partial(_compute_generic_proxy_flux, "UV_Radiation"),
     "Dioxin": _compute_dioxin_flux,
     "HeavyMetal": partial(_compute_generic_proxy_flux, "HeavyMetal"),

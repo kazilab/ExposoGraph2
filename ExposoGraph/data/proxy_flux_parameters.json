@@ -494,6 +494,7 @@
           "graph_node_id": null,
           "scale_of": "CYP2E1",
           "scale": 0.6,
+          "tissue_weight_floor": 0.2,
           "confidence": "estimated",
           "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
           "provenance_ref": "classes.ChlorinatedSolvent.detox_terms.non_genotoxic_clearance_proxy"
