@@ -33,7 +33,9 @@ _DEFAULT_GENOTYPES = {
 }
 
 
-def _enzyme_rows(result: PathwayFluxResult, *, activation: bool) -> list[dict[str, object]]:
+def _enzyme_rows(
+    result: PathwayFluxResult, *, activation: bool
+) -> list[dict[str, object]]:
     enzymes = result.activation_enzymes if activation else result.detox_enzymes
     return [
         {
@@ -62,9 +64,21 @@ def render() -> None:
             index=0,
             key="flux_carcinogen_class",
         )
+        tissue_list = [
+            "Liver",
+            "Lung",
+            "Bladder",
+            "Breast",
+            "Colon",
+            "Kidney",
+            "Prostate",
+            "Esophagus",
+            "Skin (Not Sun Exposed)",
+            "Skin (Sun Exposed)",
+        ]
         tissue = st.selectbox(
             "Tissue",
-            ["Liver", "Lung", "Bladder", "Breast", "Colon", "Kidney", "Prostate", "Esophagus"],
+            tissue_list,
             index=1,
             key="flux_tissue",
         )
@@ -84,13 +98,17 @@ def render() -> None:
         )
         qivive = st.checkbox("Apply QIVIVE scaling", value=False, key="flux_qivive")
     with col_c:
-        smoking = st.checkbox("Smoking induction", value=False, key="flux_lifestyle_smoking")
+        smoking = st.checkbox(
+            "Smoking induction", value=False, key="flux_lifestyle_smoking"
+        )
         alcohol_heavy = st.checkbox(
             "Heavy alcohol induction",
             value=False,
             key="flux_lifestyle_alcohol",
         )
-        dioxin = st.checkbox("Dioxin/AhR induction", value=False, key="flux_lifestyle_dioxin")
+        dioxin = st.checkbox(
+            "Dioxin/AhR induction", value=False, key="flux_lifestyle_dioxin"
+        )
 
     genotype_text = st.text_area(
         "Genotypes / phenotypes JSON",
