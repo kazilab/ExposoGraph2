@@ -510,6 +510,8 @@
       },
       "unit_note": "Receptor-mediated induction score scaled from TCDD exposure (uM converted to nM).",
       "signal": {
+        "source_node_id": "TCDD",
+        "target_node_id": "AHR",
         "equation": "hill",
         "substrate_scale": 1000.0,
         "vmax": 1.0,

@@ -277,6 +277,8 @@ class GraphEngine:
         self._flux_proxy_class_cfg: dict[str, dict[str, Any]] = {}
         self._flux_group_class_md_cache: dict[str, dict[str, Any]] | None = None
         self._flux_group_class_md_graph: Any = None
+        self._flux_class_signal_cache: dict[str, dict[str, Any]] | None = None
+        self._flux_class_signal_graph: Any = None
         self._flux_proxy_provenance: dict[str, Any] | None = None
         self._exposure_database: dict[str, Any] | None = None
         self._tissue_expression_raw: dict[str, dict[str, float]] | None = None
@@ -386,6 +388,8 @@ class GraphEngine:
         self._flux_proxy_class_cfg = {}
         self._flux_group_class_md_cache = None
         self._flux_group_class_md_graph = None
+        self._flux_class_signal_cache = None
+        self._flux_class_signal_graph = None
         self._flux_proxy_provenance = None
         self._exposure_database = None
         self._tissue_expression_raw = None
@@ -953,6 +957,37 @@ class GraphEngine:
             if reaction.notes is not None:
                 payload["notes"] = reaction.notes
             by_pathway[reaction.term_key] = payload
+
+        # Class-level signal blocks with declared bindings (Dioxin's AhR
+        # occupancy Hill term, bound to ``TCDD --AGONIZES--> AHR``): bake
+        # the block onto its edge under a dedicated namespace so the
+        # class's signaling parameters are served graph-first, mirroring
+        # how term payloads ride their binding edges. Signal blocks are
+        # class config, not roster terms -- a separate namespace keeps
+        # the roster walk and coverage accounting untouched.
+        for cls_name, class_cfg in self._flux_proxy_class_cfg.items():
+            signal = class_cfg.get("signal")
+            if not isinstance(signal, dict):
+                continue
+            signal_source = signal.get("source_node_id")
+            signal_target = signal.get("target_node_id")
+            if not signal_source or not signal_target:
+                continue
+            if not self.G.has_edge(signal_source, signal_target):
+                warnings.append(
+                    f"No edge for flux signal binding: {cls_name} "
+                    f"({signal_source} -> {signal_target})"
+                )
+                continue
+            edge_view = self.G[signal_source][signal_target]
+            edge_data = next(iter(edge_view.values()))
+            kinetics = edge_data.setdefault("kinetics", {})
+            kinetics.setdefault("flux_class_signal", {})[cls_name] = dict(signal)
+        # The bake mutates the graph in place, so any previously built
+        # signal cache (from an earlier get_flux_class_config call) is
+        # stale; drop it unconditionally.
+        self._flux_class_signal_cache = None
+        self._flux_class_signal_graph = None
         return warnings
 
     # ── Interaction-parameter access ─────────────────────────────────────
@@ -1270,6 +1305,33 @@ class GraphEngine:
             self._flux_group_class_md_cache = md
             self._flux_group_class_md_graph = self.G
         return self._flux_group_class_md_cache
+
+    def _flux_class_signals(self) -> dict[str, dict[str, Any]]:
+        """Map flux class name -> its edge-carried signal block.
+
+        Built lazily from the loaded reference graph's baked
+        ``kinetics["flux_class_signal"]`` payloads (see
+        :meth:`_apply_flux_edge_kinetics` -- currently Dioxin's AhR
+        occupancy Hill term on ``TCDD --AGONIZES--> AHR``) and rebuilt
+        whenever the underlying graph object changes. Empty on a bare
+        engine (no graph loaded) -- callers fall back to the proxy JSON's
+        class config.
+        """
+        if self._flux_class_signal_cache is None or self._flux_class_signal_graph is not self.G:
+            signals: dict[str, dict[str, Any]] = {}
+            for _source, _target, data in self.G.edges(data=True):
+                kinetics = data.get("kinetics")
+                if not isinstance(kinetics, dict):
+                    continue
+                carried = kinetics.get("flux_class_signal")
+                if not isinstance(carried, dict):
+                    continue
+                for cls_name, block in carried.items():
+                    if isinstance(block, dict) and block:
+                        signals[str(cls_name)] = block
+            self._flux_class_signal_cache = signals
+            self._flux_class_signal_graph = self.G
+        return self._flux_class_signal_cache
 
     def get_flux_aggregation(self, carcinogen_class: Any) -> dict[str, Any]:
         """Return the per-class flux aggregation spec, graph-first.
@@ -1852,8 +1914,12 @@ class GraphEngine:
         from the group node's ``flux_class_metadata[cls].class_level_terms``
         carrier, falling back to the proxy JSON; enzyme terms keep
         coming from the proxy JSON until the anchoring backlog gives
-        them graph edges. Also serves unit notes and signal
-        configuration for the proxy flux classes.
+        them graph edges. A class's ``signal`` block (receptor/
+        signaling-model classes, e.g. Dioxin) is served graph-first
+        from its baked edge payload when the block carries a binding
+        (``TCDD --AGONIZES--> AHR``), falling back to the proxy JSON on a
+        bare engine. Also serves unit notes and signal configuration for
+        the proxy flux classes.
         """
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
@@ -1875,6 +1941,9 @@ class GraphEngine:
                             if isinstance(term, dict):
                                 merged[term_key] = dict(term)
                         cfg[section] = merged
+        signal_block = self._flux_class_signals().get(cls)
+        if isinstance(signal_block, dict) and signal_block:
+            cfg["signal"] = dict(signal_block)
         return cfg
 
     def get_flux_provenance_entry(self, ref: str) -> dict[str, Any]:
