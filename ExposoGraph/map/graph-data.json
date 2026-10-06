@@ -9727,13 +9727,21 @@
     {
       "source": "HydroxyE2",
       "target": "E2_quinone",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "label": "auto-oxidation",
+      "evidence": "4-Hydroxyestradiol is oxidized to estradiol-3,4-quinone via catechol estrogen semiquinone/quinone redox cycling",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "MECHANISM_UNCLEAR",
+      "canonical_predicate": "TRANSFORMS_SPONTANEOUSLY",
       "canonical_namespace": "schema",
-      "provenance": []
+      "provenance": [
+        {
+          "source_db": "Carcinogenesis",
+          "record_id": "HydroxyE2->E2_quinone",
+          "evidence": "4-OHE2 oxidized to E2-3,4-quinone; the quinone forms depurinating DNA adducts",
+          "citation": "Li KM et al., Carcinogenesis 2003;24(10):1971-1977, doi:10.1093/carcin/bgg191"
+        }
+      ]
     },
     {
       "source": "HydroxyE2",
@@ -9798,11 +9806,19 @@
     {
       "source": "HQ",
       "target": "Benzoquinone",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "label": "auto-oxidation",
+      "evidence": "Hydroquinone readily oxidizes to 1,4-benzoquinone; HQ/BQ redox cycling generates ROS",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [
+        {
+          "source_db": "Chem Biol Interact",
+          "record_id": "HQ->Benzoquinone",
+          "evidence": "HQ readily oxidizes to 1,4-BQ followed by reductive GSH addition; conjugates retain redox cycling",
+          "citation": "Role of hydroquinone-thiol conjugates in benzene-mediated toxicity, Chem Biol Interact 2010;188(1):1-10, doi:10.1016/j.cbi.2009.12.016"
+        }
+      ]
     },
     {
       "source": "Benzoquinone",
