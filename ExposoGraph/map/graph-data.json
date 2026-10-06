@@ -10098,7 +10098,7 @@
     {
       "source": "Cd",
       "target": "ROS_metal",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "Cd",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -10121,7 +10121,7 @@
     {
       "source": "CrVI",
       "target": "Cr_III",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023 mfad045",
       "origin": "imported",
@@ -10135,7 +10135,7 @@
     {
       "source": "CrVI",
       "target": "Cr_V",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023 mfad045",
       "origin": "imported",
@@ -10149,7 +10149,7 @@
     {
       "source": "CrVI",
       "target": "Asc_Cr_III",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "CrVI",
       "evidence": "Biochemistry 2003",
       "origin": "imported",
@@ -10172,7 +10172,7 @@
     {
       "source": "NickelCompounds",
       "target": "ROS_metal",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "NickelCompounds",
       "evidence": "PMC6802009",
       "origin": "imported",
@@ -10358,7 +10358,7 @@
     {
       "source": "MMA_III",
       "target": "ROS_metal",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "ArsenicInorganic",
       "evidence": "PMC3606021",
       "origin": "imported",
@@ -10386,7 +10386,7 @@
     {
       "source": "Cr_V",
       "target": "ROS_metal",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "CrVI",
       "evidence": "Metallomics 2023",
       "origin": "imported",
