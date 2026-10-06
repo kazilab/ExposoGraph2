@@ -12325,14 +12325,14 @@
     {
       "source": "Radon",
       "target": "Radon_decay_products",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "label": "Alpha decay to Po-218 and Po-214",
       "carcinogen": "Radon",
       "source_db": "IARC Monographs Vol. 100D",
       "evidence": "Radon-222 decays through Po-218 and Po-214 which deliver high-LET alpha dose to bronchial epithelium",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "MECHANISM_UNCLEAR",
+      "canonical_predicate": "TRANSFORMS_SPONTANEOUSLY",
       "canonical_namespace": "schema",
       "provenance": [
         {
