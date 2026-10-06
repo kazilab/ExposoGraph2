@@ -13457,7 +13457,7 @@
     {
       "source": "MethylmercuryCompounds",
       "target": "MeHg_GSH",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "MethylmercuryCompounds",
       "evidence": "Methylmercury conjugates with GSH via thiol group to form MeHg-GSH complex; PMC6635095",
       "origin": "imported",
@@ -13471,7 +13471,7 @@
     {
       "source": "GSH",
       "target": "MeHg_GSH",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
       "carcinogen": "MethylmercuryCompounds",
       "evidence": "GSH thiol group conjugates with MeHg forming MeHg-GSH complex; PMC6635095",
       "origin": "imported",
