@@ -66,6 +66,7 @@ from .reaction_role_semantics import get_default_reaction_role_registry
 
 if TYPE_CHECKING:
     from .engine import GraphEngine
+    from .parameter_provider import JSONInteractionParameterProvider
 
 # ── Dataclasses ────────────────────────────────────────────────────────────
 
@@ -1291,6 +1292,7 @@ def competitive_inhibition_flux(
     bundled file.
     """
     params_doc = _active_interaction_params(interaction_params, engine)
+    provider = engine.get_parameter_provider() if engine is not None else None
     params = params_doc["competitive_inhibition"]
     if enzyme not in params or enzyme.startswith("_"):
         raise ValueError(f"Unknown enzyme for competitive inhibition: {enzyme}")
@@ -1341,6 +1343,7 @@ def competitive_inhibition_flux(
             param_substrates=param_substrates,
             scale_for=_scale_for,
             inhibition_contexts=inhibition_contexts,
+            provider=provider,
         )
         if resolution["modifier"] is None:
             competitive_flux = single_flux
@@ -1409,6 +1412,7 @@ def _resolve_live_inhibition_modifier(
     param_substrates: Mapping[str, Mapping[str, Any]],
     scale_for,
     inhibition_contexts: Mapping[str, Any] | None,
+    provider: "JSONInteractionParameterProvider | None" = None,
 ) -> dict[str, Any]:
     explicit_entries = _inhibition_context_entries(inhibition_contexts, target_substrate)
     if explicit_entries is not None:
@@ -1417,6 +1421,7 @@ def _resolve_live_inhibition_modifier(
             target_substrate=target_substrate,
             target_concentration=target_concentration,
             target_km_effective=target_km_effective,
+            provider=provider,
         )
 
     positive_competitors = [
@@ -1438,7 +1443,7 @@ def _resolve_live_inhibition_modifier(
     resolved_any = False
     competitor_details: list[dict[str, Any]] = []
     for other_name, other_conc in positive_competitors:
-        ki = get_ki(enzyme, other_name, target_substrate=target_substrate)
+        ki = get_ki(enzyme, other_name, target_substrate=target_substrate, provider=provider)
         competitor_warnings = [
             warning.code.upper()
             for warning in (ki.warnings or [])
@@ -1541,7 +1546,8 @@ def _resolve_live_inhibition_modifier(
             "parameter_concentration_basis": ConcentrationBasis.MODEL_DERIVED,
             "applicability_domain": ApplicabilityDomain.IN_DOMAIN,
             "metadata": {"live_adapter": "aggregate_competitive_load_v1"},
-        }
+        },
+        provider=provider,
     )
     warning_codes.update(warning.code for warning in (resolved.warnings or []))
     aggregate_resolution["aggregate_status"] = str(resolved.status)
@@ -1579,6 +1585,7 @@ def _resolve_explicit_live_inhibition_contexts(
     target_substrate: str,
     target_concentration: float,
     target_km_effective: float,
+    provider: "JSONInteractionParameterProvider | None" = None,
 ) -> dict[str, Any]:
     warning_codes: set[str] = set()
     statuses: list[str] = []
@@ -1605,7 +1612,7 @@ def _resolve_explicit_live_inhibition_contexts(
         payload.setdefault("km_uM", target_km_effective)
         payload.setdefault("substrate_concentration_uM", target_concentration)
         payload.setdefault("vmax", 1.0)
-        resolved = resolve_reversible_inhibition(payload)
+        resolved = resolve_reversible_inhibition(payload, provider=provider)
         statuses.append(str(resolved.status))
         modes.append(str(resolved.mode))
         warning_codes.update(warning.code for warning in (resolved.warnings or []))

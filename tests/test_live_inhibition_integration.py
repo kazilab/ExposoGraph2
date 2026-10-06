@@ -25,9 +25,9 @@ def test_live_competitive_inhibition_routes_through_centralized_resolver(monkeyp
     calls = []
     real_resolver = interaction_engine.resolve_reversible_inhibition
 
-    def spy(request):
+    def spy(request, **kwargs):
         calls.append(request)
-        return real_resolver(request)
+        return real_resolver(request, **kwargs)
 
     monkeypatch.setattr(interaction_engine, "resolve_reversible_inhibition", spy)
 
