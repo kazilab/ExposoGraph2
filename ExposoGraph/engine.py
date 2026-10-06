@@ -1095,16 +1095,28 @@ class GraphEngine:
         reconstructed from its edge payload. Terms carried on the class's
         CarcinogenGroup node
         (``flux_class_metadata[cls].class_level_terms``) are likewise
-        reconstructed from the group-node payload. The roster and its
-        order are still taken from the side index (the JSON files'
-        pathway/term order), so the returned list is identical to
-        ``get_flux_reactions`` by construction -- only the *source of the
-        values* differs.
+        reconstructed from the group-node payload.
+
+        When the walk's coverage is complete -- every side-index term has a
+        graph representation -- the returned roster is *graph-native*:
+        membership comes from the walk alone and the list is ordered by
+        ``(pathway, term_key)`` for determinism, independent of edge or
+        parameter-file order. The graph-native order may change the
+        presentation order of per-term/per-enzyme entries relative to the
+        side-index order; callers that require a specific display order
+        should sort explicitly. The records themselves are identical
+        (field-for-field) to ``get_flux_reactions`` by construction --
+        only the *source of the values* and the order differ.
 
         Fallbacks, all visible in the returned records' ``source``/params:
 
+        - If the walk does not cover every side-index term (a partially
+          baked or foreign graph), the roster keeps index membership and
+          order, with walked records overlaying their index counterparts
+          -- the graph never silently shrinks a roster below what the
+          index serves.
         - Terms whose bindings have no edge yet and no group carrier
-          keep their side-index record.
+          keep their side-index record in that fallback mode.
         - With a bare engine (no graph loaded) there are no edges or
           carriers to walk, so this degrades to ``get_flux_reactions``
           unchanged.
@@ -1214,6 +1226,15 @@ class GraphEngine:
                     )
         if not walked:
             return roster
+        # Graph-native completeness gate: the walk serves as the roster on
+        # its own only when it covers every side-index term. The reference
+        # graph is at full carriage (verified by the roster diff), so the
+        # loaded path is graph-native; a partially baked or foreign graph
+        # falls back to the seeded mapping below rather than silently
+        # shrinking the roster.
+        index_keys = {(reaction.pathway, reaction.term_key) for reaction in roster}
+        if index_keys <= walked.keys():
+            return [walked[key] for key in sorted(walked)]
         return [walked.get((reaction.pathway, reaction.term_key), reaction) for reaction in roster]
 
     def get_flux_classes(self) -> list[str]:
