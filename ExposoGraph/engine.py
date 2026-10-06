@@ -153,6 +153,7 @@ _FLUX_PAYLOAD_META_FIELDS = frozenset(
         "confidence",
         "provenance_ref",
         "source",
+        "dispatch_status",
         "graph_group",
         "sources",
         "notes",
@@ -879,7 +880,15 @@ class GraphEngine:
         dispatch on their proxy entries, but their shadowed kinetic entries
         are baked here too -- dispatch choice and graph knowledge are
         separate concerns -- with ``source: kinetic_parameters`` recording
-        where each payload came from.
+        where each payload came from and ``dispatch_status``
+        (``active`` | ``shadowed``) declaring whether the term is a member
+        of the active dispatch roster or carried graph knowledge. The
+        graph walk (:meth:`get_edge_flux_reactions`) skips shadowed
+        payloads, making the active-vs-carried status explicit on each
+        payload for the graph-native roster cutover (the GSTT1/TCE
+        conjugation term is the canonical case: its kinetic payload is
+        carried, while the published model treats GSTT1-mediated TCE
+        conjugation as bioactivation).
 
         Where an edge also carries interaction kinetics from
         :meth:`_apply_interaction_parameters`, both coexist: the interaction
@@ -899,13 +908,15 @@ class GraphEngine:
         warnings: list[str] = []
         if self._flux_reactions_by_class is None:
             self._apply_flux_parameters()
-        all_reactions = [
-            reaction
+        baked: list[tuple[FluxReaction, bool]] = [
+            (reaction, False)
             for reactions in self._flux_reactions_by_class.values()
             for reaction in reactions
         ]
-        all_reactions.extend(self._flux_shadowed_reactions)
-        for reaction in all_reactions:
+        # Shadowed reactions (dual-source classes): carried for graph
+        # knowledge, excluded from the active dispatch roster.
+        baked.extend((reaction, True) for reaction in self._flux_shadowed_reactions)
+        for reaction, shadowed in baked:
             source = reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
             target = reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
             if not source or not target:
@@ -928,6 +939,7 @@ class GraphEngine:
             payload["confidence"] = reaction.confidence
             payload["provenance_ref"] = reaction.provenance_ref
             payload["source"] = reaction.source
+            payload["dispatch_status"] = "shadowed" if shadowed else "active"
             if reaction.graph_group is not None:
                 payload["graph_group"] = reaction.graph_group
             # The roster's *resolved* enzyme id (graph_node_id / exact key /
@@ -1117,6 +1129,14 @@ class GraphEngine:
                     continue
                 for term_key, payload in terms.items():
                     if not isinstance(payload, dict):
+                        continue
+                    if payload.get("dispatch_status") == "shadowed":
+                        # Dispatch-shadowed payload (dual-source class: the
+                        # kinetic parameterization carried as graph
+                        # knowledge while the proxy model won dispatch).
+                        # Not a member of the active roster; skipping keeps
+                        # the walk semantically correct for a graph-native
+                        # roster enumeration.
                         continue
                     params = {
                         key: value
