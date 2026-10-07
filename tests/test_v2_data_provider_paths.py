@@ -14,8 +14,15 @@ import pytest
 import ExposoGraph
 from ExposoGraph import engine as graph_engine
 from ExposoGraph import exposure_engine, flux_engine, interaction_engine
-from ExposoGraph.flux_engine import CarcinogenClass, PathwayFluxResult, compute_pathway_flux
-from ExposoGraph.interaction_engine import InteractionMatrixResult, compute_interaction_matrix
+from ExposoGraph.flux_engine import (
+    CarcinogenClass,
+    PathwayFluxResult,
+    compute_pathway_flux,
+)
+from ExposoGraph.interaction_engine import (
+    InteractionMatrixResult,
+    compute_interaction_matrix,
+)
 from ExposoGraph.reference_data import build_reference_engine, build_reference_graph
 from ExposoGraph.exporter import parse_graph_data_js, to_graph_data_js
 from ExposoGraph.models import NodeType
@@ -35,7 +42,6 @@ RUNTIME_JSON_FILES = (
     DATA_DIR / "parameter_provenance.json",
     DATA_DIR / "tissue_expression_data.json",
     DATA_DIR / "biomarker_mapping.json",
-    DATA_DIR / "mutational_signatures.json",
 )
 
 RUNTIME_SOURCE_FILES = (
@@ -51,7 +57,6 @@ RUNTIME_SOURCE_FILES = (
     PACKAGE_ROOT / "expanded_metals.py",
     PACKAGE_ROOT / "exporter.py",
     PACKAGE_ROOT / "biomarker_mapping.py",
-    PACKAGE_ROOT / "mutational_signatures.py",
 )
 
 
@@ -82,10 +87,18 @@ def test_module3_data_loads_from_packaged_paths() -> None:
         assert Path(path).is_file()
         _assert_under(Path(path), DATA_DIR)
 
-    assert json.loads(graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
-    assert json.loads(graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
-    assert json.loads(graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH.read_text(encoding="utf-8"))["classes"]
-    assert json.loads(graph_engine._DEFAULT_PROXY_FLUX_PROVENANCE_PATH.read_text(encoding="utf-8"))["classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH.read_text(encoding="utf-8")
+    )["carcinogen_classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8")
+    )["carcinogen_classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH.read_text(encoding="utf-8")
+    )["classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_PROXY_FLUX_PROVENANCE_PATH.read_text(encoding="utf-8")
+    )["classes"]
 
     result = compute_pathway_flux(
         CarcinogenClass.PAH,
@@ -153,7 +166,9 @@ def test_reference_graph_builds_without_remote_access(tmp_path: Path) -> None:
     # Edge counts diverge by exactly that many; all pre-existing edges
     # still match.
     graph_edge_pairs = {(edge.source, edge.target) for edge in graph.edges}
-    reference_edge_pairs = {(edge.source, edge.target) for edge in reference_graph.edges}
+    reference_edge_pairs = {
+        (edge.source, edge.target) for edge in reference_graph.edges
+    }
     assert graph_edge_pairs.issubset(reference_edge_pairs)
     assert len(reference_edge_pairs) - len(graph_edge_pairs) == 69
 
@@ -178,12 +193,20 @@ def test_no_absolute_protected_repo_paths() -> None:
     for path in RUNTIME_SOURCE_FILES:
         text = path.read_text(encoding="utf-8")
         for fragment in forbidden_fragments:
-            assert fragment not in text, f"Forbidden protected-path fragment in {path.name}"
+            assert (
+                fragment not in text
+            ), f"Forbidden protected-path fragment in {path.name}"
 
-    for path in (*RUNTIME_JSON_FILES, MAP_DIR / "graph-data.js", MAP_DIR / "index.html"):
+    for path in (
+        *RUNTIME_JSON_FILES,
+        MAP_DIR / "graph-data.js",
+        MAP_DIR / "index.html",
+    ):
         text = path.read_text(encoding="utf-8")
         for fragment in forbidden_fragments:
-            assert fragment not in text, f"Forbidden protected-path fragment in {path.name}"
+            assert (
+                fragment not in text
+            ), f"Forbidden protected-path fragment in {path.name}"
 
 
 def test_no_missing_json_runtime_dependency() -> None:
@@ -191,9 +214,15 @@ def test_no_missing_json_runtime_dependency() -> None:
     assert graph.nodes
     assert graph.edges
 
-    assert json.loads(graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
-    assert json.loads(graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8"))["carcinogen_classes"]
-    assert json.loads(graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH.read_text(encoding="utf-8"))["classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_FLUX_KINETIC_PARAMETERS_PATH.read_text(encoding="utf-8")
+    )["carcinogen_classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_EXPOSURE_DB_PATH.read_text(encoding="utf-8")
+    )["carcinogen_classes"]
+    assert json.loads(
+        graph_engine._DEFAULT_PROXY_FLUX_PARAMETERS_PATH.read_text(encoding="utf-8")
+    )["classes"]
     assert interaction_engine._load_interaction_params()
     assert interaction_engine.get_parameter_provenance()
 
