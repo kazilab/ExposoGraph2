@@ -193,7 +193,8 @@ def _add_sheet(wb: Workbook, title: str, rows: list[dict[str, Any]]) -> None:
     for column_cells in ws.columns:
         header = str(column_cells[0].value)
         max_len = max(
-            len(str(cell.value)) if cell.value is not None else 0 for cell in column_cells[:200]
+            len(str(cell.value)) if cell.value is not None else 0
+            for cell in column_cells[:200]
         )
         width = min(max(max_len + 2, len(header) + 2, 10), 58)
         ws.column_dimensions[column_cells[0].column_letter].width = width
@@ -210,7 +211,10 @@ def _add_metadata_sheet(wb: Workbook) -> None:
     rows = [
         ("Generated", date.today().isoformat()),
         ("API", "ExposoGraph.exposure_engine.compute_exposure_weighted_risk"),
-        ("Formula", "combined_score = genotype_flux_ratio x exposure_multiplier x tissue_factor"),
+        (
+            "Formula",
+            "combined_score = genotype_flux_ratio x exposure_multiplier x tissue_factor",
+        ),
         ("Exposure source", "ExposoGraph/data/exposure_database.json"),
         (
             "Risk thresholds",
