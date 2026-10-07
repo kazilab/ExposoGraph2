@@ -751,9 +751,14 @@ updateBundleSubtitle();
 const g = svg.append("g");
 
 // Zoom
+const ZOOM_KEY = "exposograph.map.zoom.v1";
 const zoom = d3.zoom()
   .scaleExtent([0.15, 5])
-  .on("zoom", (e) => g.attr("transform", e.transform));
+  .on("zoom", (e) => {
+    g.attr("transform", e.transform);
+    const { x, y, k } = e.transform;
+    try { sessionStorage.setItem(ZOOM_KEY, JSON.stringify([x, y, k])); } catch (err) {}
+  });
 svg.call(zoom);
 
 // Arrow markers
@@ -878,6 +883,33 @@ node.append("text")
 // starts, rather than waiting for a search/hover interaction to trigger it.
 resetGraphVisibility();
 
+// ── Layout persistence ───────────────────────────────────────────────
+// Every Streamlit widget change re-renders this document in a fresh iframe,
+// which would otherwise restart the force layout from scratch. Node positions
+// are kept in sessionStorage (keyed by node id) so a re-render restores the
+// previous layout instead of re-running it. Positions for nodes that are not
+// in the current subgraph are kept, so toggling them back restores them too.
+const LAYOUT_KEY = "exposograph.map.layout.v1";
+let tickCount = 0;
+
+function loadLayout() {
+  try { return JSON.parse(sessionStorage.getItem(LAYOUT_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+
+function saveLayout() {
+  const saved = loadLayout();
+  nodes.forEach(n => { saved[n.id] = [n.x, n.y]; });
+  try { sessionStorage.setItem(LAYOUT_KEY, JSON.stringify(saved)); } catch (e) {}
+}
+
+const savedLayout = loadLayout();
+const restoredIds = new Set();
+nodes.forEach(n => {
+  const p = savedLayout[n.id];
+  if (p) { n.x = p[0]; n.y = p[1]; restoredIds.add(n.id); }
+});
+
 // ── Simulation ───────────────────────────────────────────────────────
 const simulation = d3.forceSimulation(nodes)
   .force("link", d3.forceLink(edges).id(d => d.id).distance(d => {
@@ -895,9 +927,30 @@ const simulation = d3.forceSimulation(nodes)
   .force("x", d3.forceX(width / 2).strength(0.03))
   .force("y", d3.forceY(height / 2).strength(0.03))
   .alphaDecay(0.02)
-  .on("tick", ticked);
+  .on("tick", ticked)
+  .on("end", saveLayout);
+
+if (restoredIds.size > 0) {
+  // Re-render with a known layout: don't animate. Nodes new to this subgraph
+  // are settled off-screen against the restored nodes (held fixed), then the
+  // simulation stays stopped until the user drags a node.
+  simulation.stop();
+  const pending = nodes.filter(n => !restoredIds.has(n.id));
+  if (pending.length > 0) {
+    nodes.forEach(n => { if (restoredIds.has(n.id)) { n.fx = n.x; n.fy = n.y; } });
+    simulation.alpha(1);
+    for (let i = 0; i < 300; i++) simulation.tick();
+    nodes.forEach(n => { n.fx = null; n.fy = null; });
+    saveLayout();
+  }
+  nodes.forEach(n => { n.vx = 0; n.vy = 0; });
+  ticked();
+}
 
 function ticked() {
+  // Checkpoint the layout while it is still animating, so a widget change
+  // before the first layout finishes still has positions to restore.
+  if (++tickCount % 25 === 0) saveLayout();
   link
     .attr("x1", d => d.source.x)
     .attr("y1", d => d.source.y)
@@ -959,6 +1012,7 @@ function dragended(event, d) {
   if (!event.active) simulation.alphaTarget(0);
   d.fx = null;
   d.fy = null;
+  saveLayout();
 }
 
 // ── Tooltip ──────────────────────────────────────────────────────────
@@ -1210,10 +1264,13 @@ searchInput.addEventListener("input", function() {
   ro.observe(container);
 })();
 
+let lastLayoutSize = [width, height];
 function rebalanceForces() {
   const w = container.clientWidth;
   const h = container.clientHeight;
   if (!w || !h) return;
+  if (w === lastLayoutSize[0] && h === lastLayoutSize[1]) return;
+  lastLayoutSize = [w, h];
   simulation.force("center", d3.forceCenter(w / 2, h / 2));
   simulation.force("x", d3.forceX(w / 2).strength(0.03));
   simulation.force("y", d3.forceY(h / 2).strength(0.03));
@@ -1232,12 +1289,19 @@ document.getElementById("zoom-reset").addEventListener("click", () => {
 });
 
 // Initial fit
-setTimeout(() => {
-  svg.transition().duration(800).call(
-    zoom.transform,
-    d3.zoomIdentity.translate(width * 0.05, height * 0.05).scale(0.85)
-  );
-}, 2000);
+let savedZoom = null;
+try { savedZoom = JSON.parse(sessionStorage.getItem(ZOOM_KEY)); } catch (err) {}
+if (savedZoom) {
+  const [x, y, k] = savedZoom;
+  svg.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(k));
+} else {
+  setTimeout(() => {
+    svg.transition().duration(800).call(
+      zoom.transform,
+      d3.zoomIdentity.translate(width * 0.05, height * 0.05).scale(0.85)
+    );
+  }, 2000);
+}
 
 </script>
 </body>
