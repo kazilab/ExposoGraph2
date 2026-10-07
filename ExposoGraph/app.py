@@ -66,7 +66,7 @@ if "revision_note" not in st.session_state:
 
 # ── Sidebar ──────────────────────────────────────────────────────────────
 
-ui_sidebar.render(engine, repository)
+# ui_sidebar.render(engine, repository)
 
 # ── Main area tabs ───────────────────────────────────────────────────────
 

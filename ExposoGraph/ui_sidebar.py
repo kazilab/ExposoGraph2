@@ -52,22 +52,19 @@ def render(engine: GraphEngine, repository: GraphRepository | None) -> None:
         st.caption(APP_TAGLINE)
         st.caption(f"Version {APP_VERSION} · {DEVELOPED_BY}")
         st.caption(f"Contact: {CONTACT_EMAIL} · Copyright {COPYRIGHT_HOLDER}")
-        st.caption(
-            f"**{engine.node_count}** nodes · **{engine.edge_count}** edges"
-        )
-        active_visibility = st.selectbox(
-            "Graph visibility",
-            options=[visibility.value for visibility in GraphVisibility],
-            key="graph_visibility",
-            format_func=graph_visibility_label,
-            help="Controls Preview, Raw Data, and Export views without changing the stored graph.",
-        )
-        visible_engine = filtered_engine(engine, active_visibility)
-        if active_visibility != GraphVisibility.ALL.value:
-            st.caption(
-                f"Current view: **{visible_engine.node_count}** nodes · "
-                f"**{visible_engine.edge_count}** edges"
-            )
+        # active_visibility = st.selectbox(
+        #     "Graph visibility",
+        #     options=[visibility.value for visibility in GraphVisibility],
+        #     key="graph_visibility",
+        #     format_func=graph_visibility_label,
+        #     help="Controls Preview, Raw Data, and Export views without changing the stored graph.",
+        # )
+        visible_engine = filtered_engine(engine, "all")  # active_visibility)
+        # if active_visibility != GraphVisibility.ALL.value:
+        #     st.caption(
+        #         f"Current view: **{visible_engine.node_count}** nodes · "
+        #         f"**{visible_engine.edge_count}** edges"
+        #     )
         if APP_MODE == AppMode.STATELESS:
             st.info(
                 "Mode: stateless. User graphs are not saved on the server. "
@@ -104,7 +101,9 @@ def _render_import(engine: GraphEngine) -> None:
         value=engine.node_count == 0,
         help="When enabled, imported data clears the current graph first.",
     )
-    st.caption("Upload a saved JSON, HTML, or graph-data.js export. There is no canonical viewer file in the repo.")
+    st.caption(
+        "Upload a saved JSON, HTML, or graph-data.js export. There is no canonical viewer file in the repo."
+    )
     uploaded = st.file_uploader(
         "Upload graph",
         type=["json", "html", "js"],
@@ -141,7 +140,9 @@ def _render_revision_history(engine: GraphEngine, repository: GraphRepository) -
     st.divider()
 
     st.markdown("##### Revision History")
-    replace_import = st.session_state.get("Replace current graph on import", engine.node_count == 0)
+    replace_import = st.session_state.get(
+        "Replace current graph on import", engine.node_count == 0
+    )
     visibility = st.session_state.get("graph_visibility", GraphVisibility.ALL.value)
     visible_engine = filtered_engine(engine, visibility)
     st.caption(f"Save scope: {graph_visibility_label(visibility)}")
@@ -155,7 +156,8 @@ def _render_revision_history(engine: GraphEngine, repository: GraphRepository) -
                 try:
                     saved = repository.save_engine(
                         graph_key=slugify_project_name(st.session_state.project_name),
-                        graph_name=st.session_state.project_name.strip() or "knowledge_graph",
+                        graph_name=st.session_state.project_name.strip()
+                        or "knowledge_graph",
                         engine=engine,
                         visibility=visibility,
                         note=st.session_state.revision_note.strip() or None,
@@ -196,7 +198,9 @@ def _render_revision_history(engine: GraphEngine, repository: GraphRepository) -
                         revision.to_knowledge_graph(),
                         replace=replace_import,
                     )
-                    message = f"Loaded {revision.graph_name} r{revision.revision_number}"
+                    message = (
+                        f"Loaded {revision.graph_name} r{revision.revision_number}"
+                    )
                     if warnings:
                         message += f" with {len(warnings)} warning(s)"
                     st.success(message)
@@ -217,7 +221,9 @@ def _render_revision_history(engine: GraphEngine, repository: GraphRepository) -
             selected_revision_id = st.selectbox(
                 "Revision",
                 options=[revision.revision_id for revision in revisions],
-                format_func=lambda revision_id: revision_label(revision_id, revisions_by_id),
+                format_func=lambda revision_id: revision_label(
+                    revision_id, revisions_by_id
+                ),
             )
             selected_revision = repository.get_revision(selected_revision_id)
             if selected_revision is not None:
@@ -264,7 +270,10 @@ def _render_html_snapshots(engine: GraphEngine) -> None:
             if visible_engine.node_count == 0:
                 st.error("Current snapshot view is empty")
             else:
-                project_path = PROJECTS_DIR / f"{slugify_project_name(st.session_state.project_name)}.html"
+                project_path = (
+                    PROJECTS_DIR
+                    / f"{slugify_project_name(st.session_state.project_name)}.html"
+                )
                 to_interactive_html(
                     engine,
                     project_path,
@@ -278,7 +287,9 @@ def _render_html_snapshots(engine: GraphEngine) -> None:
             options=[""] + [path.name for path in saved_projects],
             label_visibility="collapsed",
         )
-        replace_import = st.session_state.get("Replace current graph on import", engine.node_count == 0)
+        replace_import = st.session_state.get(
+            "Replace current graph on import", engine.node_count == 0
+        )
         if st.button("Load HTML snapshot", use_container_width=True):
             if not selected_project:
                 st.error("Select a saved project first")
@@ -297,19 +308,27 @@ def _render_gene_panels(engine: GraphEngine) -> None:
     st.markdown("##### Reference Gene Panels")
     col_p1, col_p2, col_p3 = st.columns(3)
     with col_p1:
-        if st.button("Tier 1 (13)", use_container_width=True, help="Core CYP/GST/NAT/UGT enzymes"):
+        if st.button(
+            "Tier 1 (13)", use_container_width=True, help="Core CYP/GST/NAT/UGT enzymes"
+        ):
             kg = build_tier1_panel()
             engine.merge(kg)
             st.success(f"Loaded {len(kg.nodes)} Tier 1 genes")
             st.rerun()
     with col_p2:
-        if st.button("Tier 2 (23)", use_container_width=True, help="Extended hormone, transport, and DNA-repair panel"):
+        if st.button(
+            "Tier 2 (23)",
+            use_container_width=True,
+            help="Extended hormone, transport, and DNA-repair panel",
+        ):
             kg = build_tier2_panel()
             engine.merge(kg)
             st.success(f"Loaded {len(kg.nodes)} Tier 2 genes")
             st.rerun()
     with col_p3:
-        if st.button("All (36)", use_container_width=True, help="Full Tier 1 + Tier 2 panel"):
+        if st.button(
+            "All (36)", use_container_width=True, help="Full Tier 1 + Tier 2 panel"
+        ):
             kg = build_full_panel()
             engine.merge(kg)
             st.success(f"Loaded {len(kg.nodes)} genes")
@@ -320,7 +339,11 @@ def _render_activity_scores() -> None:
     st.markdown("##### Activity Score Lookup")
     activity_gene = st.selectbox("Gene", [""] + sorted(ACTIVITY_SCORES.keys()))
     if activity_gene:
-        st.dataframe(get_activity_scores(activity_gene), use_container_width=True, hide_index=True)
+        st.dataframe(
+            get_activity_scores(activity_gene),
+            use_container_width=True,
+            hide_index=True,
+        )
         activity_meta = get_activity_score_metadata(activity_gene) or {}
         if activity_meta:
             st.caption(

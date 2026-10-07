@@ -29,7 +29,9 @@ _MAP_TEMPLATE = _MAP_DIR / "index.html"
 # so they're never offered as a selectable node-type option, and
 # GraphEngine excludes them by default regardless.
 _SELECTABLE_NODE_TYPES = [
-    t.value for t in NodeType if t not in (NodeType.SUBSTRATE, NodeType.CARCINOGEN_GROUP)
+    t.value
+    for t in NodeType
+    if t not in (NodeType.SUBSTRATE, NodeType.CARCINOGEN_GROUP)
 ]
 
 _NO_TISSUE_OPTION = "(none — no tissue dimming)"
@@ -40,8 +42,7 @@ def render(engine: GraphEngine) -> None:
     st.markdown("#### Reference Map")
     st.caption(
         "Force-directed graph rendered from the loaded reference graph. "
-        "Filters below run against the knowledge graph in Python; `Substrate` "
-        "nodes are never shown."
+        "Filters below run against the knowledge graph in Python"
     )
 
     if not _MAP_TEMPLATE.exists():
@@ -66,13 +67,13 @@ def render(engine: GraphEngine) -> None:
         )
     with col_groups:
         selected_groups = st.multiselect(
-            "Carcinogen group(s)",
+            "Carcinogen categories",
             options=carcinogen_groups,
             default=[],
             help=(
                 "Restricts the map to nodes reachable via a directed path "
-                "from any carcinogen in the selected group(s). Leave empty "
-                "for no carcinogen-path restriction."
+                "from any carcinogen in the selected categories. Leave empty "
+                "for no such restriction."
             ),
             key="map_viewer_carcinogen_groups",
         )
@@ -94,7 +95,7 @@ def render(engine: GraphEngine) -> None:
             value=0.05,
             step=0.05,
             disabled=selected_tissue == _NO_TISSUE_OPTION,
-            help="Enzyme nodes (and their edges) below this weight are grayed out, not removed.",
+            help="Enzyme nodes (and their corresponding edges) below this weight are grayed out.",
             key="map_viewer_tissue_threshold",
         )
 
@@ -104,9 +105,13 @@ def render(engine: GraphEngine) -> None:
             carcinogen_groups=selected_groups or None,
         )
         if selected_tissue != _NO_TISSUE_OPTION:
-            subgraph = engine.dim_by_tissue_threshold(subgraph, selected_tissue, threshold)
+            subgraph = engine.dim_by_tissue_threshold(
+                subgraph, selected_tissue, threshold
+            )
 
         html = subgraph_to_html_string(subgraph, template_path=_MAP_TEMPLATE)
 
-    st.caption(f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown.")
+    st.caption(
+        f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."
+    )
     components.html(html, height=920, scrolling=True)

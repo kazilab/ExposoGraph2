@@ -7325,12 +7325,12 @@
     {
       "source": "LeadInorganicCompounds",
       "target": "GSH",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "SCHEMATIC_LINKAGE",
       "carcinogen": "LeadInorganicCompounds",
       "evidence": "Lead binds GSH",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "MECHANISM_UNCLEAR",
+      "canonical_predicate": "SCHEMATIC_LINKAGE",
       "provenance": [
         {
           "evidence": "Lead binds GSH"
@@ -9797,7 +9797,7 @@
     {
       "source": "Benzene_oxide",
       "target": "HQ",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "SCHEMATIC_LINKAGE",
       "label": "rearrangement/hydroxylation",
       "origin": "imported",
       "match_status": "unmatched",
@@ -10100,7 +10100,7 @@
     {
       "source": "Cd",
       "target": "Cd_MT",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "SCHEMATIC_LINKAGE",
       "carcinogen": "Cd",
       "evidence": "PMC8141308",
       "origin": "imported",
@@ -10878,7 +10878,7 @@
     {
       "source": "Chloral_hydrate",
       "target": "TCA",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "SCHEMATIC_LINKAGE",
       "carcinogen": "TCE",
       "evidence": "Oxidized to trichloroacetic acid; urinary biomarker",
       "origin": "imported",
@@ -12821,14 +12821,14 @@
     {
       "source": "EstrogenProgestogenTherapy",
       "target": "E2",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "SCHEMATIC_LINKAGE",
       "label": "Endogenous estrogen release",
       "carcinogen": "EstrogenProgestogenTherapy",
       "source_db": "IARC Monographs Vol. 100A",
       "evidence": "Exogenous estrogen-progestogen therapy elevates circulating 17β-estradiol, connecting the pharmaceutical exposure to the intracellular hormone pathway.",
       "origin": "imported",
       "match_status": "canonical",
-      "canonical_predicate": "MECHANISM_UNCLEAR",
+      "canonical_predicate": "SCHEMATIC_LINKAGE",
       "canonical_namespace": "schema",
       "provenance": [
         {
@@ -13423,7 +13423,7 @@
     {
       "source": "Naphthalene_1_2_oxide",
       "target": "Naphthoquinone",
-      "type": "MECHANISM_UNCLEAR",
+      "type": "SCHEMATIC_LINKAGE",
       "carcinogen": "Naphthalene",
       "evidence": "1,2-oxide metabolized to 1,2-naphthoquinone via dihydrodiol; PMC12997242",
       "origin": "imported",

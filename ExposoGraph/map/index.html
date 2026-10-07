@@ -500,9 +500,9 @@ body.is-resizing * { user-select: none !important; }
     resetGraphVisibility() below. -->
 
     <!-- Detail Panel -->
-    <div class="panel detail-panel" id="detail-panel">
+    <div class="panel detail-panel" id="detail-panel" style="display: flex; flex-direction: column;">
       <div class="panel-header">Node Details</div>
-      <div class="panel-body" id="detail-content"></div>
+      <div class="panel-body" id="detail-content" style="overflow-y: auto; overflow-x: hidden;"></div>
     </div>
   </aside>
 
@@ -573,7 +573,7 @@ const EDGE_COLORS = {
   INDUCES: "#4fa382",
   INHIBITS: "#a84a3c",
   TRANSFORMS_SPONTANEOUSLY: "#7d8ba1",
-  MECHANISM_UNCLEAR: "#a3a3a3",
+  SCHEMATIC_LINKAGE: "#a3a3a3",
   PATHWAY: "#555b6a"
 };
 
@@ -595,7 +595,7 @@ const EDGE_LABELS = {
   INDUCES: "Induces (upregulates enzyme/receptor)",
   INHIBITS: "Inhibits (downregulates enzyme/receptor)",
   TRANSFORMS_SPONTANEOUSLY: "Transforms spontaneously (non-enzymatic)",
-  MECHANISM_UNCLEAR: "Mechanism unclear (ambiguous pathway, dashed)",
+  SCHEMATIC_LINKAGE: "Mechanism consolidated/summarized (dashed)",
   PATHWAY: "Pathway membership"
 };
 
@@ -740,8 +740,7 @@ function updateBundleSubtitle() {
     n => n.group === "Heavy Metals" || ["As", "Cr_V", "Ni2+", "Cd", "Be"].includes(n.id),
   );
   const subtitleBits = [
-    `${nodes.length} nodes / ${edges.length} edges`,
-    heavyMetalDetected ? "heavy-metal overlay" : "base showcase payload",
+    `${nodes.length} nodes / ${edges.length} edges`
   ];
   headerSubtitle.textContent = `Bundled reference graph · ${subtitleBits.join(" · ")}`;
 }
@@ -782,7 +781,7 @@ const link = g.append("g")
   .attr("stroke", d => EDGE_COLORS[d.type] || "#555")
   .attr("stroke-width", d => d.type === "PATHWAY" ? 0.8 : 1.2)
   .attr("stroke-opacity", d => d.type === "PATHWAY" ? 0.25 : 0.45)
-  .attr("stroke-dasharray", d => d.type === "MECHANISM_UNCLEAR" ? "4,3" : null)
+  .attr("stroke-dasharray", d => d.type === "SCHEMATIC_LINKAGE" ? "4,3" : null)
   .attr("marker-end", d => d.type !== "PATHWAY" ? `url(#arrow-${d.type})` : null);
 
 // Nodes

@@ -7,9 +7,17 @@ import re
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 # ── Enums ────────────────────────────────────────────────────────────────
+
 
 class NodeType(str, Enum):
     CARCINOGEN = "Carcinogen"
@@ -48,7 +56,7 @@ class EdgeType(str, Enum):
     REPAIRED_BY = "REPAIRED_BY"
     AGONIZES = "AGONIZES"
     TRANSFORMS_SPONTANEOUSLY = "TRANSFORMS_SPONTANEOUSLY"
-    MECHANISM_UNCLEAR = "MECHANISM_UNCLEAR"
+    SCHEMATIC_LINKAGE = "SCHEMATIC_LINKAGE"
     # CarcinogenGroup -> Carcinogen membership (structural, hidden from the
     # Reference Map viewer like Substrate nodes)
     INCLUDES = "INCLUDES"
@@ -137,7 +145,9 @@ def _first_nonempty(values: list[str]) -> str | None:
     return None
 
 
-def _normalize_provenance_fields(owner: BaseModel, *, summary_only_fields: tuple[str, ...]) -> None:
+def _normalize_provenance_fields(
+    owner: BaseModel, *, summary_only_fields: tuple[str, ...]
+) -> None:
     provenance = list(getattr(owner, "provenance", []))
     if not provenance:
         legacy = ProvenanceRecord(
@@ -169,6 +179,7 @@ def _normalize_provenance_fields(owner: BaseModel, *, summary_only_fields: tuple
 
 
 # ── Node ─────────────────────────────────────────────────────────────────
+
 
 class Node(BaseModel):
     id: str
@@ -247,6 +258,7 @@ class Node(BaseModel):
 
 # ── Edge ─────────────────────────────────────────────────────────────────
 
+
 class Edge(BaseModel):
     source: str
     target: str
@@ -275,7 +287,9 @@ class Edge(BaseModel):
             MatchStatus.CANONICAL,
             MatchStatus.ALIAS,
         ):
-            raise ValueError("Edges with type CUSTOM cannot be canonical or alias-matched")
+            raise ValueError(
+                "Edges with type CUSTOM cannot be canonical or alias-matched"
+            )
         if self.match_status in (MatchStatus.CANONICAL, MatchStatus.ALIAS):
             self.canonical_predicate = self.canonical_predicate or self.type.value
         elif self.match_status == MatchStatus.CUSTOM and not self.custom_predicate:
@@ -284,6 +298,7 @@ class Edge(BaseModel):
 
 
 # ── Top-level graph container ────────────────────────────────────────────
+
 
 class KnowledgeGraph(BaseModel):
     nodes: list[Node] = Field(default_factory=list)
@@ -299,7 +314,9 @@ class KnowledgeGraph(BaseModel):
             if edge.target not in node_ids:
                 bad.append(f"Edge references missing target node: {edge.target!r}")
             if edge.carcinogen and edge.carcinogen not in node_ids:
-                bad.append(f"Edge references missing carcinogen node: {edge.carcinogen!r}")
+                bad.append(
+                    f"Edge references missing carcinogen node: {edge.carcinogen!r}"
+                )
         if bad:
             raise ValueError(
                 f"Referential integrity errors ({len(bad)}):\n  " + "\n  ".join(bad)
