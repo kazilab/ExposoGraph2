@@ -12,7 +12,11 @@
     }
   },
   "classes": {
-    "AromaticAmines": {
+    "group_aromatic_amines": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_aromatic_amines",
+      "member_carcinogen_ids": ["4ABP", "Benzidine"],
+      "index_carcinogen_id": "4ABP",
       "model_kind": "semi_quantitative_proxy",
       "graph_group": "Aromatic Amines",
       "exposure_default": {
@@ -107,7 +111,10 @@
         }
       }
     },
-    "EstrogenMetabolites": {
+    "group_estrogen": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_estrogen",
+      "member_carcinogen_ids": ["EstrogenProgestogenTherapy"],
       "model_kind": "semi_quantitative_proxy",
       "graph_group": "Estrogen",
       "exposure_default": {
@@ -216,6 +223,11 @@
       }
     },
     "NDEA": {
+      "class_kind": "single_carcinogen",
+      "carcinogen_id": "NDEA",
+      "carcinogen_group_id": "group_nitrosamines",
+      "member_carcinogen_ids": ["NDEA"],
+      "index_carcinogen_id": "NDEA",
       "model_kind": "semi_quantitative_proxy",
       "graph_group": "Nitrosamines",
       "exposure_default": {
@@ -289,6 +301,11 @@
       }
     },
     "VinylChloride": {
+      "class_kind": "single_carcinogen",
+      "carcinogen_id": "VinylChloride",
+      "carcinogen_group_id": "group_vinyl_chloride",
+      "member_carcinogen_ids": ["VinylChloride"],
+      "index_carcinogen_id": "VinylChloride",
       "model_kind": "semi_quantitative_proxy",
       "graph_group": "Vinyl Chloride",
       "exposure_default": {
@@ -368,7 +385,11 @@
         }
       }
     },
-    "UV_Radiation": {
+    "group_uv_radiation": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_uv_radiation",
+      "member_carcinogen_ids": ["UVRadiation"],
+      "index_carcinogen_id": "UVRadiation",
       "model_kind": "damage_repair_proxy",
       "graph_group": "UV Radiation",
       "exposure_default": {
@@ -453,7 +474,11 @@
         }
       }
     },
-    "ChlorinatedSolvent": {
+    "group_chlorinated_solvents": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_chlorinated_solvents",
+      "member_carcinogen_ids": ["PCE", "TCE"],
+      "index_carcinogen_id": "TCE",
       "model_kind": "semi_quantitative_proxy",
       "graph_group": "Chlorinated Solvents",
       "exposure_default": {
@@ -501,7 +526,10 @@
         }
       }
     },
-    "Dioxin": {
+    "group_dioxins": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_dioxins",
+      "member_carcinogen_ids": ["PeCDF_23478", "TCDD"],
       "model_kind": "receptor_mediated_proxy",
       "graph_group": "Dioxins",
       "exposure_default": {
@@ -558,7 +586,11 @@
         }
       }
     },
-    "HeavyMetal": {
+    "group_heavy_metals": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_heavy_metals",
+      "member_carcinogen_ids": ["AntimonyTrivalent", "ArsenicInorganic", "Be", "Cd", "CobaltMetal", "CobaltOxide", "CrVI", "LeadInorganicCompounds", "LeadMetallic", "LeadOrganicCompounds", "MercuryInorganicCompounds", "MethylmercuryCompounds", "NickelCompounds", "NickelMetallic"],
+      "index_carcinogen_id": "ArsenicInorganic",
       "model_kind": "semi_quantitative_proxy",
       "graph_group": "Heavy Metals",
       "exposure_default": {
