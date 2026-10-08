@@ -6951,7 +6951,7 @@
             "detoxification": {
               "carbonyl_reduction": {
                 "rate_law": "michaelis_menten",
-                "substrate_node_id": "NNK",
+                "source_node_id": "NNK",
                 "dormant": true,
                 "reaction": "NNK → NNAL (reduction, detoxification product)",
                 "Km_uM": null,
