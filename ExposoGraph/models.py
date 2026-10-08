@@ -187,6 +187,9 @@ class Node(BaseModel):
     type: NodeType
     detail: str = ""
     group: Optional[str] = None
+    # Carcinogen-node field: ID of the CarcinogenGroup node that INCLUDES this
+    # carcinogen. ID-typed counterpart of the display-label ``group`` field.
+    carcinogen_group_id: Optional[str] = None
     iarc: Optional[str] = None
     phase: Optional[str] = None
     role: Optional[str] = None
@@ -303,6 +306,8 @@ class Edge(BaseModel):
 class KnowledgeGraph(BaseModel):
     nodes: list[Node] = Field(default_factory=list)
     edges: list[Edge] = Field(default_factory=list)
+    # Canonical tissue keys (the 10 GTEx tissues) mapped to display labels.
+    tissue_vocabulary: Optional[dict[str, str]] = None
 
     @model_validator(mode="after")
     def _check_edge_references(self) -> "KnowledgeGraph":
