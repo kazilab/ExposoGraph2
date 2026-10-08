@@ -27,8 +27,8 @@
       "unit_note": "Semi-quantitative 4-ABP proxy integrating CYP1A2/NAT1 activation with NAT2, GST, and NER attenuation.",
       "activation_terms": {
         "CYP1A2": {
-          "substrate_node_id": "4ABP",
-          "enzyme_node_id": "CYP1A2",
+          "source_node_id": "4ABP",
+          "target_node_id": "CYP1A2",
           "gene": "CYP1A2",
           "equation": "michaelis_menten",
           "vmax": 60.0,
@@ -38,8 +38,8 @@
           "provenance_ref": "classes.AromaticAmines.activation_terms.CYP1A2"
         },
         "NAT1": {
-          "substrate_node_id": "4ABP",
-          "enzyme_node_id": "NAT1",
+          "source_node_id": "4ABP",
+          "target_node_id": "NAT1",
           "gene": "NAT1",
           "equation": "michaelis_menten",
           "vmax": 10.0,
@@ -52,8 +52,8 @@
       },
       "detox_terms": {
         "NAT2": {
-          "substrate_node_id": "4ABP",
-          "enzyme_node_id": "NAT2",
+          "source_node_id": "4ABP",
+          "target_node_id": "NAT2",
           "gene": "NAT2",
           "equation": "michaelis_menten",
           "vmax": 18.0,
@@ -64,8 +64,8 @@
           "provenance_ref": "classes.AromaticAmines.detox_terms.NAT2"
         },
         "GSTM1": {
-          "substrate_node_id": "NOH_4ABP",
-          "enzyme_node_id": "GSTM1",
+          "source_node_id": "NOH_4ABP",
+          "target_node_id": "GSTM1",
           "gene": "GSTM1",
           "equation": "michaelis_menten",
           "vmax": 9.0,
@@ -87,8 +87,8 @@
       },
       "repair_terms": {
         "XPC": {
-          "substrate_node_id": "Benzidine_dG",
-          "enzyme_node_id": "XPC",
+          "source_node_id": "Benzidine_dG",
+          "target_node_id": "XPC",
           "rate_law": "repair",
           "gene": "XPC",
           "scale": 0.35,
@@ -98,8 +98,8 @@
           "provenance_ref": "classes.AromaticAmines.repair_terms.XPC"
         },
         "ERCC2": {
-          "substrate_node_id": "Benzidine_dG",
-          "enzyme_node_id": "ERCC2",
+          "source_node_id": "Benzidine_dG",
+          "target_node_id": "ERCC2",
           "rate_law": "repair",
           "gene": "ERCC2",
           "scale": 0.2,
@@ -125,8 +125,8 @@
       "unit_note": "Semi-quantitative estrogen-quinone burden proxy using CYP1B1-centered activation and COMT/SULT1E1/UGT detoxification.",
       "activation_terms": {
         "CYP1B1": {
-          "substrate_node_id": "E2",
-          "enzyme_node_id": "CYP1B1",
+          "source_node_id": "E2",
+          "target_node_id": "CYP1B1",
           "gene": "CYP1B1",
           "equation": "michaelis_menten",
           "vmax": 18.0,
@@ -136,8 +136,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1B1"
         },
         "CYP1A1": {
-          "substrate_node_id": "E2",
-          "enzyme_node_id": "CYP1A1",
+          "source_node_id": "E2",
+          "target_node_id": "CYP1A1",
           "gene": "CYP1A1",
           "equation": "michaelis_menten",
           "vmax": 8.0,
@@ -147,8 +147,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1A1"
         },
         "CYP1A2": {
-          "substrate_node_id": "E2",
-          "enzyme_node_id": "CYP1A2",
+          "source_node_id": "E2",
+          "target_node_id": "CYP1A2",
           "gene": "CYP1A2",
           "equation": "michaelis_menten",
           "vmax": 4.0,
@@ -160,8 +160,8 @@
       },
       "detox_terms": {
         "COMT": {
-          "substrate_node_id": "estradiol_2_OH",
-          "enzyme_node_id": "COMT",
+          "source_node_id": "estradiol_2_OH",
+          "target_node_id": "COMT",
           "gene": "COMT",
           "equation": "michaelis_menten",
           "vmax": 16.0,
@@ -172,8 +172,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.detox_terms.COMT"
         },
         "SULT1E1": {
-          "substrate_node_id": "E2",
-          "enzyme_node_id": "SULT1E1",
+          "source_node_id": "E2",
+          "target_node_id": "SULT1E1",
           "gene": "SULT1E1",
           "equation": "michaelis_menten",
           "vmax": 12.0,
@@ -184,8 +184,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.detox_terms.SULT1E1"
         },
         "UGT2B7": {
-          "substrate_node_id": "estradiol_2_OH",
-          "enzyme_node_id": "UGT2B7",
+          "source_node_id": "estradiol_2_OH",
+          "target_node_id": "UGT2B7",
           "gene": "UGT2B7",
           "equation": "michaelis_menten",
           "vmax": 10.0,
@@ -196,8 +196,8 @@
           "provenance_ref": "classes.EstrogenMetabolites.detox_terms.UGT2B7"
         },
         "GSTP1": {
-          "substrate_node_id": "E2_quinone",
-          "enzyme_node_id": "GSTP1",
+          "source_node_id": "E2_quinone",
+          "target_node_id": "GSTP1",
           "gene": "GSTP1",
           "equation": "michaelis_menten",
           "vmax": 6.0,
@@ -209,8 +209,8 @@
       },
       "repair_terms": {
         "XRCC1": {
-          "substrate_node_id": "8_OHdG",
-          "enzyme_node_id": "XRCC1",
+          "source_node_id": "8_OHdG",
+          "target_node_id": "XRCC1",
           "rate_law": "repair",
           "gene": "XRCC1",
           "scale": 0.25,
@@ -237,8 +237,8 @@
       "unit_note": "Semi-quantitative NDEA-specific dietary nitroso proxy anchored to local CYP2A13 interaction parameters.",
       "activation_terms": {
         "CYP2A13": {
-          "substrate_node_id": "NDEA",
-          "enzyme_node_id": "CYP2A13",
+          "source_node_id": "NDEA",
+          "target_node_id": "CYP2A13",
           "gene": "CYP2A13",
           "equation": "michaelis_menten",
           "vmax": 120.0,
@@ -250,8 +250,8 @@
           "provenance_ref": "classes.NDEA.activation_terms.CYP2A13"
         },
         "CYP2E1": {
-          "substrate_node_id": "NDEA",
-          "enzyme_node_id": "CYP2E1",
+          "source_node_id": "NDEA",
+          "target_node_id": "CYP2E1",
           "gene": "CYP2E1",
           "equation": "michaelis_menten",
           "vmax": 36.0,
@@ -261,8 +261,8 @@
           "provenance_ref": "classes.NDEA.activation_terms.CYP2E1"
         },
         "CYP2A6": {
-          "substrate_node_id": "NDEA",
-          "enzyme_node_id": "CYP2A6",
+          "source_node_id": "NDEA",
+          "target_node_id": "CYP2A6",
           "gene": "CYP2A6",
           "equation": "michaelis_menten",
           "vmax": 12.0,
@@ -275,8 +275,8 @@
       },
       "repair_terms": {
         "MGMT": {
-          "substrate_node_id": "O6_ethyl_dG",
-          "enzyme_node_id": "MGMT",
+          "source_node_id": "O6_ethyl_dG",
+          "target_node_id": "MGMT",
           "rate_law": "repair",
           "gene": "MGMT",
           "scale": 0.45,
@@ -314,8 +314,8 @@
       "unit_note": "Semi-quantitative vinyl-chloride proxy integrating CYP2E1 activation with GST/epoxide-hydrolase and repair attenuation.",
       "activation_terms": {
         "CYP2E1": {
-          "substrate_node_id": "VinylChloride",
-          "enzyme_node_id": "CYP2E1",
+          "source_node_id": "VinylChloride",
+          "target_node_id": "CYP2E1",
           "gene": "CYP2E1",
           "equation": "michaelis_menten",
           "vmax": 90.0,
@@ -328,8 +328,8 @@
       },
       "detox_terms": {
         "GSTT1": {
-          "substrate_node_id": "Chloroethylene_oxide",
-          "enzyme_node_id": "GSTT1",
+          "source_node_id": "Chloroethylene_oxide",
+          "target_node_id": "GSTT1",
           "gene": "GSTT1",
           "equation": "michaelis_menten",
           "vmax": 14.0,
@@ -399,7 +399,6 @@
         "UVB_photoproduct_burden": {
           "source_node_id": "UVRadiation",
           "target_node_id": "CPD",
-          "graph_node_id": null,
           "equation": "hill",
           "vmax": 14.0,
           "k50": 1.0,
@@ -412,7 +411,6 @@
         "UVA_oxidative_tail": {
           "source_node_id": "UVRadiation",
           "target_node_id": "8_OHdG",
-          "graph_node_id": null,
           "equation": "hill",
           "vmax": 5.0,
           "k50": 1.5,
@@ -425,8 +423,8 @@
       },
       "repair_terms": {
         "XPC": {
-          "substrate_node_id": "CPD",
-          "enzyme_node_id": "XPC",
+          "source_node_id": "CPD",
+          "target_node_id": "XPC",
           "rate_law": "repair",
           "gene": "XPC",
           "scale": 0.35,
@@ -436,8 +434,8 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.XPC"
         },
         "ERCC2": {
-          "substrate_node_id": "CPD",
-          "enzyme_node_id": "ERCC2",
+          "source_node_id": "CPD",
+          "target_node_id": "ERCC2",
           "rate_law": "repair",
           "gene": "ERCC2",
           "scale": 0.25,
@@ -447,8 +445,8 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.ERCC2"
         },
         "OGG1": {
-          "substrate_node_id": "8_OHdG",
-          "enzyme_node_id": "OGG1",
+          "source_node_id": "8_OHdG",
+          "target_node_id": "OGG1",
           "rate_law": "repair",
           "gene": "OGG1",
           "scale": 0.15,
@@ -458,8 +456,8 @@
           "provenance_ref": "classes.UV_Radiation.repair_terms.OGG1"
         },
         "POLH": {
-          "substrate_node_id": "CPD",
-          "enzyme_node_id": "POLH",
+          "source_node_id": "CPD",
+          "target_node_id": "POLH",
           "rate_law": "repair",
           "gene": "POLH",
           "scale": 0.1,
@@ -483,8 +481,8 @@
       "unit_note": "Semi-quantitative TCE-centered proxy built from qualitative oxidation and GSTT1 conjugation data.",
       "activation_terms": {
         "CYP2E1": {
-          "substrate_node_id": "TCE",
-          "enzyme_node_id": "CYP2E1",
+          "source_node_id": "TCE",
+          "target_node_id": "CYP2E1",
           "gene": "CYP2E1",
           "equation": "michaelis_menten",
           "vmax": 80.0,
@@ -495,8 +493,8 @@
           "provenance_ref": "classes.ChlorinatedSolvent.activation_terms.CYP2E1"
         },
         "GSTT1": {
-          "substrate_node_id": "TCE",
-          "enzyme_node_id": "GSTT1",
+          "source_node_id": "TCE",
+          "target_node_id": "GSTT1",
           "gene": "GSTT1",
           "equation": "michaelis_menten",
           "vmax": 18.0,
@@ -511,7 +509,6 @@
       "detox_terms": {
         "non_genotoxic_clearance_proxy": {
           "rate_law": "derived_scale",
-          "graph_node_id": null,
           "scale_of": "CYP2E1",
           "scale": 0.6,
           "tissue_weight_floor": 0.2,
@@ -573,7 +570,6 @@
           "source_node_id": "AHRR",
           "target_node_id": "AHR",
           "rate_law": "receptor",
-          "graph_node_id": null,
           "scale_of_signal": 8.0,
           "confidence": "estimated",
           "note": "Estimated negative-feedback burden opposing sustained AhR activation.",
@@ -594,7 +590,6 @@
       "unit_note": "Semi-quantitative proxy balancing ROS-generation burden against AS3MT-mediated arsenic methylation.",
       "activation_terms": {
         "general_ROS": {
-          "graph_node_id": null,
           "equation": "saturating",
           "scale": 5.0,
           "km": 1.0,
@@ -604,7 +599,6 @@
           "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
         },
         "cadmium_stress_proxy": {
-          "graph_node_id": null,
           "equation": "saturating",
           "scale": 2.0,
           "km": 0.5,
@@ -616,8 +610,8 @@
       },
       "detox_terms": {
         "AS3MT": {
-          "substrate_node_id": "ArsenicInorganic",
-          "enzyme_node_id": "AS3MT",
+          "source_node_id": "ArsenicInorganic",
+          "target_node_id": "AS3MT",
           "gene": "AS3MT",
           "equation": "michaelis_menten",
           "vmax": 200.0,

@@ -135,8 +135,8 @@
       "pathways": {
         "activation": {
           "CYP1A1": {
-            "substrate_node_id": "BaP",
-            "enzyme_node_id": "CYP1A1",
+            "source_node_id": "BaP",
+            "target_node_id": "CYP1A1",
             "rate_law": "michaelis_menten",
             "reaction": "BaP → BaP-7,8-oxide",
             "Km_uM": 0.054,
@@ -148,8 +148,8 @@
             "tissue_expression": ["lung", "liver", "lymphocyte", "placenta"]
           },
           "CYP1B1": {
-            "substrate_node_id": "BaP",
-            "enzyme_node_id": "CYP1B1",
+            "source_node_id": "BaP",
+            "target_node_id": "CYP1B1",
             "rate_law": "michaelis_menten",
             "reaction": "BaP → BaP-7,8-oxide",
             "Km_uM": 0.35,
@@ -161,8 +161,8 @@
             "tissue_expression": ["lung", "prostate", "breast", "colon"]
           },
           "EPHX1": {
-            "substrate_node_id": "BaP_epoxide",
-            "enzyme_node_id": "EPHX1",
+            "source_node_id": "BaP_epoxide",
+            "target_node_id": "EPHX1",
             "rate_law": "clint_ceiling",
             "reaction": "BaP-7,8-oxide → BaP-7,8-diol",
             "Km_uM": 5.0,
@@ -176,8 +176,8 @@
         },
         "detoxification": {
           "GSTM1": {
-            "substrate_node_id": "BPDE",
-            "enzyme_node_id": "GSTM1",
+            "source_node_id": "BPDE",
+            "target_node_id": "GSTM1",
             "rate_law": "clint_normalized",
             "reaction": "BPDE → BPDE-GSH conjugate",
             "Km_uM": 50.0,
@@ -190,8 +190,8 @@
             "tissue_expression": ["liver", "lung", "colon", "kidney"]
           },
           "GSTP1": {
-            "substrate_node_id": "BPDE",
-            "enzyme_node_id": "GSTP1",
+            "source_node_id": "BPDE",
+            "target_node_id": "GSTP1",
             "rate_law": "clint_normalized",
             "reaction": "BPDE → BPDE-GSH conjugate",
             "Km_uM": 25.0,
@@ -228,8 +228,8 @@
       "pathways": {
         "activation": {
           "CYP3A4": {
-            "substrate_node_id": "AFB1",
-            "enzyme_node_id": "CYP3A4",
+            "source_node_id": "AFB1",
+            "target_node_id": "CYP3A4",
             "rate_law": "hill",
             "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
             "fraction_contribution": 0.45,
@@ -244,8 +244,8 @@
             "tissue_expression": ["liver", "intestine", "lung"]
           },
           "CYP1A2": {
-            "substrate_node_id": "AFB1",
-            "enzyme_node_id": "CYP1A2",
+            "source_node_id": "AFB1",
+            "target_node_id": "CYP1A2",
             "rate_law": "michaelis_menten",
             "reaction": "AFB1 → AFB1-8,9-epoxide (AFBO)",
             "fraction_contribution": 0.49,
@@ -261,11 +261,10 @@
         },
         "detoxification": {
           "CYP3A4_AFQ1": {
-            "substrate_node_id": "AFB1",
-            "enzyme_node_id": "CYP3A4",
+            "source_node_id": "AFB1",
+            "target_node_id": "CYP3A4",
             "rate_law": "hill",
             "hill_n": 2.0,
-            "graph_node_id": "CYP3A4",
             "reaction": "AFB1 → AFQ1 (hydroxylation, non-reactive detox product)",
             "Km_uM": 160.0,
             "Vmax_pmol_min_pmolP450": 67.0,
@@ -276,8 +275,8 @@
             "tissue_expression": ["liver"]
           },
           "GSTA1": {
-            "substrate_node_id": "AFB1_epoxide",
-            "enzyme_node_id": "GSTA1",
+            "source_node_id": "AFB1_epoxide",
+            "target_node_id": "GSTA1",
             "rate_law": "michaelis_menten",
             "tissue_weight_gene": "GSTM1",
             "reaction": "AFBO → AFBO-GSH conjugate",
@@ -316,10 +315,9 @@
       "pathways": {
         "ethanol_oxidation": {
           "ADH1B_star1": {
-            "substrate_node_id": "Ethanol",
-            "enzyme_node_id": "ADH1B",
+            "source_node_id": "Ethanol",
+            "target_node_id": "ADH1B",
             "rate_law": "michaelis_menten",
-            "graph_node_id": "ADH1B",
             "diplotype": "*1/*1",
             "reaction": "Ethanol → Acetaldehyde",
             "Km_uM": 16.0,
@@ -331,10 +329,9 @@
             "tissue_expression": ["liver", "stomach", "intestine"]
           },
           "ADH1B_star2": {
-            "substrate_node_id": "Ethanol",
-            "enzyme_node_id": "ADH1B",
+            "source_node_id": "Ethanol",
+            "target_node_id": "ADH1B",
             "rate_law": "michaelis_menten",
-            "graph_node_id": "ADH1B",
             "diplotype": "*2/*2",
             "reaction": "Ethanol → Acetaldehyde",
             "Km_uM": 1900.0,
@@ -348,10 +345,9 @@
         },
         "acetaldehyde_clearance": {
           "ALDH2_star1": {
-            "substrate_node_id": "Acetaldehyde_int",
-            "enzyme_node_id": "ALDH2",
+            "source_node_id": "Acetaldehyde_int",
+            "target_node_id": "ALDH2",
             "rate_law": "michaelis_menten",
-            "graph_node_id": "ALDH2",
             "diplotype": "*1/*1",
             "reaction": "Acetaldehyde → Acetate",
             "Km_uM": 0.20,
@@ -363,10 +359,9 @@
             "tissue_expression": ["liver", "heart", "muscle"]
           },
           "ALDH2_star2_homozygous": {
-            "substrate_node_id": "Acetaldehyde_int",
-            "enzyme_node_id": "ALDH2",
+            "source_node_id": "Acetaldehyde_int",
+            "target_node_id": "ALDH2",
             "rate_law": "michaelis_menten",
-            "graph_node_id": "ALDH2",
             "diplotype": "*2/*2",
             "reaction": "Acetaldehyde → Acetate",
             "Km_uM": 4.6,
@@ -379,9 +374,8 @@
             "tissue_expression": ["liver", "heart", "muscle"]
           },
           "ALDH2_star1_star2": {
-            "substrate_node_id": "Acetaldehyde_int",
-            "enzyme_node_id": "ALDH2",
-            "graph_node_id": "ALDH2",
+            "source_node_id": "Acetaldehyde_int",
+            "target_node_id": "ALDH2",
             "diplotype": "*1/*2",
             "reaction": "Acetaldehyde → Acetate",
             "activity_fraction": 0.25,
@@ -392,8 +386,8 @@
             "tissue_expression": ["liver", "heart", "muscle"]
           },
           "ALDH1A1": {
-            "substrate_node_id": "Acetaldehyde_int",
-            "enzyme_node_id": "ALDH1A1",
+            "source_node_id": "Acetaldehyde_int",
+            "target_node_id": "ALDH1A1",
             "rate_law": "michaelis_menten",
             "reaction": "Acetaldehyde → Acetate (backup pathway)",
             "Km_uM": 33.0,
@@ -407,8 +401,8 @@
         },
         "formaldehyde_oxidation": {
           "ADH5": {
-            "substrate_node_id": "Formaldehyde",
-            "enzyme_node_id": "ADH5",
+            "source_node_id": "Formaldehyde",
+            "target_node_id": "ADH5",
             "rate_law": "michaelis_menten",
             "reaction": "Formaldehyde → Formate",
             "Km_uM": 300.0,
@@ -453,8 +447,8 @@
       "pathways": {
         "activation": {
           "CYP2A13": {
-            "substrate_node_id": "NNK",
-            "enzyme_node_id": "CYP2A13",
+            "source_node_id": "NNK",
+            "target_node_id": "CYP2A13",
             "rate_law": "michaelis_menten",
             "reaction": "NNK → 4-hydroxy-NNK (α-hydroxylation, major activation)",
             "Km_uM": 3.6,
@@ -465,8 +459,8 @@
             "tissue_expression": ["lung", "nasal mucosa"]
           },
           "CYP2A13_methyl": {
-            "substrate_node_id": "NNK",
-            "enzyme_node_id": "CYP2A13",
+            "source_node_id": "NNK",
+            "target_node_id": "CYP2A13",
             "rate_law": "michaelis_menten",
             "dormant": true,
             "reaction": "NNK → methyl-hydroxy-NNK",
@@ -479,8 +473,8 @@
             "tissue_expression": ["lung", "nasal mucosa"]
           },
           "CYP2A6": {
-            "substrate_node_id": "NNK",
-            "enzyme_node_id": "CYP2A6",
+            "source_node_id": "NNK",
+            "target_node_id": "CYP2A6",
             "reaction": "NNK → α-hydroxy-NNK (much lower efficiency than CYP2A13)",
             "Km_uM": null,
             "Vmax_pmol_min_pmolP450": null,
@@ -493,7 +487,7 @@
         },
         "detoxification": {
           "carbonyl_reduction": {
-            "substrate_node_id": "NNK",
+            "source_node_id": "NNK",
             "dormant": true,
             "reaction": "NNK → NNAL (reduction, detoxification product)",
             "Km_uM": null,
@@ -526,8 +520,8 @@
       "pathways": {
         "activation": {
           "CYP2E1": {
-            "substrate_node_id": "NDMA",
-            "enzyme_node_id": "CYP2E1",
+            "source_node_id": "NDMA",
+            "target_node_id": "CYP2E1",
             "rate_law": "michaelis_menten",
             "reaction": "NDMA → hydroxymethylnitrosamine (α-demethylation)",
             "Km_uM_range": [7.5, 22.0],
@@ -540,11 +534,10 @@
             "tissue_expression": ["liver", "lung", "esophagus", "kidney"]
           },
           "CYP2E1_with_b5": {
-            "substrate_node_id": "NDMA",
-            "enzyme_node_id": "CYP2E1",
+            "source_node_id": "NDMA",
+            "target_node_id": "CYP2E1",
             "rate_law": "michaelis_menten",
             "dormant": true,
-            "graph_node_id": "CYP2E1",
             "reaction": "NDMA → hydroxymethylnitrosamine (with cytochrome b5)",
             "Km_uM": 22.0,
             "Vmax_pmol_min_mg": 173.0,
@@ -556,8 +549,8 @@
         "detoxification": {
           "note": "No major enzymatic detoxification pathway identified for NDMA; clearance is primarily through activation and conjugation of formaldehyde downstream",
           "ADH5_formaldehyde": {
-            "substrate_node_id": "Formaldehyde",
-            "enzyme_node_id": "ADH5",
+            "source_node_id": "Formaldehyde",
+            "target_node_id": "ADH5",
             "dormant": true,
             "reaction": "Formaldehyde (downstream) → Formate",
             "CLint_relative": "low",
@@ -587,8 +580,8 @@
       "pathways": {
         "activation": {
           "CYP1A2": {
-            "substrate_node_id": "PhIP",
-            "enzyme_node_id": "CYP1A2",
+            "source_node_id": "PhIP",
+            "target_node_id": "CYP1A2",
             "rate_law": "michaelis_menten",
             "reaction": "PhIP → N-OH-PhIP (N-hydroxylation)",
             "Km_uM": 79.0,
@@ -600,8 +593,8 @@
             "tissue_expression": ["liver"]
           },
           "CYP1A1": {
-            "substrate_node_id": "PhIP",
-            "enzyme_node_id": "CYP1A1",
+            "source_node_id": "PhIP",
+            "target_node_id": "CYP1A1",
             "rate_law": "michaelis_menten",
             "reaction": "PhIP → N-OH-PhIP (N-hydroxylation)",
             "Km_uM": 5.1,
@@ -613,8 +606,8 @@
             "tissue_expression": ["lung", "lymphocyte", "colon", "mammary"]
           },
           "CYP1B1": {
-            "substrate_node_id": "PhIP",
-            "enzyme_node_id": "CYP1B1",
+            "source_node_id": "PhIP",
+            "target_node_id": "CYP1B1",
             "rate_law": "michaelis_menten",
             "reaction": "PhIP → N-OH-PhIP + 4-OH-PhIP",
             "Km_uM": 4.5,
@@ -626,8 +619,8 @@
             "tissue_expression": ["prostate", "breast", "colon", "lung"]
           },
           "NAT2": {
-            "substrate_node_id": "NOH_PhIP",
-            "enzyme_node_id": "NAT2",
+            "source_node_id": "NOH_PhIP",
+            "target_node_id": "NAT2",
             "dormant": true,
             "reaction": "N-OH-PhIP → N-acetoxy-PhIP (N,O-acetylation; further activation)",
             "CLint_relative": "moderate",
@@ -639,8 +632,8 @@
         },
         "detoxification": {
           "SULT1A1": {
-            "substrate_node_id": "NOH_PhIP",
-            "enzyme_node_id": "SULT1A1",
+            "source_node_id": "NOH_PhIP",
+            "target_node_id": "SULT1A1",
             "dormant": true,
             "reaction": "N-OH-PhIP → N-sulfonyloxy-PhIP (further activation) OR competing detox sulfation",
             "CLint_relative": "moderate",
@@ -679,12 +672,11 @@
       "pathways": {
         "activation": {
           "CYP2E1_liver": {
-            "substrate_node_id": "Benzene",
-            "enzyme_node_id": "CYP2E1",
+            "source_node_id": "Benzene",
+            "target_node_id": "CYP2E1",
             "Vmax_pmol_min_mg_estimated": 100.0,
             "confidence": "moderate",
             "rate_law": "michaelis_menten",
-            "graph_node_id": "CYP2E1",
             "reaction": "Benzene → Benzene oxide → Phenol (hepatic)",
             "Km_uM": 75.0,
             "Km_uM_range": [50, 100],
@@ -695,8 +687,8 @@
             "tissue_expression": ["liver"]
           },
           "CYP2F2_lung": {
-            "substrate_node_id": "Benzene",
-            "enzyme_node_id": "CYP2F1",
+            "source_node_id": "Benzene",
+            "target_node_id": "CYP2F1",
             "dormant": true,
             "reaction": "Benzene → Phenol (pulmonary, lung-specific)",
             "Km_uM": null,
@@ -709,8 +701,8 @@
         },
         "detoxification": {
           "NQO1": {
-            "substrate_node_id": "Benzoquinone",
-            "enzyme_node_id": "NQO1",
+            "source_node_id": "Benzoquinone",
+            "target_node_id": "NQO1",
             "reaction": "Benzoquinone → Hydroquinone (reduction, protective)",
             "CLint_relative": "moderate",
             "confidence": "low",
@@ -719,8 +711,8 @@
             "tissue_expression": ["liver", "bone_marrow", "lung"]
           },
           "GSTT1": {
-            "substrate_node_id": "Benzene_oxide",
-            "enzyme_node_id": "GSTT1",
+            "source_node_id": "Benzene_oxide",
+            "target_node_id": "GSTT1",
             "dormant": true,
             "reaction": "Benzene oxide → Benzene-GSH (detoxification)",
             "CLint_relative": "low_to_moderate",
@@ -743,8 +735,8 @@
       "pathways": {
         "biotransformation": {
           "AS3MT": {
-            "substrate_node_id": "ArsenicInorganic",
-            "enzyme_node_id": "AS3MT",
+            "source_node_id": "ArsenicInorganic",
+            "target_node_id": "AS3MT",
             "reaction": "Inorganic arsenic → methylarsonate (MMA) → dimethylarsinate (DMA) — methylation series",
             "Km_uM": 50.0,
             "CLint_relative": "moderate",
@@ -815,8 +807,8 @@
       "pathways": {
         "oxidation": {
           "CYP2E1_TCE": {
-            "substrate_node_id": "TCE",
-            "enzyme_node_id": "CYP2E1",
+            "source_node_id": "TCE",
+            "target_node_id": "CYP2E1",
             "reaction": "TCE → trichloroethylene oxide",
             "Km_uM": 85.0,
             "CLint_relative": "moderate",
@@ -828,8 +820,8 @@
         },
         "GSH_conjugation": {
           "GSTT1_TCE": {
-            "substrate_node_id": "TCE",
-            "enzyme_node_id": "GSTT1",
+            "source_node_id": "TCE",
+            "target_node_id": "GSTT1",
             "reaction": "TCE → TCE-GSH (GSTT1-mediated) → reactive kidney metabolites",
             "CLint_relative": "low_to_moderate",
             "confidence": "low",

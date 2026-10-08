@@ -6137,16 +6137,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "id": "benzo_a_anthracene",
-      "label": "Benzo[a]anthracene",
-      "type": "Substrate",
-      "detail": "Four-ring polycyclic aromatic hydrocarbon and IARC Group 2B combustion product.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "id": "bilirubin",
       "label": "Bilirubin",
       "type": "Substrate",
@@ -6191,16 +6182,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "id": "chrysene",
-      "label": "Chrysene",
-      "type": "Substrate",
-      "detail": "Four-ring polycyclic aromatic hydrocarbon component of tobacco smoke and combustion emissions.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "id": "cotinine",
       "label": "Cotinine",
       "type": "Substrate",
@@ -6245,16 +6227,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "id": "dibenz_ah_anthracene",
-      "label": "Dibenz[a,h]anthracene",
-      "type": "Substrate",
-      "detail": "Five-ring polycyclic aromatic hydrocarbon and IARC Group 2A carcinogen.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "id": "diclofenac",
       "label": "Diclofenac",
       "type": "Substrate",
@@ -6281,16 +6254,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "id": "estradiol_4_OH",
-      "label": "Estradiol (4-hydroxylation substrate)",
-      "type": "Substrate",
-      "detail": "Represents the 4-hydroxylation branch of estradiol metabolism, associated with genotoxic catechol-estrogen formation; a distinct interaction-parameters substrate key from the parent estrogen node E2.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "id": "ethacrynic_acid",
       "label": "Ethacrynic acid",
       "type": "Substrate",
@@ -6344,16 +6308,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "id": "naphthalene",
-      "label": "Naphthalene",
-      "type": "Substrate",
-      "detail": "Bicyclic aromatic hydrocarbon and common combustion/mothball-derived pulmonary toxicant.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "id": "nicotine",
       "label": "Nicotine",
       "type": "Substrate",
@@ -6951,7 +6906,7 @@
             "detoxification": {
               "carbonyl_reduction": {
                 "rate_law": "michaelis_menten",
-                "substrate_node_id": "NNK",
+                "source_node_id": "NNK",
                 "dormant": true,
                 "reaction": "NNK → NNAL (reduction, detoxification product)",
                 "Km_uM": null,
@@ -13599,21 +13554,23 @@
       "provenance": []
     },
     {
-      "source": "CYP2E1",
-      "target": "chloroform",
-      "type": "PRODUCES",
-      "label": "CYP2E1 metabolism of Chloroform",
+      "source": "chloroform",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "label": "Chloroform is a substrate of CYP2E1",
       "carcinogen": "chloroform",
+      "evidence": "CYP2E1 oxidatively dehalogenates chloroform to phosgene. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "CYP2E1",
-      "target": "styrene",
-      "type": "PRODUCES",
-      "label": "CYP2E1 metabolism of Styrene",
+      "source": "styrene",
+      "target": "CYP2E1",
+      "type": "SUBSTRATE_OF",
+      "label": "Styrene is a substrate of CYP2E1",
       "carcinogen": "styrene",
+      "evidence": "CYP2E1 oxidizes styrene to styrene-7,8-oxide. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -13639,11 +13596,12 @@
       "provenance": []
     },
     {
-      "source": "CYP1A2",
-      "target": "IQ",
-      "type": "PRODUCES",
-      "label": "CYP1A2 metabolism of IQ",
+      "source": "IQ",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "label": "IQ is a substrate of CYP1A2",
       "carcinogen": "IQ",
+      "evidence": "CYP1A2 N-hydroxylates IQ. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -13679,11 +13637,12 @@
       "evidence": "NNK is a metabolic substrate of CYP1A2. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP1A2",
-      "target": "AalphaC",
-      "type": "PRODUCES",
-      "label": "CYP1A2 metabolism of AαC",
+      "source": "AalphaC",
+      "target": "CYP1A2",
+      "type": "SUBSTRATE_OF",
+      "label": "AαC is a substrate of CYP1A2",
       "carcinogen": "AalphaC",
+      "evidence": "CYP1A2 N-hydroxylates AαC. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -13727,17 +13686,7 @@
       ],
       "evidence": "PhIP is a metabolic substrate of CYP1A1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
-    {
-      "source": "CYP1A1",
-      "target": "chrysene",
-      "type": "PRODUCES",
-      "label": "CYP1A1 metabolism of Chrysene",
-      "carcinogen": "chrysene",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "source": "7_ethoxyresorufin",
       "target": "CYP1A1",
       "type": "DETOXIFIED_BY",
@@ -13747,27 +13696,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "source": "CYP1A1",
-      "target": "benzo_a_anthracene",
-      "type": "PRODUCES",
-      "label": "CYP1A1 metabolism of Benzo[a]anthracene",
-      "carcinogen": "benzo_a_anthracene",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
-      "source": "CYP1A1",
-      "target": "dibenz_ah_anthracene",
-      "type": "PRODUCES",
-      "label": "CYP1A1 metabolism of Dibenz[a,h]anthracene",
-      "carcinogen": "dibenz_ah_anthracene",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+            {
       "source": "estradiol_2_OH",
       "target": "CYP1A1",
       "type": "DETOXIFIED_BY",
@@ -13777,17 +13706,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "source": "CYP1B1",
-      "target": "estradiol_4_OH",
-      "type": "PRODUCES",
-      "label": "CYP1B1 metabolism of Estradiol (4-hydroxylation substrate)",
-      "carcinogen": "estradiol_4_OH",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "source": "4ABP",
       "target": "CYP1B1",
       "type": "SUBSTRATE_OF",
@@ -13868,11 +13787,12 @@
       "evidence": "NDEA is a metabolic substrate of CYP2A13. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP2A13",
-      "target": "NNAL",
-      "type": "PRODUCES",
-      "label": "CYP2A13 metabolism of NNAL",
+      "source": "NNAL",
+      "target": "CYP2A13",
+      "type": "SUBSTRATE_OF",
+      "label": "NNAL is a substrate of CYP2A13",
       "carcinogen": "NNAL",
+      "evidence": "CYP2A13 alpha-hydroxylates NNAL. This is not NNK carbonyl reduction; NNK already has its own SUBSTRATE_OF edge to CYP2A13.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -14048,11 +13968,12 @@
       "evidence": "NNK is a metabolic substrate of CYP2D6. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
     {
-      "source": "CYP3A4",
-      "target": "sterigmatocystin",
-      "type": "PRODUCES",
-      "label": "CYP3A4 metabolism of Sterigmatocystin",
+      "source": "sterigmatocystin",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
+      "label": "Sterigmatocystin is a substrate of CYP3A4",
       "carcinogen": "sterigmatocystin",
+      "evidence": "CYP3A4 epoxidates sterigmatocystin. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -14098,21 +14019,23 @@
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "1_nitropyrene",
-      "type": "PRODUCES",
-      "label": "CYP3A4 metabolism of 1-Nitropyrene",
+      "source": "1_nitropyrene",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
+      "label": "1-Nitropyrene is a substrate of CYP3A4",
       "carcinogen": "1_nitropyrene",
+      "evidence": "CYP3A4 ring-hydroxylates 1-nitropyrene. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "CYP3A4",
-      "target": "6_aminochrysene",
-      "type": "PRODUCES",
-      "label": "CYP3A4 metabolism of 6-Aminochrysene",
+      "source": "6_aminochrysene",
+      "target": "CYP3A4",
+      "type": "SUBSTRATE_OF",
+      "label": "6-Aminochrysene is a substrate of CYP3A4",
       "carcinogen": "6_aminochrysene",
+      "evidence": "CYP3A4 N-hydroxylates 6-aminochrysene. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -14137,32 +14060,24 @@
       "provenance": [],
       "evidence": "Benzene is a metabolic substrate of CYP2F1. [Retyped 2026-08-23 from an Enzyme→Carcinogen PRODUCES edge during curation review -- an enzyme cannot produce an exogenous carcinogen; the original edge encoded this enzyme metabolizing this carcinogen as substrate.]"
     },
-    {
-      "source": "CYP2F1",
-      "target": "naphthalene",
-      "type": "PRODUCES",
-      "label": "CYP2F1 metabolism of Naphthalene",
-      "carcinogen": "naphthalene",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
-      "source": "CYP2F1",
-      "target": "3_methylindole",
-      "type": "PRODUCES",
-      "label": "CYP2F1 metabolism of 3-Methylindole",
+        {
+      "source": "3_methylindole",
+      "target": "CYP2F1",
+      "type": "SUBSTRATE_OF",
+      "label": "3-Methylindole is a substrate of CYP2F1",
       "carcinogen": "3_methylindole",
+      "evidence": "CYP2F1 bioactivates 3-methylindole to 3-methyleneindolenine. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
     },
     {
-      "source": "CYP2F1",
-      "target": "styrene",
-      "type": "PRODUCES",
-      "label": "CYP2F1 metabolism of Styrene",
+      "source": "styrene",
+      "target": "CYP2F1",
+      "type": "SUBSTRATE_OF",
+      "label": "Styrene is a substrate of CYP2F1",
       "carcinogen": "styrene",
+      "evidence": "CYP2F1 oxidizes styrene to styrene-7,8-oxide in lung. The chemical is the substrate, not the product.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -14198,11 +14113,12 @@
       "provenance": []
     },
     {
-      "source": "GSTT1",
-      "target": "methylene_chloride",
-      "type": "PRODUCES",
-      "label": "GSTT1 glutathione conjugation of Methylene chloride",
+      "source": "methylene_chloride",
+      "target": "GSTT1",
+      "type": "SUBSTRATE_OF",
+      "label": "Methylene chloride is a substrate of GSTT1",
       "carcinogen": "methylene_chloride",
+      "evidence": "GSTT1 conjugates dichloromethane to a genotoxic intermediate. The chemical is the substrate. SUBSTRATE_OF, not DETOXIFIED_BY, because the conjugation activates.",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []

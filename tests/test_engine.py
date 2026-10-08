@@ -442,15 +442,14 @@ class TestLoadReferenceGraph:
         assert raw is not None and normalized is not None
         assert max(normalized.values()) == 1.0
         assert normalized["Liver"] == raw["Liver"] / max(raw.values())
-        # Interaction-parameter kinetics are applied dynamically, not baked
-        # into graph-data.json -- see _apply_interaction_parameters. This
-        # pair already has a qualifying edge, so this is pure enrichment.
-        activated = engine.get_edge("CYP2E1", "Benzene_oxide")
+        # Interaction-parameter kinetics attach to the substrate-to-enzyme
+        # reaction edge, not the product PRODUCES edge.
+        activated = engine.get_edge("Benzene", "CYP2E1")
+        assert activated["type"] == "SUBSTRATE_OF"
         assert activated["kinetics"]["product"] == "benzene_oxide"
         assert activated["kinetics"]["product_carcinogenic"] is True
-        # A pair whose kinetics land on a retyped Substrate -> Enzyme edge
-        # (enzyme matched as the edge target via the carcinogen attribute;
-        # see the SUBSTRATE_OF retyping).
+        produced = engine.get_edge("CYP2E1", "Benzene_oxide")
+        assert "kinetics" not in produced or "interaction_substrate" not in produced.get("kinetics", {})
         new_edge = engine.get_edge("Ethanol", "CYP2E1")
         assert new_edge["type"] == "SUBSTRATE_OF"
         assert new_edge["kinetics"]["product"] == "acetaldehyde"
@@ -465,14 +464,15 @@ class TestLoadReferenceGraph:
         engine.load_reference_graph()
         substrate_nodes = engine.nodes_by_type(NodeType.SUBSTRATE)
         substrate_ids = [node["id"] for node in substrate_nodes]
-        assert len(substrate_nodes) == 49
-        assert len(set(substrate_ids)) == 49
+        assert len(substrate_nodes) == 44
+        assert len(set(substrate_ids)) == 44
         # trichloroethylene aliases the existing TCE Carcinogen node
         # (canonical_label="Trichloroethylene") and must NOT get its own
-        # Substrate node.
+        # Substrate node. The lowercase naphthalene Substrate node was the
+        # same kind of duplicate of Carcinogen Naphthalene and was removed.
         assert "trichloroethylene" not in substrate_ids
+        assert "naphthalene" not in substrate_ids
         assert "caffeine" in substrate_ids
-        assert "naphthalene" in substrate_ids
         for node in substrate_nodes:
             assert node["type"] == NodeType.SUBSTRATE.value
             # No interaction-parameters data (Km/Vmax/product/etc.) was
