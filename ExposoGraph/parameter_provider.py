@@ -326,8 +326,8 @@ class KGInteractionParameterProvider(JSONInteractionParameterProvider):
     across the multiple edges a pair may ride, in (enzyme, substrate) sorted
     order rather than JSON file order. Records are field-identical to the
     JSON provider's by construction -- the bake writes the substrate entry's
-    fields verbatim, and the walk re-attaches ``graph_node_id`` from the edge's
-    ``carcinogen`` attribute -- so consumers can be handed this provider as a
+    fields verbatim, and the walk re-attaches ``substrate_node_id`` from the
+    reaction edge's source -- so consumers can be handed this provider as a
     drop-in replacement.
 
     Everything without graph carriage is inherited from the JSON provider:
@@ -369,7 +369,7 @@ class KGInteractionParameterProvider(JSONInteractionParameterProvider):
                 for name, value in kinetics.items()
                 if name != "flux_terms" and name not in _KINETIC_MARKER_FIELDS
             }
-            payload["graph_node_id"] = edge_data.get("carcinogen")
+            payload["substrate_node_id"] = _source_id
             pairs[key] = payload
         return pairs
 
