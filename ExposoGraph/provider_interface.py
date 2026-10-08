@@ -63,7 +63,7 @@ class LocalV2DataProvider:
         return {
             "kinetic_parameters": self.data_dir / "kinetic_parameters.json",
             "interaction_parameters": self.data_dir / "interaction_parameters.json",
-            "exposure_database": self.data_dir / "exposure_database.json",
+            "exposure_database": self.data_dir / "exposure_database_revised.json",
             "proxy_flux_parameters": self.data_dir / "proxy_flux_parameters.json",
             "proxy_flux_provenance": self.data_dir / "proxy_flux_provenance.json",
             "parameter_provenance": self.data_dir / "parameter_provenance.json",
