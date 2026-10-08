@@ -100,7 +100,7 @@
   "pairs": {
     "CYP2E1": {
       "benzene": {
-        "substrate_node_id": "Benzene",
+        "source_node_id": "Benzene",
         "km_source": "PMID:1664256; DOI:10.1021/TX00020A008",
         "km_confidence": "medium",
         "vmax_source": "PMID:1664256; DOI:10.1021/TX00020A008",
@@ -111,7 +111,7 @@
         "notes": "Human CYP2E1 benzene oxidation is supported within a broader low-molecular-weight carcinogen panel; inhibition kinetics remain inferred via Km proxy."
       },
       "NDMA": {
-        "substrate_node_id": "NDMA",
+        "source_node_id": "NDMA",
         "km_source": "PMID:1855882; PMID:8352885; DOI:10.1002/MC.2940070410",
         "km_confidence": "high",
         "vmax_source": "PMID:1855882",
@@ -122,7 +122,7 @@
         "notes": "Human NDMA demethylase kinetics and CYP2E1 attribution are supported by human kinetic comparisons and CYP2E1/2A6 dealkylation studies; true Ki not published."
       },
       "ethanol": {
-        "substrate_node_id": "Ethanol",
+        "source_node_id": "Ethanol",
         "km_source": "PMID:23104821; DOI:10.1515/DMDI-2012-0014",
         "km_confidence": "high",
         "vmax_source": "PMID:23104821; DOI:10.1515/DMDI-2012-0014",
@@ -133,7 +133,7 @@
         "notes": "Km and Ki effectively coincide at ~13 mM"
       },
       "vinyl_chloride": {
-        "substrate_node_id": "VinylChloride",
+        "source_node_id": "VinylChloride",
         "km_source": "PMID:10076537; DOI:10.1016/S0006-2952(97)00645-X",
         "km_confidence": "medium",
         "vmax_source": "PMID:10076537; DOI:10.1016/S0006-2952(97)00645-X",
@@ -144,7 +144,7 @@
         "notes": "Km ~100 uM; chlorooxirane activation"
       },
       "acetaminophen": {
-        "substrate_node_id": "acetaminophen",
+        "source_node_id": "acetaminophen",
         "km_source": "PMID:8374050; DOI:10.1021/TX00034A019",
         "km_confidence": "high",
         "vmax_source": "PMID:8374050; DOI:10.1021/TX00034A019",
@@ -155,7 +155,7 @@
         "notes": "Km ~1.3 mM; NAPQI non-carcinogenic but drives GSH depletion"
       },
       "chloroform": {
-        "substrate_node_id": "chloroform",
+        "source_node_id": "chloroform",
         "km_source": "PMID:12584152; DOI:10.1124/DMD.31.3.266",
         "km_confidence": "high",
         "vmax_source": "PMID:12584152; DOI:10.1124/DMD.31.3.266",
@@ -166,7 +166,7 @@
         "notes": "Human liver chloroform oxidation is attributed primarily to CYP2E1; competitive Ki versus p-nitrophenol was not validated in this provenance pass."
       },
       "styrene": {
-        "substrate_node_id": "styrene",
+        "source_node_id": "styrene",
         "km_source": "PMID:8452475; DOI:10.1007/BF02072030",
         "km_confidence": "high",
         "vmax_source": "PMID:8452475; DOI:10.1007/BF02072030",
@@ -177,7 +177,7 @@
         "notes": "Primary CYP2E1 styrene-7,8-oxide pathway"
       },
       "trichloroethylene": {
-        "substrate_node_id": "TCE",
+        "source_node_id": "TCE",
         "km_source": "PMID:1664256; DOI:10.1021/TX00020A008",
         "km_confidence": "high",
         "vmax_source": "PMID:1664256; DOI:10.1021/TX00020A008",
@@ -188,7 +188,7 @@
         "notes": "Human CYP2E1 oxidizes trichloroethylene within a low-molecular-weight carcinogen panel; competitive Ki versus p-nitrophenol was not validated in this provenance pass."
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "no_direct_reference_available; pathway support anchored to PMID:1423839; DOI:10.1093/CARCIN/13.10.1789; PMID:9029045",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; pathway support anchored to PMID:1423839; DOI:10.1093/CARCIN/13.10.1789; PMID:9029045",
@@ -199,7 +199,7 @@
         "notes": "Microsomal correlation and inhibitor studies support only a minor hepatic CYP2E1 contribution to NNK activation; direct purified CYP2E1 kinetic constants are not validated here."
       },
       "p_nitrophenol": {
-        "substrate_node_id": "p_nitrophenol",
+        "source_node_id": "p_nitrophenol",
         "km_source": "PMID:3702859; DOI:10.1016/S0026-895X(25)10267-8; PMC3933162",
         "km_confidence": "high",
         "vmax_source": "PMID:3702859; DOI:10.1016/S0026-895X(25)10267-8; PMC3933162",
@@ -213,7 +213,7 @@
 
     "CYP1A2": {
       "PhIP": {
-        "substrate_node_id": "PhIP",
+        "source_node_id": "PhIP",
         "km_source": "PMID:9855011; DOI:10.1093/CARCIN/19.11.1969",
         "km_confidence": "high",
         "vmax_source": "PMID:9855011; DOI:10.1093/CARCIN/19.11.1969",
@@ -224,7 +224,7 @@
         "notes": "Km=79 uM, Vmax 90 nmol/min/nmol P450"
       },
       "IQ": {
-        "substrate_node_id": "IQ",
+        "source_node_id": "IQ",
         "km_source": "PMID:9705755; DOI:10.1021/TX980022N",
         "km_confidence": "high",
         "vmax_source": "PMID:9705755; DOI:10.1021/TX980022N",
@@ -235,7 +235,7 @@
         "notes": "HCA from cooked meat; Km ~12 uM"
       },
       "caffeine": {
-        "substrate_node_id": "caffeine",
+        "source_node_id": "caffeine",
         "km_source": "PMID:2813353; DOI:10.1073/PNAS.86.20.7696",
         "km_confidence": "high",
         "vmax_source": "PMID:2813353; DOI:10.1073/PNAS.86.20.7696",
@@ -246,7 +246,7 @@
         "notes": "Used as CYP1A2 phenotyping probe"
       },
       "BaP": {
-        "substrate_node_id": "BaP",
+        "source_node_id": "BaP",
         "km_source": "PMID:7703357; DOI:10.1021/TX00043A018",
         "km_confidence": "high",
         "vmax_source": "PMID:7703357; DOI:10.1021/TX00043A018",
@@ -257,7 +257,7 @@
         "notes": "Human CYP1A2 contributes to benzo[a]pyrene oxidation in liver, whereas CYP1A1 dominates inducible extrahepatic activation."
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "no_direct_reference_available; proxy anchored to PMID:10469628 and PMID:9029045",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; proxy anchored to PMID:10469628 and PMID:9029045",
@@ -268,7 +268,7 @@
         "notes": "Indirect lung-cell and hepatic-microsome support only; direct CYP1A2-specific NNK kinetic constants are not validated here."
       },
       "MeIQx": {
-        "substrate_node_id": "MeIQx",
+        "source_node_id": "MeIQx",
         "km_source": "PMID:9705755; DOI:10.1021/TX980022N",
         "km_confidence": "high",
         "vmax_source": "PMID:9705755; DOI:10.1021/TX980022N",
@@ -279,7 +279,7 @@
         "notes": "2-amino-3,8-dimethylimidazo[4,5-f]quinoxaline"
       },
       "AalphaC": {
-        "substrate_node_id": "AalphaC",
+        "source_node_id": "AalphaC",
         "km_source": "PMID:8801053; DOI:10.1016/S0090-9556(25)07365-9",
         "km_confidence": "medium",
         "vmax_source": "PMID:8801053; DOI:10.1016/S0090-9556(25)07365-9",
@@ -290,7 +290,7 @@
         "notes": "Pyrolysis HCA; CYP1A2-preferential activation"
       },
       "phenacetin": {
-        "substrate_node_id": "phenacetin",
+        "source_node_id": "phenacetin",
         "km_source": "PMID:2813353; DOI:10.1073/PNAS.86.20.7696",
         "km_confidence": "high",
         "vmax_source": "PMID:2813353; DOI:10.1073/PNAS.86.20.7696",
@@ -301,7 +301,7 @@
         "notes": "Historic CYP1A2 probe; withdrawn clinically"
       },
       "theophylline": {
-        "substrate_node_id": "theophylline",
+        "source_node_id": "theophylline",
         "km_source": "PMID:8786569; DOI:10.1016/S0022-3565(25)12414-2",
         "km_confidence": "high",
         "vmax_source": "PMID:8786569; DOI:10.1016/S0022-3565(25)12414-2",
@@ -312,7 +312,7 @@
         "notes": "Competitive with caffeine at CYP1A2"
       },
       "4_aminobiphenyl": {
-        "substrate_node_id": "4ABP",
+        "source_node_id": "4ABP",
         "km_source": "PMID:2813353; DOI:10.1073/PNAS.86.20.7696",
         "km_confidence": "high",
         "vmax_source": "PMID:2813353; DOI:10.1073/PNAS.86.20.7696",
@@ -326,7 +326,7 @@
 
     "CYP1A1": {
       "BaP": {
-        "substrate_node_id": "BaP",
+        "source_node_id": "BaP",
         "km_source": "PMID:7703357; DOI:10.1021/TX00043A018",
         "km_confidence": "high",
         "vmax_source": "PMID:7703357; DOI:10.1021/TX00043A018",
@@ -337,7 +337,7 @@
         "notes": "Primary PAH activation enzyme"
       },
       "PhIP": {
-        "substrate_node_id": "PhIP",
+        "source_node_id": "PhIP",
         "km_source": "PMID:9855011; DOI:10.1093/CARCIN/19.11.1969",
         "km_confidence": "medium",
         "vmax_source": "PMID:9855011; DOI:10.1093/CARCIN/19.11.1969",
@@ -348,7 +348,7 @@
         "notes": "CYP1A2 is primary HCA activator; CYP1A1 secondary"
       },
       "chrysene": {
-        "substrate_node_id": "Chrysene",
+        "source_node_id": "Chrysene",
         "km_source": "no_direct_reference_available; assumed from structural homology to BaP",
         "km_confidence": "assumed",
         "vmax_source": "no_direct_reference_available; assumed from structural homology",
@@ -369,7 +369,7 @@
         "notes": "7,12-dimethylbenz[a]anthracene; model PAH carcinogen. The prior Wen & Walle 2005 citation did not directly support CYP1A1 DMBA kinetic constants, so this entry is now treated as a semi-quantitative proxy pending direct measurement."
       },
       "7_ethoxyresorufin": {
-        "substrate_node_id": "7_ethoxyresorufin",
+        "source_node_id": "7_ethoxyresorufin",
         "km_source": "PMID:16719376; DOI:10.1385/1-59259-998-2:85",
         "km_confidence": "high",
         "vmax_source": "PMID:16719376; DOI:10.1385/1-59259-998-2:85",
@@ -380,7 +380,7 @@
         "notes": "EROD probe substrate used for comparative analysis of cDNA-expressed human CYP1A1, CYP1A2, and CYP1B1."
       },
       "benzo_a_anthracene": {
-        "substrate_node_id": "Benz_a_anthracene",
+        "source_node_id": "Benz_a_anthracene",
         "km_source": "no_direct_reference_available; proxy anchored to PMID:11502724",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; proxy anchored to PMID:11502724",
@@ -391,7 +391,7 @@
         "notes": "4-ring PAH; CYP1A1 activation is supported in broader human P450 procarcinogen activation assays, but a direct purified-enzyme kinetic constant for benzo[a]anthracene was not validated here."
       },
       "dibenz_ah_anthracene": {
-        "substrate_node_id": "Dibenz_ah_anthracene",
+        "source_node_id": "Dibenz_ah_anthracene",
         "km_source": "no_direct_reference_available; estimated from Shimada PAH series",
         "km_confidence": "medium",
         "vmax_source": "no_direct_reference_available; estimated from Shimada PAH series",
@@ -402,7 +402,7 @@
         "notes": "5-ring PAH; IARC 2A carcinogen"
       },
       "estradiol_2_OH": {
-        "substrate_node_id": "estradiol_2_OH",
+        "source_node_id": "estradiol_2_OH",
         "km_source": "PMID:12865317; DOI:10.1210/EN.2003-0192",
         "km_confidence": "high",
         "vmax_source": "PMID:12865317; DOI:10.1210/EN.2003-0192",
@@ -416,7 +416,7 @@
 
     "CYP1B1": {
       "estradiol_4_OH": {
-        "substrate_node_id": "estradiol_4_OH",
+        "source_node_id": "estradiol_4_OH",
         "km_source": "PMID:10426814; DOI:10.1093/CARCIN/20.8.1607",
         "km_confidence": "high",
         "vmax_source": "PMID:10426814; DOI:10.1093/CARCIN/20.8.1607",
@@ -427,7 +427,7 @@
         "notes": "Catechol estrogen pathway implicated in breast carcinogenesis"
       },
       "BaP": {
-        "substrate_node_id": "BaP",
+        "source_node_id": "BaP",
         "km_source": "PMID:9806168; DOI:10.1093/CARCIN/19.10.1847",
         "km_confidence": "high",
         "vmax_source": "PMID:9806168; DOI:10.1093/CARCIN/19.10.1847",
@@ -448,7 +448,7 @@
         "notes": "Cyp1b1-null mice are protected from DMBA-induced mammary tumors"
       },
       "4_aminobiphenyl": {
-        "substrate_node_id": "4ABP",
+        "source_node_id": "4ABP",
         "km_source": "no_direct_reference_available; pathway support anchored to PMID:19274671; DOI:10.1002/MC.20530",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; pathway support anchored to PMID:19274671; DOI:10.1002/MC.20530",
@@ -459,7 +459,7 @@
         "notes": "Potential CYP1B1 contribution to 4-aminobiphenyl activation in extrahepatic tissues; direct purified-enzyme kinetic constants are not validated here."
       },
       "resveratrol": {
-        "substrate_node_id": "resveratrol",
+        "source_node_id": "resveratrol",
         "km_source": "PMID:11714871; DOI:10.1016/S0022-3565(24)29205-3",
         "km_confidence": "medium",
         "vmax_source": "PMID:11714871; DOI:10.1016/S0022-3565(24)29205-3",
@@ -473,7 +473,7 @@
 
     "CYP2A6": {
       "nicotine": {
-        "substrate_node_id": "nicotine",
+        "source_node_id": "nicotine",
         "km_source": "PMID:9316878; DOI:10.1016/S0022-3565(24)36947-2",
         "km_confidence": "high",
         "vmax_source": "PMID:9316878; DOI:10.1016/S0022-3565(24)36947-2",
@@ -484,7 +484,7 @@
         "notes": "Primary nicotine clearance pathway"
       },
       "cotinine": {
-        "substrate_node_id": "cotinine",
+        "source_node_id": "cotinine",
         "km_source": "PMID:8627511; DOI:10.1016/S0022-3565(25)12887-5",
         "km_confidence": "high",
         "vmax_source": "PMID:8627511; DOI:10.1016/S0022-3565(25)12887-5",
@@ -495,7 +495,7 @@
         "notes": "Urinary 3-hydroxycotinine/cotinine ratio is CYP2A6 activity biomarker"
       },
       "coumarin": {
-        "substrate_node_id": "coumarin",
+        "source_node_id": "coumarin",
         "km_source": "PMID:10781881; DOI:10.1016/S0300-483X(99)00200-0",
         "km_confidence": "high",
         "vmax_source": "PMID:10781881; DOI:10.1016/S0300-483X(99)00200-0",
@@ -506,7 +506,7 @@
         "notes": "Canonical CYP2A6 phenotyping probe"
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "PMID:8806763; DOI:10.1006/ABBI.1996.0373",
         "km_confidence": "high",
         "vmax_source": "PMID:8806763; DOI:10.1006/ABBI.1996.0373",
@@ -517,7 +517,7 @@
         "notes": "Km ~10 uM; hepatic NNK alpha-hydroxylation"
       },
       "NDEA": {
-        "substrate_node_id": "NDEA",
+        "source_node_id": "NDEA",
         "km_source": "PMID:8352885; DOI:10.1002/MC.2940070410",
         "km_confidence": "high",
         "vmax_source": "PMID:8352885; DOI:10.1002/MC.2940070410",
@@ -531,7 +531,7 @@
 
     "CYP2A13": {
       "benzene": {
-        "substrate_node_id": "Benzene",
+        "source_node_id": "Benzene",
         "km_source": "no_direct_reference_available; proxy anchored to PMID:11718959; DOI:10.1016/S0300-483X(01)00519-4 and PMID:15122651; DOI:10.1002/JBT.20010",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; proxy anchored to PMID:11718959; DOI:10.1016/S0300-483X(01)00519-4 and PMID:15122651; DOI:10.1002/JBT.20010",
@@ -542,7 +542,7 @@
         "notes": "Pulmonary benzene activation anchor derived from lung-focused benzene metabolism studies. These sources do not provide a clean CYP2A13-specific kinetic measurement, so this entry should be treated as a low-confidence proxy rather than a validated CYP2A13 constant."
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "PMID:12975327; DOI:10.1124/DMD.31.10.1199",
         "km_confidence": "high",
         "vmax_source": "PMID:12975327; DOI:10.1124/DMD.31.10.1199",
@@ -553,7 +553,7 @@
         "notes": "Km 1-5 uM; highest-affinity NNK activator in lung"
       },
       "NDEA": {
-        "substrate_node_id": "NDEA",
+        "source_node_id": "NDEA",
         "km_source": "no_direct_reference_available; proxy anchored to PMID:12975327; DOI:10.1124/DMD.31.10.1199 and PMID:8352885; DOI:10.1002/MC.2940070410",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; proxy anchored to PMID:12975327; DOI:10.1124/DMD.31.10.1199 and PMID:8352885; DOI:10.1002/MC.2940070410",
@@ -564,7 +564,7 @@
         "notes": "No direct CYP2A13-specific NDEA kinetic paper was validated here; this entry is a pulmonary nitrosamine proxy extrapolated from CYP2A13 NNK/NNAL activity and CYP2A6/2E1 NDEA dealkylation studies."
       },
       "NNAL": {
-        "substrate_node_id": "NNAL",
+        "source_node_id": "NNAL",
         "km_source": "PMID:12975327; DOI:10.1124/DMD.31.10.1199",
         "km_confidence": "high",
         "vmax_source": "PMID:12975327; DOI:10.1124/DMD.31.10.1199",
@@ -575,7 +575,7 @@
         "notes": "Pulmonary NNAL activation back to NNK-equivalent reactive species"
       },
       "methoxsalen": {
-        "substrate_node_id": "methoxsalen",
+        "source_node_id": "methoxsalen",
         "km_source": "no_direct_reference_available; same-subfamily inhibitor proxy anchored to PMID:9665710; DOI:10.1021/BI980003C",
         "km_confidence": "medium",
         "vmax_source": "no_direct_reference_available; same-subfamily inhibitor proxy anchored to PMID:9665710; DOI:10.1021/BI980003C",
@@ -589,7 +589,7 @@
 
     "CYP2B6": {
       "cyclophosphamide": {
-        "substrate_node_id": "Cyclophosphamide",
+        "source_node_id": "Cyclophosphamide",
         "km_source": "PMID:10348794; DOI:10.1016/S0090-9556(24)15302-0",
         "km_confidence": "high",
         "vmax_source": "PMID:10348794; DOI:10.1016/S0090-9556(24)15302-0",
@@ -600,7 +600,7 @@
         "notes": "Bioactivation of oxazaphosphorine prodrug"
       },
       "bupropion": {
-        "substrate_node_id": "bupropion",
+        "source_node_id": "bupropion",
         "km_source": "PMID:10997944; DOI:10.1016/S0026-895X(24)12054-8",
         "km_confidence": "high",
         "vmax_source": "PMID:10997944; DOI:10.1016/S0026-895X(24)12054-8",
@@ -611,7 +611,7 @@
         "notes": "Clinical CYP2B6 probe"
       },
       "nicotine": {
-        "substrate_node_id": "nicotine",
+        "source_node_id": "nicotine",
         "km_source": "PMID:10350185; DOI:10.1007/S002040050588",
         "km_confidence": "medium",
         "vmax_source": "PMID:10350185; DOI:10.1007/S002040050588",
@@ -622,7 +622,7 @@
         "notes": "Minor nicotine N-demethylation pathway"
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "PMID:16174803; DOI:10.1124/DMD.105.006718",
         "km_confidence": "medium",
         "vmax_source": "PMID:16174803; DOI:10.1124/DMD.105.006718",
@@ -636,7 +636,7 @@
 
     "CYP2C9": {
       "tolbutamide": {
-        "substrate_node_id": "tolbutamide",
+        "source_node_id": "tolbutamide",
         "km_source": "PMID:9578596; DOI:10.1006/ABBI.1998.0615",
         "km_confidence": "high",
         "vmax_source": "PMID:9578596; DOI:10.1006/ABBI.1998.0615",
@@ -647,7 +647,7 @@
         "notes": "Canonical CYP2C9 probe; genotype drives dose requirements"
       },
       "S_warfarin": {
-        "substrate_node_id": "S_warfarin",
+        "source_node_id": "S_warfarin",
         "km_source": "PMID:1581537; DOI:10.1021/TX00025A009",
         "km_confidence": "high",
         "vmax_source": "PMID:1581537; DOI:10.1021/TX00025A009",
@@ -658,7 +658,7 @@
         "notes": "*2/*3 variants markedly reduce clearance"
       },
       "diclofenac": {
-        "substrate_node_id": "diclofenac",
+        "source_node_id": "diclofenac",
         "km_source": "PMID:8417277; DOI:10.1016/0024-3205(93)90285-B",
         "km_confidence": "high",
         "vmax_source": "PMID:8417277; DOI:10.1016/0024-3205(93)90285-B",
@@ -669,7 +669,7 @@
         "notes": "Forms reactive acyl-glucuronide downstream"
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "no_direct_reference_available; proxy anchored to PMID:11774366; DOI:10.1002/EM.10036",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; proxy anchored to PMID:11774366; DOI:10.1002/EM.10036",
@@ -680,7 +680,7 @@
         "notes": "Minor hepatic NNK activation inferred from mutagenicity screens using human P450-coexpressing Salmonella strains; direct CYP2C9 kinetic constants were not validated here."
       },
       "4_aminobiphenyl": {
-        "substrate_node_id": "4ABP",
+        "source_node_id": "4ABP",
         "km_source": "no_direct_reference_available; assumed based on Phase I aromatic amine screens",
         "km_confidence": "assumed",
         "vmax_source": "no_direct_reference_available; assumed",
@@ -694,7 +694,7 @@
 
     "CYP2C19": {
       "S_mephenytoin": {
-        "substrate_node_id": "S_mephenytoin",
+        "source_node_id": "S_mephenytoin",
         "km_source": "PMID:8110777; DOI:10.1021/BI00173A017",
         "km_confidence": "high",
         "vmax_source": "PMID:8110777; DOI:10.1021/BI00173A017",
@@ -705,7 +705,7 @@
         "notes": "Defines extensive/poor metabolizer phenotype"
       },
       "omeprazole": {
-        "substrate_node_id": "omeprazole",
+        "source_node_id": "omeprazole",
         "km_source": "PMID:9578596; DOI:10.1006/ABBI.1998.0615",
         "km_confidence": "high",
         "vmax_source": "PMID:9578596; DOI:10.1006/ABBI.1998.0615",
@@ -716,7 +716,7 @@
         "notes": "PPI plasma exposure ties directly to CYP2C19 genotype"
       },
       "nicotine": {
-        "substrate_node_id": "nicotine",
+        "source_node_id": "nicotine",
         "km_source": "PMID:10350185; DOI:10.1007/S002040050588",
         "km_confidence": "low",
         "vmax_source": "PMID:10350185; DOI:10.1007/S002040050588",
@@ -727,7 +727,7 @@
         "notes": "Minor nicotine N-demethylation route"
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "no_direct_reference_available; proxy anchored to PMID:11774366; DOI:10.1002/EM.10036",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; proxy anchored to PMID:11774366; DOI:10.1002/EM.10036",
@@ -741,7 +741,7 @@
 
     "CYP2D6": {
       "dextromethorphan": {
-        "substrate_node_id": "dextromethorphan",
+        "source_node_id": "dextromethorphan",
         "km_source": "PMID:8452558; DOI:10.1016/0006-2952(93)90166-T",
         "km_confidence": "high",
         "vmax_source": "PMID:8452558; DOI:10.1016/0006-2952(93)90166-T",
@@ -752,7 +752,7 @@
         "notes": "Primary CYP2D6 phenotyping probe"
       },
       "debrisoquine": {
-        "substrate_node_id": "debrisoquine",
+        "source_node_id": "debrisoquine",
         "km_source": "PMID:6594694; DOI:10.1073/PNAS.81.23.7348",
         "km_confidence": "high",
         "vmax_source": "PMID:6594694; DOI:10.1073/PNAS.81.23.7348",
@@ -763,7 +763,7 @@
         "notes": "Classical CYP2D6 metabolic ratio"
       },
       "bufuralol": {
-        "substrate_node_id": "bufuralol",
+        "source_node_id": "bufuralol",
         "km_source": "PMID:3689440; DOI:10.1016/0006-2952(87)90573-9",
         "km_confidence": "high",
         "vmax_source": "PMID:3689440; DOI:10.1016/0006-2952(87)90573-9",
@@ -774,7 +774,7 @@
         "notes": "Alternative CYP2D6 probe"
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "PMID:2070484; DOI:10.1093/CARCIN/12.7.1197",
         "km_confidence": "low",
         "vmax_source": "PMID:2070484; DOI:10.1093/CARCIN/12.7.1197",
@@ -788,7 +788,7 @@
 
     "CYP3A4": {
       "AFB1": {
-        "substrate_node_id": "AFB1",
+        "source_node_id": "AFB1",
         "km_source": "PMID:8261428",
         "km_confidence": "high",
         "vmax_source": "PMID:8261428",
@@ -799,7 +799,7 @@
         "notes": "AFB1 8,9-exo-epoxide formation is primary activation step"
       },
       "sterigmatocystin": {
-        "substrate_node_id": "sterigmatocystin",
+        "source_node_id": "sterigmatocystin",
         "km_source": "PMID:20929267; DOI:10.1021/TX100127B",
         "km_confidence": "medium",
         "vmax_source": "PMID:20929267; DOI:10.1021/TX100127B",
@@ -810,7 +810,7 @@
         "notes": "AFB1 precursor mycotoxin; shares CYP3A4 pocket"
       },
       "testosterone": {
-        "substrate_node_id": "Testosterone",
+        "source_node_id": "Testosterone",
         "km_source": "PMID:10594474; DOI:10.1046/J.1365-2125.1999.00073.X",
         "km_confidence": "high",
         "vmax_source": "PMID:10594474; DOI:10.1046/J.1365-2125.1999.00073.X",
@@ -821,7 +821,7 @@
         "notes": "Endogenous CYP3A4 probe; genotype-independent reference"
       },
       "midazolam": {
-        "substrate_node_id": "midazolam",
+        "source_node_id": "midazolam",
         "km_source": "PMID:10681383; DOI:10.1016/S0090-9556(24)15374-3",
         "km_confidence": "high",
         "vmax_source": "PMID:10681383; DOI:10.1016/S0090-9556(24)15374-3",
@@ -832,7 +832,7 @@
         "notes": "Clinical reference CYP3A4 activity probe"
       },
       "nifedipine": {
-        "substrate_node_id": "nifedipine",
+        "source_node_id": "nifedipine",
         "km_source": "PMID:3514607; DOI:10.1016/S0021-9258(19)89213-X",
         "km_confidence": "high",
         "vmax_source": "PMID:3514607; DOI:10.1016/S0021-9258(19)89213-X",
@@ -843,7 +843,7 @@
         "notes": "Dihydropyridine calcium-channel blocker"
       },
       "erythromycin": {
-        "substrate_node_id": "erythromycin",
+        "source_node_id": "erythromycin",
         "km_source": "PMID:9566442; DOI:10.1016/S1056-8719(97)00103-2",
         "km_confidence": "high",
         "vmax_source": "PMID:9566442; DOI:10.1016/S1056-8719(97)00103-2",
@@ -854,7 +854,7 @@
         "notes": "Clinical CYP3A4 inducer and probe"
       },
       "cyclosporine": {
-        "substrate_node_id": "cyclosporine",
+        "source_node_id": "cyclosporine",
         "km_source": "PMID:3378384; DOI:10.1038/CLPT.1988.87",
         "km_confidence": "high",
         "vmax_source": "PMID:3378384; DOI:10.1038/CLPT.1988.87",
@@ -865,7 +865,7 @@
         "notes": "Immunosuppressant; saturates CYP3A4 at clinical doses"
       },
       "1_nitropyrene": {
-        "substrate_node_id": "1_nitropyrene",
+        "source_node_id": "1_nitropyrene",
         "km_source": "PMID:9354593; DOI:10.1016/S0006-2952(97)00268-2",
         "km_confidence": "low",
         "vmax_source": "PMID:9354593; DOI:10.1016/S0006-2952(97)00268-2",
@@ -876,7 +876,7 @@
         "notes": "Diesel-exhaust nitro-PAH. The cited HepG2 study emphasized nitroreductase-dominant activation rather than a clear CYP3A4-mediated pathway, so this entry is provisional and should not be treated as a validated CYP3A4 kinetic constant."
       },
       "6_aminochrysene": {
-        "substrate_node_id": "6_aminochrysene",
+        "source_node_id": "6_aminochrysene",
         "km_source": "no_direct_reference_available; pathway support anchored to PMID:2655891",
         "km_confidence": "low",
         "vmax_source": "no_direct_reference_available; pathway support anchored to PMID:2655891",
@@ -887,7 +887,7 @@
         "notes": "Arylamine PAH; human liver microsomal umu-response studies support bioactivation with CYP3A-linked participation, but direct recombinant CYP3A4 kinetic constants were not validated here."
       },
       "NNK": {
-        "substrate_node_id": "NNK",
+        "source_node_id": "NNK",
         "km_source": "PMID:8806763; DOI:10.1006/ABBI.1996.0373",
         "km_confidence": "medium",
         "vmax_source": "PMID:8806763; DOI:10.1006/ABBI.1996.0373",
@@ -901,7 +901,7 @@
 
     "CYP2F1": {
       "benzene": {
-        "substrate_node_id": "Benzene",
+        "source_node_id": "Benzene",
         "km_source": "PMID:15122651; DOI:10.1002/JBT.20010; PMID:11718959; DOI:10.1016/S0300-483X(01)00519-4",
         "km_confidence": "medium",
         "vmax_source": "PMID:15122651; DOI:10.1002/JBT.20010",
@@ -912,7 +912,7 @@
         "notes": "Lung-specific benzene hydroxylation; co-dominant with CYP2A13 at low air concentrations"
       },
       "naphthalene": {
-        "substrate_node_id": "Naphthalene",
+        "source_node_id": "Naphthalene",
         "km_source": "PMID:10383923; DOI:10.1016/S0090-9556(24)15228-2",
         "km_confidence": "high",
         "vmax_source": "PMID:10383923; DOI:10.1016/S0090-9556(24)15228-2",
@@ -923,7 +923,7 @@
         "notes": "Classic CYP2F1 substrate; basis for pulmonary Clara-cell toxicity"
       },
       "3_methylindole": {
-        "substrate_node_id": "3_methylindole",
+        "source_node_id": "3_methylindole",
         "km_source": "PMID:10383923; DOI:10.1016/S0090-9556(24)15228-2",
         "km_confidence": "medium",
         "vmax_source": "PMID:10383923; DOI:10.1016/S0090-9556(24)15228-2",
@@ -934,7 +934,7 @@
         "notes": "Pneumotoxic electrophile generation"
       },
       "styrene": {
-        "substrate_node_id": "styrene",
+        "source_node_id": "styrene",
         "km_source": "PMID:7696548; DOI:10.1021/TX00042A026",
         "km_confidence": "medium",
         "vmax_source": "PMID:7696548; DOI:10.1021/TX00042A026",
@@ -948,7 +948,7 @@
 
     "GSTM1": {
       "BPDE": {
-        "substrate_node_id": "BPDE",
+        "source_node_id": "BPDE",
         "km_source": "PMID:9403173; DOI:10.1021/TX970099W",
         "km_confidence": "high",
         "vmax_source": "PMID:9403173; DOI:10.1021/TX970099W",
@@ -959,7 +959,7 @@
         "notes": "Primary PAH detoxification; GSTM1-null is major cancer risk factor"
       },
       "trans_stilbene_oxide": {
-        "substrate_node_id": "trans_stilbene_oxide",
+        "source_node_id": "trans_stilbene_oxide",
         "km_source": "PMID:4017189; DOI:10.1093/CARCIN/6.8.1211",
         "km_confidence": "high",
         "vmax_source": "PMID:4017189; DOI:10.1093/CARCIN/6.8.1211",
@@ -970,7 +970,7 @@
         "notes": "GSTM1-preferential probe substrate"
       },
       "CDNB": {
-        "substrate_node_id": "CDNB",
+        "source_node_id": "CDNB",
         "km_source": "PMID:4436300",
         "km_confidence": "high",
         "vmax_source": "PMID:4436300",
@@ -981,7 +981,7 @@
         "notes": "Generic GST activity probe"
       },
       "styrene_oxide": {
-        "substrate_node_id": "styrene_oxide",
+        "source_node_id": "styrene_oxide",
         "km_source": "PMID:3692493; DOI:10.1177/096032718700600606",
         "km_confidence": "medium",
         "vmax_source": "PMID:3692493; DOI:10.1177/096032718700600606",
@@ -995,7 +995,7 @@
 
     "GSTT1": {
       "methylene_chloride": {
-        "substrate_node_id": "methylene_chloride",
+        "source_node_id": "methylene_chloride",
         "km_source": "PMID:9307035; DOI:10.1042/BJ3260837; PMID:7979958; DOI:10.1007/S002040050092",
         "km_confidence": "high",
         "vmax_source": "PMID:9307035; DOI:10.1042/BJ3260837; PMID:7979958; DOI:10.1007/S002040050092",
@@ -1006,7 +1006,7 @@
         "notes": "GSTT1 activates to genotoxic intermediate; null individuals are protected"
       },
       "ethylene_oxide": {
-        "substrate_node_id": "EthyleneOxide",
+        "source_node_id": "EthyleneOxide",
         "km_source": "PMID:8494496; DOI:10.1007/BF01973304",
         "km_confidence": "medium",
         "vmax_source": "PMID:8494496; DOI:10.1007/BF01973304",
@@ -1017,7 +1017,7 @@
         "notes": "Industrial sterilant; direct alkylator"
       },
       "methyl_chloride": {
-        "substrate_node_id": "methyl_chloride",
+        "source_node_id": "methyl_chloride",
         "km_source": "PMID:9851677; DOI:10.1007/S002040050552",
         "km_confidence": "medium",
         "vmax_source": "PMID:9851677; DOI:10.1007/S002040050552",
@@ -1031,7 +1031,7 @@
 
     "GSTP1": {
       "BPDE": {
-        "substrate_node_id": "BPDE",
+        "source_node_id": "BPDE",
         "km_source": "PMID:9403173; DOI:10.1021/TX970099W",
         "km_confidence": "high",
         "vmax_source": "PMID:9403173; DOI:10.1021/TX970099W",
@@ -1042,7 +1042,7 @@
         "notes": "Primary PAH detox in lung; Ile105Val reduces activity"
       },
       "acrolein": {
-        "substrate_node_id": "Acrolein",
+        "source_node_id": "Acrolein",
         "km_source": "PMID:2304453; DOI:10.1016/S0026-895X(25)09980-8",
         "km_confidence": "high",
         "vmax_source": "PMID:2304453; DOI:10.1016/S0026-895X(25)09980-8",
@@ -1053,7 +1053,7 @@
         "notes": "Cigarette-smoke aldehyde conjugation"
       },
       "ethacrynic_acid": {
-        "substrate_node_id": "ethacrynic_acid",
+        "source_node_id": "ethacrynic_acid",
         "km_source": "PMID:2222516; DOI:10.1016/0006-2952(90)90465-W",
         "km_confidence": "high",
         "vmax_source": "PMID:2222516; DOI:10.1016/0006-2952(90)90465-W",
@@ -1064,7 +1064,7 @@
         "notes": "Dual substrate/inhibitor; potent GSTP1 modulator"
       },
       "chlorambucil": {
-        "substrate_node_id": "Chlorambucil_aziridinium",
+        "source_node_id": "Chlorambucil_aziridinium",
         "km_source": "DOI:10.3727/095535490820874263",
         "km_confidence": "medium",
         "vmax_source": "DOI:10.3727/095535490820874263",
@@ -1078,7 +1078,7 @@
 
     "NAT1": {
       "p_aminobenzoic_acid": {
-        "substrate_node_id": "p_aminobenzoic_acid",
+        "source_node_id": "p_aminobenzoic_acid",
         "km_source": "PMID:8220441; DOI:10.1097/00008571-199308000-00006",
         "km_confidence": "high",
         "vmax_source": "PMID:8220441; DOI:10.1097/00008571-199308000-00006",
@@ -1089,7 +1089,7 @@
         "notes": "Canonical NAT1 probe substrate"
       },
       "4_aminobiphenyl": {
-        "substrate_node_id": "4ABP",
+        "source_node_id": "4ABP",
         "km_source": "PMID:7585581",
         "km_confidence": "high",
         "vmax_source": "PMID:7585581",
@@ -1103,7 +1103,7 @@
 
     "NAT2": {
       "isoniazid": {
-        "substrate_node_id": "isoniazid",
+        "source_node_id": "isoniazid",
         "km_source": "PMID:7669073; DOI:10.1016/0006-2952(95)00182-Y",
         "km_confidence": "medium",
         "vmax_source": "PMID:7669073; DOI:10.1016/0006-2952(95)00182-Y",
@@ -1114,7 +1114,7 @@
         "notes": "Canonical NAT2 probe; recombinant human NAT2 allotype kinetics support substrate assignment, while slow-acetylator status remains the key clinical interpretation."
       },
       "sulfamethazine": {
-        "substrate_node_id": "sulfamethazine",
+        "source_node_id": "sulfamethazine",
         "km_source": "PMID:1996083; DOI:10.1016/S0026-895X(25)10988-7",
         "km_confidence": "high",
         "vmax_source": "PMID:1996083; DOI:10.1016/S0026-895X(25)10988-7",
@@ -1128,7 +1128,7 @@
 
     "SULT1A1": {
       "N_OH_PhIP": {
-        "substrate_node_id": "NOH_PhIP",
+        "source_node_id": "NOH_PhIP",
         "km_source": "PMID:7852185; PMCID:PMC5919400; DOI:10.1111/J.1349-7006.1994.TB02933.X",
         "km_confidence": "high",
         "vmax_source": "PMID:7852185; PMCID:PMC5919400; DOI:10.1111/J.1349-7006.1994.TB02933.X",
@@ -1142,7 +1142,7 @@
 
     "UGT1A1": {
       "bilirubin": {
-        "substrate_node_id": "bilirubin",
+        "source_node_id": "bilirubin",
         "km_source": "PMID:8027054; DOI:10.1016/S0021-9258(17)32403-1",
         "km_confidence": "high",
         "vmax_source": "PMID:8027054; DOI:10.1016/S0021-9258(17)32403-1",

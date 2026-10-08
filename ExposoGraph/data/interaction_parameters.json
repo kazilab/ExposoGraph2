@@ -458,10 +458,10 @@
     "_description": "Enzyme-mediated competitive inhibition between carcinogen substrates. Formula: v_A = Vmax_A * [A] / (Km_A * (1 + SUM([Bi]/Km_Bi for i != A)) + [A])",
     "CYP2E1": {
       "_description": "Most contended Phase I activation enzyme. Substrate inhibition >100 uM for pNP (Kss=260 uM). Ref: PMC3933162",
-      "enzyme_node_id": "CYP2E1",
+      "target_node_id": "CYP2E1",
       "substrates": {
         "benzene": {
-          "substrate_node_id": "Benzene",
+          "source_node_id": "Benzene",
           "Km_uM": 75,
           "Vmax_relative": 1.0,
           "relative_priority": 3,
@@ -472,7 +472,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/benzene"
         },
         "NDMA": {
-          "substrate_node_id": "NDMA",
+          "source_node_id": "NDMA",
           "Km_uM": 15,
           "Vmax_relative": 1.2,
           "relative_priority": 1,
@@ -483,7 +483,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/NDMA"
         },
         "ethanol": {
-          "substrate_node_id": "Ethanol",
+          "source_node_id": "Ethanol",
           "Km_uM": 13000,
           "Vmax_relative": 2.0,
           "relative_priority": 5,
@@ -495,7 +495,7 @@
           "Ki_uM": 13000.0
         },
         "vinyl_chloride": {
-          "substrate_node_id": "VinylChloride",
+          "source_node_id": "VinylChloride",
           "Km_uM": 100,
           "Vmax_relative": 0.8,
           "relative_priority": 4,
@@ -506,7 +506,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/vinyl_chloride"
         },
         "acetaminophen": {
-          "substrate_node_id": "acetaminophen",
+          "source_node_id": "acetaminophen",
           "Km_uM": 1300,
           "Vmax_relative": 0.5,
           "relative_priority": 5,
@@ -517,7 +517,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/acetaminophen"
         },
         "chloroform": {
-          "substrate_node_id": "chloroform",
+          "source_node_id": "chloroform",
           "Km_uM": 460,
           "Vmax_relative": 0.6,
           "relative_priority": 4,
@@ -529,7 +529,7 @@
           "Ki_uM": 400.0
         },
         "styrene": {
-          "substrate_node_id": "styrene",
+          "source_node_id": "styrene",
           "Km_uM": 70,
           "Vmax_relative": 0.7,
           "relative_priority": 3,
@@ -541,7 +541,7 @@
           "Ki_uM": 120.0
         },
         "trichloroethylene": {
-          "substrate_node_id": "TCE",
+          "source_node_id": "TCE",
           "Km_uM": 12,
           "Vmax_relative": 0.55,
           "relative_priority": 2,
@@ -553,7 +553,7 @@
           "Ki_uM": 15.0
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 520,
           "Vmax_relative": 0.45,
           "relative_priority": 5,
@@ -564,7 +564,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2E1/NNK"
         },
         "p_nitrophenol": {
-          "substrate_node_id": "p_nitrophenol",
+          "source_node_id": "p_nitrophenol",
           "Km_uM": 50,
           "Vmax_relative": 0.4,
           "relative_priority": 4,
@@ -604,10 +604,10 @@
     },
     "CYP1A2": {
       "_description": "Activated by AhR ligands (PAH, dioxins). Key for HCA and PAH activation. Ref: multiple",
-      "enzyme_node_id": "CYP1A2",
+      "target_node_id": "CYP1A2",
       "substrates": {
         "PhIP": {
-          "substrate_node_id": "PhIP",
+          "source_node_id": "PhIP",
           "Km_uM": 79,
           "Vmax_relative": 1.0,
           "relative_priority": 2,
@@ -618,7 +618,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/PhIP"
         },
         "IQ": {
-          "substrate_node_id": "IQ",
+          "source_node_id": "IQ",
           "Km_uM": 12,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -629,7 +629,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/IQ"
         },
         "caffeine": {
-          "substrate_node_id": "caffeine",
+          "source_node_id": "caffeine",
           "Km_uM": 82,
           "Vmax_relative": 0.7,
           "relative_priority": 3,
@@ -641,7 +641,7 @@
           "Ki_uM": 80.0
         },
         "BaP": {
-          "substrate_node_id": "BaP",
+          "source_node_id": "BaP",
           "Km_uM": 0.054,
           "Vmax_relative": 0.3,
           "relative_priority": 1,
@@ -652,7 +652,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/BaP"
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 20,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -663,7 +663,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/NNK"
         },
         "MeIQx": {
-          "substrate_node_id": "MeIQx",
+          "source_node_id": "MeIQx",
           "Km_uM": 55,
           "Vmax_relative": 0.75,
           "relative_priority": 2,
@@ -674,7 +674,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/MeIQx"
         },
         "AalphaC": {
-          "substrate_node_id": "AalphaC",
+          "source_node_id": "AalphaC",
           "Km_uM": 40,
           "Vmax_relative": 0.6,
           "relative_priority": 3,
@@ -685,7 +685,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A2/AalphaC"
         },
         "phenacetin": {
-          "substrate_node_id": "phenacetin",
+          "source_node_id": "phenacetin",
           "Km_uM": 50,
           "Vmax_relative": 0.9,
           "relative_priority": 2,
@@ -697,7 +697,7 @@
           "Ki_uM": 50.0
         },
         "theophylline": {
-          "substrate_node_id": "theophylline",
+          "source_node_id": "theophylline",
           "Km_uM": 280,
           "Vmax_relative": 0.5,
           "relative_priority": 4,
@@ -709,7 +709,7 @@
           "Ki_uM": 250.0
         },
         "4_aminobiphenyl": {
-          "substrate_node_id": "4ABP",
+          "source_node_id": "4ABP",
           "Km_uM": 8,
           "Vmax_relative": 0.85,
           "relative_priority": 1,
@@ -749,10 +749,10 @@
     },
     "CYP1A1": {
       "_description": "High-affinity PAH activator. Expressed in extrahepatic tissues, induced strongly by AhR ligands.",
-      "enzyme_node_id": "CYP1A1",
+      "target_node_id": "CYP1A1",
       "substrates": {
         "BaP": {
-          "substrate_node_id": "BaP",
+          "source_node_id": "BaP",
           "Km_uM": 0.054,
           "Vmax_relative": 2.0,
           "relative_priority": 1,
@@ -764,7 +764,7 @@
           "Ki_uM": 0.1
         },
         "PhIP": {
-          "substrate_node_id": "PhIP",
+          "source_node_id": "PhIP",
           "Km_uM": 5.1,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -775,7 +775,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/PhIP"
         },
         "chrysene": {
-          "substrate_node_id": "Chrysene",
+          "source_node_id": "Chrysene",
           "Km_uM": 0.5,
           "Vmax_relative": 1.5,
           "relative_priority": 1,
@@ -786,7 +786,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/chrysene"
         },
         "7_ethoxyresorufin": {
-          "substrate_node_id": "7_ethoxyresorufin",
+          "source_node_id": "7_ethoxyresorufin",
           "Km_uM": 0.1,
           "Vmax_relative": 1.2,
           "relative_priority": 2,
@@ -798,7 +798,7 @@
           "Ki_uM": 0.05
         },
         "benzo_a_anthracene": {
-          "substrate_node_id": "Benz_a_anthracene",
+          "source_node_id": "Benz_a_anthracene",
           "Km_uM": 0.5,
           "Vmax_relative": 1.3,
           "relative_priority": 2,
@@ -809,7 +809,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/benzo_a_anthracene"
         },
         "dibenz_ah_anthracene": {
-          "substrate_node_id": "Dibenz_ah_anthracene",
+          "source_node_id": "Dibenz_ah_anthracene",
           "Km_uM": 0.3,
           "Vmax_relative": 1.4,
           "relative_priority": 1,
@@ -820,7 +820,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1A1/dibenz_ah_anthracene"
         },
         "estradiol_2_OH": {
-          "substrate_node_id": "estradiol_2_OH",
+          "source_node_id": "estradiol_2_OH",
           "Km_uM": 15,
           "Vmax_relative": 0.9,
           "relative_priority": 3,
@@ -849,11 +849,11 @@
     },
     "CYP1B1": {
       "_description": "Extrahepatic (breast, prostate, lung) AhR-inducible P450. Estrogen 4-hydroxylation yields catechol estrogens implicated in hormonal carcinogenesis.",
-      "enzyme_node_id": "CYP1B1",
+      "target_node_id": "CYP1B1",
       "tissue_specificity": ["Breast", "Prostate", "Lung"],
       "substrates": {
         "estradiol_4_OH": {
-          "substrate_node_id": "estradiol_4_OH",
+          "source_node_id": "estradiol_4_OH",
           "Km_uM": 10,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -865,7 +865,7 @@
           "Ki_uM": 5.0
         },
         "BaP": {
-          "substrate_node_id": "BaP",
+          "source_node_id": "BaP",
           "Km_uM": 0.02,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -877,7 +877,7 @@
           "Ki_uM": 0.1
         },
         "Dibenz_ah_anthracene": {
-          "substrate_node_id": "Dibenz_ah_anthracene",
+          "source_node_id": "Dibenz_ah_anthracene",
           "Km_uM": 0.4,
           "Vmax_relative": 1.1,
           "relative_priority": 1,
@@ -888,7 +888,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/Dibenz_ah_anthracene"
         },
         "4_aminobiphenyl": {
-          "substrate_node_id": "4ABP",
+          "source_node_id": "4ABP",
           "Km_uM": 5,
           "Vmax_relative": 0.7,
           "relative_priority": 2,
@@ -899,7 +899,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP1B1/4_aminobiphenyl"
         },
         "resveratrol": {
-          "substrate_node_id": "resveratrol",
+          "source_node_id": "resveratrol",
           "Km_uM": 25,
           "Vmax_relative": 0.5,
           "relative_priority": 3,
@@ -928,10 +928,10 @@
     },
     "CYP2A6": {
       "_description": "Hepatic P450 responsible for nicotine and coumarin metabolism; also activates tobacco-specific nitrosamines.",
-      "enzyme_node_id": "CYP2A6",
+      "target_node_id": "CYP2A6",
       "substrates": {
         "nicotine": {
-          "substrate_node_id": "nicotine",
+          "source_node_id": "nicotine",
           "Km_uM": 47,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -943,7 +943,7 @@
           "Ki_uM": 86.0
         },
         "cotinine": {
-          "substrate_node_id": "cotinine",
+          "source_node_id": "cotinine",
           "Km_uM": 58,
           "Vmax_relative": 0.6,
           "relative_priority": 2,
@@ -955,7 +955,7 @@
           "Ki_uM": 170.0
         },
         "coumarin": {
-          "substrate_node_id": "coumarin",
+          "source_node_id": "coumarin",
           "Km_uM": 0.5,
           "Vmax_relative": 1.2,
           "relative_priority": 1,
@@ -967,7 +967,7 @@
           "Ki_uM": 0.5
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 10,
           "Vmax_relative": 0.8,
           "relative_priority": 1,
@@ -978,7 +978,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2A6/NNK"
         },
         "NDEA": {
-          "substrate_node_id": "NDEA",
+          "source_node_id": "NDEA",
           "Km_uM": 2,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -1001,11 +1001,11 @@
     },
     "CYP2A13": {
       "_description": "Lung-specific P450 with higher benzene affinity than hepatic CYP2E1 at ambient (non-occupational) concentrations. At ambient benzene concentrations, metabolism may be dominated by CYP2A13 and CYP2F1 in lung rather than CYP2E1 in liver.",
-      "enzyme_node_id": "CYP2A13",
+      "target_node_id": "CYP2A13",
       "tissue_specificity": ["Lung", "Nasal"],
       "substrates": {
         "benzene": {
-          "substrate_node_id": "Benzene",
+          "source_node_id": "Benzene",
           "Km_uM": 3.0,
           "Vmax_relative": 0.35,
           "relative_priority": 1,
@@ -1016,7 +1016,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/benzene"
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 1.4,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1027,7 +1027,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/NNK"
         },
         "NDEA": {
-          "substrate_node_id": "NDEA",
+          "source_node_id": "NDEA",
           "Km_uM": 8.0,
           "Vmax_relative": 0.6,
           "relative_priority": 2,
@@ -1038,7 +1038,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/NDEA"
         },
         "NNAL": {
-          "substrate_node_id": "NNAL",
+          "source_node_id": "NNAL",
           "Km_uM": 3.0,
           "Vmax_relative": 0.55,
           "relative_priority": 2,
@@ -1049,7 +1049,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2A13/NNAL"
         },
         "methoxsalen": {
-          "substrate_node_id": "methoxsalen",
+          "source_node_id": "methoxsalen",
           "Km_uM": 1.0,
           "Vmax_relative": 0.4,
           "relative_priority": 3,
@@ -1072,10 +1072,10 @@
     },
     "CYP2B6": {
       "_description": "CAR/PXR-inducible hepatic P450; activates cyclophosphamide and some nitrosamines.",
-      "enzyme_node_id": "CYP2B6",
+      "target_node_id": "CYP2B6",
       "substrates": {
         "cyclophosphamide": {
-          "substrate_node_id": "Cyclophosphamide",
+          "source_node_id": "Cyclophosphamide",
           "Km_uM": 45,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1087,7 +1087,7 @@
           "Ki_uM": 65.0
         },
         "bupropion": {
-          "substrate_node_id": "bupropion",
+          "source_node_id": "bupropion",
           "Km_uM": 80,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -1098,7 +1098,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2B6/bupropion"
         },
         "nicotine": {
-          "substrate_node_id": "nicotine",
+          "source_node_id": "nicotine",
           "Km_uM": 150,
           "Vmax_relative": 0.4,
           "relative_priority": 3,
@@ -1109,7 +1109,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2B6/nicotine"
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 25,
           "Vmax_relative": 0.5,
           "relative_priority": 3,
@@ -1131,10 +1131,10 @@
     },
     "CYP2C9": {
       "_description": "Major hepatic P450 for NSAID and warfarin metabolism; polymorphic (*2, *3 reduced activity).",
-      "enzyme_node_id": "CYP2C9",
+      "target_node_id": "CYP2C9",
       "substrates": {
         "tolbutamide": {
-          "substrate_node_id": "tolbutamide",
+          "source_node_id": "tolbutamide",
           "Km_uM": 120,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1146,7 +1146,7 @@
           "Ki_uM": 200.0
         },
         "S_warfarin": {
-          "substrate_node_id": "S_warfarin",
+          "source_node_id": "S_warfarin",
           "Km_uM": 4,
           "Vmax_relative": 0.7,
           "relative_priority": 1,
@@ -1158,7 +1158,7 @@
           "Ki_uM": 1.7
         },
         "diclofenac": {
-          "substrate_node_id": "diclofenac",
+          "source_node_id": "diclofenac",
           "Km_uM": 5,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -1170,7 +1170,7 @@
           "Ki_uM": 5.0
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 200,
           "Vmax_relative": 0.3,
           "relative_priority": 4,
@@ -1181,7 +1181,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2C9/NNK"
         },
         "4_aminobiphenyl": {
-          "substrate_node_id": "4ABP",
+          "source_node_id": "4ABP",
           "Km_uM": 60,
           "Vmax_relative": 0.4,
           "relative_priority": 3,
@@ -1203,10 +1203,10 @@
     },
     "CYP2C19": {
       "_description": "Polymorphic hepatic P450 (extensive vs poor metabolizer). Proton-pump inhibitor and mephenytoin metabolism.",
-      "enzyme_node_id": "CYP2C19",
+      "target_node_id": "CYP2C19",
       "substrates": {
         "S_mephenytoin": {
-          "substrate_node_id": "S_mephenytoin",
+          "source_node_id": "S_mephenytoin",
           "Km_uM": 24,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1218,7 +1218,7 @@
           "Ki_uM": 35.0
         },
         "omeprazole": {
-          "substrate_node_id": "omeprazole",
+          "source_node_id": "omeprazole",
           "Km_uM": 17,
           "Vmax_relative": 0.8,
           "relative_priority": 1,
@@ -1230,7 +1230,7 @@
           "Ki_uM": 6.0
         },
         "nicotine": {
-          "substrate_node_id": "nicotine",
+          "source_node_id": "nicotine",
           "Km_uM": 120,
           "Vmax_relative": 0.3,
           "relative_priority": 3,
@@ -1241,7 +1241,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2C19/nicotine"
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 300,
           "Vmax_relative": 0.2,
           "relative_priority": 4,
@@ -1263,10 +1263,10 @@
     },
     "CYP2D6": {
       "_description": "Highly polymorphic hepatic P450 (PM/IM/EM/UM phenotypes). Metabolizes ~25% of clinically used drugs.",
-      "enzyme_node_id": "CYP2D6",
+      "target_node_id": "CYP2D6",
       "substrates": {
         "dextromethorphan": {
-          "substrate_node_id": "dextromethorphan",
+          "source_node_id": "dextromethorphan",
           "Km_uM": 6,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1278,7 +1278,7 @@
           "Ki_uM": 1.0
         },
         "debrisoquine": {
-          "substrate_node_id": "debrisoquine",
+          "source_node_id": "debrisoquine",
           "Km_uM": 4,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -1290,7 +1290,7 @@
           "Ki_uM": 4.0
         },
         "bufuralol": {
-          "substrate_node_id": "bufuralol",
+          "source_node_id": "bufuralol",
           "Km_uM": 13,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -1301,7 +1301,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2D6/bufuralol"
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 150,
           "Vmax_relative": 0.25,
           "relative_priority": 4,
@@ -1315,10 +1315,10 @@
     },
     "CYP3A4": {
       "_description": "Most abundant hepatic P450; AFB1 and many drugs. Hill kinetics for AFB1.",
-      "enzyme_node_id": "CYP3A4",
+      "target_node_id": "CYP3A4",
       "substrates": {
         "AFB1": {
-          "substrate_node_id": "AFB1",
+          "source_node_id": "AFB1",
           "Km_uM": 49.6,
           "Vmax_relative": 1.0,
           "hill_coefficient": 2.0,
@@ -1331,7 +1331,7 @@
           "Ki_uM": 65.0
         },
         "sterigmatocystin": {
-          "substrate_node_id": "sterigmatocystin",
+          "source_node_id": "sterigmatocystin",
           "Km_uM": 80,
           "Vmax_relative": 0.6,
           "relative_priority": 2,
@@ -1342,7 +1342,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/sterigmatocystin"
         },
         "testosterone": {
-          "substrate_node_id": "Testosterone",
+          "source_node_id": "Testosterone",
           "Km_uM": 50,
           "Vmax_relative": 1.1,
           "relative_priority": 1,
@@ -1354,7 +1354,7 @@
           "Ki_uM": 62.0
         },
         "midazolam": {
-          "substrate_node_id": "midazolam",
+          "source_node_id": "midazolam",
           "Km_uM": 3,
           "Vmax_relative": 1.3,
           "relative_priority": 1,
@@ -1366,7 +1366,7 @@
           "Ki_uM": 2.7
         },
         "nifedipine": {
-          "substrate_node_id": "nifedipine",
+          "source_node_id": "nifedipine",
           "Km_uM": 10,
           "Vmax_relative": 0.9,
           "relative_priority": 2,
@@ -1378,7 +1378,7 @@
           "Ki_uM": 28.0
         },
         "erythromycin": {
-          "substrate_node_id": "erythromycin",
+          "source_node_id": "erythromycin",
           "Km_uM": 45,
           "Vmax_relative": 0.7,
           "relative_priority": 3,
@@ -1390,7 +1390,7 @@
           "Ki_uM": 17.0
         },
         "cyclosporine": {
-          "substrate_node_id": "cyclosporine",
+          "source_node_id": "cyclosporine",
           "Km_uM": 1.7,
           "Vmax_relative": 0.6,
           "relative_priority": 1,
@@ -1402,7 +1402,7 @@
           "Ki_uM": 1.3
         },
         "1_nitropyrene": {
-          "substrate_node_id": "1_nitropyrene",
+          "source_node_id": "1_nitropyrene",
           "Km_uM": 2,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -1413,7 +1413,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/1_nitropyrene"
         },
         "6_aminochrysene": {
-          "substrate_node_id": "6_aminochrysene",
+          "source_node_id": "6_aminochrysene",
           "Km_uM": 0.3,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -1424,7 +1424,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP3A4/6_aminochrysene"
         },
         "NNK": {
-          "substrate_node_id": "NNK",
+          "source_node_id": "NNK",
           "Km_uM": 200,
           "Vmax_relative": 0.35,
           "relative_priority": 4,
@@ -1458,11 +1458,11 @@
     },
     "CYP2F1": {
       "_description": "Lung-specific P450 catalyzing benzene ring hydroxylation; co-dominant with CYP2A13 at low air concentrations.",
-      "enzyme_node_id": "CYP2F1",
+      "target_node_id": "CYP2F1",
       "tissue_specificity": ["Lung", "Nasal"],
       "substrates": {
         "benzene": {
-          "substrate_node_id": "Benzene",
+          "source_node_id": "Benzene",
           "Km_uM": 5.0,
           "Vmax_relative": 0.4,
           "relative_priority": 1,
@@ -1473,7 +1473,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/benzene"
         },
         "naphthalene": {
-          "substrate_node_id": "Naphthalene",
+          "source_node_id": "Naphthalene",
           "Km_uM": 4.0,
           "Vmax_relative": 0.8,
           "relative_priority": 1,
@@ -1484,7 +1484,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/naphthalene"
         },
         "3_methylindole": {
-          "substrate_node_id": "3_methylindole",
+          "source_node_id": "3_methylindole",
           "Km_uM": 8.0,
           "Vmax_relative": 0.6,
           "relative_priority": 2,
@@ -1495,7 +1495,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/CYP2F1/3_methylindole"
         },
         "styrene": {
-          "substrate_node_id": "styrene",
+          "source_node_id": "styrene",
           "Km_uM": 25.0,
           "Vmax_relative": 0.45,
           "relative_priority": 3,
@@ -1512,21 +1512,21 @@
     "_description": "Phase II detoxification enzymes. Competition occurs at the transferase active site between xenobiotic substrates; depletes co-substrates (GSH, SAM, UDPGA, PAPS).",
     "GSTM1": {
       "_description": "Glutathione S-transferase mu-1; highly polymorphic with null allele ~50% frequency in Caucasians.",
-      "enzyme_node_id": "GSTM1",
+      "target_node_id": "GSTM1",
       "substrates": {
         "BPDE": {
-          "substrate_node_id": "BPDE",
+          "source_node_id": "BPDE",
           "Km_uM": 25,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
           "product": "BPDE_GSH_conjugate",
           "product_carcinogenic": false,
-          "notes": "Primary PAH detoxification pathway; GSTM1-null individuals lose this capacity. substrate_node_id is BPDE, the diol-epoxide substrate of the GSTM1 DETOXIFIED_BY edge. BaP remains that edge's carcinogen tag, not the substrate.",
+          "notes": "Primary PAH detoxification pathway; GSTM1-null individuals lose this capacity. source_node_id is BPDE, the diol-epoxide substrate of the GSTM1 DETOXIFIED_BY edge. BaP remains that edge's carcinogen tag, not the substrate.",
           "assumed_ki": true,
           "provenance_ref": "parameter_provenance.json#pairs/GSTM1/BPDE"
         },
         "trans_stilbene_oxide": {
-          "substrate_node_id": "trans_stilbene_oxide",
+          "source_node_id": "trans_stilbene_oxide",
           "Km_uM": 35,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -1537,7 +1537,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/GSTM1/trans_stilbene_oxide"
         },
         "CDNB": {
-          "substrate_node_id": "CDNB",
+          "source_node_id": "CDNB",
           "Km_uM": 500,
           "Vmax_relative": 1.2,
           "relative_priority": 3,
@@ -1548,7 +1548,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/GSTM1/CDNB"
         },
         "styrene_oxide": {
-          "substrate_node_id": "styrene_oxide",
+          "source_node_id": "styrene_oxide",
           "Km_uM": 40,
           "Vmax_relative": 0.7,
           "relative_priority": 2,
@@ -1562,10 +1562,10 @@
     },
     "GSTT1": {
       "_description": "Glutathione S-transferase theta-1; null allele ~20% frequency. Specializes in small electrophiles.",
-      "enzyme_node_id": "GSTT1",
+      "target_node_id": "GSTT1",
       "substrates": {
         "methylene_chloride": {
-          "substrate_node_id": "methylene_chloride",
+          "source_node_id": "methylene_chloride",
           "Km_uM": 6000,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1576,7 +1576,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/GSTT1/methylene_chloride"
         },
         "ethylene_oxide": {
-          "substrate_node_id": "EthyleneOxide",
+          "source_node_id": "EthyleneOxide",
           "Km_uM": 800,
           "Vmax_relative": 0.9,
           "relative_priority": 1,
@@ -1587,7 +1587,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/GSTT1/ethylene_oxide"
         },
         "methyl_chloride": {
-          "substrate_node_id": "methyl_chloride",
+          "source_node_id": "methyl_chloride",
           "Km_uM": 4000,
           "Vmax_relative": 0.6,
           "relative_priority": 2,
@@ -1601,21 +1601,21 @@
     },
     "GSTP1": {
       "_description": "Glutathione S-transferase pi-1; Ile105Val polymorphism alters activity against PAH diol epoxides.",
-      "enzyme_node_id": "GSTP1",
+      "target_node_id": "GSTP1",
       "substrates": {
         "BPDE": {
-          "substrate_node_id": "BPDE",
+          "source_node_id": "BPDE",
           "Km_uM": 20,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
           "product": "BPDE_GSH_conjugate",
           "product_carcinogenic": false,
-          "notes": "Primary PAH detox pathway in lung; Val/Val reduces activity >2-fold. substrate_node_id is BPDE, the diol-epoxide substrate of the GSTP1 DETOXIFIED_BY edge. BaP remains that edge's carcinogen tag, not the substrate.",
+          "notes": "Primary PAH detox pathway in lung; Val/Val reduces activity >2-fold. source_node_id is BPDE, the diol-epoxide substrate of the GSTP1 DETOXIFIED_BY edge. BaP remains that edge's carcinogen tag, not the substrate.",
           "assumed_ki": true,
           "provenance_ref": "parameter_provenance.json#pairs/GSTP1/BPDE"
         },
         "acrolein": {
-          "substrate_node_id": "Acrolein",
+          "source_node_id": "Acrolein",
           "Km_uM": 80,
           "Vmax_relative": 1.1,
           "relative_priority": 1,
@@ -1626,7 +1626,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/GSTP1/acrolein"
         },
         "ethacrynic_acid": {
-          "substrate_node_id": "ethacrynic_acid",
+          "source_node_id": "ethacrynic_acid",
           "Km_uM": 6,
           "Vmax_relative": 0.8,
           "relative_priority": 2,
@@ -1638,7 +1638,7 @@
           "Ki_uM": 0.14
         },
         "chlorambucil": {
-          "substrate_node_id": "Chlorambucil_aziridinium",
+          "source_node_id": "Chlorambucil_aziridinium",
           "Km_uM": 80,
           "Vmax_relative": 0.5,
           "relative_priority": 3,
@@ -1652,10 +1652,10 @@
     },
     "NAT1": {
       "_description": "N-acetyltransferase 1; polymorphic (*10, *11); extrahepatic aromatic amine acetylation.",
-      "enzyme_node_id": "NAT1",
+      "target_node_id": "NAT1",
       "substrates": {
         "p_aminobenzoic_acid": {
-          "substrate_node_id": "p_aminobenzoic_acid",
+          "source_node_id": "p_aminobenzoic_acid",
           "Km_uM": 50,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1666,7 +1666,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/NAT1/p_aminobenzoic_acid"
         },
         "4_aminobiphenyl": {
-          "substrate_node_id": "4ABP",
+          "source_node_id": "4ABP",
           "Km_uM": 30,
           "Vmax_relative": 0.7,
           "relative_priority": 1,
@@ -1680,10 +1680,10 @@
     },
     "NAT2": {
       "_description": "N-acetyltransferase 2; fast/slow acetylator phenotype; hepatic.",
-      "enzyme_node_id": "NAT2",
+      "target_node_id": "NAT2",
       "substrates": {
         "isoniazid": {
-          "substrate_node_id": "isoniazid",
+          "source_node_id": "isoniazid",
           "Km_uM": 40,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
@@ -1694,7 +1694,7 @@
           "provenance_ref": "parameter_provenance.json#pairs/NAT2/isoniazid"
         },
         "sulfamethazine": {
-          "substrate_node_id": "sulfamethazine",
+          "source_node_id": "sulfamethazine",
           "Km_uM": 120,
           "Vmax_relative": 0.8,
           "relative_priority": 1,
@@ -1708,16 +1708,16 @@
     },
     "SULT1A1": {
       "_description": "Sulfotransferase 1A1; hepatic activation of N-OH aromatic amines/HCAs via sulfation.",
-      "enzyme_node_id": "SULT1A1",
+      "target_node_id": "SULT1A1",
       "substrates": {
         "N_OH_PhIP": {
-          "substrate_node_id": "NOH_PhIP",
+          "source_node_id": "NOH_PhIP",
           "Km_uM": 8,
           "Vmax_relative": 1.0,
           "relative_priority": 1,
           "product": "PhIP_N_sulfonyl_ester",
           "product_carcinogenic": true,
-          "notes": "Sulfation of CYP1A2-generated N-OH-PhIP creates DNA-reactive species. substrate_node_id is NOH_PhIP, the N-hydroxy substrate of the SULT1A1 SUBSTRATE_OF edge. PhIP remains that edge's carcinogen tag, not the substrate.",
+          "notes": "Sulfation of CYP1A2-generated N-OH-PhIP creates DNA-reactive species. source_node_id is NOH_PhIP, the N-hydroxy substrate of the SULT1A1 SUBSTRATE_OF edge. PhIP remains that edge's carcinogen tag, not the substrate.",
           "assumed_ki": true,
           "provenance_ref": "parameter_provenance.json#pairs/SULT1A1/N_OH_PhIP"
         }
@@ -1725,10 +1725,10 @@
     },
     "UGT1A1": {
       "_description": "UDP-glucuronosyltransferase 1A1; hepatic bilirubin and xenobiotic glucuronidation.",
-      "enzyme_node_id": "UGT1A1",
+      "target_node_id": "UGT1A1",
       "substrates": {
         "bilirubin": {
-          "substrate_node_id": "bilirubin",
+          "source_node_id": "bilirubin",
           "Km_uM": 4,
           "Vmax_relative": 1.0,
           "relative_priority": 1,

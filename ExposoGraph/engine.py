@@ -581,34 +581,20 @@ class GraphEngine:
         for the same transferase active site / co-substrate pool). See
         ``_INTERACTION_PARAMETER_BLOCKS``.
 
-        Each enzyme block declares ``enzyme_node_id``. Each substrate entry
-        declares ``substrate_node_id``, the graph node that is the substrate
-        of the enzymatic reaction, not the parent carcinogen and not the
-        JSON key when that key is only a spelling alias. Kinetics are written
-        only onto an existing ``substrate_node_id -[SUBSTRATE_OF|DETOXIFIED_BY]->
-        enzyme_node_id`` edge. ``PRODUCES`` edges are product edges and are
-        not carriers for these kinetics.
+        Each enzyme block declares ``target_node_id``. Each substrate entry
+        declares ``source_node_id``. Those are the ends of the reaction edge:
+        ``source_node_id -[SUBSTRATE_OF|DETOXIFIED_BY]-> target_node_id``.
+        ``PRODUCES`` edges are not carriers for these kinetics.
 
-        The entry's remaining fields (Km_uM, Vmax_relative, Ki_uM, product,
-        product_carcinogenic, ...) are set, unchanged, as ``kinetics`` on
-        that reaction edge, plus three self-description markers
+        The entry's remaining fields are set, unchanged, as ``kinetics`` on
+        that edge, plus three self-description markers
         (``interaction_enzyme``, ``interaction_substrate``,
-        ``interaction_block``) identifying the JSON enzyme key, substrate
-        key, and source block so a graph walk can reconstruct typed records
-        without re-reading the JSON. This *overwrites* any ``kinetics``
-        already present on that edge, which is no longer trusted as a data
-        source once this method has run -- the same overwrite semantics as
-        :meth:`_apply_tissue_expression`. The two blocks' enzyme keys are
-        disjoint, so there is no cross-block collision in this overwrite.
+        ``interaction_block``). This overwrites any ``kinetics`` already on
+        the edge. Flux bindings already stored under ``flux_terms`` are kept.
 
-        A second substrate entry that resolves to the same enzyme and
-        substrate node is reported and skipped; the earlier entry is kept.
-        Entries with a missing id, an id that is not a node, or no reaction
-        edge are reported as warnings rather than raising, mirroring the
-        tissue-expression warning pattern.
-        ``CYP1B1`` / ``estradiol_4_OH`` is one such open edge: the node is
-        labeled as a 4-hydroxylation substrate, but the only graph edge is
-        still ``CYP1B1 -[PRODUCES]-> estradiol_4_OH``.
+        A second entry for the same source and target is reported and
+        skipped; the earlier entry is kept. A missing id, an id that is not
+        a node, or no reaction edge is a warning, not an error.
 
         Returns a list of warning messages.
         """
@@ -642,43 +628,43 @@ class GraphEngine:
                     continue
                 if "substrates" not in enzyme_block:
                     continue
-                enzyme_id = enzyme_block.get("enzyme_node_id")
-                if not enzyme_id:
+                target_id = enzyme_block.get("target_node_id")
+                if not target_id:
                     warnings.append(
-                        f"No enzyme_node_id declared for {block_name} enzyme: {enzyme_key}"
+                        f"No target_node_id declared for {block_name} enzyme: {enzyme_key}"
                     )
                     continue
-                if enzyme_id not in self.G or self.G.nodes[enzyme_id].get("type") != "Enzyme":
+                if target_id not in self.G:
                     warnings.append(
-                        f"enzyme_node_id {enzyme_id!r} for {block_name} enzyme "
-                        f"{enzyme_key} is not an Enzyme node"
+                        f"target_node_id {target_id!r} for {block_name} enzyme "
+                        f"{enzyme_key} is not a node in the graph"
                     )
                     continue
                 for substrate_key, params in enzyme_block.get("substrates", {}).items():
                     if not isinstance(params, dict):
                         continue
-                    substrate_id = params.get("substrate_node_id")
-                    if not substrate_id:
+                    source_id = params.get("source_node_id")
+                    if not source_id:
                         warnings.append(
-                            f"No substrate_node_id declared for {block_name} "
-                            f"substrate: {enzyme_id}/{substrate_key}"
+                            f"No source_node_id declared for {block_name} "
+                            f"substrate: {enzyme_key}/{substrate_key}"
                         )
                         continue
-                    if substrate_id not in self.G:
+                    if source_id not in self.G:
                         warnings.append(
-                            f"substrate_node_id {substrate_id!r} for {block_name} substrate "
-                            f"{enzyme_id}/{substrate_key} is not a node in the graph"
+                            f"source_node_id {source_id!r} for {block_name} substrate "
+                            f"{enzyme_key}/{substrate_key} is not a node in the graph"
                         )
                         continue
-                    key = (enzyme_id, substrate_id)
+                    key = (target_id, source_id)
                     if key in pending:
                         warnings.append(
-                            f"Duplicate substrate_node_id {substrate_id!r} for "
-                            f"{block_name} enzyme {enzyme_id}: {substrate_key} conflicts with "
+                            f"Duplicate source_node_id {source_id!r} for "
+                            f"{block_name} target {target_id}: {substrate_key} conflicts with "
                             f"{pending_substrate[key]}; kept the earlier entry"
                         )
                         continue
-                    kinetics = {k: v for k, v in params.items() if k != "substrate_node_id"}
+                    kinetics = {k: v for k, v in params.items() if k != "source_node_id"}
                     # Self-description markers so the graph-walk provider
                     # (KGInteractionParameterProvider) can reconstruct
                     # typed records from the edge kinetics without
@@ -709,12 +695,12 @@ class GraphEngine:
                 edge_data["kinetics"]["flux_terms"] = previous["flux_terms"]
             applied.add(key)
 
-        for enzyme_id, substrate_id in pending:
-            if (enzyme_id, substrate_id) not in applied:
-                block_name = pending_block[(enzyme_id, substrate_id)]
+        for target_id, source_id in pending:
+            if (target_id, source_id) not in applied:
+                block_name = pending_block[(target_id, source_id)]
                 warnings.append(
-                    f"No substrate-to-enzyme reaction edge for {block_name} pair: "
-                    f"{substrate_id} -> {enzyme_id}"
+                    f"No source-to-target reaction edge for {block_name} pair: "
+                    f"{source_id} -> {target_id}"
                 )
 
         return warnings
