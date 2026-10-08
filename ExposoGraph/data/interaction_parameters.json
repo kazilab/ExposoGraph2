@@ -853,7 +853,7 @@
       "tissue_specificity": ["Breast", "Prostate", "Lung"],
       "substrates": {
         "estradiol_4_OH": {
-          "source_node_id": "estradiol_4_OH",
+          "source_node_id": "E2",
           "Km_uM": 10,
           "Vmax_relative": 1.0,
           "relative_priority": 1,

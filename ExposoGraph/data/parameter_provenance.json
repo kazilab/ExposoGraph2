@@ -416,7 +416,7 @@
 
     "CYP1B1": {
       "estradiol_4_OH": {
-        "source_node_id": "estradiol_4_OH",
+        "source_node_id": "E2",
         "km_source": "PMID:10426814; DOI:10.1093/CARCIN/20.8.1607",
         "km_confidence": "high",
         "vmax_source": "PMID:10426814; DOI:10.1093/CARCIN/20.8.1607",

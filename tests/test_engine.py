@@ -464,8 +464,8 @@ class TestLoadReferenceGraph:
         engine.load_reference_graph()
         substrate_nodes = engine.nodes_by_type(NodeType.SUBSTRATE)
         substrate_ids = [node["id"] for node in substrate_nodes]
-        assert len(substrate_nodes) == 45
-        assert len(set(substrate_ids)) == 45
+        assert len(substrate_nodes) == 44
+        assert len(set(substrate_ids)) == 44
         # trichloroethylene aliases the existing TCE Carcinogen node
         # (canonical_label="Trichloroethylene") and must NOT get its own
         # Substrate node. The lowercase naphthalene Substrate node was the

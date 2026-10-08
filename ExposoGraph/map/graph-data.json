@@ -6254,16 +6254,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "id": "estradiol_4_OH",
-      "label": "Estradiol (4-hydroxylation substrate)",
-      "type": "Substrate",
-      "detail": "Represents the 4-hydroxylation branch of estradiol metabolism, associated with genotoxic catechol-estrogen formation; a distinct interaction-parameters substrate key from the parent estrogen node E2.",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "id": "ethacrynic_acid",
       "label": "Ethacrynic acid",
       "type": "Substrate",
@@ -13715,17 +13706,7 @@
       "match_status": "unmatched",
       "provenance": []
     },
-    {
-      "source": "CYP1B1",
-      "target": "estradiol_4_OH",
-      "type": "PRODUCES",
-      "label": "CYP1B1 metabolism of Estradiol (4-hydroxylation substrate)",
-      "carcinogen": "estradiol_4_OH",
-      "origin": "imported",
-      "match_status": "unmatched",
-      "provenance": []
-    },
-    {
+        {
       "source": "4ABP",
       "target": "CYP1B1",
       "type": "SUBSTRATE_OF",

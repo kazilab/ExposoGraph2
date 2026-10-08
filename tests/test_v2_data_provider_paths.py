@@ -170,10 +170,10 @@ def test_reference_graph_builds_without_remote_access(tmp_path: Path) -> None:
         (edge.source, edge.target) for edge in reference_graph.edges
     }
     assert graph_edge_pairs.issubset(reference_edge_pairs)
-    # Four json-only PRODUCES edges to duplicate Substrate nodes
-    # (chrysene, benzo_a_anthracene, dibenz_ah_anthracene, naphthalene)
-    # were removed with those nodes. 69 - 4 = 65.
-    assert len(reference_edge_pairs) - len(graph_edge_pairs) == 65
+    # Five json-only PRODUCES edges to duplicate Substrate nodes
+    # (chrysene, benzo_a_anthracene, dibenz_ah_anthracene, naphthalene,
+    # estradiol_4_OH) were removed with those nodes. 69 - 5 = 64.
+    assert len(reference_edge_pairs) - len(graph_edge_pairs) == 64
 
     engine = build_reference_engine()
     assert engine.node_count == len(reference_graph.nodes)
