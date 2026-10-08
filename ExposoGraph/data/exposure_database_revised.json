@@ -28,29 +28,10 @@
       "tier_2": "Lifestyle adjustment scenarios for smoking, alcohol, grilled or processed meat, fish/seafood, outdoor UV, and related behavioral exposures.",
       "tier_3": "Occupational, residential, environmental, or measured-biomarker scenarios, including workplace limits, contaminated water/air, industrial proximity, and biomarker-derived tissue substrate estimates."
     },
-    "runtime_formula": "exposure_weighted_risk = flux_ratio × exposure_multiplier × tissue_factor; flux_ratio may be supplied by the quantitative flux engine, and optional biomarker measurements replace the scenario multiplier with a biomarker-derived [S]/Km value.",
-    "revision": {
-      "file": "exposure_database_revised.json",
-      "based_on": "exposure_database.json",
-      "runtime_status": "not loaded; engine.py and exposure_engine.py still read exposure_database.json",
-      "removed_fields": [
-        "epa_inhalation_unit_risk",
-        "iarc_classification",
-        "index_carcinogen",
-        "key_enzymes_activation",
-        "key_enzymes_detox",
-        "population_prevalence_notes",
-        "primary_targets",
-        "regulatory_limits"
-      ],
-      "regulatory_limits": "omitted here; retained on exposure_database.json, which the exposure-engine test still reads",
-      "note": "Class keys are unchanged. carcinogen_group_id and member_carcinogen_ids are declarative until the scenario rekey."
-    }
+    "runtime_formula": "exposure_weighted_risk = flux_ratio × exposure_multiplier × tissue_factor; flux_ratio may be supplied by the quantitative flux engine, and optional biomarker measurements replace the scenario multiplier with a biomarker-derived [S]/Km value."
   },
   "carcinogen_classes": {
     "PAH": {
-      "class_id": 1,
-      "class_label": "A. Polycyclic Aromatic Hydrocarbons (PAHs)",
       "class_kind": "group",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
@@ -120,8 +101,6 @@
       }
     },
     "HCA": {
-      "class_id": 2,
-      "class_label": "B. Heterocyclic Amines (HCAs)",
       "class_kind": "group",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
@@ -178,8 +157,6 @@
       }
     },
     "AromaticAmines": {
-      "class_id": 3,
-      "class_label": "C. Aromatic Amines (Bladder Carcinogens)",
       "class_kind": "group",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
@@ -224,8 +201,6 @@
       }
     },
     "TobaccoNitrosamines": {
-      "class_id": 4,
-      "class_label": "D. Tobacco-Specific Nitrosamines (TSNAs)",
       "class_kind": "group",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
@@ -285,8 +260,6 @@
       }
     },
     "AflatoxinB1": {
-      "class_id": 5,
-      "class_label": "E. Aflatoxin B1 (AFB1) / Mycotoxins",
       "class_kind": "single_carcinogen",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
@@ -334,8 +307,6 @@
       }
     },
     "EstrogenMetabolites": {
-      "class_id": 6,
-      "class_label": "F. Estrogen Metabolites (Catechol Estrogens)",
       "class_kind": "group",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
@@ -378,8 +349,6 @@
       }
     },
     "Benzene": {
-      "class_id": 7,
-      "class_label": "G. Benzene / Small-Molecule Solvents",
       "class_kind": "single_carcinogen",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
@@ -434,8 +403,6 @@
       }
     },
     "VinylChloride": {
-      "class_id": 8,
-      "class_label": "H. Vinyl Chloride",
       "class_kind": "single_carcinogen",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
@@ -472,8 +439,6 @@
       }
     },
     "HeavyMetals": {
-      "class_id": 10,
-      "class_label": "J. Heavy Metals (As, Cd, Cr(VI), Ni, Pb)",
       "class_kind": "group",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
@@ -595,8 +560,6 @@
       }
     },
     "Aldehyde": {
-      "class_id": 11,
-      "class_label": "K. Formaldehyde / Aldehydes (Class 11)",
       "class_kind": "group",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
@@ -687,8 +650,6 @@
       }
     },
     "Dioxins_AhR": {
-      "class_id": 12,
-      "class_label": "L. Dioxins / AhR Pathway Activators (Class 12)",
       "class_kind": "group",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
@@ -736,8 +697,6 @@
       }
     },
     "DietaryNitroso": {
-      "class_id": 13,
-      "class_label": "M. Dietary N-Nitroso Compounds (NDMA/NDEA)",
       "class_kind": "group",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
@@ -802,8 +761,6 @@
       }
     },
     "ChlorinatedSolvents": {
-      "class_id": 14,
-      "class_label": "N. Chlorinated Solvents / TCE (Class 14)",
       "class_kind": "group",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
@@ -859,8 +816,6 @@
       }
     },
     "UV_Radiation": {
-      "class_id": 9,
-      "class_label": "I. Ultraviolet Radiation (UV/NER)",
       "class_kind": "group",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
