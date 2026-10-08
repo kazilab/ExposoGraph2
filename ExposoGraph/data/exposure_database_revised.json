@@ -32,6 +32,7 @@
   },
   "exposure_scenarios": {
     "group_pahs_unexposed": {
+      "base_scenario": "unexposed",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -48,6 +49,7 @@
       "source": "ATSDR; EPA background estimates"
     },
     "group_pahs_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -66,6 +68,7 @@
       "source": "NHANES 1999-2000; PMID:15322857"
     },
     "group_pahs_smoker": {
+      "base_scenario": "smoker",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -83,6 +86,7 @@
       "source": "NHANES; ATSDR ToxProfile PAH"
     },
     "group_pahs_heavy_grilled_meat_diet": {
+      "base_scenario": "heavy_grilled_meat_diet",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -101,6 +105,7 @@
       "source": "FDA Total Diet Study"
     },
     "group_pahs_smoker_heavy_grilled_meat": {
+      "base_scenario": "smoker_heavy_grilled_meat",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -117,6 +122,7 @@
       "source": "Combined smoking + dietary PAH estimates"
     },
     "group_pahs_occupational_high": {
+      "base_scenario": "occupational_high",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -135,6 +141,7 @@
       "source": "OSHA; occupational cohort studies; NIOSH"
     },
     "group_hcas_vegetarian_low_meat": {
+      "base_scenario": "vegetarian_low_meat",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -148,6 +155,7 @@
       "source": "PMID:11477514"
     },
     "group_hcas_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -164,6 +172,7 @@
       "source": "PMID:11477514; DOI:10.1038/sj.jea.7500158"
     },
     "group_hcas_moderate_meat_diet": {
+      "base_scenario": "moderate_meat_diet",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -177,6 +186,7 @@
       "source": "NCI HCA estimation tool; PMID:11477514"
     },
     "group_hcas_high_meat_well_done": {
+      "base_scenario": "high_meat_well_done",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -191,6 +201,7 @@
       "source": "NCI CHARRED database; PMID:11477514"
     },
     "group_aromatic_amines_nonsmoker_no_occupational": {
+      "base_scenario": "nonsmoker_no_occupational",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -203,6 +214,7 @@
       "source": "NHANES; background dietary exposure"
     },
     "group_aromatic_amines_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -216,6 +228,7 @@
       "source": "ATSDR toxicological profiles; IARC Monograph Vol 99"
     },
     "group_aromatic_amines_smoker": {
+      "base_scenario": "smoker",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -228,6 +241,7 @@
       "source": "NHANES; IARC Monograph Vol 99"
     },
     "group_aromatic_amines_occupational_dye_rubber": {
+      "base_scenario": "occupational_dye_rubber",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -240,6 +254,7 @@
       "source": "OSHA; NIOSH; IARC Monograph Vol 1 and 99"
     },
     "group_nitrosamines_tobacco_never_smoker": {
+      "base_scenario": "never_smoker",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -253,6 +268,7 @@
       "source": "NHANES cotinine; NIAAA 2023"
     },
     "group_nitrosamines_tobacco_secondhand_smoke": {
+      "base_scenario": "secondhand_smoke",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -265,6 +281,7 @@
       "source": "Hecht et al. 1993 (PMID:8413477)"
     },
     "group_nitrosamines_tobacco_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -277,6 +294,7 @@
       "source": "NHANES urinary cotinine / NNAL reference"
     },
     "group_nitrosamines_tobacco_smoker_half_pack": {
+      "base_scenario": "smoker_half_pack",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -290,6 +308,7 @@
       "source": "Carmella et al. 1993 (PMID:8428352); Hecht et al. 2004 (PMID:14734700)"
     },
     "group_nitrosamines_tobacco_smoker_one_pack": {
+      "base_scenario": "smoker_one_pack",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -303,6 +322,7 @@
       "source": "Carmella et al. 1993 (PMID:8428352); Hecht et al. 2004 (PMID:14734700)"
     },
     "group_nitrosamines_tobacco_heavy_smoker": {
+      "base_scenario": "heavy_smoker",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -315,6 +335,7 @@
       "source": "IARC Monograph Vol 100E; Hecht et al. 2004 (PMID:14734700)"
     },
     "AFB1_us_low_exposure": {
+      "base_scenario": "us_low_exposure",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -328,6 +349,7 @@
       "source": "FDA; IARC 1993; ATSDR"
     },
     "AFB1_high_processed_grain": {
+      "base_scenario": "high_processed_grain",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -339,6 +361,7 @@
       "source": "FDA Total Diet Study; USDA monitoring"
     },
     "AFB1_developing_country_moderate": {
+      "base_scenario": "developing_country_moderate",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -351,6 +374,7 @@
       "source": "IARC; PMID:12435844; DOI:10.1093/mutage/17.6.471; WHO AFB1 risk assessment"
     },
     "AFB1_developing_country_high": {
+      "base_scenario": "developing_country_high",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -362,6 +386,7 @@
       "source": "IARC Monograph Vol 82; PMID:17192028; DOI:10.3233/CBM-2005-1103"
     },
     "group_estrogen_premenopausal_no_exogenous": {
+      "base_scenario": "premenopausal_no_exogenous",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -373,6 +398,7 @@
       "source": "NHANES biomonitoring; standard estradiol reference ranges"
     },
     "group_estrogen_postmenopausal_no_hrt": {
+      "base_scenario": "postmenopausal_no_hrt",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -384,6 +410,7 @@
       "source": "NHANES; estradiol reference ranges"
     },
     "group_estrogen_postmenopausal_hrt_combined": {
+      "base_scenario": "postmenopausal_hrt_combined",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -395,6 +422,7 @@
       "source": "WHI; IARC Monograph Vol 91 and 100A"
     },
     "group_estrogen_obesity_related_high_estrogen": {
+      "base_scenario": "obesity_related_high_estrogen",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -406,6 +434,7 @@
       "source": "IARC; PMID:9051321; DOI:10.1023/A:1018479020716"
     },
     "Benzene_unexposed_rural": {
+      "base_scenario": "unexposed_rural",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -417,6 +446,7 @@
       "source": "EPA outdoor air monitoring"
     },
     "Benzene_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -430,6 +460,7 @@
       "source": "EPA IRIS; NHANES volatile organic compounds"
     },
     "Benzene_smoker": {
+      "base_scenario": "smoker",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -441,6 +472,7 @@
       "source": "NHANES; ATSDR ToxProfile Benzene"
     },
     "Benzene_urban_high_traffic": {
+      "base_scenario": "urban_high_traffic",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -452,6 +484,7 @@
       "source": "EPA air toxics monitoring"
     },
     "Benzene_occupational_petroleum": {
+      "base_scenario": "occupational_petroleum",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -464,6 +497,7 @@
       "source": "OSHA 29 CFR 1910.1028; PMID:9230889; DOI:10.1093/jnci/89.14.1065"
     },
     "VinylChloride_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
         "VinylChloride"
@@ -475,6 +509,7 @@
       "source": "EPA ambient air monitoring"
     },
     "VinylChloride_near_contaminated_site": {
+      "base_scenario": "near_contaminated_site",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
         "VinylChloride"
@@ -485,6 +520,7 @@
       "source": "ATSDR ToxProfile VCM; EPA site assessments"
     },
     "VinylChloride_occupational": {
+      "base_scenario": "occupational",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
         "VinylChloride"
@@ -496,6 +532,7 @@
       "source": "OSHA 29 CFR 1910.1017; IARC Monograph Vol 97"
     },
     "group_heavy_metals_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -531,6 +568,7 @@
       "source": "NHANES 2007-2012; CDC fourth national report on human exposure to environmental chemicals"
     },
     "group_heavy_metals_smoker": {
+      "base_scenario": "smoker",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -560,6 +598,7 @@
       "source": "NHANES; ATSDR ToxProfile Cadmium"
     },
     "group_heavy_metals_high_seafood_fish": {
+      "base_scenario": "high_seafood_fish",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -587,6 +626,7 @@
       "source": "FDA seafood advisory; EPA fish consumption"
     },
     "group_heavy_metals_arsenic_endemic_well_water": {
+      "base_scenario": "arsenic_endemic_well_water",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -614,6 +654,7 @@
       "source": "ATSDR; EPA; PMID:20646756; DOI:10.1016/S0140-6736(10)60481-3"
     },
     "group_heavy_metals_occupational_chromium_vi": {
+      "base_scenario": "occupational_chromium_vi",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -643,6 +684,7 @@
       "source": "OSHA 29 CFR 1910.1026; IARC Monograph Vol 49"
     },
     "group_heavy_metals_occupational_cadmium": {
+      "base_scenario": "occupational_cadmium",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -670,6 +712,7 @@
       "source": "OSHA 29 CFR 1910.1027; ATSDR"
     },
     "group_aldehydes_nondrinker": {
+      "base_scenario": "nondrinker",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -688,6 +731,7 @@
       "source": "PMID:33147438; PMCID:PMC7758861"
     },
     "group_aldehydes_light_drinker": {
+      "base_scenario": "light_drinker",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -709,6 +753,7 @@
       "source": "NIAAA; PMID:17590988; DOI:10.1002/9780470511848.ch6"
     },
     "group_aldehydes_moderate_drinker": {
+      "base_scenario": "moderate_drinker",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -730,6 +775,7 @@
       "source": "NIAAA; PMID:22320931; DOI:10.1111/j.1440-1746.2012.07017.x"
     },
     "group_aldehydes_heavy_drinker": {
+      "base_scenario": "heavy_drinker",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -751,6 +797,7 @@
       "source": "NIAAA 2023 NSDUH; IARC Monograph Vol 100E"
     },
     "group_aldehydes_ALDH2_heterozygote_moderate": {
+      "base_scenario": "ALDH2_heterozygote_moderate",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -768,6 +815,7 @@
       "source": "PMCID:PMC4376259; PMID:11375898; DOI:10.1093/carcin/22.6.913"
     },
     "group_aldehydes_ALDH2_homozygote_any_drinking": {
+      "base_scenario": "ALDH2_homozygote_any_drinking",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -785,6 +833,7 @@
       "source": "IARC; PMCID:PMC7941978; PMID:11375898; DOI:10.1093/carcin/22.6.913"
     },
     "group_aldehydes_formaldehyde_occupational": {
+      "base_scenario": "formaldehyde_occupational",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -804,6 +853,7 @@
       "source": "OSHA 29 CFR 1910.1048; NIOSH REL 0.016 ppm"
     },
     "group_dioxins_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -818,6 +868,7 @@
       "source": "EPA Dioxin Reassessment 2012; WHO-ECEH 1998-2000"
     },
     "group_dioxins_high_fatty_fish_diet": {
+      "base_scenario": "high_fatty_fish_diet",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -830,6 +881,7 @@
       "source": "EPA; EFSA 2018 dioxin assessment"
     },
     "group_dioxins_near_industrial_source": {
+      "base_scenario": "near_industrial_source",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -841,6 +893,7 @@
       "source": "EPA; ATSDR ToxProfile Dioxins"
     },
     "group_dioxins_occupational_herbicide_agent_orange": {
+      "base_scenario": "occupational_herbicide_agent_orange",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -854,6 +907,7 @@
       "source": "VA/NAS Agent Orange reports; IARC Monograph Vol 100F"
     },
     "group_nitrosamines_dietary_general_population_low_processed_meat": {
+      "base_scenario": "general_population_low_processed_meat",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -867,6 +921,7 @@
       "source": "PMID:39226451; DOI:10.1080/19440049.2024.2398704; FDA monitoring"
     },
     "group_nitrosamines_dietary_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -881,6 +936,7 @@
       "source": "PMID:39226451; DOI:10.1080/19440049.2024.2398704; FDA Total Diet Study"
     },
     "group_nitrosamines_dietary_high_processed_meat": {
+      "base_scenario": "high_processed_meat",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -895,6 +951,7 @@
       "source": "Scientific Reports 2025 processed-meat nitrosamine study, DOI:10.1038/s41598-024-84059-y; PMID:39226451 and DOI:10.1080/19440049.2024.2398704 for U.S. mean dietary exposure context"
     },
     "group_nitrosamines_dietary_contaminated_water_above_advisory": {
+      "base_scenario": "contaminated_water_above_advisory",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -909,6 +966,7 @@
       "source": "EPA health advisory documents; IARC Monograph Vol 17"
     },
     "group_nitrosamines_dietary_occupational_rubber_tanning": {
+      "base_scenario": "occupational_rubber_tanning",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -921,6 +979,7 @@
       "source": "IARC Monograph Vol 17; OSHA occupational exposure data"
     },
     "group_chlorinated_solvents_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -934,6 +993,7 @@
       "source": "EPA; ATSDR ToxProfile TCE"
     },
     "group_chlorinated_solvents_near_superfund_site": {
+      "base_scenario": "near_superfund_site",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -948,6 +1008,7 @@
       "source": "ATSDR; EPA Superfund TCE reports"
     },
     "group_chlorinated_solvents_occupational_moderate": {
+      "base_scenario": "occupational_moderate",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -961,6 +1022,7 @@
       "source": "OSHA; ACGIH; PMID:14652303; DOI:10.1093/aje/kwg282"
     },
     "group_chlorinated_solvents_occupational_high": {
+      "base_scenario": "occupational_high",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -974,6 +1036,7 @@
       "source": "IARC Monograph Vol 106; PMID:12594774; DOI:10.1002/ajim.10185"
     },
     "group_uv_radiation_minimal": {
+      "base_scenario": "minimal",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -985,6 +1048,7 @@
       "source": "WHO UV Index guidelines"
     },
     "group_uv_radiation_general_population": {
+      "base_scenario": "general_population",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -996,6 +1060,7 @@
       "source": "WHO; IARC Monograph Vol 100D"
     },
     "group_uv_radiation_outdoor_worker": {
+      "base_scenario": "outdoor_worker",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -1007,6 +1072,7 @@
       "source": "OSHA; WHO"
     },
     "group_uv_radiation_tanning_bed_user": {
+      "base_scenario": "tanning_bed_user",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
