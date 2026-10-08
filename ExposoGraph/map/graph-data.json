@@ -6559,8 +6559,7 @@
           "model_kind": "semi_quantitative_proxy",
           "exposure_defaults": {
             "source": "exposure_database",
-            "class": "AromaticAmines",
-            "scenario": "general_population",
+            "scenario_id": "group_aromatic_amines_general_population",
             "field": "estimated_tissue_conc_uM"
           }
         ,
@@ -6712,8 +6711,7 @@
           "model_kind": "semi_quantitative_proxy",
           "exposure_defaults": {
             "source": "exposure_database",
-            "class": "EstrogenMetabolites",
-            "scenario": "premenopausal_no_exogenous",
+            "scenario_id": "group_estrogen_premenopausal_no_exogenous",
             "field": "estimated_tissue_conc_uM"
           }
         }
@@ -6945,8 +6943,7 @@
           "model_kind": "semi_quantitative_proxy",
           "exposure_defaults": {
             "source": "exposure_database",
-            "class": "DietaryNitroso",
-            "scenario": "general_population",
+            "scenario_id": "group_nitrosamines_dietary_general_population",
             "field": "estimated_tissue_conc_uM"
           }
         ,
@@ -7096,8 +7093,7 @@
           "model_kind": "damage_repair_proxy",
           "exposure_defaults": {
             "source": "exposure_database",
-            "class": "UV_Radiation",
-            "scenario": "general_population",
+            "scenario_id": "group_uv_radiation_general_population",
             "field": "estimated_DNA_damage_relative"
           }
         }
@@ -7122,8 +7118,7 @@
           "model_kind": "semi_quantitative_proxy",
           "exposure_defaults": {
             "source": "exposure_database",
-            "class": "VinylChloride",
-            "scenario": "general_population",
+            "scenario_id": "VinylChloride_general_population",
             "field": "estimated_tissue_conc_uM"
           }
         ,

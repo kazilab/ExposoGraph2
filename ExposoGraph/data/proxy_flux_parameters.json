@@ -20,8 +20,7 @@
       "graph_group": "Aromatic Amines",
       "exposure_default": {
         "source": "exposure_database",
-        "class": "AromaticAmines",
-        "scenario": "general_population",
+        "scenario_id": "group_aromatic_amines_general_population",
         "field": "estimated_tissue_conc_uM"
       },
       "unit_note": "Semi-quantitative 4-ABP proxy integrating CYP1A2/NAT1 activation with NAT2, GST, and NER attenuation.",
@@ -118,8 +117,7 @@
       "graph_group": "Estrogen",
       "exposure_default": {
         "source": "exposure_database",
-        "class": "EstrogenMetabolites",
-        "scenario": "premenopausal_no_exogenous",
+        "scenario_id": "group_estrogen_premenopausal_no_exogenous",
         "field": "estimated_tissue_conc_uM"
       },
       "unit_note": "Semi-quantitative estrogen-quinone burden proxy using CYP1B1-centered activation and COMT/SULT1E1/UGT detoxification.",
@@ -230,8 +228,7 @@
       "graph_group": "Nitrosamines",
       "exposure_default": {
         "source": "exposure_database",
-        "class": "DietaryNitroso",
-        "scenario": "general_population",
+        "scenario_id": "group_nitrosamines_dietary_general_population",
         "field": "estimated_tissue_conc_uM"
       },
       "unit_note": "Semi-quantitative NDEA-specific dietary nitroso proxy anchored to local CYP2A13 interaction parameters.",
@@ -307,8 +304,7 @@
       "graph_group": "Vinyl Chloride",
       "exposure_default": {
         "source": "exposure_database",
-        "class": "VinylChloride",
-        "scenario": "general_population",
+        "scenario_id": "VinylChloride_general_population",
         "field": "estimated_tissue_conc_uM"
       },
       "unit_note": "Semi-quantitative vinyl-chloride proxy integrating CYP2E1 activation with GST/epoxide-hydrolase and repair attenuation.",
@@ -390,8 +386,7 @@
       "graph_group": "UV Radiation",
       "exposure_default": {
         "source": "exposure_database",
-        "class": "UV_Radiation",
-        "scenario": "general_population",
+        "scenario_id": "group_uv_radiation_general_population",
         "field": "estimated_DNA_damage_relative"
       },
       "unit_note": "Relative UV damage burden (general-population default = 1.0 DNA-damage unit) versus NER/BER repair capacity.",

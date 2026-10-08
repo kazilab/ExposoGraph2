@@ -38,7 +38,7 @@ _DEFAULT_PROXY_FLUX_PROVENANCE_PATH = _PACKAGE_DIR / "data" / "proxy_flux_proven
 # (see kinetic_parameters.json genotype_modifiers.special_cases).
 _GST_NULL_RESIDUAL_ACTIVITY = 0.05
 
-_DEFAULT_EXPOSURE_DB_PATH = _PACKAGE_DIR / "data" / "exposure_database.json"
+_DEFAULT_EXPOSURE_DB_PATH = _PACKAGE_DIR / "data" / "exposure_database_revised.json"
 
 _FALLBACK_QIVIVE_TISSUES: dict[str, dict[str, float]] = {
     "liver": {"mppgl_mg_per_g": 40.0, "organ_weight_g": 1500.0},
@@ -1887,11 +1887,8 @@ class GraphEngine:
                     return float(value)
             elif source == "exposure_database":
                 exposure_db = self._ensure_exposure_database()
-                scenario = (
-                    exposure_db.get("carcinogen_classes", {})
-                    .get(spec.get("class"), {})
-                    .get("exposure_scenarios", {})
-                    .get(spec.get("scenario"), {})
+                scenario = exposure_db.get("exposure_scenarios", {}).get(
+                    spec.get("scenario_id"), {}
                 )
                 value = scenario.get(spec.get("field"))
                 if value is not None:

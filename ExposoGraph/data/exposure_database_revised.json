@@ -33,6 +33,8 @@
   "exposure_scenarios": {
     "group_pahs_unexposed": {
       "base_scenario": "unexposed",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -50,6 +52,8 @@
     },
     "group_pahs_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -69,6 +73,8 @@
     },
     "group_pahs_smoker": {
       "base_scenario": "smoker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -87,6 +93,8 @@
     },
     "group_pahs_heavy_grilled_meat_diet": {
       "base_scenario": "heavy_grilled_meat_diet",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -106,6 +114,8 @@
     },
     "group_pahs_smoker_heavy_grilled_meat": {
       "base_scenario": "smoker_heavy_grilled_meat",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -123,6 +133,8 @@
     },
     "group_pahs_occupational_high": {
       "base_scenario": "occupational_high",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_pahs",
       "member_carcinogen_ids": [
         "BaP",
@@ -142,6 +154,8 @@
     },
     "group_hcas_vegetarian_low_meat": {
       "base_scenario": "vegetarian_low_meat",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -156,6 +170,8 @@
     },
     "group_hcas_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -173,6 +189,8 @@
     },
     "group_hcas_moderate_meat_diet": {
       "base_scenario": "moderate_meat_diet",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -187,6 +205,8 @@
     },
     "group_hcas_high_meat_well_done": {
       "base_scenario": "high_meat_well_done",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_hcas",
       "member_carcinogen_ids": [
         "MeIQx",
@@ -202,6 +222,8 @@
     },
     "group_aromatic_amines_nonsmoker_no_occupational": {
       "base_scenario": "nonsmoker_no_occupational",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -215,6 +237,8 @@
     },
     "group_aromatic_amines_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -229,6 +253,8 @@
     },
     "group_aromatic_amines_smoker": {
       "base_scenario": "smoker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -242,6 +268,8 @@
     },
     "group_aromatic_amines_occupational_dye_rubber": {
       "base_scenario": "occupational_dye_rubber",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_aromatic_amines",
       "member_carcinogen_ids": [
         "4ABP",
@@ -255,6 +283,8 @@
     },
     "group_nitrosamines_tobacco_never_smoker": {
       "base_scenario": "never_smoker",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -269,6 +299,8 @@
     },
     "group_nitrosamines_tobacco_secondhand_smoke": {
       "base_scenario": "secondhand_smoke",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -282,6 +314,8 @@
     },
     "group_nitrosamines_tobacco_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -295,6 +329,8 @@
     },
     "group_nitrosamines_tobacco_smoker_half_pack": {
       "base_scenario": "smoker_half_pack",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -309,6 +345,8 @@
     },
     "group_nitrosamines_tobacco_smoker_one_pack": {
       "base_scenario": "smoker_one_pack",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -323,6 +361,8 @@
     },
     "group_nitrosamines_tobacco_heavy_smoker": {
       "base_scenario": "heavy_smoker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NNK"
@@ -336,6 +376,8 @@
     },
     "AFB1_us_low_exposure": {
       "base_scenario": "us_low_exposure",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -350,6 +392,8 @@
     },
     "AFB1_high_processed_grain": {
       "base_scenario": "high_processed_grain",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -362,6 +406,8 @@
     },
     "AFB1_developing_country_moderate": {
       "base_scenario": "developing_country_moderate",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -375,6 +421,8 @@
     },
     "AFB1_developing_country_high": {
       "base_scenario": "developing_country_high",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_mycotoxins",
       "member_carcinogen_ids": [
         "AFB1"
@@ -387,6 +435,8 @@
     },
     "group_estrogen_premenopausal_no_exogenous": {
       "base_scenario": "premenopausal_no_exogenous",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -399,6 +449,8 @@
     },
     "group_estrogen_postmenopausal_no_hrt": {
       "base_scenario": "postmenopausal_no_hrt",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -411,6 +463,8 @@
     },
     "group_estrogen_postmenopausal_hrt_combined": {
       "base_scenario": "postmenopausal_hrt_combined",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -423,6 +477,8 @@
     },
     "group_estrogen_obesity_related_high_estrogen": {
       "base_scenario": "obesity_related_high_estrogen",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_estrogen",
       "member_carcinogen_ids": [
         "EstrogenProgestogenTherapy"
@@ -435,6 +491,8 @@
     },
     "Benzene_unexposed_rural": {
       "base_scenario": "unexposed_rural",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -447,6 +505,8 @@
     },
     "Benzene_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -461,6 +521,8 @@
     },
     "Benzene_smoker": {
       "base_scenario": "smoker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -473,6 +535,8 @@
     },
     "Benzene_urban_high_traffic": {
       "base_scenario": "urban_high_traffic",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -485,6 +549,8 @@
     },
     "Benzene_occupational_petroleum": {
       "base_scenario": "occupational_petroleum",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_benzene",
       "member_carcinogen_ids": [
         "Benzene"
@@ -498,6 +564,8 @@
     },
     "VinylChloride_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
         "VinylChloride"
@@ -510,6 +578,8 @@
     },
     "VinylChloride_near_contaminated_site": {
       "base_scenario": "near_contaminated_site",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
         "VinylChloride"
@@ -521,6 +591,8 @@
     },
     "VinylChloride_occupational": {
       "base_scenario": "occupational",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_vinyl_chloride",
       "member_carcinogen_ids": [
         "VinylChloride"
@@ -533,6 +605,8 @@
     },
     "group_heavy_metals_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -569,6 +643,8 @@
     },
     "group_heavy_metals_smoker": {
       "base_scenario": "smoker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -599,6 +675,8 @@
     },
     "group_heavy_metals_high_seafood_fish": {
       "base_scenario": "high_seafood_fish",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -627,6 +705,8 @@
     },
     "group_heavy_metals_arsenic_endemic_well_water": {
       "base_scenario": "arsenic_endemic_well_water",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -655,6 +735,8 @@
     },
     "group_heavy_metals_occupational_chromium_vi": {
       "base_scenario": "occupational_chromium_vi",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -685,6 +767,8 @@
     },
     "group_heavy_metals_occupational_cadmium": {
       "base_scenario": "occupational_cadmium",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": [
         "AntimonyTrivalent",
@@ -713,6 +797,8 @@
     },
     "group_aldehydes_nondrinker": {
       "base_scenario": "nondrinker",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -732,6 +818,8 @@
     },
     "group_aldehydes_light_drinker": {
       "base_scenario": "light_drinker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -754,6 +842,8 @@
     },
     "group_aldehydes_moderate_drinker": {
       "base_scenario": "moderate_drinker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -776,6 +866,8 @@
     },
     "group_aldehydes_heavy_drinker": {
       "base_scenario": "heavy_drinker",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -798,6 +890,8 @@
     },
     "group_aldehydes_ALDH2_heterozygote_moderate": {
       "base_scenario": "ALDH2_heterozygote_moderate",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -816,6 +910,8 @@
     },
     "group_aldehydes_ALDH2_homozygote_any_drinking": {
       "base_scenario": "ALDH2_homozygote_any_drinking",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -834,6 +930,8 @@
     },
     "group_aldehydes_formaldehyde_occupational": {
       "base_scenario": "formaldehyde_occupational",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_aldehydes",
       "member_carcinogen_ids": [
         "Acetaldehyde",
@@ -854,6 +952,8 @@
     },
     "group_dioxins_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -869,6 +969,8 @@
     },
     "group_dioxins_high_fatty_fish_diet": {
       "base_scenario": "high_fatty_fish_diet",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -882,6 +984,8 @@
     },
     "group_dioxins_near_industrial_source": {
       "base_scenario": "near_industrial_source",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -894,6 +998,8 @@
     },
     "group_dioxins_occupational_herbicide_agent_orange": {
       "base_scenario": "occupational_herbicide_agent_orange",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": [
         "PeCDF_23478",
@@ -908,6 +1014,8 @@
     },
     "group_nitrosamines_dietary_general_population_low_processed_meat": {
       "base_scenario": "general_population_low_processed_meat",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -922,6 +1030,8 @@
     },
     "group_nitrosamines_dietary_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -937,6 +1047,8 @@
     },
     "group_nitrosamines_dietary_high_processed_meat": {
       "base_scenario": "high_processed_meat",
+      "exposure_tier": 2,
+      "tier_label": "Tier 2 lifestyle adjustment",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -952,6 +1064,8 @@
     },
     "group_nitrosamines_dietary_contaminated_water_above_advisory": {
       "base_scenario": "contaminated_water_above_advisory",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -967,6 +1081,8 @@
     },
     "group_nitrosamines_dietary_occupational_rubber_tanning": {
       "base_scenario": "occupational_rubber_tanning",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_nitrosamines",
       "member_carcinogen_ids": [
         "NDEA",
@@ -980,6 +1096,8 @@
     },
     "group_chlorinated_solvents_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -994,6 +1112,8 @@
     },
     "group_chlorinated_solvents_near_superfund_site": {
       "base_scenario": "near_superfund_site",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -1009,6 +1129,8 @@
     },
     "group_chlorinated_solvents_occupational_moderate": {
       "base_scenario": "occupational_moderate",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -1023,6 +1145,8 @@
     },
     "group_chlorinated_solvents_occupational_high": {
       "base_scenario": "occupational_high",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": [
         "PCE",
@@ -1037,6 +1161,8 @@
     },
     "group_uv_radiation_minimal": {
       "base_scenario": "minimal",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -1049,6 +1175,8 @@
     },
     "group_uv_radiation_general_population": {
       "base_scenario": "general_population",
+      "exposure_tier": 1,
+      "tier_label": "Tier 1 population baseline",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -1061,6 +1189,8 @@
     },
     "group_uv_radiation_outdoor_worker": {
       "base_scenario": "outdoor_worker",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -1073,6 +1203,8 @@
     },
     "group_uv_radiation_tanning_bed_user": {
       "base_scenario": "tanning_bed_user",
+      "exposure_tier": 3,
+      "tier_label": "Tier 3 occupational/environmental or measured biomarker",
       "carcinogen_group_id": "group_uv_radiation",
       "member_carcinogen_ids": [
         "UVRadiation"
@@ -1571,225 +1703,69 @@
       }
     }
   },
-  "exposure_questionnaire_schema": {
-    "sections": {
-      "smoking": {
-        "label": "Tobacco Use",
-        "questions": [
-          {
-            "id": "smoking_status",
-            "text": "Do you currently smoke cigarettes?",
-            "type": "select",
-            "options": [
-              "never",
-              "former",
-              "current"
-            ]
-          },
-          {
-            "id": "cigarettes_per_day",
-            "text": "If current/former smoker: cigarettes per day at peak?",
-            "type": "number",
-            "unit": "cigarettes/day"
-          },
-          {
-            "id": "pack_years",
-            "text": "Estimated pack-years (packs/day × years)?",
-            "type": "number",
-            "unit": "pack-years"
-          },
-          {
-            "id": "secondhand_smoke",
-            "text": "Regular secondhand smoke exposure (home/work)?",
-            "type": "boolean"
-          }
-        ]
+  "tissue_factors": {
+    "group_pahs": {
+      "Lung": 1.5,
+      "Liver": 0.8,
+      "Colon": 1.2,
+      "Skin": 1.3
+    },
+    "group_hcas": {
+      "Colon": 1.4,
+      "Liver": 1.2,
+      "Breast": 1.1
+    },
+    "group_aromatic_amines": {
+      "Bladder": 2.0,
+      "Liver": 1.0
+    },
+    "group_mycotoxins": {
+      "Liver": 2.5,
+      "Lung": 0.5
+    },
+    "group_estrogen": {
+      "Breast": 2.0,
+      "Endometrium": 1.8
+    },
+    "group_benzene": {
+      "Liver": 1.5,
+      "BoneMarrow": 1.8,
+      "Lung": 1.2
+    },
+    "group_vinyl_chloride": {
+      "Liver": 2.5
+    },
+    "group_aldehydes": {
+      "Liver": 2.0,
+      "Esophagus": 1.8,
+      "Colon": 1.2
+    },
+    "group_chlorinated_solvents": {
+      "Kidney": 2.5,
+      "Liver": 1.5
+    },
+    "group_heavy_metals": {
+      "Lung": 1.5,
+      "Kidney": 1.8,
+      "Bladder": 1.3
+    },
+    "group_uv_radiation": {
+      "Skin": 3.0,
+      "Eye": 1.5
+    },
+    "group_dioxins": {
+      "Liver": 1.5,
+      "Lung": 1.2
+    },
+    "group_nitrosamines": {
+      "tobacco": {
+        "Lung": 2.0,
+        "Liver": 0.8
       },
-      "alcohol": {
-        "label": "Alcohol Consumption",
-        "questions": [
-          {
-            "id": "alcohol_status",
-            "text": "Do you drink alcohol?",
-            "type": "select",
-            "options": [
-              "nondrinker",
-              "light",
-              "moderate",
-              "heavy"
-            ]
-          },
-          {
-            "id": "drinks_per_week",
-            "text": "Approximate drinks per week (1 drink = 14g ethanol)?",
-            "type": "number",
-            "unit": "drinks/week"
-          },
-          {
-            "id": "binge_episodes",
-            "text": "Binge drinking episodes per month (≥5 drinks/occasion men, ≥4 women)?",
-            "type": "number",
-            "unit": "episodes/month"
-          }
-        ]
-      },
-      "diet": {
-        "label": "Dietary Exposures",
-        "questions": [
-          {
-            "id": "grilled_meat_frequency",
-            "text": "How often do you eat grilled/charred meats?",
-            "type": "select",
-            "options": [
-              "never",
-              "monthly",
-              "weekly",
-              "daily"
-            ]
-          },
-          {
-            "id": "processed_meat_frequency",
-            "text": "How often do you eat processed meats (hotdogs, sausage, bacon, deli meats)?",
-            "type": "select",
-            "options": [
-              "never",
-              "monthly",
-              "weekly",
-              "daily"
-            ]
-          },
-          {
-            "id": "red_meat_servings",
-            "text": "Red meat servings per week?",
-            "type": "number",
-            "unit": "servings/week"
-          },
-          {
-            "id": "seafood_frequency",
-            "text": "Fish/seafood servings per week?",
-            "type": "number",
-            "unit": "servings/week"
-          },
-          {
-            "id": "aflatoxin_exposure",
-            "text": "Do you live in or travel frequently to regions with high aflatoxin exposure (parts of Africa, South/Southeast Asia)?",
-            "type": "boolean"
-          }
-        ]
-      },
-      "occupation": {
-        "label": "Occupational Exposures",
-        "questions": [
-          {
-            "id": "occupation_category",
-            "text": "Which best describes your occupation?",
-            "type": "select",
-            "options": [
-              "office_indoor",
-              "healthcare",
-              "agriculture",
-              "construction_outdoor",
-              "manufacturing_industrial",
-              "petroleum_chemical",
-              "mining_metals",
-              "dry_cleaning_solvents",
-              "firefighting",
-              "funeral_embalming",
-              "other"
-            ]
-          },
-          {
-            "id": "occupation_years",
-            "text": "Years in current or most hazardous occupation?",
-            "type": "number",
-            "unit": "years"
-          },
-          {
-            "id": "occupational_chemicals",
-            "text": "Have you had occupational exposure to any of these?",
-            "type": "multiselect",
-            "options": [
-              "PAHs_coke_oven",
-              "benzene_petroleum",
-              "chromium_vi",
-              "arsenic",
-              "cadmium_batteries",
-              "formaldehyde",
-              "TCE_solvents",
-              "PCBs_dioxins",
-              "asbestos",
-              "coal_dust",
-              "diesel_exhaust",
-              "none"
-            ]
-          },
-          {
-            "id": "ppe_use",
-            "text": "Did/do you use personal protective equipment consistently?",
-            "type": "select",
-            "options": [
-              "always",
-              "usually",
-              "sometimes",
-              "rarely",
-              "never"
-            ]
-          }
-        ]
-      },
-      "residential": {
-        "label": "Residential Environment",
-        "questions": [
-          {
-            "id": "urban_rural",
-            "text": "Primary residential environment?",
-            "type": "select",
-            "options": [
-              "urban_high_traffic",
-              "urban_typical",
-              "suburban",
-              "rural_agricultural",
-              "rural_low_exposure"
-            ]
-          },
-          {
-            "id": "proximity_industrial",
-            "text": "Within 1 mile of industrial facility, power plant, or hazardous waste site?",
-            "type": "boolean"
-          },
-          {
-            "id": "water_source",
-            "text": "Primary drinking water source?",
-            "type": "select",
-            "options": [
-              "municipal_treated",
-              "well_water_tested",
-              "well_water_untested",
-              "bottled_water"
-            ]
-          },
-          {
-            "id": "arsenic_endemic_area",
-            "text": "Well water in area with known arsenic contamination?",
-            "type": "boolean"
-          },
-          {
-            "id": "indoor_air_quality",
-            "text": "Home built before 1980 or significant renovation with new materials?",
-            "type": "boolean"
-          },
-          {
-            "id": "sun_exposure",
-            "text": "Average outdoor sun exposure?",
-            "type": "select",
-            "options": [
-              "minimal",
-              "moderate",
-              "high_outdoor_worker",
-              "tanning_bed_user"
-            ]
-          }
-        ]
+      "dietary": {
+        "Liver": 2.0,
+        "Esophagus": 1.5,
+        "Stomach": 1.5
       }
     }
   },
@@ -1825,43 +1801,92 @@
     },
     "genotype_modifiers": {
       "GSTM1_null": {
-        "PAH": 2.0,
-        "AflatoxinB1": 2.5,
-        "AromaticAmines": 1.5,
-        "HeavyMetals": 1.8
+        "BaP": 2.0,
+        "Benz_a_anthracene": 2.0,
+        "Benzo_b_fluoranthene": 2.0,
+        "Chrysene": 2.0,
+        "Dibenz_ah_anthracene": 2.0,
+        "Naphthalene": 2.0,
+        "AFB1": 2.5,
+        "4ABP": 1.5,
+        "Benzidine": 1.5,
+        "AntimonyTrivalent": 1.8,
+        "ArsenicInorganic": 1.8,
+        "Be": 1.8,
+        "Cd": 1.8,
+        "CobaltMetal": 1.8,
+        "CobaltOxide": 1.8,
+        "CrVI": 1.8,
+        "LeadInorganicCompounds": 1.8,
+        "LeadMetallic": 1.8,
+        "LeadOrganicCompounds": 1.8,
+        "MercuryInorganicCompounds": 1.8,
+        "MethylmercuryCompounds": 1.8,
+        "NickelCompounds": 1.8,
+        "NickelMetallic": 1.8
       },
       "GSTT1_null": {
-        "PAH": 1.5,
+        "BaP": 1.5,
+        "Benz_a_anthracene": 1.5,
+        "Benzo_b_fluoranthene": 1.5,
+        "Chrysene": 1.5,
+        "Dibenz_ah_anthracene": 1.5,
+        "Naphthalene": 1.5,
         "Benzene": 1.8,
-        "ChlorinatedSolvents": 0.5
+        "PCE": 0.5,
+        "TCE": 0.5
       },
       "NAT2_slow": {
-        "AromaticAmines": 2.5,
-        "HCA": 0.7
+        "4ABP": 2.5,
+        "Benzidine": 2.5,
+        "MeIQx": 0.7,
+        "PhIP": 0.7
       },
       "CYP1A1_high_activity": {
-        "PAH": 1.8,
-        "HCA": 1.5
+        "BaP": 1.8,
+        "Benz_a_anthracene": 1.8,
+        "Benzo_b_fluoranthene": 1.8,
+        "Chrysene": 1.8,
+        "Dibenz_ah_anthracene": 1.8,
+        "Naphthalene": 1.8,
+        "MeIQx": 1.5,
+        "PhIP": 1.5
       },
       "CYP2E1_high_activity": {
         "Benzene": 1.8,
         "VinylChloride": 2.0,
-        "DietaryNitroso": 1.6
+        "NDEA": 1.6,
+        "NDMA": 1.6
       },
       "ALDH2_heterozygote": {
-        "Aldehyde": 6.0
+        "Acetaldehyde": 6.0,
+        "Acrolein": 6.0,
+        "Crotonaldehyde": 6.0,
+        "Formaldehyde": 6.0,
+        "Furfural": 6.0,
+        "MDA": 6.0
       },
       "ALDH2_homozygous_variant": {
-        "Aldehyde": 19.0
+        "Acetaldehyde": 19.0,
+        "Acrolein": 19.0,
+        "Crotonaldehyde": 19.0,
+        "Formaldehyde": 19.0,
+        "Furfural": 19.0,
+        "MDA": 19.0
       },
       "CYP2A6_PM": {
-        "TobaccoNitrosamines": 0.4
+        "NNK": 0.4
       },
       "CYP3A4_high_activity": {
-        "AflatoxinB1": 1.5
+        "AFB1": 1.5
       },
       "EPHX1_low_activity_Y113H": {
-        "PAH": 1.7
+        "BaP": 1.7,
+        "Benz_a_anthracene": 1.7,
+        "Benzo_b_fluoranthene": 1.7,
+        "Chrysene": 1.7,
+        "Dibenz_ah_anthracene": 1.7,
+        "Naphthalene": 1.7
       }
     }
   }
