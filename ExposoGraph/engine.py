@@ -698,6 +698,27 @@ class GraphEngine:
 
         return warnings
 
+
+    def _flux_term_enzyme_id(self, term: Mapping[str, Any], term_key: str) -> str | None:
+        """Resolve a flux term's enzyme node.
+
+        Exact term keys win. Alias keys (``CYP2E1_liver``) use
+        ``target_node_id`` when that target is an Enzyme, then ``gene``.
+        """
+        if term_key in self.G:
+            return term_key
+        target = term.get("target_node_id")
+        if (
+            isinstance(target, str)
+            and target in self.G
+            and self.G.nodes[target].get("type") == "Enzyme"
+        ):
+            return target
+        gene = term.get("gene")
+        if isinstance(gene, str) and gene in self.G:
+            return gene
+        return None
+
     def _apply_flux_parameters(
         self,
         kinetic_path: str | Path | None = None,
@@ -721,11 +742,10 @@ class GraphEngine:
         :meth:`_apply_flux_edge_kinetics` can still bake their graph-edge
         bindings.
 
-        Enzyme linkage: an explicit ``graph_node_id`` term field is honored
-        when present (warned when it names no node); otherwise a term whose
-        key exactly matches a node id resolves to it, and everything else
-        (alias pseudo-terms like ``CYP2E1_liver``) resolves to ``None``
-        pending explicit annotations in the JSONs.
+        Enzyme linkage: a term whose key exactly matches a node id resolves
+        to it. Alias keys (``CYP2E1_liver``, ``ADH1B_star1``) resolve to
+        ``target_node_id`` when that target is an Enzyme node, otherwise to
+        a ``gene`` that names a node, otherwise ``None``.
 
         Returns warning messages, mirroring the other overlay methods.
         """
@@ -746,20 +766,7 @@ class GraphEngine:
             source: str,
             provenance_prefix: str,
         ) -> FluxReaction:
-            graph_node_id = term.get("graph_node_id")
-            enzyme_id: str | None = None
-            if graph_node_id:
-                enzyme_id = str(graph_node_id)
-                if enzyme_id not in self.G:
-                    warnings.append(
-                        f"graph_node_id {enzyme_id!r} for flux term "
-                        f"{cls}/{block}/{term_key} is not a node in the graph"
-                    )
-            elif term_key in self.G:
-                enzyme_id = term_key
-            gene = term.get("gene")
-            if enzyme_id is None and isinstance(gene, str) and gene in self.G:
-                enzyme_id = gene
+            enzyme_id = self._flux_term_enzyme_id(term, term_key)
             declared_group = class_data.get("graph_group")
             return FluxReaction(
                 carcinogen_class=cls,
@@ -860,10 +867,8 @@ class GraphEngine:
         term's verbatim parameter payload to the graph edge between those
         two nodes, under ``Edge.kinetics["flux_terms"]``, nested as
         ``flux_terms[carcinogen_class][pathway][term_key]``. The binding is
-        endpoint-generic by design: the legacy
-        ``substrate_node_id``/``enzyme_node_id`` field pair (still honored
-        as a fallback) presumes a substrate→enzyme reaction edge, while
-        the generic names also bind non-enzymatic terms -- formation /
+        endpoint-generic by design: ``source_node_id`` / ``target_node_id``
+        cover substrate-to-enzyme reaction edges and non-enzymatic terms -- formation /
         driver terms anchored on ``carcinogen --FORMS_ADDUCT--> lesion``
         edges, receptor-feedback terms on ``INHIBITS`` edges, and so on.
         The nesting is
@@ -921,8 +926,8 @@ class GraphEngine:
         # knowledge, excluded from the active dispatch roster.
         baked.extend((reaction, True) for reaction in self._flux_shadowed_reactions)
         for reaction, shadowed in baked:
-            source = reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
-            target = reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
+            source = reaction.params.get("source_node_id")
+            target = reaction.params.get("target_node_id")
             if not source or not target:
                 continue
             if not self.G.has_edge(source, target):
@@ -946,9 +951,9 @@ class GraphEngine:
             payload["dispatch_status"] = "shadowed" if shadowed else "active"
             if reaction.graph_group is not None:
                 payload["graph_group"] = reaction.graph_group
-            # The roster's *resolved* enzyme id (graph_node_id / exact key /
-            # gene), which can differ from the binding annotation (e.g.
-            # alias pseudo-terms like ``CYP2E1_liver`` resolve to ``None``).
+            # The roster's *resolved* enzyme id (exact key / Enzyme-typed
+            # ``target_node_id`` / gene), which can differ from the binding
+            # annotation (alias pseudo-terms like ``CYP2E1_liver``).
             # Baked so the edge payload reconstructs the index record exactly.
             if reaction.enzyme_id is not None:
                 payload["enzyme_id"] = reaction.enzyme_id
@@ -1972,8 +1977,7 @@ class GraphEngine:
         Two anchoring criteria are reported per roster term:
 
         - **Binding edges (primary).** A term carrying both
-          ``source_node_id`` and ``target_node_id`` (legacy
-          ``substrate_node_id``/``enzyme_node_id`` still honored) is
+          ``source_node_id`` and ``target_node_id`` is
           edge-anchored when an edge between those two nodes carries its
           baked flux
           payload -- ``kinetics.flux_terms[cls][pathway][term_key]``, the
@@ -2030,8 +2034,8 @@ class GraphEngine:
             exact payload the edge-walk reader consumes. Edge presence
             alone is necessary but not sufficient.
             """
-            substrate = reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
-            enzyme = reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
+            substrate = reaction.params.get("source_node_id")
+            enzyme = reaction.params.get("target_node_id")
             if not substrate or not enzyme:
                 return None
             if not self.G.has_edge(substrate, enzyme):
@@ -2082,8 +2086,8 @@ class GraphEngine:
                 "role": reaction.role,
                 "rate_law": reaction.rate_law,
                 "enzyme_id": reaction.enzyme_id,
-                "substrate_node_id": reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id"),
-                "target_node_id": reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id"),
+                "source_node_id": reaction.params.get("source_node_id"),
+                "target_node_id": reaction.params.get("target_node_id"),
                 "resolved": resolved,
                 "binding_edge_present": edge_present,
                 "binding_edge_types": binding_types,
@@ -2111,11 +2115,7 @@ class GraphEngine:
         for reaction, row in zip(reactions, rows):
             if not row["resolved"] or reaction.term_key in carried_terms:
                 continue
-            if not (
-                reaction.params.get("source_node_id") or reaction.params.get("substrate_node_id")
-            ) or not (
-                reaction.params.get("target_node_id") or reaction.params.get("enzyme_node_id")
-            ):
+            if not reaction.params.get("source_node_id") or not reaction.params.get("target_node_id"):
                 unbound.append(reaction.term_key)
             elif not row["binding_edge_present"]:
                 missing_binding.append(reaction.term_key)
