@@ -112,7 +112,10 @@
     }
   },
   "carcinogen_classes": {
-    "PAH": {
+    "group_pahs": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_pahs",
+      "member_carcinogen_ids": ["BaP", "Benz_a_anthracene", "Benzo_b_fluoranthene", "Chrysene", "Dibenz_ah_anthracene", "Naphthalene"],
       "graph_group": "PAHs",
       "index_carcinogen": "Benzo[a]pyrene",
       "description": "Polycyclic aromatic hydrocarbons — require metabolic activation to reactive diol-epoxide intermediates",
@@ -206,7 +209,10 @@
         "CYP1A1_high_GSTM1_null_lung_cancer_OR": {"value": "4.67", "source": "Combined genotype studies"}
       }
     },
-    "Aflatoxin": {
+    "group_mycotoxins": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_mycotoxins",
+      "member_carcinogen_ids": ["AFB1"],
       "graph_group": "Mycotoxins",
       "index_carcinogen": "Aflatoxin B1 (AFB1)",
       "description": "Mycotoxin requiring CYP-mediated epoxidation to the reactive AFB1-8,9-epoxide (AFBO); AFQ1 is a detoxification product",
@@ -291,7 +297,10 @@
         "other": 0.06
       }
     },
-    "Aldehyde": {
+    "group_aldehydes": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_aldehydes",
+      "member_carcinogen_ids": ["Acetaldehyde", "Acrolein", "Crotonaldehyde", "Formaldehyde", "Furfural", "MDA"],
       "graph_group": "Aldehydes",
       "index_carcinogen": "Acetaldehyde (from ethanol metabolism)",
       "description": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
@@ -417,7 +426,10 @@
         "note": "800-fold CLint reduction in *2/*2; heterozygote ~25% wildtype — consistent with dose-response OR pattern"
       }
     },
-    "Nitrosamine": {
+    "group_nitrosamines": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_nitrosamines",
+      "member_carcinogen_ids": ["NDEA", "NDMA", "NNK"],
       "graph_group": "Nitrosamines",
       "index_carcinogen": "NNK (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone)",
       "description": "Tobacco-specific nitrosamine. α-hydroxylation by CYP2A13 generates reactive methylating and pyridyloxobutylating species.",
@@ -495,6 +507,10 @@
       }
     },
     "NDMA": {
+      "class_kind": "single_carcinogen",
+      "carcinogen_id": "NDMA",
+      "carcinogen_group_id": "group_nitrosamines",
+      "member_carcinogen_ids": ["NDMA"],
       "graph_group": "Nitrosamines",
       "index_carcinogen": "N-Nitrosodimethylamine (NDMA)",
       "description": "Volatile nitrosamine formed endogenously and from diet/water. CYP2E1-mediated α-hydroxylation generates formaldehyde and methyldiazonium ion.",
@@ -552,7 +568,10 @@
         }
       }
     },
-    "HCA": {
+    "group_hcas": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_hcas",
+      "member_carcinogen_ids": ["MeIQx", "PhIP"],
       "graph_group": "HCAs",
       "index_carcinogen": "PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine)",
       "description": "Heterocyclic amine formed in cooked meat. N-hydroxylation by CYP1A2/CYP1A1/CYP1B1 generates reactive N-OH-PhIP.",
@@ -634,6 +653,10 @@
       }
     },
     "Benzene": {
+      "class_kind": "single_carcinogen",
+      "carcinogen_id": "Benzene",
+      "carcinogen_group_id": "group_benzene",
+      "member_carcinogen_ids": ["Benzene"],
       "graph_group": "Benzene",
       "index_carcinogen": "Benzene",
       "description": "Industrial/environmental chemical. CYP2E1-mediated oxidation to phenol, then further to catechol and benzoquinone — reactive hematotoxic/leukemogenic metabolites.",
@@ -709,7 +732,10 @@
         }
       }
     },
-    "HeavyMetal": {
+    "group_heavy_metals": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_heavy_metals",
+      "member_carcinogen_ids": ["AntimonyTrivalent", "ArsenicInorganic", "Be", "Cd", "CobaltMetal", "CobaltOxide", "CrVI", "LeadInorganicCompounds", "LeadMetallic", "LeadOrganicCompounds", "MercuryInorganicCompounds", "MethylmercuryCompounds", "NickelCompounds", "NickelMetallic"],
       "graph_group": "Heavy Metals",
       "index_carcinogen": "Arsenic (inorganic)",
       "description": "Heavy metals including arsenic, cadmium, chromium. Mechanism involves indirect genotoxicity — oxidative stress, DNA repair inhibition, epigenetic dysregulation rather than direct enzyme-mediated metabolism. Limited Michaelis-Menten parameters available.",
@@ -752,7 +778,10 @@
       "confidence_overall": "low",
       "notes": "Heavy metal carcinogenicity modeling is semi-quantitative. Enzyme kinetics not applicable to primary mechanism. Use oxidative stress / DNA repair inhibition scores as proxies."
     },
-    "Dioxin": {
+    "group_dioxins": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_dioxins",
+      "member_carcinogen_ids": ["PeCDF_23478", "TCDD"],
       "graph_group": "Dioxins",
       "index_carcinogen": "TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)",
       "description": "Persistent organic pollutant acting through AhR signaling rather than direct metabolic activation. Induces CYP1A1/CYP1B1 expression, amplifying downstream PAH activation.",
@@ -775,7 +804,10 @@
       "confidence_overall": "low",
       "notes": "Quantitative enzyme kinetics not applicable. Model via AhR-mediated induction amplifying PAH pathway fluxes. TEF approach recommended for dioxin-like compounds."
     },
-    "ChlorinatedSolvent": {
+    "group_chlorinated_solvents": {
+      "class_kind": "carcinogen_group",
+      "carcinogen_group_id": "group_chlorinated_solvents",
+      "member_carcinogen_ids": ["PCE", "TCE"],
       "graph_group": "Chlorinated Solvents",
       "index_carcinogen": "Trichloroethylene (TCE)",
       "description": "TCE oxidized by CYP2E1/CYP1A2 to trichloroethylene oxide → trichloroacetaldehyde → trichloroacetic acid and other metabolites. Also conjugated to GSH via GSTT1.",
