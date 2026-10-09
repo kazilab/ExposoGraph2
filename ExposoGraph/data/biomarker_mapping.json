@@ -77,9 +77,8 @@
       ],
       "reference_units": "umol_per_mol_creatinine",
       "partition_coefficient": 0.8,
-      "target_tissue": "Lung",
+      "target_tissue": "lung",
       "target_enzyme": "CYP1A1",
-      "carcinogen_class": "PAH",
       "Km_uM": 0.054,
       "S_over_Km_central": 3.0,
       "S_over_Km_range": [
@@ -94,7 +93,7 @@
         "PMID 12376124 Viau et al. 2002 dietary PAH/1-hydroxypyrene variability caveat"
       ],
       "source_status": "biomarker_supported; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary 1-hydroxypyrene supports PAH/pyrene exposure, not CYP1A1-specific enzyme activity. CYP1A1 and Km_uM are retained as PAH activation normalization parameters from the flux model.",
+      "provenance_note": "Urinary 1-hydroxypyrene supports PAH/pyrene exposure, not CYP1A1-specific enzyme activity. CYP1A1 and Km_uM are retained as PAH activation normalization parameters from the flux model. Step 7: no Pyrene Carcinogen node, so this row joins group_pahs only.",
       "entry_id": "urinary_1_hydroxypyrene::current_smoking",
       "trace": {
         "created_index": 0,
@@ -104,7 +103,9 @@
         "registry_phase": "direct_measurement",
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
-      }
+      },
+      "carcinogen_id": null,
+      "carcinogen_group_id": "group_pahs"
     },
     {
       "lifestyle_factor": "current_smoking",
@@ -116,9 +117,8 @@
       ],
       "reference_units": "ug_per_L",
       "partition_coefficient": 2.5,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP2E1",
-      "carcinogen_class": "Benzene",
       "Km_uM": 75.0,
       "S_over_Km_central": 2.0,
       "S_over_Km_range": [
@@ -143,7 +143,9 @@
         "registry_phase": "direct_measurement",
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
-      }
+      },
+      "carcinogen_id": "Benzene",
+      "carcinogen_group_id": "group_benzene"
     },
     {
       "lifestyle_factor": "current_smoking",
@@ -155,9 +157,8 @@
       ],
       "reference_units": "ng_per_mL",
       "partition_coefficient": 1.0,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP1A2",
-      "carcinogen_class": "TobaccoNitrosamines",
       "Km_uM": 20.0,
       "S_over_Km_central": 1.5,
       "S_over_Km_range": [
@@ -171,7 +172,7 @@
         "PMID 10350520 Benowitz 1999 biomarkers of environmental tobacco smoke exposure"
       ],
       "source_status": "biomarker_supported; exposure_class_proxy; enzyme_and_Km_model_proxy",
-      "provenance_note": "Serum cotinine supports tobacco-smoke exposure. The TobaccoNitrosamines class assignment and CYP1A2 normalization are exposure-model proxies, not cotinine-specific enzyme evidence.",
+      "provenance_note": "Serum cotinine supports tobacco-smoke exposure. The TobaccoNitrosamines class assignment and CYP1A2 normalization are exposure-model proxies, not cotinine-specific enzyme evidence. Step 7: cotinine is a Substrate node, not a Carcinogen. The old TobaccoNitrosamines class was an exposure-model proxy and is not copied onto a nitrosamine ID.",
       "entry_id": "serum_cotinine::current_smoking",
       "trace": {
         "created_index": 2,
@@ -181,7 +182,9 @@
         "registry_phase": "direct_measurement",
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
-      }
+      },
+      "carcinogen_id": null,
+      "carcinogen_group_id": null
     },
     {
       "lifestyle_factor": "current_smoking",
@@ -193,9 +196,8 @@
       ],
       "reference_units": "pmol_per_mg_creatinine",
       "partition_coefficient": 1.2,
-      "target_tissue": "Lung",
+      "target_tissue": "lung",
       "target_enzyme": "CYP2A13",
-      "carcinogen_class": "NNK",
       "Km_uM": 1.4,
       "S_over_Km_central": 1.6,
       "S_over_Km_range": [
@@ -220,7 +222,9 @@
         "registry_phase": "direct_measurement",
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
-      }
+      },
+      "carcinogen_id": "NNK",
+      "carcinogen_group_id": "group_nitrosamines"
     },
     {
       "lifestyle_factor": "grilled_meat_frequent",
@@ -232,9 +236,8 @@
       ],
       "reference_units": "ug_per_g_creatinine",
       "partition_coefficient": 0.6,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP1A1",
-      "carcinogen_class": "PAH",
       "Km_uM": 0.054,
       "S_over_Km_central": 1.5,
       "S_over_Km_range": [
@@ -258,7 +261,9 @@
         "registry_phase": "direct_measurement",
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
-      }
+      },
+      "carcinogen_id": "Naphthalene",
+      "carcinogen_group_id": "group_pahs"
     },
     {
       "lifestyle_factor": "arsenic_endemic",
@@ -270,9 +275,8 @@
       ],
       "reference_units": "ug_per_L",
       "partition_coefficient": 1.0,
-      "target_tissue": "Bladder",
+      "target_tissue": "bladder",
       "target_enzyme": "AS3MT",
-      "carcinogen_class": "HeavyMetal",
       "Km_uM": 7.0,
       "S_over_Km_central": 4.0,
       "S_over_Km_range": [
@@ -286,7 +290,7 @@
         "ATSDR Toxicological Profile for Arsenic 2007"
       ],
       "source_status": "biomarker_supported; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary total arsenic supports arsenic exposure but includes organic seafood arsenicals unless speciated. AS3MT and Km_uM are inorganic-arsenic methylation normalization parameters.",
+      "provenance_note": "Urinary total arsenic supports arsenic exposure but includes organic seafood arsenicals unless speciated. AS3MT and Km_uM are inorganic-arsenic methylation normalization parameters. Step 7: total urinary arsenic includes seafood organoarsenicals and is not speciated inorganic arsenic, so it is not joined to ArsenicInorganic or to group_heavy_metals.",
       "entry_id": "urinary_total_arsenic::arsenic_endemic",
       "trace": {
         "created_index": 13,
@@ -296,7 +300,9 @@
         "registry_phase": "direct_measurement",
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
-      }
+      },
+      "carcinogen_id": null,
+      "carcinogen_group_id": null
     },
     {
       "lifestyle_factor": "moderate_alcohol",
@@ -308,9 +314,8 @@
       ],
       "reference_units": "mmol_per_L",
       "partition_coefficient": 1.0,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP2E1",
-      "carcinogen_class": "Ethanol",
       "Km_uM": 13000.0,
       "S_over_Km_central": 1.0,
       "S_over_Km_range": [
@@ -333,7 +338,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "Ethanol",
+      "carcinogen_group_id": "group_alcohols"
     },
     {
       "lifestyle_factor": "moderate_alcohol",
@@ -345,9 +352,8 @@
       ],
       "reference_units": "mg_per_L",
       "partition_coefficient": 0.5,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "ALDH2",
-      "carcinogen_class": "Aldehyde",
       "Km_uM": 15.0,
       "S_over_Km_central": 1.5,
       "S_over_Km_range": [
@@ -360,7 +366,7 @@
         "PMID 15289206 ethyl glucuronide as an alcohol-use biomarker"
       ],
       "source_status": "biomarker_supported; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary ethyl glucuronide supports recent alcohol consumption. ALDH2 and Km_uM are aldehyde-flux normalization parameters.",
+      "provenance_note": "Urinary ethyl glucuronide supports recent alcohol consumption. ALDH2 and Km_uM are aldehyde-flux normalization parameters. Step 7: ethyl glucuronide is an ethanol conjugate. The old Aldehyde class named the ALDH2 normalization target, not the analyte.",
       "entry_id": "urinary_ethyl_glucuronide::moderate_alcohol",
       "trace": {
         "created_index": 5,
@@ -370,7 +376,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "Ethanol",
+      "carcinogen_group_id": "group_alcohols"
     },
     {
       "lifestyle_factor": "heavy_alcohol",
@@ -382,9 +390,8 @@
       ],
       "reference_units": "mmol_per_L",
       "partition_coefficient": 1.0,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP2E1",
-      "carcinogen_class": "Ethanol",
       "Km_uM": 13000.0,
       "S_over_Km_central": 2.0,
       "S_over_Km_range": [
@@ -407,7 +414,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "Ethanol",
+      "carcinogen_group_id": "group_alcohols"
     },
     {
       "lifestyle_factor": "heavy_alcohol",
@@ -419,9 +428,8 @@
       ],
       "reference_units": "umol_per_L",
       "partition_coefficient": 1.5,
-      "target_tissue": "Esophagus",
+      "target_tissue": "esophagus",
       "target_enzyme": "ALDH2",
-      "carcinogen_class": "Aldehyde",
       "Km_uM": 15.0,
       "S_over_Km_central": 3.0,
       "S_over_Km_range": [
@@ -445,7 +453,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "Acetaldehyde",
+      "carcinogen_group_id": "group_aldehydes"
     },
     {
       "lifestyle_factor": "grilled_meat_frequent",
@@ -457,9 +467,8 @@
       ],
       "reference_units": "ng_per_24h",
       "partition_coefficient": 2.0,
-      "target_tissue": "Colon",
+      "target_tissue": "colon",
       "target_enzyme": "CYP1A2",
-      "carcinogen_class": "HCA",
       "Km_uM": 79.0,
       "S_over_Km_central": 2.0,
       "S_over_Km_range": [
@@ -483,7 +492,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "PhIP",
+      "carcinogen_group_id": "group_hcas"
     },
     {
       "lifestyle_factor": "processed_meat_frequent",
@@ -495,9 +506,8 @@
       ],
       "reference_units": "ug_per_g_creatinine",
       "partition_coefficient": 1.0,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP2E1",
-      "carcinogen_class": "DietaryNitroso",
       "Km_uM": 15.0,
       "S_over_Km_central": 2.0,
       "S_over_Km_range": [
@@ -511,7 +521,7 @@
         "ATSDR Toxicological Profile for N-Nitrosodimethylamine (NDMA) 2023"
       ],
       "source_status": "exposure_proxy; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary_NDMA_equivalent is a processed-meat nitrosamine exposure proxy, not a directly validated single urinary biomarker row. CYP2E1 and Km_uM are NDMA activation normalization parameters.",
+      "provenance_note": "Urinary_NDMA_equivalent is a processed-meat nitrosamine exposure proxy, not a directly validated single urinary biomarker row. CYP2E1 and Km_uM are NDMA activation normalization parameters. Step 7: processed-meat N-nitroso proxy, not a validated NDMA measurement, so carcinogen_id is omitted.",
       "entry_id": "urinary_NDMA_equivalent::processed_meat_frequent",
       "trace": {
         "created_index": 10,
@@ -521,7 +531,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": null,
+      "carcinogen_group_id": "group_nitrosamines"
     },
     {
       "lifestyle_factor": "occupational_benzene",
@@ -535,7 +547,6 @@
       "partition_coefficient": 1.0,
       "target_tissue": "Bone_Marrow",
       "target_enzyme": "CYP2E1",
-      "carcinogen_class": "Benzene",
       "Km_uM": 75.0,
       "S_over_Km_central": 8.0,
       "S_over_Km_range": [
@@ -549,7 +560,7 @@
         "PMID 12931845 validation and evaluation of benzene biomarkers in exposed workers"
       ],
       "source_status": "biomarker_supported; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary trans,trans-muconic acid supports benzene exposure. CYP2E1 and Km_uM are benzene activation normalization parameters.",
+      "provenance_note": "Urinary trans,trans-muconic acid supports benzene exposure. CYP2E1 and Km_uM are benzene activation normalization parameters. Step 7: Bone_Marrow is not in tissue_vocabulary and stays annotation-only.",
       "entry_id": "urinary_t_t_muconic_acid::occupational_benzene",
       "trace": {
         "created_index": 11,
@@ -559,7 +570,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "Benzene",
+      "carcinogen_group_id": "group_benzene"
     },
     {
       "lifestyle_factor": "occupational_TCE",
@@ -571,9 +584,8 @@
       ],
       "reference_units": "mg_per_g_creatinine",
       "partition_coefficient": 1.2,
-      "target_tissue": "Kidney",
+      "target_tissue": "kidney",
       "target_enzyme": "GSTT1",
-      "carcinogen_class": "ChlorinatedSolvent",
       "Km_uM": 40.0,
       "S_over_Km_central": 4.0,
       "S_over_Km_range": [
@@ -597,7 +609,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "TCE",
+      "carcinogen_group_id": "group_chlorinated_solvents"
     },
     {
       "lifestyle_factor": "aflatoxin_exposure",
@@ -609,9 +623,8 @@
       ],
       "reference_units": "pg_per_mg_creatinine",
       "partition_coefficient": 1.0,
-      "target_tissue": "Liver",
+      "target_tissue": "liver",
       "target_enzyme": "CYP3A4",
-      "carcinogen_class": "Aflatoxin",
       "Km_uM": 49.6,
       "S_over_Km_central": 4.0,
       "S_over_Km_range": [
@@ -635,7 +648,9 @@
         "registry_phase": "validated_proxy",
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
-      }
+      },
+      "carcinogen_id": "AFB1",
+      "carcinogen_group_id": "group_mycotoxins"
     }
   ]
 }
