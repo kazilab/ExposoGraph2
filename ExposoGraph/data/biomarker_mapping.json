@@ -172,7 +172,7 @@
         "PMID 10350520 Benowitz 1999 biomarkers of environmental tobacco smoke exposure"
       ],
       "source_status": "biomarker_supported; exposure_class_proxy; enzyme_and_Km_model_proxy",
-      "provenance_note": "Serum cotinine supports tobacco-smoke exposure. The TobaccoNitrosamines class assignment and CYP1A2 normalization are exposure-model proxies, not cotinine-specific enzyme evidence. Step 7: cotinine is a Substrate node, not a Carcinogen. The old TobaccoNitrosamines class was an exposure-model proxy and is not copied onto a nitrosamine ID.",
+      "provenance_note": "Serum cotinine supports tobacco-smoke exposure. The TobaccoNitrosamines class assignment and CYP1A2 normalization are exposure-model proxies, not cotinine-specific enzyme evidence. Joined to NNK by curator decision. Cotinine remains a tobacco-smoke exposure marker, not an NNK metabolite.",
       "entry_id": "serum_cotinine::current_smoking",
       "trace": {
         "created_index": 2,
@@ -183,8 +183,8 @@
         "registry_tier": 1,
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
       },
-      "carcinogen_id": null,
-      "carcinogen_group_id": null
+      "carcinogen_id": "NNK",
+      "carcinogen_group_id": "group_nitrosamines"
     },
     {
       "lifestyle_factor": "current_smoking",
@@ -290,7 +290,7 @@
         "ATSDR Toxicological Profile for Arsenic 2007"
       ],
       "source_status": "biomarker_supported; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary total arsenic supports arsenic exposure but includes organic seafood arsenicals unless speciated. AS3MT and Km_uM are inorganic-arsenic methylation normalization parameters. Step 7: total urinary arsenic includes seafood organoarsenicals and is not speciated inorganic arsenic, so it is not joined to ArsenicInorganic or to group_heavy_metals.",
+      "provenance_note": "Urinary total arsenic supports arsenic exposure but includes organic seafood arsenicals unless speciated. AS3MT and Km_uM are inorganic-arsenic methylation normalization parameters. Step 7: total urinary arsenic includes seafood organoarsenicals and is not speciated inorganic arsenic, so it is not joined to ArsenicInorganic or to group_heavy_metals. Joined to group_heavy_metals by curator decision. ArsenicOrganic is not a graph node, so carcinogen_id is not set.",
       "entry_id": "urinary_total_arsenic::arsenic_endemic",
       "trace": {
         "created_index": 13,
@@ -302,7 +302,7 @@
         "source_note": "CDC NHANES biomarker measurements and biomonitoring tables used for direct exposure rows."
       },
       "carcinogen_id": null,
-      "carcinogen_group_id": null
+      "carcinogen_group_id": "group_heavy_metals"
     },
     {
       "lifestyle_factor": "moderate_alcohol",
@@ -521,7 +521,7 @@
         "ATSDR Toxicological Profile for N-Nitrosodimethylamine (NDMA) 2023"
       ],
       "source_status": "exposure_proxy; enzyme_and_Km_model_proxy",
-      "provenance_note": "Urinary_NDMA_equivalent is a processed-meat nitrosamine exposure proxy, not a directly validated single urinary biomarker row. CYP2E1 and Km_uM are NDMA activation normalization parameters. Step 7: processed-meat N-nitroso proxy, not a validated NDMA measurement, so carcinogen_id is omitted.",
+      "provenance_note": "Urinary_NDMA_equivalent is a processed-meat nitrosamine exposure proxy, not a directly validated single urinary biomarker row. CYP2E1 and Km_uM are NDMA activation normalization parameters. Joined to NDMA by curator decision. The row remains a processed-meat N-nitroso proxy, not a validated NDMA assay.",
       "entry_id": "urinary_NDMA_equivalent::processed_meat_frequent",
       "trace": {
         "created_index": 10,
@@ -532,7 +532,7 @@
         "registry_tier": 2,
         "source_note": "Literature-backed biomarker proxies, scenario proxies, and model-normalization rows."
       },
-      "carcinogen_id": null,
+      "carcinogen_id": "NDMA",
       "carcinogen_group_id": "group_nitrosamines"
     },
     {
