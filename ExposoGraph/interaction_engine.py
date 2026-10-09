@@ -416,9 +416,44 @@ class SynergyConfidenceInterval:
 _INTERACTION_PARAMS_FILE = (
     Path(__file__).parent / "data" / "interaction_parameters.json"
 )
+_EXPOSURE_DB_FILE = Path(__file__).parent / "data" / "exposure_database_revised.json"
 _PROVENANCE_FILE = Path(__file__).parent / "data" / "parameter_provenance.json"
 _INTERACTION_CACHE: dict[str, Any] | None = None
 _PROVENANCE_CACHE: dict[str, Any] | None = None
+_EXPOSURE_PROFILE_CACHE: dict[str, Any] | None = None
+
+
+
+def _load_exposure_profiles() -> dict[str, Any]:
+    """Load exposure profiles from the revised exposure database."""
+    global _EXPOSURE_PROFILE_CACHE
+    if _EXPOSURE_PROFILE_CACHE is None:
+        if not _EXPOSURE_DB_FILE.exists():
+            raise FileNotFoundError(
+                f"Exposure database not found at {_EXPOSURE_DB_FILE}."
+            )
+        with open(_EXPOSURE_DB_FILE, "r") as fh:
+            document = json.load(fh)
+        _EXPOSURE_PROFILE_CACHE = document["exposure_profiles"]
+    return _EXPOSURE_PROFILE_CACHE
+
+
+def _reference_concentrations() -> dict[str, Any]:
+    """Return graph-id keyed reference concentrations from interaction parameters."""
+    return _get_interaction_params().get("reference_concentrations_uM", {})
+
+
+def _gsh_reference_rates() -> dict[str, Any]:
+    """Return graph-id keyed GSH reference rates from interaction parameters."""
+    return _get_interaction_params().get("gsh_reference_rates", {})
+
+
+def _profile_exposure(profile: Mapping[str, Any]) -> dict[str, float]:
+    """Return entity_id to exposure multiplier for a stored profile."""
+    return {
+        component["entity_id"]: float(component["exposure_multiplier"])
+        for component in profile.get("components", [])
+    }
 
 
 def _load_interaction_params() -> dict[str, Any]:
@@ -503,51 +538,51 @@ def assumed_ki_pairs() -> list[tuple[str, str]]:
 # ── Public constants ───────────────────────────────────────────────────────
 
 BASELINE_RISK_SCORES: dict[str, float] = {
-    "PAH": 25.0,
-    "HCA": 18.0,
+    "group_pahs": 25.0,
+    "group_hcas": 18.0,
     "NNK": 30.0,
-    "benzene": 20.0,
+    "Benzene": 20.0,
     "NDMA": 22.0,
-    "formaldehyde": 10.0,
-    "chromium_VI": 28.0,
-    "arsenic": 22.0,
+    "Formaldehyde": 10.0,
+    "CrVI": 28.0,
+    "ArsenicInorganic": 22.0,
     "AFB1": 35.0,
-    "acetaldehyde": 15.0,
-    "cadmium": 18.0,
-    "vinyl_chloride": 20.0,
-    "acrolein": 8.0,
+    "Acetaldehyde": 15.0,
+    "Cd": 18.0,
+    "VinylChloride": 20.0,
+    "Acrolein": 8.0,
 }
 
 CARCINOGEN_ENZYME_MAP: dict[str, list[str]] = {
-    "PAH": ["CYP1A1", "CYP1B1"],
-    "HCA": ["CYP1A2"],
+    "group_pahs": ["CYP1A1", "CYP1B1"],
+    "group_hcas": ["CYP1A2"],
     "NNK": ["CYP1A2", "CYP2E1"],
-    "benzene": ["CYP2E1"],
+    "Benzene": ["CYP2E1"],
     "NDMA": ["CYP2E1"],
-    "vinyl_chloride": ["CYP2E1"],
+    "VinylChloride": ["CYP2E1"],
     "AFB1": ["CYP3A4"],
-    "acetaldehyde": [],
-    "formaldehyde": [],
-    "chromium_VI": [],
-    "arsenic": [],
-    "cadmium": [],
-    "acrolein": [],
+    "Acetaldehyde": [],
+    "Formaldehyde": [],
+    "CrVI": [],
+    "ArsenicInorganic": [],
+    "Cd": [],
+    "Acrolein": [],
 }
 
 CARCINOGEN_GSH_DETOX: dict[str, str | None] = {
-    "PAH": "PAH_GSTM1",
-    "HCA": None,
+    "group_pahs": "PAH_GSTM1",
+    "group_hcas": None,
     "NNK": None,
-    "benzene": None,
+    "Benzene": None,
     "NDMA": None,
-    "vinyl_chloride": None,
+    "VinylChloride": None,
     "AFB1": "BPDE_conjugation",
-    "acetaldehyde": None,
-    "formaldehyde": None,
-    "chromium_VI": "chromium_VI",
-    "arsenic": "arsenic_methylation",
-    "cadmium": "cadmium",
-    "acrolein": "acrolein",
+    "Acetaldehyde": None,
+    "Formaldehyde": None,
+    "CrVI": "chromium_VI",
+    "ArsenicInorganic": "arsenic_methylation",
+    "Cd": "cadmium",
+    "Acrolein": "acrolein",
 }
 
 
@@ -583,177 +618,6 @@ _CARCINOGEN_ALIASES: dict[str, str] = {
     "ethanol": "ethanol",
 }
 
-_REFERENCE_CONCENTRATIONS_UM: dict[str, float] = {
-    "benzene": 10.0,
-    "NDMA": 0.5,
-    "vinyl_chloride": 5.0,
-    "ethanol": 500.0,
-    "PAH": 0.1,
-    "HCA": 1.0,
-    "AFB1": 1.0,
-    "NNK": 0.5,
-}
-
-_GSH_REFERENCE_RATES: dict[str, float] = {
-    "PAH": 0.5,
-    "chromium_VI": 0.3,
-    "arsenic": 0.2,
-    "cadmium": 0.1,
-    "acrolein": 0.4,
-    "ethanol": 0.8,
-}
-
-_SEVERITY_RANK = {"CRITICAL": 3, "HIGH": 2, "MODERATE": 1}
-
-
-EXPOSURE_PROFILES: dict[str, dict[str, Any]] = {
-    "smoker": {
-        "_description": (
-            "Active cigarette smoker (1 pack/day). Includes PAH from tobacco smoke, "
-            "tobacco-specific nitrosamines (NNK), benzene, formaldehyde, cadmium, and "
-            "acrolein. CYP1A2 induction amplifies HCA activation."
-        ),
-        "exposure": {
-            "PAH": 3.0,
-            "NNK": 4.0,
-            "HCA": 1.5,
-            "benzene": 6.0,
-            "formaldehyde": 2.0,
-            "cadmium": 2.0,
-            "acrolein": 5.0,
-        },
-        "lifestyle": {"smoking": True, "pack_years": 20},
-    },
-    "heavy_drinker": {
-        "_description": (
-            "Chronic heavy drinker (>4 drinks/day). Elevated acetaldehyde, NDMA activation "
-            "via CYP2E1, and GSH depletion from ethanol-induced ROS."
-        ),
-        "exposure": {
-            "acetaldehyde": 3.0,
-            "NDMA": 1.5,
-            "benzene": 1.5,
-            "ethanol": 8.0,
-            "acrolein": 1.5,
-        },
-        "lifestyle": {"alcohol_heavy": True, "chronic_alcohol": True},
-    },
-    "smoker_heavy_drinker": {
-        "_description": (
-            "Critical interaction scenario: combined smoking + heavy drinking. Smoking "
-            "induces CYP1A2 while alcohol induces CYP2E1 and depletes GSH."
-        ),
-        "exposure": {
-            "PAH": 3.0,
-            "NNK": 4.0,
-            "HCA": 2.0,
-            "benzene": 6.0,
-            "NDMA": 2.0,
-            "formaldehyde": 2.0,
-            "cadmium": 2.0,
-            "acrolein": 6.0,
-            "acetaldehyde": 3.0,
-            "ethanol": 8.0,
-        },
-        "lifestyle": {
-            "smoking": True,
-            "alcohol_heavy": True,
-            "chronic_alcohol": True,
-            "pack_years": 25,
-        },
-    },
-    "industrial_worker": {
-        "_description": (
-            "Industrial exposure scenario with occupational chromium(VI), benzene, "
-            "and formaldehyde exposure. Very high GSH consumption from Cr(VI)."
-        ),
-        "exposure": {
-            "chromium_VI": 10.0,
-            "benzene": 10.0,
-            "formaldehyde": 5.0,
-            "PAH": 2.0,
-            "cadmium": 3.0,
-        },
-        "lifestyle": {"smoking": False, "alcohol_heavy": False},
-    },
-    "smoker_industrial_worker": {
-        "_description": (
-            "Worst case for GSH depletion: high occupational exposure with smoking. Smoking PAH plus "
-            "industrial Cr(VI) and benzene creates three simultaneous GSH consumers."
-        ),
-        "exposure": {
-            "PAH": 5.0,
-            "NNK": 4.0,
-            "benzene": 15.0,
-            "chromium_VI": 10.0,
-            "formaldehyde": 6.0,
-            "cadmium": 4.0,
-            "acrolein": 5.0,
-            "HCA": 1.5,
-            "ethanol": 0.5,
-        },
-        "lifestyle": {"smoking": True, "pack_years": 30},
-    },
-    "moderate_drinker": {
-        "_description": (
-            "Moderate drinker (1-2 drinks/day). Some CYP2E1 induction (~2x), mild GSH "
-            "depletion, and mildly elevated NDMA risk."
-        ),
-        "exposure": {
-            "acetaldehyde": 1.5,
-            "NDMA": 1.2,
-            "benzene": 1.0,
-            "ethanol": 3.0,
-        },
-        "lifestyle": {"alcohol_moderate": True},
-    },
-    "smoker_moderate_drinker": {
-        "_description": (
-            "Smoker + moderate drinker — profile for patient JHBUI-10030. Moderate CYP2E1 "
-            "induction plus full CYP1A2 induction from smoking."
-        ),
-        "exposure": {
-            "PAH": 3.0,
-            "NNK": 4.0,
-            "HCA": 1.8,
-            "benzene": 6.0,
-            "NDMA": 1.5,
-            "formaldehyde": 2.0,
-            "cadmium": 2.0,
-            "acrolein": 5.0,
-            "acetaldehyde": 1.5,
-            "ethanol": 3.0,
-        },
-        "lifestyle": {"smoking": True, "alcohol_moderate": True, "pack_years": 20},
-    },
-    "JHBUI_10030": {
-        "_description": (
-            "Patient JHBUI-10030: smoker + moderate drinker profile from the clinical "
-            "ExposoGraph reference set."
-        ),
-        "exposure": {
-            "PAH": 3.0,
-            "NNK": 4.0,
-            "HCA": 1.8,
-            "benzene": 6.0,
-            "NDMA": 1.5,
-            "formaldehyde": 2.0,
-            "cadmium": 2.0,
-            "acrolein": 5.0,
-            "acetaldehyde": 1.5,
-            "ethanol": 3.0,
-        },
-        "lifestyle": {"smoking": True, "alcohol_moderate": True, "pack_years": 20},
-        "genotypes": {
-            "GSTM1": "null",
-            "CYP2E1": "NM",
-            "CYP1A2": "NM",
-            "NAT2": "intermediate",
-        },
-    },
-}
-
-
 # ── Private helpers ────────────────────────────────────────────────────────
 
 
@@ -775,11 +639,22 @@ def _canonical_carcinogen_key(name: str) -> str:
     return _CARCINOGEN_ALIASES.get(lowered, name)
 
 
+def _graph_entity_ids() -> set[str]:
+    """Entity IDs already used by the revised profiles and interaction tables."""
+    entity_ids = set(_reference_concentrations()) | set(_gsh_reference_rates())
+    entity_ids.discard("_description")
+    for profile in _load_exposure_profiles().values():
+        for component in profile.get("components", []):
+            entity_ids.add(component["entity_id"])
+    return entity_ids
+
+
 def _normalize_exposure_profile(exposure_profile: Mapping[str, Any]) -> dict[str, Any]:
-    """Normalize carcinogen keys while preserving explicit rate keys."""
+    """Normalize leftover caller keys without rewriting graph entity IDs."""
+    preserved = _graph_entity_ids()
     normalized: dict[str, Any] = {}
     for key, value in exposure_profile.items():
-        if key.endswith("_umol_h_g"):
+        if key.endswith("_umol_h_g") or key in preserved:
             normalized[key] = value
             continue
         normalized[_canonical_carcinogen_key(key)] = value
@@ -797,11 +672,20 @@ def _extract_exposure_multiplier(value: float | dict[str, Any]) -> float:
     return float(value)
 
 
-def _extract_concentration_uM(carcinogen: str, value: float | dict[str, Any]) -> float:
+def _kinetic_substrate(entity_id: str) -> str:
+    """Return the competitive-inhibition substrate name for a graph entity."""
+    entry = _reference_concentrations().get(entity_id, {})
+    if isinstance(entry, dict) and entry.get("kinetic_substrate"):
+        return str(entry["kinetic_substrate"])
+    return entity_id
+
+
+def _extract_concentration_uM(entity_id: str, value: float | dict[str, Any]) -> float:
     """Return a substrate concentration for competition modeling."""
     if isinstance(value, dict) and "concentration_uM" in value:
         return float(value["concentration_uM"])
-    ref = _REFERENCE_CONCENTRATIONS_UM.get(carcinogen, 1.0)
+    entry = _reference_concentrations().get(entity_id, {})
+    ref = float(entry["value"]) if isinstance(entry, dict) and "value" in entry else 1.0
     return _extract_exposure_multiplier(value) * ref
 
 
@@ -883,37 +767,34 @@ def _build_competitive_substrates(
     tissue_lower = str(tissue).lower() if tissue else "liver"
     is_pulmonary = tissue_lower in _PULMONARY_TISSUES
 
+    def _put(bucket: dict[str, float], entity_id: str) -> None:
+        if entity_id not in exposure_profile:
+            return
+        bucket[_kinetic_substrate(entity_id)] = _extract_concentration_uM(
+            entity_id, exposure_profile[entity_id]
+        )
+
     cyp2e1: dict[str, float] = {}
-    for key in ("benzene", "NDMA", "vinyl_chloride", "ethanol"):
-        if key in exposure_profile:
-            cyp2e1[key] = _extract_concentration_uM(key, exposure_profile[key])
+    for entity_id in ("Benzene", "NDMA", "VinylChloride", "Ethanol"):
+        _put(cyp2e1, entity_id)
     if len(cyp2e1) > 1:
         substrates["CYP2E1"] = cyp2e1
 
     cyp1a1: dict[str, float] = {}
-    if "PAH" in exposure_profile:
-        cyp1a1["BaP"] = _extract_concentration_uM("PAH", exposure_profile["PAH"])
-    if "HCA" in exposure_profile:
-        cyp1a1["PhIP"] = _extract_concentration_uM("HCA", exposure_profile["HCA"])
+    _put(cyp1a1, "group_pahs")
+    _put(cyp1a1, "group_hcas")
     if len(cyp1a1) > 1:
         substrates["CYP1A1"] = cyp1a1
 
     if is_pulmonary:
         cyp2a13: dict[str, float] = {}
-        if "benzene" in exposure_profile:
-            cyp2a13["benzene"] = _extract_concentration_uM(
-                "benzene", exposure_profile["benzene"]
-            )
-        if "NNK" in exposure_profile:
-            cyp2a13["NNK"] = _extract_concentration_uM("NNK", exposure_profile["NNK"])
+        _put(cyp2a13, "Benzene")
+        _put(cyp2a13, "NNK")
         if len(cyp2a13) >= 1:
             substrates["CYP2A13"] = cyp2a13
 
         cyp2f1: dict[str, float] = {}
-        if "benzene" in exposure_profile:
-            cyp2f1["benzene"] = _extract_concentration_uM(
-                "benzene", exposure_profile["benzene"]
-            )
+        _put(cyp2f1, "Benzene")
         if len(cyp2f1) >= 1:
             substrates["CYP2F1"] = cyp2f1
 
@@ -929,29 +810,24 @@ def _to_gsh_rate_map(exposure_profile: dict[str, Any]) -> dict[str, float]:
             rate_map[key] = scalar
             continue
 
-        canonical = _canonical_carcinogen_key(key)
-        if canonical not in _GSH_REFERENCE_RATES:
+        entry = _gsh_reference_rates().get(key)
+        if not isinstance(entry, dict) or "value" not in entry:
             continue
         if isinstance(value, dict) and "flux_umol_h_g" in value:
-            rate_map[f"{canonical}_umol_h_g"] = float(value["flux_umol_h_g"])
+            rate_map[f"{key}_umol_h_g"] = float(value["flux_umol_h_g"])
         else:
-            rate_map[f"{canonical}_umol_h_g"] = (
-                _extract_exposure_multiplier(value) * _GSH_REFERENCE_RATES[canonical]
+            rate_map[f"{key}_umol_h_g"] = (
+                _extract_exposure_multiplier(value) * float(entry["value"])
             )
     return rate_map
 
 
 def _gsh_consumer_key(base_key: str) -> str:
-    return {
-        "PAH": "PAH_GSTM1",
-        "chromium_VI": "chromium_VI",
-        "arsenic": "arsenic_methylation",
-        "cadmium": "cadmium",
-        "acrolein": "acrolein",
-        "ethanol": "ethanol_ROS",
-        "BPDE": "BPDE_conjugation",
-        "acetaminophen": "acetaminophen_NAPQI",
-    }.get(base_key, base_key)
+    """Map a graph entity or rate-key stem to a GSH consumer record."""
+    entry = _gsh_reference_rates().get(base_key)
+    if isinstance(entry, dict) and entry.get("consumer"):
+        return str(entry["consumer"])
+    return base_key
 
 
 def _warning_dict(
@@ -2364,16 +2240,7 @@ def gsh_depletion_model(
 
     for rate_key, flux_umol_h_g in rate_map.items():
         base_key = rate_key.removesuffix("_umol_h_g")
-        consumer_key = {
-            "PAH": "PAH_GSTM1",
-            "chromium_VI": "chromium_VI",
-            "arsenic": "arsenic_methylation",
-            "cadmium": "cadmium",
-            "acrolein": "acrolein",
-            "ethanol": "ethanol_ROS",
-            "BPDE": "BPDE_conjugation",
-            "acetaminophen": "acetaminophen_NAPQI",
-        }.get(base_key, base_key)
+        consumer_key = _gsh_consumer_key(base_key)
 
         consumer = consumers.get(consumer_key)
         gsh_ratio = (
@@ -2526,16 +2393,7 @@ def gsh_depletion_biology_model(
 
     for rate_key, flux_umol_h_g in rate_map.items():
         base_key = rate_key.removesuffix("_umol_h_g")
-        consumer_key = {
-            "PAH": "PAH_GSTM1",
-            "chromium_VI": "chromium_VI",
-            "arsenic": "arsenic_methylation",
-            "cadmium": "cadmium",
-            "acrolein": "acrolein",
-            "ethanol": "ethanol_ROS",
-            "BPDE": "BPDE_conjugation",
-            "acetaminophen": "acetaminophen_NAPQI",
-        }.get(base_key, base_key)
+        consumer_key = _gsh_consumer_key(base_key)
 
         consumer = consumers.get(consumer_key)
         gsh_ratio = (
@@ -2680,7 +2538,7 @@ def _selected_competitive_effect(
     carcinogen: str,
     competitive_effects: dict[str, CompetitiveInhibitionResult],
 ) -> tuple[str, str, str, SubstrateFluxChange] | None:
-    if carcinogen == "benzene":
+    if carcinogen == "Benzene":
         pulmonary_candidates: list[tuple[float, str, str, str, SubstrateFluxChange]] = (
             []
         )
@@ -2719,20 +2577,21 @@ def _selected_competitive_effect(
                 return "CYP2E1", "benzene", "benzene", sub_effect
         return None
 
-    if carcinogen in {"NDMA", "vinyl_chloride"}:
+    if carcinogen in {"NDMA", "VinylChloride"}:
+        kinetic = _kinetic_substrate(carcinogen)
         cyp2e1 = competitive_effects.get("CYP2E1")
         if cyp2e1 is not None:
-            sub_effect = cyp2e1.substrates.get(carcinogen)
+            sub_effect = cyp2e1.substrates.get(kinetic)
             if sub_effect is not None:
-                return "CYP2E1", carcinogen, carcinogen, sub_effect
+                return "CYP2E1", kinetic, kinetic, sub_effect
         return None
 
-    if carcinogen == "HCA":
+    if carcinogen == "group_hcas":
         cyp1a1 = competitive_effects.get("CYP1A1")
         if cyp1a1 is not None:
             sub_effect = cyp1a1.substrates.get("PhIP")
             if sub_effect is not None:
-                return "CYP1A1", "PhIP", "HCA", sub_effect
+                return "CYP1A1", "PhIP", "group_hcas", sub_effect
         return None
 
     return None
@@ -3660,8 +3519,8 @@ def monte_carlo_synergy_ci(
 
 
 def get_interaction_profiles() -> dict[str, dict[str, Any]]:
-    """Return a defensive copy of the predefined interaction exposure profiles."""
-    return deepcopy(EXPOSURE_PROFILES)
+    """Return exposure profiles from the revised exposure database."""
+    return deepcopy(_load_exposure_profiles())
 
 
 def _competitive_effects_to_compat_dict(
@@ -3857,17 +3716,18 @@ def run_validation_case_1() -> tuple[InteractionMatrixResult, InteractionMatrixR
     print("=" * 70)
 
     genotypes = {"GSTM1": "active", "CYP2E1": "NM", "CYP1A2": "NM"}
-    smoker_profile = EXPOSURE_PROFILES["smoker"]
-    smoker_drinker_profile = EXPOSURE_PROFILES["smoker_heavy_drinker"]
+    profiles = get_interaction_profiles()
+    smoker_profile = profiles["smoker"]
+    smoker_drinker_profile = profiles["smoker_heavy_drinker"]
 
     result_smoker = compute_interaction_matrix(
-        smoker_profile["exposure"],
+        _profile_exposure(smoker_profile),
         genotypes=genotypes,
         tissue="Liver",
         lifestyle=smoker_profile["lifestyle"],
     )
     result_smoker_drinker = compute_interaction_matrix(
-        smoker_drinker_profile["exposure"],
+        _profile_exposure(smoker_drinker_profile),
         genotypes=genotypes,
         tissue="Liver",
         lifestyle=smoker_drinker_profile["lifestyle"],
@@ -3969,10 +3829,10 @@ def run_validation_case_2() -> InteractionMatrixResult:
     for chromium_level in [0, 0.5, 1.0, 2.0, 5.0, 10.0, 15.0, 20.0]:
         status = gsh_depletion_model(
             {
-                "PAH_umol_h_g": 0.5,
-                "arsenic_umol_h_g": 0.2,
-                "acrolein_umol_h_g": 0.5,
-                "chromium_VI_umol_h_g": chromium_level,
+                "group_pahs_umol_h_g": 0.5,
+                "ArsenicInorganic_umol_h_g": 0.2,
+                "Acrolein_umol_h_g": 0.5,
+                "CrVI_umol_h_g": chromium_level,
             }
         )
         tipping_label = ""
@@ -3991,10 +3851,10 @@ def run_validation_case_2() -> InteractionMatrixResult:
         ("GSTM1-null", {"GSTM1": "null"}),
     ]:
         rate_map = {
-            "PAH_umol_h_g": 0.5 * (0.1 if genotype.get("GSTM1") == "null" else 1.0),
-            "arsenic_umol_h_g": 0.2,
-            "acrolein_umol_h_g": 0.5,
-            "chromium_VI_umol_h_g": 5.0,
+            "group_pahs_umol_h_g": 0.5 * (0.1 if genotype.get("GSTM1") == "null" else 1.0),
+            "ArsenicInorganic_umol_h_g": 0.2,
+            "Acrolein_umol_h_g": 0.5,
+            "CrVI_umol_h_g": 5.0,
         }
         status = gsh_depletion_model(rate_map)
         print(
@@ -4004,9 +3864,9 @@ def run_validation_case_2() -> InteractionMatrixResult:
         if status.impaired_pathways:
             print(f"    Impaired pathways: {status.impaired_pathways}")
 
-    industrial_profile = EXPOSURE_PROFILES["smoker_industrial_worker"]
+    industrial_profile = get_interaction_profiles()["smoker_industrial_worker"]
     result = compute_interaction_matrix(
-        industrial_profile["exposure"],
+        _profile_exposure(industrial_profile),
         genotypes={"GSTM1": "null", "CYP2E1": "NM"},
         tissue="Liver",
         lifestyle=industrial_profile["lifestyle"],
@@ -4128,10 +3988,9 @@ def run_validation_case_4(patient_id: str = "JHBUI-10030") -> InteractionMatrixR
     print(f"VALIDATION CASE 4: Patient {patient_id} — Full Interaction Profile")
     print("=" * 70)
 
-    profile_data = EXPOSURE_PROFILES.get(
-        "JHBUI_10030", EXPOSURE_PROFILES["smoker_moderate_drinker"]
-    )
-    exposure = profile_data["exposure"]
+    profiles = get_interaction_profiles()
+    profile_data = profiles.get("JHBUI_10030", profiles["smoker_moderate_drinker"])
+    exposure = _profile_exposure(profile_data)
     lifestyle = profile_data.get("lifestyle", {})
     genotypes = profile_data.get(
         "genotypes",
@@ -4289,8 +4148,8 @@ Examples:
 
     if args.list_profiles:
         print("\nAvailable exposure profiles:")
-        for name, profile in EXPOSURE_PROFILES.items():
-            print(f"  {name:<30} {profile['_description'][:70]}...")
+        for name, profile in get_interaction_profiles().items():
+            print(f"  {name:<30} {profile['description'][:70]}...")
         return 0
 
     if args.validate:
@@ -4323,21 +4182,22 @@ Examples:
         return 0
 
     if args.profile:
-        if args.profile not in EXPOSURE_PROFILES:
+        profiles = get_interaction_profiles()
+        if args.profile not in profiles:
             print(
                 f"Error: Unknown profile '{args.profile}'. Use --list-profiles to see options.",
                 file=sys.stderr,
             )
             return 1
 
-        profile = EXPOSURE_PROFILES[args.profile]
-        exposure = deepcopy(profile["exposure"])
+        profile = profiles[args.profile]
+        exposure = _profile_exposure(profile)
         lifestyle = deepcopy(profile.get("lifestyle", {}))
         if args.genotypes == "{}" and "genotypes" in profile:
             genotypes = deepcopy(profile["genotypes"])
 
         print(f"\nRunning profile: {args.profile}")
-        print(f"Description: {profile['_description']}")
+        print(f"Description: {profile['description']}")
         result = compute_interaction_matrix(
             exposure,
             genotypes=genotypes,

@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from ExposoGraph.interaction_engine import (  # noqa: E402
-    EXPOSURE_PROFILES,
+    get_interaction_profiles,
     compute_interaction_matrix,
     decompose_synergy,
 )
@@ -38,22 +38,22 @@ PROFILE_NAMES = [
 ]
 
 SELECTED_PAIRS = [
-    ("smoker_moderate_drinker", "NNK_x_acetaldehyde"),
-    ("smoker_moderate_drinker", "PAH_x_NNK"),
-    ("smoker_moderate_drinker", "PAH_x_cadmium"),
-    ("smoker_moderate_drinker", "PAH_x_benzene"),
-    ("smoker_moderate_drinker", "benzene_x_NDMA"),
-    ("smoker_heavy_drinker", "NNK_x_benzene"),
-    ("smoker_heavy_drinker", "PAH_x_NNK"),
-    ("JHBUI_10030", "PAH_x_NNK"),
-    ("JHBUI_10030", "PAH_x_cadmium"),
-    ("smoker_industrial_worker", "PAH_x_acrolein"),
+    ("smoker_moderate_drinker", "NNK_x_Acetaldehyde"),
+    ("smoker_moderate_drinker", "group_pahs_x_NNK"),
+    ("smoker_moderate_drinker", "group_pahs_x_Cd"),
+    ("smoker_moderate_drinker", "group_pahs_x_Benzene"),
+    ("smoker_moderate_drinker", "Benzene_x_NDMA"),
+    ("smoker_heavy_drinker", "NNK_x_Benzene"),
+    ("smoker_heavy_drinker", "group_pahs_x_NNK"),
+    ("JHBUI_10030", "group_pahs_x_NNK"),
+    ("JHBUI_10030", "group_pahs_x_Cd"),
+    ("smoker_industrial_worker", "group_pahs_x_Acrolein"),
 ]
 
 PAIR_AUDITS = [
     {
         "label": "PAH with dioxin/TCDD induction",
-        "exposure": {"PAH": 3.0, "TCDD": 1.0},
+        "exposure": {"group_pahs": 3.0, "TCDD": 1.0},
         "lifestyle": {"TCDD_exposed": True},
         "expected_note": (
             "TCDD/dioxin is represented as induction, not as a baseline-risk "
@@ -62,7 +62,7 @@ PAIR_AUDITS = [
     },
     {
         "label": "Benzene plus trichloroethylene/TCE",
-        "exposure": {"benzene": 10.0, "trichloroethylene": 5.0},
+        "exposure": {"Benzene": 10.0, "trichloroethylene": 5.0},
         "lifestyle": {},
         "expected_note": (
             "Trichloroethylene is parameterized as a CYP2E1 substrate in the JSON, "
@@ -71,7 +71,7 @@ PAIR_AUDITS = [
     },
     {
         "label": "Benzene plus vinyl chloride",
-        "exposure": {"benzene": 10.0, "vinyl_chloride": 5.0},
+        "exposure": {"Benzene": 10.0, "VinylChloride": 5.0},
         "lifestyle": {},
         "expected_note": (
             "Supported chlorinated-solvent pair in current interaction matrix; "
@@ -88,9 +88,13 @@ def _format_mapping(mapping: dict[str, Any]) -> str:
 def _scenario_rows() -> list[dict[str, Any]]:
     rows = []
     for profile_name in PROFILE_NAMES:
-        cfg = EXPOSURE_PROFILES[profile_name]
+        cfg = get_interaction_profiles()[profile_name]
+        exposure = {
+            component["entity_id"]: component["exposure_multiplier"]
+            for component in cfg["components"]
+        }
         result = compute_interaction_matrix(
-            cfg["exposure"],
+            exposure,
             lifestyle=cfg.get("lifestyle", {}),
             genotypes=cfg.get("genotypes", {}),
             tissue="Liver",
@@ -114,7 +118,7 @@ def _scenario_rows() -> list[dict[str, Any]]:
                     "gsh_tipping_point": result.gsh_status.tipping_point_reached,
                     "active_inducers": "; ".join(result.induction_effects.active_inducers),
                     "enzyme_folds": _format_mapping(result.induction_effects.enzyme_folds),
-                    "exposure_profile": _format_mapping(cfg["exposure"]),
+                    "exposure_profile": _format_mapping(exposure),
                     "genotypes": _format_mapping(cfg.get("genotypes", {})),
                 }
             )
@@ -124,9 +128,13 @@ def _scenario_rows() -> list[dict[str, Any]]:
 def _decomposition_rows() -> list[dict[str, Any]]:
     rows = []
     for profile_name, pair in SELECTED_PAIRS:
-        cfg = EXPOSURE_PROFILES[profile_name]
+        cfg = get_interaction_profiles()[profile_name]
+        exposure = {
+            component["entity_id"]: component["exposure_multiplier"]
+            for component in cfg["components"]
+        }
         decomposed = decompose_synergy(
-            cfg["exposure"],
+            exposure,
             lifestyle=cfg.get("lifestyle", {}),
             genotypes=cfg.get("genotypes", {}),
             tissue="Liver",
