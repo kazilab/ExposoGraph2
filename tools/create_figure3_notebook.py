@@ -38,7 +38,7 @@ This notebook regenerates a manuscript-style interaction heatmap from the local
 **ExposoGraph** package.
 
 The default figure uses the built-in `smoker_moderate_drinker` profile from
-`ExposoGraph.interaction_engine.EXPOSURE_PROFILES`, because it is the package's
+`exposure_database_revised.json` via `get_interaction_profiles()`, because it is the package's
 representative tobacco-plus-alcohol co-exposure scenario. Pairwise scores are
 computed with `compute_interaction_matrix()` and mechanism decomposition is
 computed with the eight-state `decompose_synergy()` output.
@@ -116,18 +116,18 @@ CLASS_LABELS = [
 ]
 
 CANONICAL_TO_CLASS = {
-    "PAH": "PAHs",
-    "HCA": "Heterocyclic amines",
+    "group_pahs": "PAHs",
+    "group_hcas": "Heterocyclic amines",
     "AFB1": "Aflatoxins",
     "NNK": "Nitrosamines",
     "NDMA": "Nitrosamines",
-    "benzene": "Benzene",
-    "vinyl_chloride": "Vinyl chloride",
-    "acetaldehyde": "Alcohol(Acetaldehyde)",
-    "formaldehyde": "Formaldehyde",
-    "chromium_VI": "Heavy metals",
-    "arsenic": "Heavy metals",
-    "cadmium": "Heavy metals",
+    "Benzene": "Benzene",
+    "VinylChloride": "Vinyl chloride",
+    "Acetaldehyde": "Alcohol(Acetaldehyde)",
+    "Formaldehyde": "Formaldehyde",
+    "CrVI": "Heavy metals",
+    "ArsenicInorganic": "Heavy metals",
+    "Cd": "Heavy metals",
 }
 
 CLASS_SUPPORT_NOTES = {
@@ -154,20 +154,24 @@ For each canonical pair in the selected ExposoGraph profile, the notebook:
         code_cell(
             """
 from ExposoGraph.interaction_engine import (
-    EXPOSURE_PROFILES,
+    get_interaction_profiles,
     compute_interaction_matrix,
     decompose_synergy,
 )
 
-profile = EXPOSURE_PROFILES[PROFILE_NAME]
+profile = get_interaction_profiles()[PROFILE_NAME]
+exposure = {
+    component["entity_id"]: component["exposure_multiplier"]
+    for component in profile["components"]
+}
 result = compute_interaction_matrix(
-    profile["exposure"],
+    exposure,
     lifestyle=profile.get("lifestyle", {}),
     genotypes=profile.get("genotypes", {}),
     tissue=TISSUE,
 )
 decomposition = decompose_synergy(
-    profile["exposure"],
+    exposure,
     lifestyle=profile.get("lifestyle", {}),
     genotypes=profile.get("genotypes", {}),
     tissue=TISSUE,

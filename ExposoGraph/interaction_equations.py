@@ -54,9 +54,9 @@ def gsh_detox_components(
     gstm1 = str(genotypes.get("GSTM1", "active")).lower()
     gstp1 = genotypes.get("GSTP1", "Ile105Ile")
 
-    if carcinogen == "PAH" and gstm1 in {"null", "null/null", "deletion", "0"}:
+    if carcinogen == "group_pahs" and gstm1 in {"null", "null/null", "deletion", "0"}:
         genotype_factor = 2.5
-    elif carcinogen == "PAH" and gstp1 == "Val105Val":
+    elif carcinogen == "group_pahs" and gstp1 == "Val105Val":
         genotype_factor = 1.5
 
     if redox_detox_penalty is not None:

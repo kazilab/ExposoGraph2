@@ -2086,5 +2086,27 @@
         "antagonism_score": 0.7
       }
     ]
+  },
+  "reference_concentrations_uM": {
+    "_description": "Reference substrate concentrations used to convert an exposure multiplier into uM. Keys are graph node or group IDs. kinetic_substrate is the competitive_inhibition substrate name still used by the kinetic block.",
+    "Benzene": {"value": 10.0, "kinetic_substrate": "benzene"},
+    "NDMA": {"value": 0.5, "kinetic_substrate": "NDMA"},
+    "VinylChloride": {"value": 5.0, "kinetic_substrate": "vinyl_chloride"},
+    "Ethanol": {"value": 500.0, "kinetic_substrate": "ethanol"},
+    "group_pahs": {"value": 0.1, "kinetic_substrate": "BaP"},
+    "group_hcas": {"value": 1.0, "kinetic_substrate": "PhIP"},
+    "AFB1": {"value": 1.0, "kinetic_substrate": "AFB1"},
+    "NNK": {"value": 0.5, "kinetic_substrate": "NNK"}
+  },
+  "gsh_reference_rates": {
+    "_description": "Reference GSH consumption rates (umol/h/g) per unit exposure multiplier. Keys are graph node or group IDs, or a direct rate-key stem that is not a graph node. consumer is the gsh_depletion.consumers key.",
+    "group_pahs": {"value": 0.5, "consumer": "PAH_GSTM1"},
+    "CrVI": {"value": 0.3, "consumer": "chromium_VI"},
+    "ArsenicInorganic": {"value": 0.2, "consumer": "arsenic_methylation"},
+    "Cd": {"value": 0.1, "consumer": "cadmium"},
+    "Acrolein": {"value": 0.4, "consumer": "acrolein"},
+    "Ethanol": {"value": 0.8, "consumer": "ethanol_ROS"},
+    "BPDE": {"consumer": "BPDE_conjugation"},
+    "acetaminophen": {"consumer": "acetaminophen_NAPQI"}
   }
 }
