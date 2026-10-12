@@ -28,11 +28,21 @@ from .parameter_provider import (
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"
-_DEFAULT_TISSUE_EXPRESSION_PATH = _PACKAGE_DIR / "data" / "tissue_expression_data_raw.json"
-_DEFAULT_INTERACTION_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "interaction_parameters.json"
-_DEFAULT_FLUX_KINETIC_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "kinetic_parameters.json"
-_DEFAULT_PROXY_FLUX_PARAMETERS_PATH = _PACKAGE_DIR / "data" / "proxy_flux_parameters.json"
-_DEFAULT_PROXY_FLUX_PROVENANCE_PATH = _PACKAGE_DIR / "data" / "proxy_flux_provenance.json"
+_DEFAULT_TISSUE_EXPRESSION_PATH = (
+    _PACKAGE_DIR / "data" / "tissue_expression_data_raw.json"
+)
+_DEFAULT_INTERACTION_PARAMETERS_PATH = (
+    _PACKAGE_DIR / "data" / "interaction_parameters.json"
+)
+_DEFAULT_FLUX_KINETIC_PARAMETERS_PATH = (
+    _PACKAGE_DIR / "data" / "kinetic_parameters.json"
+)
+_DEFAULT_PROXY_FLUX_PARAMETERS_PATH = (
+    _PACKAGE_DIR / "data" / "proxy_flux_parameters.json"
+)
+_DEFAULT_PROXY_FLUX_PROVENANCE_PATH = (
+    _PACKAGE_DIR / "data" / "proxy_flux_provenance.json"
+)
 
 # Residual activity retained by GSTM1/GSTT1 homozygous deletion carriers
 # (see kinetic_parameters.json genotype_modifiers.special_cases).
@@ -113,7 +123,10 @@ _FALLBACK_STEADY_STATE_TISSUES: dict[str, dict[str, float]] = {
     },
 }
 
-def _positive_context_float(context: Mapping[str, Any], key: str, fallback: float) -> float:
+
+def _positive_context_float(
+    context: Mapping[str, Any], key: str, fallback: float
+) -> float:
     """Read a positive numeric context value with a conservative fallback."""
     try:
         value = float(context.get(key, fallback))
@@ -124,7 +137,9 @@ def _positive_context_float(context: Mapping[str, Any], key: str, fallback: floa
     return value
 
 
-def _bounded_fraction_context(context: Mapping[str, Any], key: str, fallback: float) -> float:
+def _bounded_fraction_context(
+    context: Mapping[str, Any], key: str, fallback: float
+) -> float:
     """Read a fraction constrained to the open interval used by PBPK rates."""
     try:
         value = float(context.get(key, fallback))
@@ -134,12 +149,21 @@ def _bounded_fraction_context(context: Mapping[str, Any], key: str, fallback: fl
         return fallback
     return min(max(value, 1e-6), 1.0)
 
+
 # Fields a flux-parameter term carries that are represented on the
 # FluxReaction record itself (or as provenance pointers) rather than inside
 # its verbatim ``params`` payload. ``gene`` and ``note`` stay in ``params``
 # because the flux proxy-term helpers consume them directly.
 _FLUX_RESERVED_TERM_FIELDS = frozenset(
-    {"graph_node_id", "rate_law", "equation", "confidence", "notes", "provenance_ref", "sources"}
+    {
+        "graph_node_id",
+        "rate_law",
+        "equation",
+        "confidence",
+        "notes",
+        "provenance_ref",
+        "sources",
+    }
 )
 
 # Audit metadata ``_apply_flux_edge_kinetics`` adds to each baked edge
@@ -206,6 +230,7 @@ class FluxReaction:
     # including PMID lists and notes -- to ``Edge.kinetics["flux_terms"]``.
     sources: list[str] | None = None
     notes: str | None = None
+
 
 logger = logging.getLogger(__name__)
 
@@ -417,14 +442,22 @@ class GraphEngine:
 
         Returns the combined warning messages from all steps.
         """
-        from .exporter import parse_graph_artifact  # local import avoids an import cycle
+        from .exporter import (
+            parse_graph_artifact,
+        )  # local import avoids an import cycle
 
-        resolved_graph_path = Path(graph_data_path) if graph_data_path else _DEFAULT_GRAPH_DATA_PATH
+        resolved_graph_path = (
+            Path(graph_data_path) if graph_data_path else _DEFAULT_GRAPH_DATA_PATH
+        )
         kg = parse_graph_artifact(resolved_graph_path)
         warnings = self.load(kg)
         warnings.extend(self._apply_tissue_expression(tissue_expression_path))
         warnings.extend(self._apply_interaction_parameters(interaction_parameters_path))
-        warnings.extend(self._apply_flux_parameters(kinetic_parameters_path, proxy_flux_parameters_path))
+        warnings.extend(
+            self._apply_flux_parameters(
+                kinetic_parameters_path, proxy_flux_parameters_path
+            )
+        )
         warnings.extend(self._apply_flux_edge_kinetics())
         return warnings
 
@@ -437,9 +470,14 @@ class GraphEngine:
         normalized table is the single tissue-weight source served to flux
         models via :meth:`get_tissue_expression`.
         """
-        if self._tissue_expression_raw is None or self._tissue_expression_normalized is None:
+        if (
+            self._tissue_expression_raw is None
+            or self._tissue_expression_normalized is None
+        ):
             try:
-                doc = json.loads(_DEFAULT_TISSUE_EXPRESSION_PATH.read_text(encoding="utf-8"))
+                doc = json.loads(
+                    _DEFAULT_TISSUE_EXPRESSION_PATH.read_text(encoding="utf-8")
+                )
                 expression: dict[str, dict[str, float]] = doc["expression"]
             except (OSError, json.JSONDecodeError, KeyError) as exc:
                 # This file is the authoritative flux tissue-weight table;
@@ -511,7 +549,9 @@ class GraphEngine:
             # This file's "expression" table is raw nTPM values with no
             # normalization applied -- the divide-by-max step below is this
             # method's own responsibility, unchanged regardless of source file.
-            expression = json.loads(resolved_path.read_text(encoding="utf-8"))["expression"]
+            expression = json.loads(resolved_path.read_text(encoding="utf-8"))[
+                "expression"
+            ]
             normalized_by_gene = {}
             for gene, raw in expression.items():
                 max_raw = max(raw.values()) if raw else 0.0
@@ -523,7 +563,9 @@ class GraphEngine:
 
         warnings: list[str] = []
         enzyme_ids = [
-            node_id for node_id, data in self.G.nodes(data=True) if data.get("type") == "Enzyme"
+            node_id
+            for node_id, data in self.G.nodes(data=True)
+            if data.get("type") == "Enzyme"
         ]
         for enzyme_id in enzyme_ids:
             node_data = self.G.nodes[enzyme_id]
@@ -547,7 +589,9 @@ class GraphEngine:
         "phase2_conjugation",
     )
 
-    def _apply_interaction_parameters(self, path: str | Path | None = None) -> list[str]:
+    def _apply_interaction_parameters(
+        self, path: str | Path | None = None
+    ) -> list[str]:
         """(Re)apply enzyme/substrate kinetics from ``interaction_parameters.json``
         onto the matching edges.
 
@@ -587,7 +631,9 @@ class GraphEngine:
         # below the mutation section).
         self._interaction_parameters = source_data
         if resolved_path.name == "interaction_parameters.json":
-            self._parameter_provider = JSONInteractionParameterProvider(resolved_path.parent)
+            self._parameter_provider = JSONInteractionParameterProvider(
+                resolved_path.parent
+            )
         else:
             # Custom-named overlay documents have no provider-side
             # counterpart file; fall back to the bundled default provider.
@@ -641,7 +687,9 @@ class GraphEngine:
                             f"{pending_substrate[key]}; kept the earlier entry"
                         )
                         continue
-                    kinetics = {k: v for k, v in params.items() if k != "source_node_id"}
+                    kinetics = {
+                        k: v for k, v in params.items() if k != "source_node_id"
+                    }
                     # Self-description markers so the graph-walk provider
                     # (KGInteractionParameterProvider) can reconstruct
                     # typed records from the edge kinetics without
@@ -682,8 +730,9 @@ class GraphEngine:
 
         return warnings
 
-
-    def _flux_term_enzyme_id(self, term: Mapping[str, Any], term_key: str) -> str | None:
+    def _flux_term_enzyme_id(
+        self, term: Mapping[str, Any], term_key: str
+    ) -> str | None:
         """Resolve a flux term's enzyme node.
 
         Exact term keys win. Alias keys (``CYP2E1_liver``) use
@@ -733,8 +782,14 @@ class GraphEngine:
 
         Returns warning messages, mirroring the other overlay methods.
         """
-        kinetic_resolved = Path(kinetic_path) if kinetic_path else _DEFAULT_FLUX_KINETIC_PARAMETERS_PATH
-        proxy_resolved = Path(proxy_path) if proxy_path else _DEFAULT_PROXY_FLUX_PARAMETERS_PATH
+        kinetic_resolved = (
+            Path(kinetic_path)
+            if kinetic_path
+            else _DEFAULT_FLUX_KINETIC_PARAMETERS_PATH
+        )
+        proxy_resolved = (
+            Path(proxy_path) if proxy_path else _DEFAULT_PROXY_FLUX_PARAMETERS_PATH
+        )
 
         warnings: list[str] = []
         index: dict[str, list[FluxReaction]] = {}
@@ -763,15 +818,24 @@ class GraphEngine:
                     or class_data.get("kinetics_model")
                     or ""
                 ),
-                params={k: v for k, v in term.items() if k not in _FLUX_RESERVED_TERM_FIELDS},
-                confidence=str(term.get("confidence") or class_data.get("confidence_overall") or ""),
+                params={
+                    k: v for k, v in term.items() if k not in _FLUX_RESERVED_TERM_FIELDS
+                },
+                confidence=str(
+                    term.get("confidence") or class_data.get("confidence_overall") or ""
+                ),
                 provenance_ref=str(
-                    term.get("provenance_ref") or f"{provenance_prefix}.{block}.{term_key}"
+                    term.get("provenance_ref")
+                    or f"{provenance_prefix}.{block}.{term_key}"
                 ),
                 enzyme_id=enzyme_id,
                 graph_group=str(declared_group) if declared_group else None,
                 source=source,
-                sources=list(term["sources"]) if isinstance(term.get("sources"), list) else None,
+                sources=(
+                    list(term["sources"])
+                    if isinstance(term.get("sources"), list)
+                    else None
+                ),
                 notes=str(term["notes"]) if term.get("notes") is not None else None,
             )
 
@@ -779,7 +843,9 @@ class GraphEngine:
         try:
             kinetic_doc = json.loads(kinetic_resolved.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
-            warnings.append(f"Could not read flux kinetic parameters at {kinetic_resolved}: {exc}")
+            warnings.append(
+                f"Could not read flux kinetic parameters at {kinetic_resolved}: {exc}"
+            )
             kinetic_doc = {}
         for cls, cls_data in kinetic_doc.get("carcinogen_classes", {}).items():
             if not isinstance(cls_data, dict):
@@ -792,17 +858,31 @@ class GraphEngine:
                     if term_key.startswith("_") or not isinstance(term, dict):
                         continue
                     reactions.append(
-                        _record(cls, term_key, block, term, cls_data, "kinetic_parameters", f"carcinogen_classes.{cls}.pathways")
+                        _record(
+                            cls,
+                            term_key,
+                            block,
+                            term,
+                            cls_data,
+                            "kinetic_parameters",
+                            f"carcinogen_classes.{cls}.pathways",
+                        )
                     )
             index[cls] = reactions
             sources[cls] = {"kinetic_parameters"}
-            aggregations[cls] = dict(cls_data.get("aggregation", {})) if isinstance(cls_data.get("aggregation"), dict) else {}
+            aggregations[cls] = (
+                dict(cls_data.get("aggregation", {}))
+                if isinstance(cls_data.get("aggregation"), dict)
+                else {}
+            )
 
         # proxy_flux_parameters.json -- semi-quantitative classes; proxy wins
         try:
             proxy_doc = json.loads(proxy_resolved.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
-            warnings.append(f"Could not read proxy flux parameters at {proxy_resolved}: {exc}")
+            warnings.append(
+                f"Could not read proxy flux parameters at {proxy_resolved}: {exc}"
+            )
             proxy_doc = {}
         for cls, cls_data in proxy_doc.get("classes", {}).items():
             if not isinstance(cls_data, dict):
@@ -815,7 +895,15 @@ class GraphEngine:
                     if term_key.startswith("_") or not isinstance(term, dict):
                         continue
                     reactions.append(
-                        _record(cls, term_key, block, term, cls_data, "proxy_flux_parameters", f"classes.{cls}")
+                        _record(
+                            cls,
+                            term_key,
+                            block,
+                            term,
+                            cls_data,
+                            "proxy_flux_parameters",
+                            f"classes.{cls}",
+                        )
                     )
             if cls in index:
                 # Proxy wins for dispatch, but the kinetic entries are
@@ -828,13 +916,19 @@ class GraphEngine:
                 sources[cls] = {"proxy_flux_parameters"}
             index[cls] = reactions
             if isinstance(cls_data.get("exposure_default"), dict):
-                self._flux_proxy_exposure_defaults[cls] = dict(cls_data["exposure_default"])
+                self._flux_proxy_exposure_defaults[cls] = dict(
+                    cls_data["exposure_default"]
+                )
             self._flux_proxy_class_cfg[cls] = dict(cls_data)
 
         self._flux_reactions_by_class = index
         self._flux_class_sources = sources
         self._flux_aggregation_by_class = aggregations
-        self._flux_metadata = dict(kinetic_doc.get("metadata", {})) if isinstance(kinetic_doc.get("metadata"), dict) else {}
+        self._flux_metadata = (
+            dict(kinetic_doc.get("metadata", {}))
+            if isinstance(kinetic_doc.get("metadata"), dict)
+            else {}
+        )
         self._flux_genotype_modifiers = (
             dict(kinetic_doc.get("genotype_modifiers", {}))
             if isinstance(kinetic_doc.get("genotype_modifiers"), dict)
@@ -1056,7 +1150,9 @@ class GraphEngine:
         """
         rules = self.get_parameter_provider().get_induction_rules(tissue=tissue)
         if exposure_context is not None:
-            rules = [rule for rule in rules if rule.exposure_context == exposure_context]
+            rules = [
+                rule for rule in rules if rule.exposure_context == exposure_context
+            ]
         return rules
 
     def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
@@ -1191,8 +1287,16 @@ class GraphEngine:
                         enzyme_id=payload.get("enzyme_id"),
                         graph_group=payload.get("graph_group"),
                         source=str(payload.get("source", "")),
-                        sources=list(payload["sources"]) if isinstance(payload.get("sources"), list) else None,
-                        notes=str(payload["notes"]) if payload.get("notes") is not None else None,
+                        sources=(
+                            list(payload["sources"])
+                            if isinstance(payload.get("sources"), list)
+                            else None
+                        ),
+                        notes=(
+                            str(payload["notes"])
+                            if payload.get("notes") is not None
+                            else None
+                        ),
                     )
         # Graph-carried class-level terms (CarcinogenGroup
         # ``flux_class_metadata[cls].class_level_terms``): rebuild their
@@ -1237,16 +1341,27 @@ class GraphEngine:
                             if key not in _FLUX_RESERVED_TERM_FIELDS
                         },
                         confidence=str(
-                            term.get("confidence") or class_data.get("confidence_overall") or ""
+                            term.get("confidence")
+                            or class_data.get("confidence_overall")
+                            or ""
                         ),
                         provenance_ref=str(
-                            term.get("provenance_ref") or f"classes.{cls}.{section}.{term_key}"
+                            term.get("provenance_ref")
+                            or f"classes.{cls}.{section}.{term_key}"
                         ),
                         enzyme_id=enzyme_id,
                         graph_group=str(declared_group) if declared_group else None,
                         source="graph_class_level_carrier",
-                        sources=list(term["sources"]) if isinstance(term.get("sources"), list) else None,
-                        notes=str(term["notes"]) if term.get("notes") is not None else None,
+                        sources=(
+                            list(term["sources"])
+                            if isinstance(term.get("sources"), list)
+                            else None
+                        ),
+                        notes=(
+                            str(term["notes"])
+                            if term.get("notes") is not None
+                            else None
+                        ),
                     )
         if not walked:
             return roster
@@ -1259,7 +1374,10 @@ class GraphEngine:
         index_keys = {(reaction.pathway, reaction.term_key) for reaction in roster}
         if index_keys <= walked.keys():
             return [walked[key] for key in sorted(walked)]
-        return [walked.get((reaction.pathway, reaction.term_key), reaction) for reaction in roster]
+        return [
+            walked.get((reaction.pathway, reaction.term_key), reaction)
+            for reaction in roster
+        ]
 
     def get_flux_classes(self) -> list[str]:
         """Return the union of kinetic + proxy flux classes.
@@ -1283,7 +1401,10 @@ class GraphEngine:
         Empty on a bare engine (no graph loaded) -- callers fall back to
         the JSON-sourced side index.
         """
-        if self._flux_group_class_md_cache is None or self._flux_group_class_md_graph is not self.G:
+        if (
+            self._flux_group_class_md_cache is None
+            or self._flux_group_class_md_graph is not self.G
+        ):
             md: dict[str, dict[str, Any]] = {}
             for _, data in self.G.nodes(data=True):
                 if data.get("type") != "CarcinogenGroup":
@@ -1306,7 +1427,10 @@ class GraphEngine:
         engine (no graph loaded) -- callers fall back to the proxy JSON's
         class config.
         """
-        if self._flux_class_signal_cache is None or self._flux_class_signal_graph is not self.G:
+        if (
+            self._flux_class_signal_cache is None
+            or self._flux_class_signal_graph is not self.G
+        ):
             signals: dict[str, dict[str, Any]] = {}
             for _source, _target, data in self.G.edges(data=True):
                 kinetics = data.get("kinetics")
@@ -1337,7 +1461,11 @@ class GraphEngine:
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
         entry = self._flux_group_class_md().get(cls)
-        if entry and isinstance(entry.get("aggregation"), dict) and entry["aggregation"]:
+        if (
+            entry
+            and isinstance(entry.get("aggregation"), dict)
+            and entry["aggregation"]
+        ):
             return entry["aggregation"]
         return self._flux_aggregation_by_class.get(cls, {})
 
@@ -1389,15 +1517,29 @@ class GraphEngine:
                 return 1.0
             if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
                 return 0.5
-            if diplotype_lower in ("pm", "poor", "poor metabolizer", "poor_metabolizer"):
+            if diplotype_lower in (
+                "pm",
+                "poor",
+                "poor metabolizer",
+                "poor_metabolizer",
+            ):
                 return 0.3
 
         if gene_upper == "NAT2":
             if diplotype_lower in ("slow", "slow acetylator", "slow_acetylator", "sa"):
                 return 0.2
-            if diplotype_lower in ("intermediate", "intermediate acetylator", "intermediate_acetylator"):
+            if diplotype_lower in (
+                "intermediate",
+                "intermediate acetylator",
+                "intermediate_acetylator",
+            ):
                 return 0.5
-            if diplotype_lower in ("rapid", "rapid acetylator", "rapid_acetylator", "ra"):
+            if diplotype_lower in (
+                "rapid",
+                "rapid acetylator",
+                "rapid_acetylator",
+                "ra",
+            ):
                 return 1.0
 
         if gene_upper == "NAT1":
@@ -1434,7 +1576,9 @@ class GraphEngine:
 
         if gene_upper == "ALDH2" and diplotype in ("*2/*2", "PM_ALDH2"):
             return float(
-                special.get("ALDH2_star2_homozygous", {}).get("activity_fraction", 0.001)
+                special.get("ALDH2_star2_homozygous", {}).get(
+                    "activity_fraction", 0.001
+                )
             )
 
         if gene_upper == "GSTM1" and diplotype_lower in (
@@ -1468,7 +1612,11 @@ class GraphEngine:
             return 1.0
 
         # Extension cohort aliases.
-        if gene_upper == "CYP2E1" and diplotype_lower in ("um_c1c1", "*1c/*1c", "c1/c1"):
+        if gene_upper == "CYP2E1" and diplotype_lower in (
+            "um_c1c1",
+            "*1c/*1c",
+            "c1/c1",
+        ):
             # Source interaction model defines CYP2E1*1C/*1C as a 140% activity state.
             return 1.4
 
@@ -1576,15 +1724,29 @@ class GraphEngine:
                 return 1.0
             if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
                 return 0.5
-            if diplotype_lower in ("pm", "poor", "poor metabolizer", "poor_metabolizer"):
+            if diplotype_lower in (
+                "pm",
+                "poor",
+                "poor metabolizer",
+                "poor_metabolizer",
+            ):
                 return 0.3
 
         if gene_upper == "NAT2":
             if diplotype_lower in ("slow", "slow acetylator", "slow_acetylator", "sa"):
                 return 0.2
-            if diplotype_lower in ("intermediate", "intermediate acetylator", "intermediate_acetylator"):
+            if diplotype_lower in (
+                "intermediate",
+                "intermediate acetylator",
+                "intermediate_acetylator",
+            ):
                 return 0.5
-            if diplotype_lower in ("rapid", "rapid acetylator", "rapid_acetylator", "ra"):
+            if diplotype_lower in (
+                "rapid",
+                "rapid acetylator",
+                "rapid_acetylator",
+                "ra",
+            ):
                 return 1.0
 
         if gene_upper == "NAT1":
@@ -1615,7 +1777,9 @@ class GraphEngine:
             return float(special["ALDH2_star1_star2"]["activity_fraction"])
         if gene_upper == "ALDH2" and diplotype in ("*2/*2", "PM_ALDH2"):
             return float(
-                special.get("ALDH2_star2_homozygous", {}).get("activity_fraction", 0.001)
+                special.get("ALDH2_star2_homozygous", {}).get(
+                    "activity_fraction", 0.001
+                )
             )
         if gene_upper in {"GSTM1", "GSTT1"} and diplotype_lower in (
             "null",
@@ -1635,7 +1799,11 @@ class GraphEngine:
             "1/1",
         ):
             return 1.0
-        if gene_upper == "CYP2E1" and diplotype_lower in ("um_c1c1", "*1c/*1c", "c1/c1"):
+        if gene_upper == "CYP2E1" and diplotype_lower in (
+            "um_c1c1",
+            "*1c/*1c",
+            "c1/c1",
+        ):
             return 1.4
         if gene_upper == "CYP1A1":
             if diplotype_lower in ("*1/*2a", "*1/2a", "wt/*2a", "*2a carrier"):
@@ -1707,7 +1875,10 @@ class GraphEngine:
         metadata = self.get_flux_metadata()
         qivive_defaults = metadata.get("qivive_defaults", {})
         tissue_defaults = qivive_defaults.get("tissues", {})
-        source = tissue_defaults.get(tissue_key, _FALLBACK_QIVIVE_TISSUES.get(tissue_key, _FALLBACK_QIVIVE_TISSUES["liver"]))
+        source = tissue_defaults.get(
+            tissue_key,
+            _FALLBACK_QIVIVE_TISSUES.get(tissue_key, _FALLBACK_QIVIVE_TISSUES["liver"]),
+        )
         context = {
             "mppgl_mg_per_g": float(source["mppgl_mg_per_g"]),
             "organ_weight_g": float(source["organ_weight_g"]),
@@ -1717,7 +1888,9 @@ class GraphEngine:
                 context["mppgl_mg_per_g"] = float(overrides["mppgl_mg_per_g"])
             if "organ_weight_g" in overrides:
                 context["organ_weight_g"] = float(overrides["organ_weight_g"])
-        context["scale"] = round(context["mppgl_mg_per_g"] * context["organ_weight_g"], 6)
+        context["scale"] = round(
+            context["mppgl_mg_per_g"] * context["organ_weight_g"], 6
+        )
         return context
 
     def get_steady_state_context(
@@ -1776,9 +1949,13 @@ class GraphEngine:
         if overrides:
             for key, value in overrides.items():
                 if key in {"absorption_fraction", "tissue_blood_flow_fraction"}:
-                    context[key] = _bounded_fraction_context(overrides, key, context[key])
+                    context[key] = _bounded_fraction_context(
+                        overrides, key, context[key]
+                    )
                 else:
-                    context[key] = _positive_context_float(overrides, key, context.get(key, 1.0))
+                    context[key] = _positive_context_float(
+                        overrides, key, context.get(key, 1.0)
+                    )
 
         context["central_volume_l"] = round(
             context["body_weight_kg"] * context["volume_l_per_kg"],
@@ -1842,7 +2019,6 @@ class GraphEngine:
                     f"Could not read exposure database at {_DEFAULT_EXPOSURE_DB_PATH}: {exc}"
                 ) from exc
         return self._exposure_database
-
 
     def get_flux_class_config(self, carcinogen_class: Any) -> dict[str, Any]:
         """Return a class's proxy config block, class-level fields graph-first.
@@ -1971,7 +2147,9 @@ class GraphEngine:
         ]
         graph_group = group_id
 
-        def _binding_probe(reaction: FluxReaction) -> tuple[bool, bool, list[str]] | None:
+        def _binding_probe(
+            reaction: FluxReaction,
+        ) -> tuple[bool, bool, list[str]] | None:
             """``(edge_present, payload_present, edge_types)`` for the term's
             binding nodes; ``None`` when the term carries no bindings.
 
@@ -1992,7 +2170,9 @@ class GraphEngine:
                 if data.get("type"):
                     edge_types.add(str(data.get("type")))
                 flux_terms = (data.get("kinetics") or {}).get("flux_terms", {})
-                if reaction.term_key in flux_terms.get(cls, {}).get(reaction.pathway, {}):
+                if reaction.term_key in flux_terms.get(cls, {}).get(
+                    reaction.pathway, {}
+                ):
                     payload_present = True
             return (True, payload_present, sorted(edge_types))
 
@@ -2002,7 +2182,10 @@ class GraphEngine:
                 return []
             edge_types: set[str] = set()
             for carcinogen_id in carcinogen_ids:
-                for source_id, target_id in ((carcinogen_id, enzyme_id), (enzyme_id, carcinogen_id)):
+                for source_id, target_id in (
+                    (carcinogen_id, enzyme_id),
+                    (enzyme_id, carcinogen_id),
+                ):
                     if not self.G.has_edge(source_id, target_id):
                         continue
                     for data in self.G.get_edge_data(source_id, target_id).values():
@@ -2025,7 +2208,9 @@ class GraphEngine:
         def _row(reaction: FluxReaction) -> dict[str, Any]:
             resolved = reaction.enzyme_id is not None and reaction.enzyme_id in self.G
             probe = _binding_probe(reaction)
-            edge_present, payload_present, binding_types = probe if probe else (False, False, [])
+            edge_present, payload_present, binding_types = (
+                probe if probe else (False, False, [])
+            )
             return {
                 "term_key": reaction.term_key,
                 "pathway": reaction.pathway,
@@ -2039,7 +2224,9 @@ class GraphEngine:
                 "binding_edge_types": binding_types,
                 "edge_anchored": payload_present,
                 "group_carried": reaction.term_key in carried_terms,
-                "class_carcinogen_edge_types": _class_carcinogen_edge_types(reaction.enzyme_id),
+                "class_carcinogen_edge_types": _class_carcinogen_edge_types(
+                    reaction.enzyme_id
+                ),
             }
 
         rows: list[dict[str, Any]] = []
@@ -2061,14 +2248,18 @@ class GraphEngine:
         for reaction, row in zip(reactions, rows):
             if not row["resolved"] or reaction.term_key in carried_terms:
                 continue
-            if not reaction.params.get("source_node_id") or not reaction.params.get("target_node_id"):
+            if not reaction.params.get("source_node_id") or not reaction.params.get(
+                "target_node_id"
+            ):
                 unbound.append(reaction.term_key)
             elif not row["binding_edge_present"]:
                 missing_binding.append(reaction.term_key)
             elif not row["edge_anchored"]:
                 missing_payload.append(reaction.term_key)
 
-        shadowed = [r for r in self._flux_shadowed_reactions if r.carcinogen_class == cls]
+        shadowed = [
+            r for r in self._flux_shadowed_reactions if r.carcinogen_class == cls
+        ]
         shadowed_rows = [_row(reaction) for reaction in shadowed]
 
         group_carried = [r.term_key for r in reactions if r.term_key in carried_terms]
@@ -2222,9 +2413,7 @@ class GraphEngine:
 
     def nodes_by_type(self, node_type: str) -> list[dict[str, Any]]:
         return [
-            data
-            for _, data in self.G.nodes(data=True)
-            if data.get("type") == node_type
+            data for _, data in self.G.nodes(data=True) if data.get("type") == node_type
         ]
 
     # ── Domain-specific filters ──────────────────────────────────────────
@@ -2313,7 +2502,10 @@ class GraphEngine:
     #: Node types hidden from viewer-facing subgraphs by default (they
     #: remain in the underlying graph for callers that bypass this method,
     #: e.g. the flux engine) -- see :meth:`subgraph_by_node_types`.
-    _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES: tuple[str, ...] = ("Substrate", "CarcinogenGroup")
+    _DEFAULT_EXCLUDED_VIEWER_NODE_TYPES: tuple[str, ...] = (
+        "Substrate",
+        "CarcinogenGroup",
+    )
 
     def subgraph_by_node_types(
         self,
@@ -2366,7 +2558,9 @@ class GraphEngine:
         nodes = [dict(self.G.nodes[n]) for n in node_ids]
         return {"nodes": nodes, "edges": edges}
 
-    def enzymes_by_tissue_threshold(self, tissue: str, threshold: float) -> dict[str, list[Any]]:
+    def enzymes_by_tissue_threshold(
+        self, tissue: str, threshold: float
+    ) -> dict[str, list[Any]]:
         """Return Enzyme nodes at/above *threshold* for *tissue*, plus their neighborhood.
 
         Qualifying enzymes: ``type == "Enzyme"`` and
@@ -2447,7 +2641,9 @@ class GraphEngine:
 
         tissue_node_ids: set[str] | None = None
         if tissue is not None:
-            threshold = tissue_threshold if tissue_threshold is not None else float("-inf")
+            threshold = (
+                tissue_threshold if tissue_threshold is not None else float("-inf")
+            )
             tissue_node_ids = {
                 node_id
                 for node_id, data in self.G.nodes(data=True)
@@ -2459,11 +2655,19 @@ class GraphEngine:
         type_node_ids: set[str] | None = None
         if node_type is not None:
             type_node_ids = {
-                node_id for node_id, data in self.G.nodes(data=True) if data.get("type") == node_type
+                node_id
+                for node_id, data in self.G.nodes(data=True)
+                if data.get("type") == node_type
             }
 
-        def _touches(u: str, v: str, carcinogen: str | None, candidates: set[str]) -> bool:
-            return u in candidates or v in candidates or (carcinogen is not None and carcinogen in candidates)
+        def _touches(
+            u: str, v: str, carcinogen: str | None, candidates: set[str]
+        ) -> bool:
+            return (
+                u in candidates
+                or v in candidates
+                or (carcinogen is not None and carcinogen in candidates)
+            )
 
         surviving_edges: list[dict[str, Any]] = []
         node_ids: set[str] = set()
@@ -2471,11 +2675,17 @@ class GraphEngine:
             if edge_type is not None and data.get("type") != edge_type:
                 continue
             carcinogen = data.get("carcinogen")
-            if group_node_ids is not None and not _touches(u, v, carcinogen, group_node_ids):
+            if group_node_ids is not None and not _touches(
+                u, v, carcinogen, group_node_ids
+            ):
                 continue
-            if tissue_node_ids is not None and not _touches(u, v, None, tissue_node_ids):
+            if tissue_node_ids is not None and not _touches(
+                u, v, None, tissue_node_ids
+            ):
                 continue
-            if type_node_ids is not None and not (u in type_node_ids or v in type_node_ids):
+            if type_node_ids is not None and not (
+                u in type_node_ids or v in type_node_ids
+            ):
                 continue
             surviving_edges.append(dict(data))
             node_ids.add(u)
@@ -2553,7 +2763,12 @@ class GraphEngine:
                 }
             )
 
-        def _dfs(node: str, visited: set[str], node_ids: list[str], edge_data: list[dict[str, Any]]) -> None:
+        def _dfs(
+            node: str,
+            visited: set[str],
+            node_ids: list[str],
+            edge_data: list[dict[str, Any]],
+        ) -> None:
             extended = False
             for neighbor, data in _step(node):
                 if neighbor in visited:
@@ -2596,7 +2811,9 @@ class GraphEngine:
             raise ValueError(f"Unknown node: {carcinogen_id}")
         if self.G.nodes[carcinogen_id].get("type") != "Carcinogen":
             raise ValueError(f"Node {carcinogen_id!r} is not a Carcinogen node")
-        return self._maximal_simple_paths(carcinogen_id, forward=True, edge_types=edge_types)
+        return self._maximal_simple_paths(
+            carcinogen_id, forward=True, edge_types=edge_types
+        )
 
     def paths_to_carcinogen(
         self,
@@ -2622,7 +2839,9 @@ class GraphEngine:
             raise ValueError(f"Unknown node: {carcinogen_id}")
         if self.G.nodes[carcinogen_id].get("type") != "Carcinogen":
             raise ValueError(f"Node {carcinogen_id!r} is not a Carcinogen node")
-        return self._maximal_simple_paths(carcinogen_id, forward=False, edge_types=edge_types)
+        return self._maximal_simple_paths(
+            carcinogen_id, forward=False, edge_types=edge_types
+        )
 
     def carcinogen_group_paths_subgraph(
         self,
@@ -2663,7 +2882,9 @@ class GraphEngine:
             for carcinogen in self.carcinogens_by_group(group):
                 carcinogen_id = carcinogen["id"]
                 _add_node(carcinogen_id)
-                for path in self.paths_from_carcinogen(carcinogen_id, edge_types=edge_types):
+                for path in self.paths_from_carcinogen(
+                    carcinogen_id, edge_types=edge_types
+                ):
                     for node in path["nodes"]:
                         _add_node(node["id"])
                     for edge in path["edges"]:
@@ -2707,11 +2928,15 @@ class GraphEngine:
         separate, non-removing overlay applied afterward; see
         :meth:`dim_by_tissue_threshold`.
         """
-        type_subgraph = self.subgraph_by_node_types(node_types, exclude_types=exclude_types)
+        type_subgraph = self.subgraph_by_node_types(
+            node_types, exclude_types=exclude_types
+        )
         kept_ids = {node["id"] for node in type_subgraph["nodes"]}
 
         if carcinogen_groups:
-            carcinogen_subgraph = self.carcinogen_group_paths_subgraph(carcinogen_groups)
+            carcinogen_subgraph = self.carcinogen_group_paths_subgraph(
+                carcinogen_groups
+            )
             kept_ids &= {node["id"] for node in carcinogen_subgraph["nodes"]}
 
         nodes = [dict(self.G.nodes[node_id]) for node_id in kept_ids]
@@ -2761,7 +2986,9 @@ class GraphEngine:
         edges: list[dict[str, Any]] = []
         for edge in subgraph["edges"]:
             edge = dict(edge)
-            edge["_dimmed"] = edge.get("source") in dimmed_ids or edge.get("target") in dimmed_ids
+            edge["_dimmed"] = (
+                edge.get("source") in dimmed_ids or edge.get("target") in dimmed_ids
+            )
             edges.append(edge)
 
         return {"nodes": nodes, "edges": edges}
