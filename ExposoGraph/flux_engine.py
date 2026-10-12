@@ -177,19 +177,6 @@ class FullProfileResult:
     tissue_weight_source: FluxTissueWeightSource
 
 
-@dataclass
-class SensitivityResult:
-    """Result of single-gene sensitivity analysis."""
-
-    carcinogen_class: str
-    gene_varied: str
-    tissue: str
-    baseline_ratio: float
-    results_by_phenotype: dict[str, dict[str, Any]]
-    max_fold_change: float | None
-    tissue_weight_source: FluxTissueWeightSource
-
-
 # ── Parameter-source labels (output vocabulary; data served by GraphEngine) ──
 
 _KINETIC_PARAMETER_SOURCE = "kinetic_parameters.json"
@@ -1403,7 +1390,9 @@ def _compute_aflatoxin_flux(
 ) -> FluxResultDict:
     """Compute AFB1 activation and detoxification fluxes."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("group_mycotoxins")}
+    terms = {
+        r.term_key: r for r in active_engine.get_edge_flux_reactions("group_mycotoxins")
+    }
     agg = active_engine.get_flux_aggregation("group_mycotoxins")
     activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
@@ -1502,7 +1491,9 @@ def _compute_aldehyde_flux(
 ) -> FluxResultDict:
     """Compute aldehyde (acetaldehyde) clearance flux."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("group_aldehydes")}
+    terms = {
+        r.term_key: r for r in active_engine.get_edge_flux_reactions("group_aldehydes")
+    }
     agg = active_engine.get_flux_aggregation("group_aldehydes")
     detox_enzymes: dict[str, Any] = {}
 
@@ -1723,11 +1714,15 @@ _DISPATCH: dict[str, FluxCalculator] = {
     "group_pahs": partial(_compute_generic_mechanistic_flux, "group_pahs"),
     "group_mycotoxins": _compute_aflatoxin_flux,
     "group_aldehydes": _compute_aldehyde_flux,
-    "group_nitrosamines": partial(_compute_generic_mechanistic_flux, "group_nitrosamines"),
+    "group_nitrosamines": partial(
+        _compute_generic_mechanistic_flux, "group_nitrosamines"
+    ),
     "NDMA": partial(_compute_generic_mechanistic_flux, "NDMA"),
     "NDEA": partial(_compute_generic_proxy_flux, "NDEA"),
     "group_hcas": partial(_compute_generic_mechanistic_flux, "group_hcas"),
-    "group_aromatic_amines": partial(_compute_generic_proxy_flux, "group_aromatic_amines"),
+    "group_aromatic_amines": partial(
+        _compute_generic_proxy_flux, "group_aromatic_amines"
+    ),
     "group_estrogen": partial(_compute_generic_proxy_flux, "group_estrogen"),
     "Benzene": partial(_compute_generic_mechanistic_flux, "Benzene"),
     "VinylChloride": partial(_compute_generic_proxy_flux, "VinylChloride"),
@@ -2002,133 +1997,6 @@ def compute_full_profile(
     )
 
 
-def sensitivity_analysis(
-    carcinogen_class: CarcinogenClass | str,
-    gene: str,
-    tissue: str,
-    substrate_conc_uM: float | None = None,
-    tissue_weight_source: FluxTissueWeightSource | str = FluxTissueWeightSource.CURATED,
-) -> SensitivityResult:
-    """Assess how changing one gene's genotype shifts the net ratio.
-
-    Tests PM, IM, NM, RM, UM (or null for GSTM1/GSTT1, or star alleles
-    for ALDH2) while holding all other genes at NM.
-
-    Args:
-        carcinogen_class: Carcinogen class.
-        gene: Gene to vary.
-        tissue: Tissue name.
-        substrate_conc_uM: Optional substrate concentration.
-        tissue_weight_source: ``"curated"`` (default) or ``"gtex"``.
-
-    Returns:
-        :class:`SensitivityResult` with per-phenotype ratios.
-    """
-    cls_str = (
-        carcinogen_class.value
-        if isinstance(carcinogen_class, CarcinogenClass)
-        else carcinogen_class
-    )
-    weight_source = _normalize_tissue_weight_source(tissue_weight_source)
-
-    base_genotypes = {
-        g: "NM"
-        for g in [
-            "CYP1A1",
-            "CYP1B1",
-            "CYP1A2",
-            "CYP3A4",
-            "CYP3A5",
-            "CYP2A13",
-            "CYP2A6",
-            "CYP2E1",
-            "EPHX1",
-            "GSTM1",
-            "GSTT1",
-            "GSTP1",
-            "ALDH2",
-            "ALDH1A1",
-            "ADH1B",
-            "NQO1",
-            "CYP2D6",
-            "CYP2B6",
-            "NAT1",
-            "NAT2",
-            "COMT",
-            "SULT1E1",
-            "UGT2B7",
-            "AS3MT",
-            "XPC",
-            "ERCC2",
-            "XRCC1",
-            "OGG1",
-            "MGMT",
-            "POLH",
-        ]
-    }
-
-    test_phenotypes = ["PM", "IM", "NM", "RM", "UM"]
-    if gene in ("GSTM1", "GSTT1"):
-        test_phenotypes = ["null", "NM", "RM"]
-    elif gene == "ALDH2":
-        test_phenotypes = ["*1/*1", "*1/*2", "*2/*2"]
-
-    baseline = compute_pathway_flux(
-        cls_str,
-        base_genotypes,
-        tissue,
-        substrate_conc_uM,
-        tissue_weight_source=weight_source,
-    )
-    baseline_ratio = baseline.net_ratio
-
-    sensitivity_results: dict[str, dict[str, Any]] = {}
-    for pt in test_phenotypes:
-        gt = dict(base_genotypes)
-        gt[gene] = pt
-        r = compute_pathway_flux(
-            cls_str,
-            gt,
-            tissue,
-            substrate_conc_uM,
-            tissue_weight_source=weight_source,
-        )
-        net = r.net_ratio
-
-        if isinstance(baseline_ratio, (int, float)) and baseline_ratio > 0:
-            delta = round(net - baseline_ratio, 4)
-            fold_change = round(net / baseline_ratio, 4)
-        else:
-            delta = None
-            fold_change = None
-
-        sensitivity_results[pt] = {
-            "net_ratio": net,
-            "risk_classification": r.risk_classification.value,
-            "delta_from_NM_baseline": delta,
-            "fold_change_from_NM": fold_change,
-        }
-
-    max_fc = max(
-        (
-            v["fold_change_from_NM"]
-            for v in sensitivity_results.values()
-            if v["fold_change_from_NM"] is not None
-        ),
-        default=None,
-    )
-
-    return SensitivityResult(
-        carcinogen_class=cls_str,
-        gene_varied=gene,
-        tissue=tissue,
-        baseline_ratio=baseline_ratio,
-        results_by_phenotype=sensitivity_results,
-        max_fold_change=max_fc,
-        tissue_weight_source=weight_source,
-    )
-
-
 def run_validation_cases(
     tissue_weight_source: FluxTissueWeightSource | str = FluxTissueWeightSource.CURATED,
 ) -> None:
@@ -2229,11 +2097,6 @@ Examples:
         "--validate", action="store_true", help="Run built-in validation cases"
     )
     parser.add_argument(
-        "--sensitivity",
-        action="store_true",
-        help="Run sensitivity analysis for one gene",
-    )
-    parser.add_argument(
         "--gene", type=str, default=None, help="Gene to vary for sensitivity analysis"
     )
     parser.add_argument("--output-json", action="store_true", help="Output JSON")
@@ -2307,18 +2170,7 @@ Examples:
     if args.organ_weight_g is not None:
         qivive_context["organ_weight_g"] = args.organ_weight_g
 
-    if args.sensitivity:
-        if not args.gene:
-            print("ERROR: --sensitivity requires --gene", file=sys.stderr)
-            return 1
-        result_obj: Any = sensitivity_analysis(
-            args.carcinogen or "group_pahs",
-            args.gene,
-            args.tissue,
-            args.concentration,
-            tissue_weight_source=weight_source,
-        )
-    elif args.full_profile or not args.carcinogen:
+    if args.full_profile or not args.carcinogen:
         result_obj = compute_full_profile(
             genotypes,
             args.tissue,
