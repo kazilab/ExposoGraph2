@@ -20,7 +20,6 @@ from ExposoGraph import (
     ui_flux,
     ui_manual,
     ui_map_viewer,
-    ui_sidebar,
 )
 from ExposoGraph._app_shared import get_engine, get_repository, start_engine
 from ExposoGraph.branding import (
