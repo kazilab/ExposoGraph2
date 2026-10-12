@@ -1693,48 +1693,6 @@ class GraphEngine:
             pass
         return 1.0
 
-
-        # ── Tissue weight (GTEx integration) ──────────────────────────────────────
-
-        _FLUX_TISSUE_TO_GTEX: dict[str, str] = {
-        "liver": "Liver",
-        "lung": "Lung",
-        "prostate": "Prostate",
-        "bladder": "Bladder",
-        "colon": "Colon",
-        "breast": "Breast",
-        "kidney": "Kidney",
-        "esophagus": "Esophagus",
-        }
-
-        _TISSUE_ALIASES: dict[str, str] = {
-        "liver": "liver",
-        "hepatic": "liver",
-        "lung": "lung",
-        "pulmonary": "lung",
-        "prostate": "prostate",
-        "breast": "breast",
-        "colon": "colon",
-        "colorectal": "colon",
-        "kidney": "kidney",
-        "renal": "kidney",
-        "bladder": "bladder",
-        "lymphocyte": "lymphocyte",
-        "blood": "lymphocyte",
-        "esophagus": "esophagus",
-        "esophageal": "esophagus",
-        "stomach": "stomach",
-        "gastric": "stomach",
-        "intestine": "intestine",
-        "nasal_mucosa": "nasal_mucosa",
-        "brain": "brain",
-        "heart": "heart",
-        "muscle": "muscle",
-        "adipose": "adipose",
-        "skin": "skin",
-        "placenta": "placenta",
-        }
-
     def get_qivive_context(
         self,
         tissue_key: str,
