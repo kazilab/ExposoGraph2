@@ -228,21 +228,6 @@ def export_interaction_parameters(data: dict[str, Any], out: Path) -> list[Path]
     write_csv(path, consumer_rows, ["consumer_id", "substrate_class", "enzyme", "gsh_per_umol_substrate"])
     written.append(path)
 
-    genotype_rows = []
-    for gene, variants in data.get("genotype_modifiers", {}).items():
-        if not isinstance(variants, dict):
-            continue
-        for variant_id, variant in variants.items():
-            row = {"gene": gene, "variant_id": variant_id}
-            if isinstance(variant, dict):
-                row.update(flatten_record(variant))
-            else:
-                row["value"] = variant
-            genotype_rows.append(row)
-    path = out / "interaction_parameters__genotype_modifiers.csv"
-    write_csv(path, genotype_rows, ["gene", "variant_id", "activity_multiplier", "frequency", "alleles"])
-    written.append(path)
-
     rule_rows = []
     for rule_type, rules in data.get("interaction_rules", {}).items():
         if isinstance(rules, list):
@@ -309,15 +294,6 @@ def export_kinetic_parameters(data: dict[str, Any], out: Path) -> list[Path]:
 
     path = out / "kinetic_parameters__epidemiological_validation.csv"
     write_csv(path, validation_rows, ["carcinogen_class", "validation_id", "value", "source"])
-    written.append(path)
-
-    special_rows = []
-    for modifier_id, modifier in data.get("genotype_modifiers", {}).get("special_cases", {}).items():
-        row = {"modifier_id": modifier_id}
-        row.update(flatten_record(modifier))
-        special_rows.append(row)
-    path = out / "kinetic_parameters__genotype_special_cases.csv"
-    write_csv(path, special_rows, ["modifier_id", "phenotype", "activity_fraction", "mechanism", "source"])
     written.append(path)
 
     weight_rows = []

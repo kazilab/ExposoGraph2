@@ -226,8 +226,8 @@ def genotype_modifier(diplotype: str, gene: str) -> float:
     Special cases for ALDH2 heterozygotes, GSTM1/GSTT1 copy-number states,
     and cohort-specific CYP aliases used by the extension modules.
 
-    Delegates to ``GraphEngine.get_genotype_modifier`` over the retained
-    ``genotype_modifiers`` tables.
+    Delegates to ``GraphEngine.get_genotype_modifier``, which reads
+    ``genotypes.json``.
 
     Args:
         diplotype: Phenotype label (for example ``"NM"``, ``"null"``,

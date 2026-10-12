@@ -198,15 +198,15 @@ def _genotype_matches(modifier_key: str, geno_val: str) -> bool:
 
 def compute_flux_ratio(genotypes: dict[str, str], member_carcinogen_ids: list[str]) -> float:
     """Genotype multiplier for one scenario. Applied once per matching modifier."""
-    modifiers = _get_exposure_db()["flux_model_integration"]["genotype_modifiers"]
+    from .genotypes import risk_fold_rows
+
     members = set(member_carcinogen_ids)
     norm = {key.upper(): value.lower() for key, value in genotypes.items()}
     flux = 1.0
-    for modifier_key, by_member in modifiers.items():
-        gene = modifier_key.partition("_")[0].upper()
-        if not _genotype_matches(modifier_key, norm.get(gene, "")):
+    for gene, match, folds in risk_fold_rows():
+        if not _genotype_matches(match, norm.get(gene, "")):
             continue
-        matched = [float(value) for mid, value in by_member.items() if mid in members]
+        matched = [value for member_id, value in folds.items() if member_id in members]
         if matched:
             flux *= matched[0]
     return round(flux, 4)

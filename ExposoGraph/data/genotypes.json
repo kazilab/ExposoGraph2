@@ -1,0 +1,605 @@
+{
+  "metadata": {
+    "description": "Single genotype catalog. activity_fraction multiplies enzyme Vmax. risk_fold multiplies the exposure scenario score for one member carcinogen. The two numbers are not interchangeable.",
+    "activity_fraction": "Remaining catalytic activity relative to the reference diplotype.",
+    "risk_fold": "Epidemiological fold on the exposure scenario score. Not an activity fraction and not its inverse.",
+    "resolutions": [
+      "GSTM1 and GSTT1 null activity is 0.0. The former flux constant 0.05 is not used.",
+      "ALDH2 *2/*2 activity is the former code fallback 0.001.",
+      "Where flux and interaction disagreed, the flux fraction is the catalog value. Superseded interaction values are named in the phenotype note."
+    ]
+  },
+  "standard_scale": {
+    "PM": 0.0,
+    "IM": 0.5,
+    "NM": 1.0,
+    "RM": 1.5,
+    "UM": 2.0,
+    "null": 0.0
+  },
+  "label_aliases": {
+    "pm": "PM",
+    "poor": "PM",
+    "im": "IM",
+    "intermediate": "IM",
+    "nm": "NM",
+    "normal": "NM",
+    "wt": "NM",
+    "wildtype": "NM",
+    "*1/*1": "NM",
+    "rm": "RM",
+    "rapid": "RM",
+    "um": "UM",
+    "ultrarapid": "UM",
+    "null": "null",
+    "0/0": "PM"
+  },
+  "genes": {
+    "CYP1A2": {
+      "phenotypes": {
+        "star1f_homozygous": {
+          "aliases": [
+            "*1f/*1f",
+            "1f/1f",
+            "cyp1a2*1f/*1f",
+            "um_1f_1f",
+            "um"
+          ],
+          "activity_fraction": 1.5,
+          "frequency": 0.1,
+          "note": "Flux *1F/*1F fraction. Interaction UM was 1.8 and is not used."
+        },
+        "star1a_star1f": {
+          "aliases": [
+            "*1a/*1f",
+            "1a/1f",
+            "*1f/*1a",
+            "1f/1a"
+          ],
+          "activity_fraction": 1.25,
+          "note": "Heterozygous *1F. Intermediate between *1A/*1A and *1F/*1F."
+        },
+        "star1a_homozygous": {
+          "aliases": [
+            "*1a/*1a",
+            "1a/1a",
+            "nm"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.55
+        },
+        "star1k": {
+          "aliases": [
+            "*1k",
+            "*1k/*1k",
+            "1k/1k"
+          ],
+          "activity_fraction": 0.5
+        },
+        "im": {
+          "aliases": [
+            "im"
+          ],
+          "activity_fraction": 0.5,
+          "frequency": 0.25,
+          "note": "Interaction *1C/*1D intermediate. Same fraction as the generic IM scale."
+        },
+        "poor": {
+          "aliases": [
+            "pm",
+            "poor",
+            "poor metabolizer",
+            "poor_metabolizer"
+          ],
+          "activity_fraction": 0.3,
+          "frequency": 0.05,
+          "note": "Flux poor fraction. Interaction PM was 0.1 and is not used."
+        }
+      }
+    },
+    "NAT2": {
+      "phenotypes": {
+        "slow": {
+          "aliases": [
+            "slow",
+            "slow acetylator",
+            "slow_acetylator",
+            "sa"
+          ],
+          "activity_fraction": 0.2,
+          "frequency": 0.3,
+          "exposure_match": "NAT2_slow",
+          "risk_folds": {
+            "4ABP": 2.5,
+            "Benzidine": 2.5,
+            "MeIQx": 0.7,
+            "PhIP": 0.7
+          },
+          "note": "Flux slow fraction. Interaction slow was 0.3 and is not used."
+        },
+        "intermediate": {
+          "aliases": [
+            "intermediate",
+            "intermediate acetylator",
+            "intermediate_acetylator"
+          ],
+          "activity_fraction": 0.5,
+          "frequency": 0.45,
+          "note": "Flux intermediate fraction. Interaction intermediate was 1.0 and is not used."
+        },
+        "rapid": {
+          "aliases": [
+            "rapid",
+            "rapid acetylator",
+            "rapid_acetylator",
+            "ra"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.25,
+          "note": "Flux rapid fraction. Interaction rapid was 2.0 and is not used."
+        }
+      }
+    },
+    "NAT1": {
+      "phenotypes": {
+        "star4_homozygous": {
+          "aliases": [
+            "*4/*4",
+            "4/4",
+            "rapid",
+            "ra"
+          ],
+          "activity_fraction": 1.0
+        },
+        "star4_star10": {
+          "aliases": [
+            "*4/*10",
+            "*10/*4",
+            "4/10",
+            "10/4"
+          ],
+          "activity_fraction": 1.05
+        },
+        "star10_homozygous": {
+          "aliases": [
+            "*10/*10",
+            "10/10"
+          ],
+          "activity_fraction": 1.1
+        },
+        "star4_star14": {
+          "aliases": [
+            "*4/*14",
+            "*14/*4",
+            "4/14",
+            "14/4"
+          ],
+          "activity_fraction": 0.75
+        },
+        "star10_star14": {
+          "aliases": [
+            "*10/*14",
+            "*14/*10",
+            "10/14",
+            "14/10"
+          ],
+          "activity_fraction": 0.8
+        },
+        "star14_homozygous": {
+          "aliases": [
+            "*14/*14",
+            "14/14",
+            "slow",
+            "sa"
+          ],
+          "activity_fraction": 0.5
+        }
+      }
+    },
+    "CYP2D6": {
+      "contains": [
+        {
+          "token": "x2",
+          "activity_fraction": 2.0
+        }
+      ],
+      "phenotypes": {
+        "reference": {
+          "aliases": [
+            "*1/*1",
+            "*1/*2",
+            "*2/*2"
+          ],
+          "activity_fraction": 1.0
+        },
+        "intermediate": {
+          "aliases": [
+            "*1/*4",
+            "*1/*5",
+            "*2/*4",
+            "*10/*10",
+            "im"
+          ],
+          "activity_fraction": 0.5
+        },
+        "poor": {
+          "aliases": [
+            "*4/*4",
+            "*5/*5",
+            "*4/*5",
+            "pm",
+            "poor"
+          ],
+          "activity_fraction": 0.0
+        },
+        "ultrarapid": {
+          "aliases": [
+            "um",
+            "ultrarapid"
+          ],
+          "activity_fraction": 2.0
+        }
+      }
+    },
+    "ALDH2": {
+      "phenotypes": {
+        "heterozygote": {
+          "aliases": [
+            "*1/*2",
+            "heterozygote"
+          ],
+          "activity_fraction": 0.25,
+          "exposure_match": "ALDH2_heterozygote",
+          "risk_folds": {
+            "Acetaldehyde": 6.0,
+            "Acrolein": 6.0,
+            "Crotonaldehyde": 6.0,
+            "Formaldehyde": 6.0,
+            "Furfural": 6.0,
+            "MDA": 6.0
+          },
+          "note": "Dominant-negative *2 heterozygote. Formerly special_cases.ALDH2_star1_star2."
+        },
+        "homozygous": {
+          "aliases": [
+            "*2/*2",
+            "pm_aldh2"
+          ],
+          "activity_fraction": 0.001,
+          "exposure_match": "ALDH2_homozygous_variant",
+          "risk_folds": {
+            "Acetaldehyde": 19.0,
+            "Acrolein": 19.0,
+            "Crotonaldehyde": 19.0,
+            "Formaldehyde": 19.0,
+            "Furfural": 19.0,
+            "MDA": 19.0
+          },
+          "note": "Current code fallback, written down. Not changed to 0.0."
+        }
+      }
+    },
+    "GSTM1": {
+      "phenotypes": {
+        "null": {
+          "aliases": [
+            "null",
+            "null/null",
+            "deletion",
+            "deleted",
+            "0",
+            "0/0"
+          ],
+          "activity_fraction": 0.0,
+          "frequency": 0.5,
+          "exposure_match": "GSTM1_null",
+          "risk_folds": {
+            "BaP": 2.0,
+            "Benz_a_anthracene": 2.0,
+            "Benzo_b_fluoranthene": 2.0,
+            "Chrysene": 2.0,
+            "Dibenz_ah_anthracene": 2.0,
+            "Naphthalene": 2.0,
+            "AFB1": 2.5,
+            "4ABP": 1.5,
+            "Benzidine": 1.5,
+            "AntimonyTrivalent": 1.8,
+            "ArsenicInorganic": 1.8,
+            "Be": 1.8,
+            "Cd": 1.8,
+            "CobaltMetal": 1.8,
+            "CobaltOxide": 1.8,
+            "CrVI": 1.8,
+            "LeadInorganicCompounds": 1.8,
+            "LeadMetallic": 1.8,
+            "LeadOrganicCompounds": 1.8,
+            "MercuryInorganicCompounds": 1.8,
+            "MethylmercuryCompounds": 1.8,
+            "NickelCompounds": 1.8,
+            "NickelMetallic": 1.8
+          },
+          "note": "Gene deletion. Activity is 0.0, not the former flux constant 0.05."
+        },
+        "present": {
+          "aliases": [
+            "present",
+            "active",
+            "wt",
+            "wildtype",
+            "*1/*1",
+            "1/1"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.5
+        }
+      }
+    },
+    "GSTT1": {
+      "phenotypes": {
+        "null": {
+          "aliases": [
+            "null",
+            "null/null",
+            "deletion",
+            "deleted",
+            "0",
+            "0/0"
+          ],
+          "activity_fraction": 0.0,
+          "frequency": 0.2,
+          "exposure_match": "GSTT1_null",
+          "risk_folds": {
+            "BaP": 1.5,
+            "Benz_a_anthracene": 1.5,
+            "Benzo_b_fluoranthene": 1.5,
+            "Chrysene": 1.5,
+            "Dibenz_ah_anthracene": 1.5,
+            "Naphthalene": 1.5,
+            "Benzene": 1.8,
+            "PCE": 0.5,
+            "TCE": 0.5
+          },
+          "note": "Gene deletion. Activity is 0.0, not the former flux constant 0.05."
+        },
+        "present": {
+          "aliases": [
+            "present",
+            "active",
+            "wt",
+            "wildtype",
+            "*1/*1",
+            "1/1"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.8
+        }
+      }
+    },
+    "CYP2E1": {
+      "phenotypes": {
+        "star1c_homozygous": {
+          "aliases": [
+            "um_c1c1",
+            "*1c/*1c",
+            "c1/c1"
+          ],
+          "activity_fraction": 1.4,
+          "frequency": 0.12,
+          "exposure_match": "CYP2E1_high_activity",
+          "risk_folds": {
+            "Benzene": 1.8,
+            "VinylChloride": 2.0,
+            "NDEA": 1.6,
+            "NDMA": 1.6
+          }
+        },
+        "im": {
+          "aliases": [
+            "im"
+          ],
+          "activity_fraction": 0.7,
+          "frequency": 0.08
+        },
+        "nm": {
+          "aliases": [
+            "nm"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.8
+        }
+      }
+    },
+    "CYP1A1": {
+      "phenotypes": {
+        "star2a_heterozygous": {
+          "aliases": [
+            "*1/*2a",
+            "*1/2a",
+            "wt/*2a",
+            "*2a carrier"
+          ],
+          "activity_fraction": 1.25
+        },
+        "star2a_homozygous": {
+          "aliases": [
+            "*2a/*2a",
+            "2a/2a"
+          ],
+          "activity_fraction": 1.5,
+          "exposure_match": "CYP1A1_high_activity",
+          "risk_folds": {
+            "BaP": 1.8,
+            "Benz_a_anthracene": 1.8,
+            "Benzo_b_fluoranthene": 1.8,
+            "Chrysene": 1.8,
+            "Dibenz_ah_anthracene": 1.8,
+            "Naphthalene": 1.8,
+            "MeIQx": 1.5,
+            "PhIP": 1.5
+          }
+        }
+      }
+    },
+    "EPHX1": {
+      "phenotypes": {
+        "slow": {
+          "aliases": [
+            "pm",
+            "slow"
+          ],
+          "activity_fraction": 0.4,
+          "exposure_match": "EPHX1_low_activity_Y113H",
+          "risk_folds": {
+            "BaP": 1.7,
+            "Benz_a_anthracene": 1.7,
+            "Benzo_b_fluoranthene": 1.7,
+            "Chrysene": 1.7,
+            "Dibenz_ah_anthracene": 1.7,
+            "Naphthalene": 1.7
+          },
+          "note": "Y113H slow retains about 40% activity. Hassett 1994; Smith 1997."
+        },
+        "intermediate": {
+          "aliases": [
+            "im",
+            "intermediate"
+          ],
+          "activity_fraction": 0.7
+        },
+        "rapid": {
+          "aliases": [
+            "rm",
+            "rapid",
+            "fast"
+          ],
+          "activity_fraction": 1.3
+        }
+      }
+    },
+    "NQO1": {
+      "phenotypes": {
+        "reference": {
+          "aliases": [
+            "wt"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.75
+        },
+        "heterozygous": {
+          "aliases": [
+            "im",
+            "*1/*2"
+          ],
+          "activity_fraction": 0.5,
+          "frequency": 0.2
+        },
+        "homozygous": {
+          "aliases": [
+            "pm",
+            "*2/*2"
+          ],
+          "activity_fraction": 0.05,
+          "frequency": 0.04,
+          "note": "Flux *2/*2 fraction. Interaction homozygous was 0.02 and is not used."
+        }
+      }
+    },
+    "GSTP1": {
+      "phenotypes": {
+        "ile_ile": {
+          "aliases": [
+            "ile105ile",
+            "ile/ile"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.45
+        },
+        "ile_val": {
+          "aliases": [
+            "im",
+            "ile/val",
+            "ile105val"
+          ],
+          "activity_fraction": 0.7,
+          "frequency": 0.4,
+          "note": "Flux Ile/Val fraction. Interaction Ile105Val was 0.6 and is not used."
+        },
+        "val_val": {
+          "aliases": [
+            "pm",
+            "val/val",
+            "val105val"
+          ],
+          "activity_fraction": 0.4,
+          "frequency": 0.15,
+          "note": "Flux Val/Val fraction. Interaction Val105Val was 0.3 and is not used."
+        }
+      }
+    },
+    "CYP1B1": {
+      "phenotypes": {
+        "star3_heterozygous": {
+          "aliases": [
+            "rm",
+            "*1/*3",
+            "leu/val"
+          ],
+          "activity_fraction": 1.25
+        },
+        "star3_homozygous": {
+          "aliases": [
+            "um",
+            "*3/*3",
+            "val/val"
+          ],
+          "activity_fraction": 1.5
+        }
+      }
+    },
+    "CYP3A4": {
+      "phenotypes": {
+        "nm": {
+          "aliases": [
+            "nm"
+          ],
+          "activity_fraction": 1.0,
+          "frequency": 0.75
+        },
+        "im": {
+          "aliases": [
+            "im"
+          ],
+          "activity_fraction": 0.5,
+          "frequency": 0.2
+        },
+        "um": {
+          "aliases": [
+            "um"
+          ],
+          "activity_fraction": 1.5,
+          "frequency": 0.05,
+          "exposure_match": "CYP3A4_high_activity",
+          "risk_folds": {
+            "AFB1": 1.5
+          }
+        }
+      }
+    },
+    "CYP2A6": {
+      "phenotypes": {
+        "poor": {
+          "aliases": [
+            "pm",
+            "poor"
+          ],
+          "activity_fraction": 0.0,
+          "exposure_match": "CYP2A6_PM",
+          "risk_folds": {
+            "NNK": 0.4
+          },
+          "note": "Poor-metabolizer activity is the standard PM fraction. The 0.4 NNK fold is epidemiological, not activity."
+        }
+      }
+    }
+  }
+}

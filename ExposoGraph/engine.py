@@ -44,10 +44,6 @@ _DEFAULT_PROXY_FLUX_PROVENANCE_PATH = (
     _PACKAGE_DIR / "data" / "proxy_flux_provenance.json"
 )
 
-# Residual activity retained by GSTM1/GSTT1 homozygous deletion carriers
-# (see kinetic_parameters.json genotype_modifiers.special_cases).
-_GST_NULL_RESIDUAL_ACTIVITY = 0.05
-
 _DEFAULT_EXPOSURE_DB_PATH = _PACKAGE_DIR / "data" / "exposure_database_revised.json"
 
 _FALLBACK_QIVIVE_TISSUES: dict[str, dict[str, float]] = {
@@ -275,7 +271,6 @@ class GraphEngine:
         self._flux_shadowed_reactions: list[FluxReaction] = []
         self._flux_aggregation_by_class: dict[str, dict[str, Any]] | None = None
         self._flux_metadata: dict[str, Any] | None = None
-        self._flux_genotype_modifiers: dict[str, Any] | None = None
         self._flux_proxy_exposure_defaults: dict[str, dict[str, Any]] = {}
         self._flux_proxy_class_cfg: dict[str, dict[str, Any]] = {}
         self._flux_group_class_md_cache: dict[str, dict[str, Any]] | None = None
@@ -386,7 +381,6 @@ class GraphEngine:
         self._flux_shadowed_reactions = []
         self._flux_aggregation_by_class = None
         self._flux_metadata = None
-        self._flux_genotype_modifiers = None
         self._flux_proxy_exposure_defaults = {}
         self._flux_proxy_class_cfg = {}
         self._flux_group_class_md_cache = None
@@ -929,11 +923,6 @@ class GraphEngine:
             if isinstance(kinetic_doc.get("metadata"), dict)
             else {}
         )
-        self._flux_genotype_modifiers = (
-            dict(kinetic_doc.get("genotype_modifiers", {}))
-            if isinstance(kinetic_doc.get("genotype_modifiers"), dict)
-            else {}
-        )
         return warnings
 
     def _apply_flux_edge_kinetics(self) -> list[str]:
@@ -1164,11 +1153,13 @@ class GraphEngine:
         return self.get_interaction_parameters().get("gsh_depletion", {})
 
     def get_genotype_modifiers(self, gene: str | None = None) -> dict[str, Any]:
-        """Return genotype-modifier tables, or one gene's table when ``gene`` is given."""
-        block = self.get_interaction_parameters().get("genotype_modifiers", {})
+        """Return the genotype catalog, or one gene's block when ``gene`` is given."""
+        from .genotypes import load_genotypes
+
+        genes = load_genotypes()["genes"]
         if gene is None:
-            return block
-        return block.get(gene, {})
+            return genes
+        return genes.get(gene, {})
 
     def get_interaction_rules(self) -> dict[str, Any]:
         """Return the ``interaction_rules`` block (thresholds, synergies, antagonisms)."""
@@ -1481,385 +1472,20 @@ class GraphEngine:
         return self._flux_metadata or {}
 
     def get_genotype_modifier(self, diplotype: str, gene: str) -> float:
-        """Return Vmax scaling factor (0.0-2.0) based on metaboliser phenotype.
+        """Return the Vmax activity fraction for a gene and diplotype.
 
-        Standard scale: PM=0.0, IM=0.5, NM=1.0, RM=1.5, UM=2.0.
-        Special cases for ALDH2 heterozygotes, GSTM1/GSTT1 copy-number states,
-        and cohort-specific CYP aliases used by the extension modules.
-
-        Args:
-            diplotype: Phenotype label (for example ``"NM"``, ``"null"``,
-                or ``"*1/*2"``).
-            gene: Gene name (for example ``"GSTM1"`` or ``"ALDH2"``).
-
-        Returns:
-            Scaling factor between 0.0 and 2.0.
+        Read from ``genotypes.json``. Gene phenotype entries win over the
+        generic PM/IM/NM scale.
         """
-        self._ensure_flux_index()
-        modifiers = self._flux_genotype_modifiers or {}
-        special = modifiers["special_cases"]
-        std = modifiers["standard_scale"]
+        from .genotypes import activity_fraction
 
-        diplotype_lower = diplotype.lower().strip()
-        gene_upper = gene.upper().strip()
-
-        # Gene-specific manuscript/reference aliases that are more precise than
-        # the generic PM/IM/NM/RM/UM scale.
-        if gene_upper == "CYP1A2":
-            if diplotype_lower in ("*1f/*1f", "1f/1f", "cyp1a2*1f/*1f", "um_1f_1f"):
-                return 1.5
-            if diplotype_lower in ("*1a/*1f", "1a/1f", "*1f/*1a", "1f/1a"):
-                # Heterozygous *1F: intermediate inducibility (Sachse et al. 1999;
-                # Ghotbi et al. 2007). Splits the difference between *1A/*1A (1.0)
-                # and *1F/*1F (1.5).
-                return 1.25
-            if diplotype_lower in ("*1a/*1a", "1a/1a"):
-                return 1.0
-            if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
-                return 0.5
-            if diplotype_lower in (
-                "pm",
-                "poor",
-                "poor metabolizer",
-                "poor_metabolizer",
-            ):
-                return 0.3
-
-        if gene_upper == "NAT2":
-            if diplotype_lower in ("slow", "slow acetylator", "slow_acetylator", "sa"):
-                return 0.2
-            if diplotype_lower in (
-                "intermediate",
-                "intermediate acetylator",
-                "intermediate_acetylator",
-            ):
-                return 0.5
-            if diplotype_lower in (
-                "rapid",
-                "rapid acetylator",
-                "rapid_acetylator",
-                "ra",
-            ):
-                return 1.0
-
-        if gene_upper == "NAT1":
-            # NAT1 phenotype assignments: *4 is the reference (rapid), *10 has
-            # been associated with modestly increased acetylation activity in
-            # several reports (Bell et al. 1995; Lin et al. 1998), and *14 is a
-            # well-established slow allele (Hughes et al. 1998).
-            if diplotype_lower in ("*4/*4", "4/4", "rapid", "ra"):
-                return 1.0
-            if diplotype_lower in ("*4/*10", "*10/*4", "4/10", "10/4"):
-                return 1.05
-            if diplotype_lower in ("*10/*10", "10/10"):
-                return 1.1
-            if diplotype_lower in ("*4/*14", "*14/*4", "4/14", "14/4"):
-                return 0.75
-            if diplotype_lower in ("*10/*14", "*14/*10", "10/14", "14/10"):
-                return 0.8
-            if diplotype_lower in ("*14/*14", "14/14", "slow", "sa"):
-                return 0.5
-
-        if gene_upper == "CYP2D6":
-            if diplotype_lower in ("*1/*1", "*1/*2", "*2/*2"):
-                return 1.0
-            if diplotype_lower in ("*1/*4", "*1/*5", "*2/*4", "*10/*10", "im"):
-                return 0.5
-            if diplotype_lower in ("*4/*4", "*5/*5", "*4/*5", "pm", "poor"):
-                return 0.0
-            if "x2" in diplotype_lower or diplotype_lower in ("um", "ultrarapid"):
-                return 2.0
-
-        # Special cases
-        if gene_upper == "ALDH2" and diplotype in ("*1/*2", "heterozygote"):
-            return float(special["ALDH2_star1_star2"]["activity_fraction"])
-
-        if gene_upper == "ALDH2" and diplotype in ("*2/*2", "PM_ALDH2"):
-            return float(
-                special.get("ALDH2_star2_homozygous", {}).get(
-                    "activity_fraction", 0.001
-                )
-            )
-
-        if gene_upper == "GSTM1" and diplotype_lower in (
-            "null",
-            "null/null",
-            "deletion",
-            "deleted",
-            "0",
-            "0/0",
-        ):
-            return _GST_NULL_RESIDUAL_ACTIVITY
-
-        if gene_upper == "GSTT1" and diplotype_lower in (
-            "null",
-            "null/null",
-            "deletion",
-            "deleted",
-            "0",
-            "0/0",
-        ):
-            return _GST_NULL_RESIDUAL_ACTIVITY
-
-        if gene_upper in {"GSTM1", "GSTT1"} and diplotype_lower in (
-            "present",
-            "active",
-            "wt",
-            "wildtype",
-            "*1/*1",
-            "1/1",
-        ):
-            return 1.0
-
-        # Extension cohort aliases.
-        if gene_upper == "CYP2E1" and diplotype_lower in (
-            "um_c1c1",
-            "*1c/*1c",
-            "c1/c1",
-        ):
-            # Source interaction model defines CYP2E1*1C/*1C as a 140% activity state.
-            return 1.4
-
-        if gene_upper == "CYP1A1":
-            if diplotype_lower in ("*1/*2a", "*1/2a", "wt/*2a", "*2a carrier"):
-                # CYP1A1*2A is an inducibility/risk allele rather than a well-calibrated
-                # kinetic phenotype, so use a conservative step-up above NM.
-                return 1.25
-            if diplotype_lower in ("*2a/*2a", "2a/2a"):
-                return 1.5
-
-        # Gene-specific phenotype scales (override the generic PM=0/IM=0.5/NM=1.0
-        # standard for genes whose null/slow phenotype retains substantial residual
-        # activity in vivo).
-        if gene_upper == "EPHX1":
-            # Hassett 1994; Smith 1997: Y113H/Y113H ("slow") retains ~30-50% epoxide
-            # hydrolase activity, not zero.
-            if diplotype_lower in ("pm", "slow"):
-                return 0.4
-            if diplotype_lower in ("im", "intermediate"):
-                return 0.7
-            if diplotype_lower in ("rm", "rapid", "fast"):
-                return 1.3
-
-        if gene_upper == "NQO1":
-            # Siegel 1999; Ross 2004: NQO1*2 (Pro187Ser) homozygotes retain ~3-5%
-            # activity due to ubiquitin-mediated degradation; heterozygotes ~50%.
-            if diplotype_lower in ("pm", "*2/*2"):
-                return 0.05
-            if diplotype_lower in ("im", "*1/*2"):
-                return 0.5
-
-        if gene_upper == "GSTP1":
-            # Watson 1998; Hu 1997: Ile105Val (Val/Val) retains ~30-50% activity
-            # for many PAH-diol epoxide substrates (reduced thermal stability and
-            # affinity, not loss of function).
-            if diplotype_lower in ("pm", "val/val"):
-                return 0.4
-            if diplotype_lower in ("im", "ile/val"):
-                return 0.7
-
-        if gene_upper == "CYP1B1":
-            # Bailey 1998; Shimada 1999: CYP1B1*3 (L432V) carriers have modestly
-            # elevated catalysis (~25-50%), not the standard 2x ultrarapid scale.
-            if diplotype_lower in ("rm", "*1/*3", "leu/val"):
-                return 1.25
-            if diplotype_lower in ("um", "*3/*3", "val/val"):
-                return 1.5
-
-        # Standard phenotype scale
-        phenotype_map = {
-            "pm": std["PM"],
-            "poor": std["PM"],
-            "im": std["IM"],
-            "intermediate": std["IM"],
-            "nm": std["NM"],
-            "normal": std["NM"],
-            "wt": std["NM"],
-            "wildtype": std["NM"],
-            "*1/*1": std["NM"],
-            "rm": std["RM"],
-            "rapid": std["RM"],
-            "um": std["UM"],
-            "ultrarapid": std["UM"],
-            "null": std["PM"],
-            "0/0": 0.0,
-        }
-
-        key = diplotype_lower
-        if key in phenotype_map:
-            return float(phenotype_map[key])
-
-        # Try numeric
-        try:
-            val = float(diplotype)
-            if 0.0 <= val <= 2.0:
-                return val
-        except (ValueError, TypeError):
-            pass
-
-        warnings.warn(
-            f"Unrecognized diplotype '{diplotype}' for gene '{gene}'; defaulting to NM (1.0)",
-            stacklevel=2,
-        )
-        return 1.0
+        return activity_fraction(gene, diplotype)
 
     def get_proxy_genotype_modifier(self, diplotype: str, gene: str | None) -> float:
-        """Return a silent genotype scaling factor for proxy-model terms."""
+        """Return the same activity fraction used by measured-kinetics terms."""
         if not gene:
             return 1.0
-
-        gene_upper = gene.upper().strip()
-        diplotype_lower = str(diplotype).lower().strip()
-        self._ensure_flux_index()
-        modifiers = self._flux_genotype_modifiers or {}
-        special = modifiers["special_cases"]
-        std = modifiers["standard_scale"]
-
-        if gene_upper == "CYP1A2":
-            if diplotype_lower in ("*1f/*1f", "1f/1f", "cyp1a2*1f/*1f", "um_1f_1f"):
-                return 1.5
-            if diplotype_lower in ("*1a/*1f", "1a/1f", "*1f/*1a", "1f/1a"):
-                return 1.25
-            if diplotype_lower in ("*1a/*1a", "1a/1a"):
-                return 1.0
-            if diplotype_lower in ("*1k", "*1k/*1k", "1k/1k"):
-                return 0.5
-            if diplotype_lower in (
-                "pm",
-                "poor",
-                "poor metabolizer",
-                "poor_metabolizer",
-            ):
-                return 0.3
-
-        if gene_upper == "NAT2":
-            if diplotype_lower in ("slow", "slow acetylator", "slow_acetylator", "sa"):
-                return 0.2
-            if diplotype_lower in (
-                "intermediate",
-                "intermediate acetylator",
-                "intermediate_acetylator",
-            ):
-                return 0.5
-            if diplotype_lower in (
-                "rapid",
-                "rapid acetylator",
-                "rapid_acetylator",
-                "ra",
-            ):
-                return 1.0
-
-        if gene_upper == "NAT1":
-            if diplotype_lower in ("*4/*4", "4/4", "rapid", "ra"):
-                return 1.0
-            if diplotype_lower in ("*4/*10", "*10/*4", "4/10", "10/4"):
-                return 1.05
-            if diplotype_lower in ("*10/*10", "10/10"):
-                return 1.1
-            if diplotype_lower in ("*4/*14", "*14/*4", "4/14", "14/4"):
-                return 0.75
-            if diplotype_lower in ("*10/*14", "*14/*10", "10/14", "14/10"):
-                return 0.8
-            if diplotype_lower in ("*14/*14", "14/14", "slow", "sa"):
-                return 0.5
-
-        if gene_upper == "CYP2D6":
-            if diplotype_lower in ("*1/*1", "*1/*2", "*2/*2"):
-                return 1.0
-            if diplotype_lower in ("*1/*4", "*1/*5", "*2/*4", "*10/*10", "im"):
-                return 0.5
-            if diplotype_lower in ("*4/*4", "*5/*5", "*4/*5", "pm", "poor"):
-                return 0.0
-            if "x2" in diplotype_lower or diplotype_lower in ("um", "ultrarapid"):
-                return 2.0
-
-        if gene_upper == "ALDH2" and diplotype in ("*1/*2", "heterozygote"):
-            return float(special["ALDH2_star1_star2"]["activity_fraction"])
-        if gene_upper == "ALDH2" and diplotype in ("*2/*2", "PM_ALDH2"):
-            return float(
-                special.get("ALDH2_star2_homozygous", {}).get(
-                    "activity_fraction", 0.001
-                )
-            )
-        if gene_upper in {"GSTM1", "GSTT1"} and diplotype_lower in (
-            "null",
-            "null/null",
-            "deletion",
-            "deleted",
-            "0",
-            "0/0",
-        ):
-            return _GST_NULL_RESIDUAL_ACTIVITY
-        if gene_upper in {"GSTM1", "GSTT1"} and diplotype_lower in (
-            "present",
-            "active",
-            "wt",
-            "wildtype",
-            "*1/*1",
-            "1/1",
-        ):
-            return 1.0
-        if gene_upper == "CYP2E1" and diplotype_lower in (
-            "um_c1c1",
-            "*1c/*1c",
-            "c1/c1",
-        ):
-            return 1.4
-        if gene_upper == "CYP1A1":
-            if diplotype_lower in ("*1/*2a", "*1/2a", "wt/*2a", "*2a carrier"):
-                return 1.25
-            if diplotype_lower in ("*2a/*2a", "2a/2a"):
-                return 1.5
-
-        if gene_upper == "EPHX1":
-            if diplotype_lower in ("pm", "slow"):
-                return 0.4
-            if diplotype_lower in ("im", "intermediate"):
-                return 0.7
-            if diplotype_lower in ("rm", "rapid", "fast"):
-                return 1.3
-        if gene_upper == "NQO1":
-            if diplotype_lower in ("pm", "*2/*2"):
-                return 0.05
-            if diplotype_lower in ("im", "*1/*2"):
-                return 0.5
-        if gene_upper == "GSTP1":
-            if diplotype_lower in ("pm", "val/val"):
-                return 0.4
-            if diplotype_lower in ("im", "ile/val"):
-                return 0.7
-        if gene_upper == "CYP1B1":
-            if diplotype_lower in ("rm", "*1/*3", "leu/val"):
-                return 1.25
-            if diplotype_lower in ("um", "*3/*3", "val/val"):
-                return 1.5
-
-        phenotype_map = {
-            "pm": std["PM"],
-            "poor": std["PM"],
-            "im": std["IM"],
-            "intermediate": std["IM"],
-            "nm": std["NM"],
-            "normal": std["NM"],
-            "wt": std["NM"],
-            "wildtype": std["NM"],
-            "*1/*1": std["NM"],
-            "rm": std["RM"],
-            "rapid": std["RM"],
-            "um": std["UM"],
-            "ultrarapid": std["UM"],
-            "null": std["PM"],
-            "0/0": 0.0,
-        }
-        if diplotype_lower in phenotype_map:
-            return float(phenotype_map[diplotype_lower])
-        try:
-            val = float(diplotype)
-            if 0.0 <= val <= 40.0:
-                return val
-        except (ValueError, TypeError):
-            pass
-        return 1.0
+        return self.get_genotype_modifier(diplotype, gene)
 
     def get_qivive_context(
         self,
