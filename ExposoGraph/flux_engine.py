@@ -245,38 +245,9 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
     return _get_flux_contract_engine().get_proxy_genotype_modifier(diplotype, gene)
 
 
-_TISSUE_ALIASES: dict[str, str] = {
-    "liver": "liver",
-    "hepatic": "liver",
-    "lung": "lung",
-    "pulmonary": "lung",
-    "prostate": "prostate",
-    "breast": "breast",
-    "colon": "colon",
-    "colorectal": "colon",
-    "kidney": "kidney",
-    "renal": "kidney",
-    "bladder": "bladder",
-    "lymphocyte": "lymphocyte",
-    "blood": "lymphocyte",
-    "esophagus": "esophagus",
-    "esophageal": "esophagus",
-    "stomach": "stomach",
-    "gastric": "stomach",
-    "intestine": "intestine",
-    "nasal_mucosa": "nasal_mucosa",
-    "brain": "brain",
-    "heart": "heart",
-    "muscle": "muscle",
-    "adipose": "adipose",
-    "skin": "skin",
-    "placenta": "placenta",
-}
-
-
 def _normalize_tissue(tissue: str) -> str:
-    """Normalize a tissue name string to a canonical key."""
-    return _TISSUE_ALIASES.get(tissue.lower().strip(), tissue.lower().strip())
+    """Lowercase a tissue string. Vocabulary keys are already lowercase."""
+    return tissue.lower().strip()
 
 
 def _normalize_tissue_weight_source(

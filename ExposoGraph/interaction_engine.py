@@ -590,34 +590,6 @@ CARCINOGEN_GSH_DETOX: dict[str, str | None] = {
 
 _DEFAULT_ENZYMES = ["CYP1A1", "CYP1A2", "CYP1B1", "CYP2E1", "CYP3A4"]
 
-_CARCINOGEN_ALIASES: dict[str, str] = {
-    "pah": "PAH",
-    "bap": "PAH",
-    "benzoapyrene": "PAH",
-    "hca": "HCA",
-    "phip": "HCA",
-    "nnk": "NNK",
-    "tobacconitrosamines": "NNK",
-    "benzene": "benzene",
-    "ndma": "NDMA",
-    "formaldehyde": "formaldehyde",
-    "chromium": "chromium_VI",
-    "chromiumvi": "chromium_VI",
-    "chromium_vi": "chromium_VI",
-    "cr": "chromium_VI",
-    "arsenic": "arsenic",
-    "afb1": "AFB1",
-    "aflatoxin": "AFB1",
-    "aflatoxinb1": "AFB1",
-    "acetaldehyde": "acetaldehyde",
-    "aldehyde": "acetaldehyde",
-    "cadmium": "cadmium",
-    "vinylchloride": "vinyl_chloride",
-    "vinyl_chloride": "vinyl_chloride",
-    "acrolein": "acrolein",
-    "ethanol": "ethanol",
-}
-
 # ── Private helpers ────────────────────────────────────────────────────────
 
 
@@ -626,39 +598,9 @@ def _round(value: float, digits: int) -> float:
     return round(float(value), digits)
 
 
-def _canonical_carcinogen_key(name: str) -> str:
-    """Normalize supported carcinogen aliases to canonical keys."""
-    if name in BASELINE_RISK_SCORES or name == "ethanol":
-        return name
-    cleaned = (
-        name.strip().replace(" ", "").replace("-", "").replace("[", "").replace("]", "")
-    )
-    if cleaned in _CARCINOGEN_ALIASES:
-        return _CARCINOGEN_ALIASES[cleaned]
-    lowered = cleaned.lower()
-    return _CARCINOGEN_ALIASES.get(lowered, name)
-
-
-def _graph_entity_ids() -> set[str]:
-    """Entity IDs already used by the revised profiles and interaction tables."""
-    entity_ids = set(_reference_concentrations()) | set(_gsh_reference_rates())
-    entity_ids.discard("_description")
-    for profile in _load_exposure_profiles().values():
-        for component in profile.get("components", []):
-            entity_ids.add(component["entity_id"])
-    return entity_ids
-
-
 def _normalize_exposure_profile(exposure_profile: Mapping[str, Any]) -> dict[str, Any]:
-    """Normalize leftover caller keys without rewriting graph entity IDs."""
-    preserved = _graph_entity_ids()
-    normalized: dict[str, Any] = {}
-    for key, value in exposure_profile.items():
-        if key.endswith("_umol_h_g") or key in preserved:
-            normalized[key] = value
-            continue
-        normalized[_canonical_carcinogen_key(key)] = value
-    return normalized
+    """Copy a caller profile. Keys are graph IDs; old slugs are not rewritten."""
+    return dict(exposure_profile)
 
 
 def _extract_exposure_multiplier(value: float | dict[str, Any]) -> float:
