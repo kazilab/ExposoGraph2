@@ -258,17 +258,6 @@ def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
     return _get_flux_contract_engine().get_proxy_genotype_modifier(diplotype, gene)
 
 
-_FLUX_TISSUE_TO_GTEX: dict[str, str] = {
-    "liver": "Liver",
-    "lung": "Lung",
-    "prostate": "Prostate",
-    "bladder": "Bladder",
-    "colon": "Colon",
-    "breast": "Breast",
-    "kidney": "Kidney",
-    "esophagus": "Esophagus",
-}
-
 _TISSUE_ALIASES: dict[str, str] = {
     "liver": "liver",
     "hepatic": "liver",
@@ -362,12 +351,9 @@ def get_flux_tissue_weight(
     if weights is None:
         # Gene not in the expression source -- moderate default
         return 0.5
-    expression_tissue = _FLUX_TISSUE_TO_GTEX.get(tissue_key)
-    if expression_tissue is None:
-        # Tissue not covered by the expression source
-        return 0.2
-    weight = weights.get(expression_tissue)
+    weight = weights.get(tissue_key)
     if weight is None:
+        # Tissue not covered by the expression source
         return 0.2
     return float(weight)
 

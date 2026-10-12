@@ -497,8 +497,7 @@ class GraphEngine:
     def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
         """(Re)apply ``tissue_expression_data_raw.json`` to the relevant enzyme nodes.
 
-        The raw file covers 10 tissues (the original 8 plus
-        ``Skin_NotSunExposed``/``Skin_SunExposed``) and 76 genes -- a superset
+        The raw file covers the 10 canonical tissue keys and 76 genes -- a superset
         of the older, pre-normalized ``tissue_expression_data.json`` (8
         tissues, 59 genes), which remains bundled only for the separate
         GTEx lookup helpers in ``tissue_subgraphs.py``, not for this method.
