@@ -349,17 +349,14 @@ def check_rate_tables(errors: list[str], nodes: dict[str, str]) -> None:
                 continue
             if key not in nodes:
                 errors.append(f"interaction_parameters.json:{table}: {key!r} does not resolve")
-    modifiers = _load(DATA / "exposure_database_revised.json")["flux_model_integration"][
-        "genotype_modifiers"
-    ]
-    for modifier, weights in modifiers.items():
-        if not isinstance(weights, dict):
-            continue
-        for member_id in weights:
-            if member_id not in nodes or nodes[member_id] != "Carcinogen":
-                errors.append(
-                    f"genotype_modifiers.{modifier}: {member_id!r} is not a Carcinogen"
-                )
+    for gene, block in _load(DATA / "genotypes.json")["genes"].items():
+        for phenotype_id, phenotype in block.get("phenotypes", {}).items():
+            folds = phenotype.get("risk_folds") or {}
+            for member_id in folds:
+                if member_id not in nodes or nodes[member_id] != "Carcinogen":
+                    errors.append(
+                        f"genotypes.json:{gene}.{phenotype_id}: {member_id!r} is not a Carcinogen"
+                    )
 
 
 def main() -> int:

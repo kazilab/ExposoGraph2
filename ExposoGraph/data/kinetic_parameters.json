@@ -834,39 +834,5 @@
       "confidence_overall": "low",
       "notes": "TCE kinetics are reasonably understood in animal models; human-specific quantitative parameters are limited. Confidence low for quantitative flux."
     }
-  },
-  "genotype_modifiers": {
-    "description": "Scaling factors applied to Vmax for each metabolizer phenotype class. Special cases override the standard scale.",
-    "standard_scale": {
-      "PM": 0.0,
-      "IM": 0.5,
-      "NM": 1.0,
-      "RM": 1.5,
-      "UM": 2.0,
-      "null": 0.0
-    },
-    "special_cases": {
-      "ALDH2_star1_star2": {
-        "phenotype": "heterozygote",
-        "activity_fraction": 0.25,
-        "mechanism": "dominant_negative",
-        "note": "ALDH2*2 is dominant-negative; heterozygote retains only ~25% of *1/*1 activity",
-        "source": "PMC3525274"
-      },
-      "GSTM1_null": {
-        "phenotype": "null/null",
-        "activity_fraction": 0.0,
-        "mechanism": "gene_deletion",
-        "note": "GSTM1-null is a complete gene deletion polymorphism (~50% population frequency)",
-        "source": "GSTM1 null polymorphism literature"
-      },
-      "GSTT1_null": {
-        "phenotype": "null/null",
-        "activity_fraction": 0.0,
-        "mechanism": "gene_deletion",
-        "note": "GSTT1-null is a complete gene deletion polymorphism (~20% population frequency)",
-        "source": "GSTT1 null polymorphism literature"
-      }
-    }
   }
 }

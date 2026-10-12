@@ -666,26 +666,17 @@ def _genotype_activity_multiplier(
     interaction_params: Mapping[str, Any] | None = None,
     engine: "GraphEngine | None" = None,
 ) -> float:
-    """Return the activity multiplier defined in the interaction JSON.
+    """Return the activity fraction for this gene and phenotype.
 
-    ``interaction_params`` optionally supplies an engine-sourced parameter
-    document (``GraphEngine.get_interaction_parameters()``); it defaults to
-    the bundled file loaded through ``_get_interaction_params``. Passing
-    ``engine`` instead lets a loaded ``GraphEngine`` serve that document
-    (honoring overlay documents applied at load time); bare calls keep the
-    bundled file.
+    Read from ``genotypes.json``. A phenotype that is not an alias on that
+    gene returns 1.0. The retained arguments are unused; callers still pass
+    the interaction document and a loaded engine.
     """
     if not phenotype:
         return 1.0
-    params_doc = _active_interaction_params(interaction_params, engine)
-    params = params_doc["genotype_modifiers"].get(gene, {})
-    if phenotype in params:
-        return float(params[phenotype].get("activity_multiplier", 1.0))
-    lowered = phenotype.lower()
-    for key, values in params.items():
-        if key.lower() == lowered:
-            return float(values.get("activity_multiplier", 1.0))
-    return 1.0
+    from .genotypes import activity_fraction
+
+    return activity_fraction(gene, phenotype, allow_generic=False)
 
 
 _PULMONARY_TISSUES: frozenset[str] = frozenset(
