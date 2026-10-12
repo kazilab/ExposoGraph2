@@ -73,8 +73,8 @@ def render() -> None:
             "Kidney",
             "Prostate",
             "Esophagus",
-            "Skin (Not Sun Exposed)",
-            "Skin (Sun Exposed)",
+            "skin_not_sun_exposed",
+            "skin_sun_exposed",
         ]
         tissue = st.selectbox(
             "Tissue",
