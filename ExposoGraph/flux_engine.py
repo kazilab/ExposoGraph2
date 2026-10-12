@@ -43,21 +43,21 @@ if TYPE_CHECKING:
 class CarcinogenClass(str, Enum):
     """Supported carcinogen classes for quantitative flux modeling."""
 
-    PAH = "PAH"
-    AFLATOXIN = "Aflatoxin"
-    ALDEHYDE = "Aldehyde"
-    NITROSAMINE = "Nitrosamine"
+    PAH = "group_pahs"
+    AFLATOXIN = "group_mycotoxins"
+    ALDEHYDE = "group_aldehydes"
+    NITROSAMINE = "group_nitrosamines"
     NDMA = "NDMA"
     NDEA = "NDEA"
-    HCA = "HCA"
-    AROMATIC_AMINES = "AromaticAmines"
-    ESTROGEN_METABOLITES = "EstrogenMetabolites"
+    HCA = "group_hcas"
+    AROMATIC_AMINES = "group_aromatic_amines"
+    ESTROGEN_METABOLITES = "group_estrogen"
     BENZENE = "Benzene"
     VINYL_CHLORIDE = "VinylChloride"
-    CHLORINATED_SOLVENT = "ChlorinatedSolvent"
-    UV_RADIATION = "UV_Radiation"
-    DIOXIN = "Dioxin"
-    HEAVY_METAL = "HeavyMetal"
+    CHLORINATED_SOLVENT = "group_chlorinated_solvents"
+    UV_RADIATION = "group_uv_radiation"
+    DIOXIN = "group_dioxins"
+    HEAVY_METAL = "group_heavy_metals"
 
 
 class RiskClassification(str, Enum):
@@ -986,7 +986,7 @@ _PROXY_TERM_KINETICS_LABELS: dict[str, str] = {
 # "michaelis_menten". Preserved so the generic loop is output-identical;
 # drop when output normalization is accepted as a deliberate change.
 _PROXY_ACTIVATION_WITHOUT_KINETICS = frozenset(
-    {"NDEA", "VinylChloride", "ChlorinatedSolvent"}
+    {"NDEA", "VinylChloride", "group_chlorinated_solvents"}
 )
 
 
@@ -1403,8 +1403,8 @@ def _compute_aflatoxin_flux(
 ) -> FluxResultDict:
     """Compute AFB1 activation and detoxification fluxes."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("Aflatoxin")}
-    agg = active_engine.get_flux_aggregation("Aflatoxin")
+    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("group_mycotoxins")}
+    agg = active_engine.get_flux_aggregation("group_mycotoxins")
     activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
 
@@ -1502,8 +1502,8 @@ def _compute_aldehyde_flux(
 ) -> FluxResultDict:
     """Compute aldehyde (acetaldehyde) clearance flux."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("Aldehyde")}
-    agg = active_engine.get_flux_aggregation("Aldehyde")
+    terms = {r.term_key: r for r in active_engine.get_edge_flux_reactions("group_aldehydes")}
+    agg = active_engine.get_flux_aggregation("group_aldehydes")
     detox_enzymes: dict[str, Any] = {}
 
     # Determine ALDH2 genotype
@@ -1599,7 +1599,7 @@ def _compute_dioxin_flux(
     engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
     """Compute receptor-mediated dioxin signaling as an induction burden score."""
-    cfg = _active_proxy_class_params("Dioxin", engine)
+    cfg = _active_proxy_class_params("group_dioxins", engine)
     signal_p = cfg["signal"]
     signal_strength, _, tissue_signal = _compute_proxy_hill_term(
         signal_p,
@@ -1695,46 +1695,48 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 # the GSTT1 bioactivation inversion being a role annotation, not code).
 _GENERIC_PROXY_FLUX_CLASSES = frozenset(
     {
-        "AromaticAmines",
-        "EstrogenMetabolites",
+        "group_aromatic_amines",
+        "group_estrogen",
         "NDEA",
         "VinylChloride",
-        "UV_Radiation",
-        "HeavyMetal",
-        "ChlorinatedSolvent",
+        "group_uv_radiation",
+        "group_heavy_metals",
+        "group_chlorinated_solvents",
     }
 )
 
 # Measured-kinetics classes whose term evaluation and aggregation are fully
 # described by the per-class "aggregation" block in kinetic_parameters.json.
 _GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset(
-    {"PAH", "Nitrosamine", "NDMA", "HCA", "Benzene"}
+    {"group_pahs", "group_nitrosamines", "NDMA", "group_hcas", "Benzene"}
 )
 
 # Dedicated proxy functions that now take the engine kwarg so their
 # class-config reads are served graph-first when a loaded engine is
 # passed (bare JSON fallback otherwise).
-_DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"Dioxin"})
+_DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"group_dioxins"})
 
 # Dedicated functions that still take the engine kwarg for their parameters.
-_DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"Aflatoxin", "Aldehyde"})
+_DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"group_mycotoxins", "group_aldehydes"})
 
 _DISPATCH: dict[str, FluxCalculator] = {
-    "PAH": partial(_compute_generic_mechanistic_flux, "PAH"),
-    "Aflatoxin": _compute_aflatoxin_flux,
-    "Aldehyde": _compute_aldehyde_flux,
-    "Nitrosamine": partial(_compute_generic_mechanistic_flux, "Nitrosamine"),
+    "group_pahs": partial(_compute_generic_mechanistic_flux, "group_pahs"),
+    "group_mycotoxins": _compute_aflatoxin_flux,
+    "group_aldehydes": _compute_aldehyde_flux,
+    "group_nitrosamines": partial(_compute_generic_mechanistic_flux, "group_nitrosamines"),
     "NDMA": partial(_compute_generic_mechanistic_flux, "NDMA"),
     "NDEA": partial(_compute_generic_proxy_flux, "NDEA"),
-    "HCA": partial(_compute_generic_mechanistic_flux, "HCA"),
-    "AromaticAmines": partial(_compute_generic_proxy_flux, "AromaticAmines"),
-    "EstrogenMetabolites": partial(_compute_generic_proxy_flux, "EstrogenMetabolites"),
+    "group_hcas": partial(_compute_generic_mechanistic_flux, "group_hcas"),
+    "group_aromatic_amines": partial(_compute_generic_proxy_flux, "group_aromatic_amines"),
+    "group_estrogen": partial(_compute_generic_proxy_flux, "group_estrogen"),
     "Benzene": partial(_compute_generic_mechanistic_flux, "Benzene"),
     "VinylChloride": partial(_compute_generic_proxy_flux, "VinylChloride"),
-    "ChlorinatedSolvent": partial(_compute_generic_proxy_flux, "ChlorinatedSolvent"),
-    "UV_Radiation": partial(_compute_generic_proxy_flux, "UV_Radiation"),
-    "Dioxin": _compute_dioxin_flux,
-    "HeavyMetal": partial(_compute_generic_proxy_flux, "HeavyMetal"),
+    "group_chlorinated_solvents": partial(
+        _compute_generic_proxy_flux, "group_chlorinated_solvents"
+    ),
+    "group_uv_radiation": partial(_compute_generic_proxy_flux, "group_uv_radiation"),
+    "group_dioxins": _compute_dioxin_flux,
+    "group_heavy_metals": partial(_compute_generic_proxy_flux, "group_heavy_metals"),
 }
 
 
@@ -2138,14 +2140,14 @@ def run_validation_cases(
     print("=" * 72)
 
     baseline_pah = compute_pathway_flux(
-        "PAH",
+        "group_pahs",
         {"CYP1A1": "NM", "GSTM1": "NM", "CYP1B1": "NM", "GSTP1": "NM", "EPHX1": "NM"},
         "Lung",
         0.1,
         tissue_weight_source=weight_source,
     )
     gstm1_null = compute_pathway_flux(
-        "PAH",
+        "group_pahs",
         {"CYP1A1": "NM", "GSTM1": "null", "CYP1B1": "NM", "GSTP1": "NM", "EPHX1": "NM"},
         "Lung",
         0.1,
@@ -2157,14 +2159,14 @@ def run_validation_cases(
     print(f"  Risk classification: {gstm1_null.risk_classification.value}")
 
     aldh2_wt = compute_pathway_flux(
-        "Aldehyde",
+        "group_aldehydes",
         {"ALDH2": "*1/*1", "ALDH1A1": "NM", "ADH1B": "*1/*1"},
         "Liver",
         10.0,
         tissue_weight_source=weight_source,
     )
     aldh2_het = compute_pathway_flux(
-        "Aldehyde",
+        "group_aldehydes",
         {"ALDH2": "*1/*2", "ALDH1A1": "NM", "ADH1B": "*1/*1"},
         "Liver",
         10.0,
@@ -2176,7 +2178,7 @@ def run_validation_cases(
     print(f"  Risk classification : {aldh2_het.risk_classification.value}")
 
     um_null = compute_pathway_flux(
-        "PAH",
+        "group_pahs",
         {"CYP1A1": "UM", "GSTM1": "null", "CYP1B1": "NM", "GSTP1": "NM", "EPHX1": "NM"},
         "Lung",
         0.1,
@@ -2198,9 +2200,9 @@ def main(argv: list[str] | None = None) -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python -m ExposoGraph.flux_engine --genotypes '{"CYP1A1":"NM","GSTM1":"null"}' --tissue Lung --carcinogen PAH
+  python -m ExposoGraph.flux_engine --genotypes '{"CYP1A1":"NM","GSTM1":"null"}' --tissue Lung --carcinogen group_pahs
   python -m ExposoGraph.flux_engine --full-profile --genotypes '{"ALDH2":"*1/*2"}' --tissue Liver
-  python -m ExposoGraph.flux_engine --sensitivity --gene GSTM1 --carcinogen PAH --tissue Lung
+  python -m ExposoGraph.flux_engine --sensitivity --gene GSTM1 --carcinogen group_pahs --tissue Lung
   python -m ExposoGraph.flux_engine --validate
         """,
     )
@@ -2310,7 +2312,7 @@ Examples:
             print("ERROR: --sensitivity requires --gene", file=sys.stderr)
             return 1
         result_obj: Any = sensitivity_analysis(
-            args.carcinogen or "PAH",
+            args.carcinogen or "group_pahs",
             args.gene,
             args.tissue,
             args.concentration,
