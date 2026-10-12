@@ -173,28 +173,6 @@ _FLUX_ROLE_KINDS = {
     "repair_terms": "repair",
 }
 
-# Bridge mapping from flux-parameter class keys to the Carcinogen node
-# ``group`` labels used in graph-data.json. Transitional: once the flux JSONs
-# carry explicit ``graph_group`` / ``carcinogen_node_ids`` annotations, the
-# JSON-declared values take precedence and this mapping is only a fallback.
-_FLUX_CLASS_GRAPH_GROUPS = {
-    "PAH": "PAHs",
-    "Aflatoxin": "Mycotoxins",
-    "Aldehyde": "Aldehydes",
-    "Nitrosamine": "Nitrosamines",
-    "NDMA": "Nitrosamines",
-    "NDEA": "Nitrosamines",
-    "HCA": "HCAs",
-    "AromaticAmines": "Aromatic Amines",
-    "EstrogenMetabolites": "Estrogen",
-    "Benzene": "Benzene",
-    "VinylChloride": "Vinyl Chloride",
-    "ChlorinatedSolvent": "Chlorinated Solvents",
-    "UV_Radiation": "UV Radiation",
-    "Dioxin": "Dioxins",
-    "HeavyMetal": "Heavy Metals",
-}
-
 # Edge types that can carry flux-reaction scope between a Carcinogen (or its
 # metabolites) and an Enzyme; used by get_flux_reaction_coverage.
 _FLUX_SCOPE_EDGE_TYPES = frozenset({"SUBSTRATE_OF", "DETOXIFIED_BY", "REPAIRED_BY"})
@@ -791,7 +769,7 @@ class GraphEngine:
                     term.get("provenance_ref") or f"{provenance_prefix}.{block}.{term_key}"
                 ),
                 enzyme_id=enzyme_id,
-                graph_group=str(declared_group) if declared_group else _FLUX_CLASS_GRAPH_GROUPS.get(cls),
+                graph_group=str(declared_group) if declared_group else None,
                 source=source,
                 sources=list(term["sources"]) if isinstance(term.get("sources"), list) else None,
                 notes=str(term["notes"]) if term.get("notes") is not None else None,
@@ -1265,7 +1243,7 @@ class GraphEngine:
                             term.get("provenance_ref") or f"classes.{cls}.{section}.{term_key}"
                         ),
                         enzyme_id=enzyme_id,
-                        graph_group=str(declared_group) if declared_group else _FLUX_CLASS_GRAPH_GROUPS.get(cls),
+                        graph_group=str(declared_group) if declared_group else None,
                         source="graph_class_level_carrier",
                         sources=list(term["sources"]) if isinstance(term.get("sources"), list) else None,
                         notes=str(term["notes"]) if term.get("notes") is not None else None,
@@ -2019,7 +1997,7 @@ class GraphEngine:
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
         reactions = self._flux_reactions_by_class.get(cls, [])
-        graph_group = next((r.graph_group for r in reactions if r.graph_group), None) or _FLUX_CLASS_GRAPH_GROUPS.get(cls)
+        graph_group = next((r.graph_group for r in reactions if r.graph_group), None)
         carcinogen_ids = []
         if graph_group:
             carcinogen_ids = [
