@@ -1955,14 +1955,21 @@ class GraphEngine:
         self._ensure_flux_index()
         cls = getattr(carcinogen_class, "value", carcinogen_class)
         reactions = self._flux_reactions_by_class.get(cls, [])
-        graph_group = next((r.graph_group for r in reactions if r.graph_group), None)
-        carcinogen_ids = []
-        if graph_group:
-            carcinogen_ids = [
-                node_id
-                for node_id, data in self.G.nodes(data=True)
-                if data.get("type") == "Carcinogen" and data.get("group") == graph_group
-            ]
+        group_id = None
+        if cls in self.G:
+            class_node = self.G.nodes[cls]
+            if class_node.get("type") == "CarcinogenGroup":
+                group_id = cls
+            elif class_node.get("type") == "Carcinogen":
+                group_id = class_node.get("carcinogen_group_id")
+        carcinogen_ids = [
+            node_id
+            for node_id, data in self.G.nodes(data=True)
+            if group_id
+            and data.get("type") == "Carcinogen"
+            and data.get("carcinogen_group_id") == group_id
+        ]
+        graph_group = group_id
 
         def _binding_probe(reaction: FluxReaction) -> tuple[bool, bool, list[str]] | None:
             """``(edge_present, payload_present, edge_types)`` for the term's
