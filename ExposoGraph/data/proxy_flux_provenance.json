@@ -10,7 +10,7 @@
     }
   },
   "classes": {
-    "AromaticAmines": {
+    "group_aromatic_amines": {
       "activation_terms": {
         "CYP1A2": {
           "sources": [
@@ -74,7 +74,7 @@
         }
       }
     },
-    "EstrogenMetabolites": {
+    "group_estrogen": {
       "activation_terms": {
         "CYP1B1": {
           "sources": [
@@ -238,7 +238,7 @@
         }
       }
     },
-    "UV_Radiation": {
+    "group_uv_radiation": {
       "activation_terms": {
         "UVB_photoproduct_burden": {
           "sources": [
@@ -287,7 +287,7 @@
         }
       }
     },
-    "ChlorinatedSolvent": {
+    "group_chlorinated_solvents": {
       "activation_terms": {
         "CYP2E1": {
           "sources": [
@@ -314,7 +314,7 @@
         }
       }
     },
-    "Dioxin": {
+    "group_dioxins": {
       "signal": {
         "sources": [
           "kinetic_parameters.json:Dioxin/AhR_signaling/AhR_binding"
@@ -348,7 +348,7 @@
         }
       }
     },
-    "HeavyMetal": {
+    "group_heavy_metals": {
       "activation_terms": {
         "general_ROS": {
           "sources": [

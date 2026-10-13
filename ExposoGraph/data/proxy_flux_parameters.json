@@ -34,7 +34,7 @@
           "km": 79.0,
           "confidence": "estimated",
           "note": "4-ABP N-hydroxylation proxy anchored to local CYP1A2 aromatic-amine/HCA context.",
-          "provenance_ref": "classes.AromaticAmines.activation_terms.CYP1A2"
+          "provenance_ref": "classes.group_aromatic_amines.activation_terms.CYP1A2"
         },
         "NAT1": {
           "source_node_id": "4ABP",
@@ -46,7 +46,7 @@
           "confidence": "estimated",
           "note": "Peripheral O-acetylation proxy for reactive aromatic-amine ester formation.",
           "supported_tissues": ["bladder", "colon", "breast", "lung"],
-          "provenance_ref": "classes.AromaticAmines.activation_terms.NAT1"
+          "provenance_ref": "classes.group_aromatic_amines.activation_terms.NAT1"
         }
       },
       "detox_terms": {
@@ -60,7 +60,7 @@
           "confidence": "estimated",
           "note": "Protective N-acetylation proxy; slow-acetylator states reduce this term.",
           "supported_tissues": ["liver", "intestine", "bladder"],
-          "provenance_ref": "classes.AromaticAmines.detox_terms.NAT2"
+          "provenance_ref": "classes.group_aromatic_amines.detox_terms.NAT2"
         },
         "GSTM1": {
           "source_node_id": "NOH_4ABP",
@@ -72,7 +72,7 @@
           "confidence": "estimated",
           "note": "GST conjugation proxy attenuating aromatic-amine electrophiles.",
           "supported_tissues": ["bladder", "breast", "kidney", "liver"],
-          "provenance_ref": "classes.AromaticAmines.detox_terms.GSTM1"
+          "provenance_ref": "classes.group_aromatic_amines.detox_terms.GSTM1"
         },
         "GSTP1": {
           "gene": "GSTP1",
@@ -81,7 +81,7 @@
           "km": 0.02,
           "confidence": "estimated",
           "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling.",
-          "provenance_ref": "classes.AromaticAmines.detox_terms.GSTP1"
+          "provenance_ref": "classes.group_aromatic_amines.detox_terms.GSTP1"
         }
       },
       "repair_terms": {
@@ -94,7 +94,7 @@
           "confidence": "estimated",
           "note": "NER recognition proxy for dG-C8-4-ABP adduct removal.",
           "supported_tissues": ["bladder", "breast", "kidney", "liver"],
-          "provenance_ref": "classes.AromaticAmines.repair_terms.XPC"
+          "provenance_ref": "classes.group_aromatic_amines.repair_terms.XPC"
         },
         "ERCC2": {
           "source_node_id": "Benzidine_dG",
@@ -105,7 +105,7 @@
           "confidence": "estimated",
           "note": "NER excision-capacity proxy for aromatic-amine adduct burden.",
           "supported_tissues": ["bladder", "breast", "kidney", "liver"],
-          "provenance_ref": "classes.AromaticAmines.repair_terms.ERCC2"
+          "provenance_ref": "classes.group_aromatic_amines.repair_terms.ERCC2"
         }
       }
     },
@@ -131,7 +131,7 @@
           "km": 0.015,
           "confidence": "estimated",
           "note": "Primary catechol-estrogen activation proxy for 4-hydroxyestradiol formation.",
-          "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1B1"
+          "provenance_ref": "classes.group_estrogen.activation_terms.CYP1B1"
         },
         "CYP1A1": {
           "source_node_id": "E2",
@@ -142,7 +142,7 @@
           "km": 0.02,
           "confidence": "estimated",
           "note": "Secondary estrogen bioactivation proxy.",
-          "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1A1"
+          "provenance_ref": "classes.group_estrogen.activation_terms.CYP1A1"
         },
         "CYP1A2": {
           "source_node_id": "E2",
@@ -153,7 +153,7 @@
           "km": 0.025,
           "confidence": "estimated",
           "note": "Minor hepatic estrogen hydroxylation proxy.",
-          "provenance_ref": "classes.EstrogenMetabolites.activation_terms.CYP1A2"
+          "provenance_ref": "classes.group_estrogen.activation_terms.CYP1A2"
         }
       },
       "detox_terms": {
@@ -167,7 +167,7 @@
           "confidence": "estimated",
           "note": "Catechol-estrogen O-methylation proxy limiting quinone formation.",
           "supported_tissues": ["breast", "brain", "endometrium", "liver"],
-          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.COMT"
+          "provenance_ref": "classes.group_estrogen.detox_terms.COMT"
         },
         "SULT1E1": {
           "source_node_id": "E2",
@@ -179,7 +179,7 @@
           "confidence": "estimated",
           "note": "High-affinity sulfation proxy for estradiol/catechol-estrogen inactivation.",
           "supported_tissues": ["liver", "endometrium", "breast", "placenta"],
-          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.SULT1E1"
+          "provenance_ref": "classes.group_estrogen.detox_terms.SULT1E1"
         },
         "UGT2B7": {
           "source_node_id": "estradiol_2_OH",
@@ -191,7 +191,7 @@
           "confidence": "estimated",
           "note": "Glucuronidation proxy for estrogen-metabolite disposal.",
           "supported_tissues": ["liver", "kidney", "gi_tract", "mammary"],
-          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.UGT2B7"
+          "provenance_ref": "classes.group_estrogen.detox_terms.UGT2B7"
         },
         "GSTP1": {
           "source_node_id": "E2_quinone",
@@ -202,7 +202,7 @@
           "km": 0.025,
           "confidence": "estimated",
           "note": "GSH conjugation proxy for estrogen quinone electrophiles.",
-          "provenance_ref": "classes.EstrogenMetabolites.detox_terms.GSTP1"
+          "provenance_ref": "classes.group_estrogen.detox_terms.GSTP1"
         }
       },
       "repair_terms": {
@@ -215,7 +215,7 @@
           "confidence": "estimated",
           "note": "BER scaffold proxy for depurinating estrogen-adduct repair.",
           "supported_tissues": ["breast", "endometrium", "ovary", "kidney", "liver"],
-          "provenance_ref": "classes.EstrogenMetabolites.repair_terms.XRCC1"
+          "provenance_ref": "classes.group_estrogen.repair_terms.XRCC1"
         }
       }
     },
@@ -401,7 +401,7 @@
           "confidence": "estimated",
           "note": "Relative cyclobutane-pyrimidine-dimer / 6-4 photoproduct burden.",
           "supported_tissues": ["skin", "eye"],
-          "provenance_ref": "classes.UV_Radiation.activation_terms.UVB_photoproduct_burden"
+          "provenance_ref": "classes.group_uv_radiation.activation_terms.UVB_photoproduct_burden"
         },
         "UVA_oxidative_tail": {
           "source_node_id": "UVRadiation",
@@ -413,7 +413,7 @@
           "confidence": "estimated",
           "note": "Relative oxidative DNA-damage tail accompanying solar/tanning UV exposure.",
           "supported_tissues": ["skin", "eye"],
-          "provenance_ref": "classes.UV_Radiation.activation_terms.UVA_oxidative_tail"
+          "provenance_ref": "classes.group_uv_radiation.activation_terms.UVA_oxidative_tail"
         }
       },
       "repair_terms": {
@@ -426,7 +426,7 @@
           "confidence": "estimated",
           "note": "NER damage-recognition proxy for UV photoproducts.",
           "supported_tissues": ["skin", "eye"],
-          "provenance_ref": "classes.UV_Radiation.repair_terms.XPC"
+          "provenance_ref": "classes.group_uv_radiation.repair_terms.XPC"
         },
         "ERCC2": {
           "source_node_id": "CPD",
@@ -437,7 +437,7 @@
           "confidence": "estimated",
           "note": "NER helicase/excision proxy for UV-induced lesions.",
           "supported_tissues": ["skin", "eye"],
-          "provenance_ref": "classes.UV_Radiation.repair_terms.ERCC2"
+          "provenance_ref": "classes.group_uv_radiation.repair_terms.ERCC2"
         },
         "OGG1": {
           "source_node_id": "8_OHdG",
@@ -448,7 +448,7 @@
           "confidence": "estimated",
           "note": "Repair proxy for UV-associated oxidative lesions.",
           "supported_tissues": ["skin", "eye"],
-          "provenance_ref": "classes.UV_Radiation.repair_terms.OGG1"
+          "provenance_ref": "classes.group_uv_radiation.repair_terms.OGG1"
         },
         "POLH": {
           "source_node_id": "CPD",
@@ -459,7 +459,7 @@
           "confidence": "estimated",
           "note": "Tolerance/bypass proxy for persistent UV photoproduct burden.",
           "supported_tissues": ["skin", "eye"],
-          "provenance_ref": "classes.UV_Radiation.repair_terms.POLH"
+          "provenance_ref": "classes.group_uv_radiation.repair_terms.POLH"
         }
       }
     },
@@ -485,7 +485,7 @@
           "relative_capacity": "moderate",
           "confidence": "low",
           "note": "TCE oxidation proxy using qualitative CLint scaling.",
-          "provenance_ref": "classes.ChlorinatedSolvent.activation_terms.CYP2E1"
+          "provenance_ref": "classes.group_chlorinated_solvents.activation_terms.CYP2E1"
         },
         "GSTT1": {
           "source_node_id": "TCE",
@@ -498,7 +498,7 @@
           "confidence": "low",
           "note": "GSTT1 conjugation is modeled as bioactivation to reactive kidney metabolites.",
           "supported_tissues": ["kidney", "liver"],
-          "provenance_ref": "classes.ChlorinatedSolvent.activation_terms.GSTT1"
+          "provenance_ref": "classes.group_chlorinated_solvents.activation_terms.GSTT1"
         }
       },
       "detox_terms": {
@@ -509,7 +509,7 @@
           "tissue_weight_floor": 0.2,
           "confidence": "estimated",
           "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
-          "provenance_ref": "classes.ChlorinatedSolvent.detox_terms.non_genotoxic_clearance_proxy"
+          "provenance_ref": "classes.group_chlorinated_solvents.detox_terms.non_genotoxic_clearance_proxy"
         }
       }
     },
@@ -536,7 +536,7 @@
         "confidence": "moderate",
         "note": "AhR occupancy surrogate used to drive downstream induction burden.",
         "supported_tissues": ["liver", "lung", "skin", "adipose"],
-        "provenance_ref": "classes.Dioxin.signal"
+        "provenance_ref": "classes.group_dioxins.signal"
       },
       "activation_terms": {
         "CYP1A1": {
@@ -547,7 +547,7 @@
           "induction_factor": 50.0,
           "confidence": "moderate",
           "note": "AhR-mediated CYP1A1 induction score rather than catalytic flux.",
-          "provenance_ref": "classes.Dioxin.activation_terms.CYP1A1"
+          "provenance_ref": "classes.group_dioxins.activation_terms.CYP1A1"
         },
         "CYP1B1": {
           "source_node_id": "AHR",
@@ -557,7 +557,7 @@
           "induction_factor": 20.0,
           "confidence": "moderate",
           "note": "AhR-mediated CYP1B1 induction score rather than catalytic flux.",
-          "provenance_ref": "classes.Dioxin.activation_terms.CYP1B1"
+          "provenance_ref": "classes.group_dioxins.activation_terms.CYP1B1"
         }
       },
       "detox_terms": {
@@ -568,7 +568,7 @@
           "scale_of_signal": 8.0,
           "confidence": "estimated",
           "note": "Estimated negative-feedback burden opposing sustained AhR activation.",
-          "provenance_ref": "classes.Dioxin.detox_terms.AHRR_feedback"
+          "provenance_ref": "classes.group_dioxins.detox_terms.AHRR_feedback"
         }
       }
     },
@@ -591,7 +591,7 @@
           "confidence": "estimated",
           "note": "Indirect genotoxicity proxy for oxidative DNA damage burden.",
           "supported_tissues": ["bladder", "lung", "skin", "liver"],
-          "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
+          "provenance_ref": "classes.group_heavy_metals.activation_terms.general_ROS"
         },
         "cadmium_stress_proxy": {
           "equation": "saturating",
@@ -600,7 +600,7 @@
           "confidence": "estimated",
           "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure.",
           "supported_tissues": ["kidney", "liver", "lung", "prostate"],
-          "provenance_ref": "classes.HeavyMetal.activation_terms.cadmium_stress_proxy"
+          "provenance_ref": "classes.group_heavy_metals.activation_terms.cadmium_stress_proxy"
         }
       },
       "detox_terms": {
@@ -615,7 +615,7 @@
           "confidence": "low",
           "note": "AS3MT methylation proxy representing arsenic biotransformation capacity.",
           "supported_tissues": ["liver"],
-          "provenance_ref": "classes.HeavyMetal.detox_terms.AS3MT"
+          "provenance_ref": "classes.group_heavy_metals.detox_terms.AS3MT"
         }
       }
     }
