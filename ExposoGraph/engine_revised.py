@@ -31,9 +31,7 @@ from .parameter_provider import (
     INTERACTION_BLOCK_MARKER,
     INTERACTION_ENZYME_MARKER,
     INTERACTION_SUBSTRATE_MARKER,
-    InteractionParameterProvider,
     JSONInteractionParameterProvider,
-    KGInteractionParameterProvider,
 )
 
 logger = logging.getLogger(__name__)
@@ -164,7 +162,7 @@ class GraphEngine:
         self.G.clear()
         self._docs: dict[str, dict[str, Any]] = {}
         self._flux: tuple[dict, list, dict] | None = None
-        self._kg_provider: InteractionParameterProvider | None = None
+        self._provider: JSONInteractionParameterProvider | None = None
 
     def _add_records(self, nodes: Iterable[Node | dict[str, Any]],
                      edges: Iterable[Edge | dict[str, Any]]) -> list[str]:
@@ -473,14 +471,11 @@ class GraphEngine:
 
     # ── Interaction parameters ───────────────────────────────────────────
 
-    def get_parameter_provider(self) -> InteractionParameterProvider:
-        baked = any(dig(d, ("kinetics", INTERACTION_BLOCK_MARKER)) == "competitive_inhibition"
-                    for _, _, d in self.G.edges(data=True))
-        if not baked:
-            return JSONInteractionParameterProvider(self.data_dir)
-        if self._kg_provider is None:
-            self._kg_provider = KGInteractionParameterProvider(self, data_dir=self.data_dir)
-        return self._kg_provider
+    def get_parameter_provider(self) -> JSONInteractionParameterProvider:
+        """JSON provider. Induction rules and GSH consumers have no graph carrier."""
+        if self._provider is None:
+            self._provider = JSONInteractionParameterProvider(self.data_dir)
+        return self._provider
 
     def get_induction_rules(self, exposure_context: str | None = None,
                             tissue: str | None = None) -> list[InductionRule]:
