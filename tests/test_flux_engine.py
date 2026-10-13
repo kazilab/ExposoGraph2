@@ -74,7 +74,7 @@ def test_proxy_flux_result_exposes_provenance_metadata():
         enzyme for enzyme in payload["activation_enzymes"] if enzyme["enzyme"] == "CYP2A13"
     )
     assert cyp2a13["parameter_source"] == "proxy_flux_parameters.json"
-    assert cyp2a13["provenance_ref"] == "classes.NDEA.activation_terms.CYP2A13"
+    assert cyp2a13["provenance_ref"] == "classes.NDEA.pathways.activation.CYP2A13"
     assert cyp2a13["provenance_sources"]
     assert cyp2a13["parameter_basis"]
 

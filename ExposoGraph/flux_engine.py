@@ -1280,11 +1280,12 @@ def _proxy_term_metadata(
     """Return provenance metadata for a proxy-model term."""
     cfg = _active_proxy_class_params(carcinogen_class, engine)
     sections = (
-        ("activation_terms",) if activation_term else ("detox_terms", "repair_terms")
+        ("activation",) if activation_term else ("detoxification", "repair")
     )
+    pathways = cfg.get("pathways", {})
 
     for section in sections:
-        term_cfg = cfg.get(section, {}).get(term_name)
+        term_cfg = pathways.get(section, {}).get(term_name)
         if term_cfg is None:
             continue
 
@@ -1571,17 +1572,17 @@ def _compute_dioxin_flux(
         tissue_weight_source,
     )
 
-    act1_p = cfg["activation_terms"]["CYP1A1"]
+    act1_p = cfg["pathways"]["activation"]["CYP1A1"]
     gm1a1 = _proxy_genotype_modifier(genotypes.get("CYP1A1", "NM"), "CYP1A1")
     tw1a1 = get_flux_tissue_weight("CYP1A1", tissue, tissue_weight_source)
     v1a1 = signal_strength * float(act1_p["induction_factor"]) * gm1a1 * tw1a1
 
-    act2_p = cfg["activation_terms"]["CYP1B1"]
+    act2_p = cfg["pathways"]["activation"]["CYP1B1"]
     gm1b1 = _proxy_genotype_modifier(genotypes.get("CYP1B1", "NM"), "CYP1B1")
     tw1b1 = get_flux_tissue_weight("CYP1B1", tissue, tissue_weight_source)
     v1b1 = signal_strength * float(act2_p["induction_factor"]) * gm1b1 * tw1b1
 
-    feedback_p = cfg["detox_terms"]["AHRR_feedback"]
+    feedback_p = cfg["pathways"]["detoxification"]["AHRR_feedback"]
     v_feedback = signal_strength * float(feedback_p["scale_of_signal"])
 
     return {

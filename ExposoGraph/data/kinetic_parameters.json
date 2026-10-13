@@ -725,6 +725,7 @@
       }
     },
     "group_heavy_metals": {
+      "dispatch": "shadowed",
       "class_kind": "carcinogen_group",
       "carcinogen_group_id": "group_heavy_metals",
       "member_carcinogen_ids": ["AntimonyTrivalent", "ArsenicInorganic", "Be", "Cd", "CobaltMetal", "CobaltOxide", "CrVI", "LeadInorganicCompounds", "LeadMetallic", "LeadOrganicCompounds", "MercuryInorganicCompounds", "MethylmercuryCompounds", "NickelCompounds", "NickelMetallic"],
@@ -771,6 +772,7 @@
       "notes": "Heavy metal carcinogenicity modeling is semi-quantitative. Enzyme kinetics not applicable to primary mechanism. Use oxidative stress / DNA repair inhibition scores as proxies."
     },
     "group_dioxins": {
+      "dispatch": "shadowed",
       "class_kind": "carcinogen_group",
       "carcinogen_group_id": "group_dioxins",
       "member_carcinogen_ids": ["PeCDF_23478", "TCDD"],
@@ -797,6 +799,7 @@
       "notes": "Quantitative enzyme kinetics not applicable. Model via AhR-mediated induction amplifying PAH pathway fluxes. TEF approach recommended for dioxin-like compounds."
     },
     "group_chlorinated_solvents": {
+      "dispatch": "shadowed",
       "class_kind": "carcinogen_group",
       "carcinogen_group_id": "group_chlorinated_solvents",
       "member_carcinogen_ids": ["PCE", "TCE"],

@@ -35,13 +35,13 @@ def test_proxy_flux_terms_have_resolvable_provenance():
     provenance = _load_json("proxy_flux_provenance.json")
 
     for class_name, class_cfg in params.items():
-        for section in ("activation_terms", "detox_terms", "repair_terms"):
-            for term_name, term_cfg in class_cfg.get(section, {}).items():
+        for section, terms in class_cfg.get("pathways", {}).items():
+            for term_name, term_cfg in terms.items():
                 ref = term_cfg.get("provenance_ref")
-                assert ref, f"{class_name}.{section}.{term_name} is missing provenance_ref"
+                assert ref, f"{class_name}.pathways.{section}.{term_name} is missing provenance_ref"
                 entry = _resolve_ref(provenance, ref)
                 assert entry["confidence"] == term_cfg["confidence"]
-                assert entry["sources"], f"{class_name}.{section}.{term_name} has no sources"
+                assert entry["sources"], f"{class_name}.pathways.{section}.{term_name} has no sources"
 
         signal_cfg = class_cfg.get("signal")
         if signal_cfg is not None:
