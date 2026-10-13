@@ -2,10 +2,10 @@
 
 Not imported by the package. ``graph-data.json`` is the topology contract
 and is read directly here. ``data/*.json`` is read only while baking.
-After that, getters and the interaction view read the graph: endpoint
-payloads ride edges, class rosters and class config ride the class node,
-and document-level blocks ride ``G.graph``. This module does not parse
-artifacts through ``exporter`` or ground records through ``grounding``.
+After that, getters read the graph: endpoint payloads ride edges, class
+rosters and class config ride the class node, and document-level blocks
+ride ``G.graph``. This module does not parse artifacts through ``exporter``
+or ground records through ``grounding``.
 
 Intentionally not a drop-in. The old per-filter getter names
 (``get_node``, ``nodes_by_type``, ``subgraph_by_*``) collapse onto ``get``,
@@ -130,54 +130,6 @@ def _activity_fraction(catalog: Mapping[str, Any], gene: str, diplotype: str) ->
         stacklevel=2,
     )
     return 1.0
-
-
-class GraphInteractionView:
-    """Induction rules and GSH consumers from blocks baked onto the graph."""
-
-    def __init__(self, engine: GraphEngine) -> None:
-        self._engine = engine
-
-    def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
-        consumers = (self._engine.G.graph.get("gsh_depletion") or {}).get("consumers", {})
-        parsed = []
-        for name, data in consumers.items():
-            data = data if isinstance(data, dict) else {}
-            context = TissueContext(tissue=data.get("tissue"))
-            if tissue and context.tissue and context.tissue.lower() != tissue.lower():
-                continue
-            parsed.append(GSHConsumer(
-                name=name,
-                enzyme=data.get("enzyme"),
-                substrate_class=data.get("substrate_class"),
-                gsh_per_umol_substrate=_optional_float(data.get("gsh_per_umol_substrate")),
-                tissue_context=context,
-                metadata=dict(data),
-            ))
-        return parsed
-
-    def get_induction_rules(self, tissue: str | None = None) -> list[InductionRule]:
-        rules = []
-        for exposure_context, exposure_data in (self._engine.G.graph.get("enzyme_induction") or {}).items():
-            if not isinstance(exposure_data, dict):
-                continue
-            for enzyme, rule_data in exposure_data.items():
-                if enzyme.startswith("_") or not isinstance(rule_data, dict):
-                    continue
-                specificity = rule_data.get("tissue_specificity")
-                if tissue and specificity and tissue.lower() not in str(specificity).lower():
-                    continue
-                rules.append(InductionRule(
-                    exposure_context=exposure_context,
-                    enzyme=enzyme,
-                    fold_induction=_optional_float(rule_data.get("fold_induction")),
-                    range_min=_optional_float(rule_data.get("range_min")),
-                    range_max=_optional_float(rule_data.get("range_max")),
-                    mechanism=rule_data.get("mechanism"),
-                    tissue_context=TissueContext(tissue=specificity),
-                    metadata=dict(rule_data),
-                ))
-        return rules
 
 
 @dataclass(frozen=True)
@@ -574,17 +526,49 @@ class GraphEngine:
 
     # ── Interaction parameters ───────────────────────────────────────────
 
-    def get_parameter_provider(self) -> GraphInteractionView:
-        """Interaction view over blocks and edges already baked on the graph."""
-        return GraphInteractionView(self)
-
     def get_induction_rules(self, exposure_context: str | None = None,
                             tissue: str | None = None) -> list[InductionRule]:
-        rules = self.get_parameter_provider().get_induction_rules(tissue=tissue)
-        return [r for r in rules if exposure_context in (None, r.exposure_context)]
+        rules = []
+        for context, exposure_data in (self.G.graph.get("enzyme_induction") or {}).items():
+            if not isinstance(exposure_data, dict):
+                continue
+            for enzyme, rule_data in exposure_data.items():
+                if enzyme.startswith("_") or not isinstance(rule_data, dict):
+                    continue
+                if exposure_context not in (None, context):
+                    continue
+                specificity = rule_data.get("tissue_specificity")
+                if tissue and specificity and tissue.lower() not in str(specificity).lower():
+                    continue
+                rules.append(InductionRule(
+                    exposure_context=context,
+                    enzyme=enzyme,
+                    fold_induction=_optional_float(rule_data.get("fold_induction")),
+                    range_min=_optional_float(rule_data.get("range_min")),
+                    range_max=_optional_float(rule_data.get("range_max")),
+                    mechanism=rule_data.get("mechanism"),
+                    tissue_context=TissueContext(tissue=specificity),
+                    metadata=dict(rule_data),
+                ))
+        return rules
 
     def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
-        return self.get_parameter_provider().get_gsh_consumers(tissue=tissue)
+        consumers = (self.G.graph.get("gsh_depletion") or {}).get("consumers", {})
+        parsed = []
+        for name, data in consumers.items():
+            data = data if isinstance(data, dict) else {}
+            context = TissueContext(tissue=data.get("tissue"))
+            if tissue and context.tissue and context.tissue.lower() != tissue.lower():
+                continue
+            parsed.append(GSHConsumer(
+                name=name,
+                enzyme=data.get("enzyme"),
+                substrate_class=data.get("substrate_class"),
+                gsh_per_umol_substrate=_optional_float(data.get("gsh_per_umol_substrate")),
+                tissue_context=context,
+                metadata=dict(data),
+            ))
+        return parsed
 
     def get_genotype_modifiers(self, gene: str | None = None) -> dict[str, Any]:
         """Baked genotype catalog, or one gene's block."""
