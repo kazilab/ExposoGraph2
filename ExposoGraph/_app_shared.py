@@ -10,10 +10,9 @@ from typing import Any
 
 import streamlit as st
 
-from .config import GraphVisibility, get_app_mode, persistence_enabled
+from .config import get_app_mode, persistence_enabled
 from .engine import GraphEngine
 from .exporter import parse_graph_data_text
-from .graph_filters import graph_visibility_label
 from .models import (
     CurationConfidence,
     CurationRecord,
@@ -21,7 +20,6 @@ from .models import (
     KnowledgeGraph,
     ProvenanceRecord,
 )
-from .storage import GraphRepository, GraphRevisionSummary
 
 # ── Path constants ────────────────────────────────────────────────────────
 
@@ -120,13 +118,6 @@ def start_engine(engine: GraphEngine) -> None:
             st.warning(f"Could not pre-load reference map: {e}")
 
 
-@st.cache_resource
-def get_repository() -> GraphRepository | None:
-    if not PERSISTENCE_ENABLED:
-        return None
-    return GraphRepository(REPOSITORY_PATH)
-
-
 def get_pending_extraction() -> KnowledgeGraph | None:
     raw = st.session_state.get("pending_extraction")
     if raw is None:
@@ -194,22 +185,6 @@ def slugify_project_name(value: str) -> str:
 
 def saved_project_paths() -> list[Path]:
     return sorted(list(PROJECTS_DIR.glob("*.html")) + list(PROJECTS_DIR.glob("*.json")))
-
-
-def revision_label(
-    revision_id: int, revisions_by_id: dict[int, GraphRevisionSummary]
-) -> str:
-    revision = revisions_by_id[revision_id]
-    note = f" - {revision.note}" if revision.note else ""
-    visibility = (
-        f" | {graph_visibility_label(revision.visibility)}"
-        if revision.visibility != GraphVisibility.ALL
-        else ""
-    )
-    return (
-        f"r{revision.revision_number} | {revision.node_count}n/{revision.edge_count}e | "
-        f"{revision.created_at[:19]}{visibility}{note}"
-    )
 
 
 def parse_uploaded_graph(name: str, raw_text: str) -> KnowledgeGraph:
@@ -302,15 +277,3 @@ def annotation_lines(data: dict[str, Any]) -> list[str]:
     if data.get("activity_score") is not None:
         lines.append(f"Activity score: {data['activity_score']}")
     return lines
-
-
-def node_tooltip(data: dict[str, Any]) -> str:
-    parts = [data.get("detail", "")]
-    parts.extend(annotation_lines(data))
-    return "\n".join(part for part in parts if part)
-
-
-def edge_tooltip(data: dict[str, Any]) -> str:
-    parts = [data.get("label", data.get("type", ""))]
-    parts.extend(annotation_lines(data))
-    return "\n".join(part for part in parts if part)

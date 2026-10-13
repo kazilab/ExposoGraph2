@@ -21,7 +21,7 @@ from ExposoGraph import (
     ui_manual,
     ui_map_viewer,
 )
-from ExposoGraph._app_shared import get_engine, get_repository, start_engine
+from ExposoGraph._app_shared import get_engine, start_engine
 from ExposoGraph.branding import (
     APP_NAME,
     APP_TAGLINE,
@@ -53,7 +53,7 @@ st.markdown(
 # ── Session state bootstrap ──────────────────────────────────────────────
 
 engine = get_engine()
-repository = get_repository()
+# repository = get_repository()
 start_engine(engine)
 
 if "extract_text" not in st.session_state:
