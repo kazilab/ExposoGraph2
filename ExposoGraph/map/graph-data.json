@@ -6487,30 +6487,6 @@
       "detail": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
       "group": "Aldehydes",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "Aldehyde": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "Acetaldehyde (from ethanol metabolism)",
-          "aggregation": {
-            "exposure_default_field": "acetaldehyde",
-            "vmax_field": {
-              "detoxification": "Vmax_U_per_mg",
-              "ethanol_oxidation": "Vmax_U_per_mg"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in U/mg; ratio dimensionally consistent",
-            "status": "dedicated_function",
-            "notes": "Hand-rolled: diplotype-driven parameter-row selection (ALDH2/ADH1B) and the ethanol substrate override (metadata exposure default, no gm/tw scaling) are model-specific."
-          },
-          "epidemiological_validation": {
-            "ALDH2_heterozygote_ESCC_OR": {
-              "value": "2.34-6.50",
-              "source": "Asian cohort studies"
-            },
-            "note": "800-fold CLint reduction in *2/*2; heterozygote ~25% wildtype — consistent with dose-response OR pattern"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6554,29 +6530,6 @@
       "detail": "Carcinogen group aggregating the 2 Aromatic Amines members.",
       "group": "Aromatic Amines",
       "kinetics_model": "semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "AromaticAmines": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_aromatic_amines_general_population",
-            "field": "estimated_tissue_conc_uM"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "GSTP1": {
-                  "gene": "GSTP1",
-                  "equation": "michaelis_menten",
-                  "vmax": 7.0,
-                  "km": 0.02,
-                  "confidence": "estimated",
-                  "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling.",
-                  "provenance_ref": "classes.AromaticAmines.detox_terms.GSTP1"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
@@ -6592,31 +6545,6 @@
       "detail": "Industrial/environmental chemical. CYP2E1-mediated oxidation to phenol, then further to catechol and benzoquinone — reactive hematotoxic/leukemogenic metabolites.",
       "group": "Benzene",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "Benzene": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "Benzene",
-          "aggregation": {
-            "exposure_default_field": "benzene",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_mg_estimated"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in pmol/min/mg (estimated Vmax)",
-            "entry_names": {
-              "CYP2E1_liver": "CYP2E1"
-            },
-            "derived_terms": {
-              "NQO1": {
-                "base_term": "CYP2E1_liver",
-                "fraction": 0.4,
-                "form": "fraction_of_base",
-                "confidence": "low"
-              }
-            }
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6632,30 +6560,6 @@
       "detail": "TCE oxidized by CYP2E1/CYP1A2 to trichloroethylene oxide → trichloroacetaldehyde → trichloroacetic acid and other metabolites. Also conjugated to GSH via GSTT1.",
       "group": "Chlorinated Solvents",
       "kinetics_model": "michaelis_menten + semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "ChlorinatedSolvent": {
-          "model_kind": "semi_quantitative_proxy",
-          "index_carcinogen": "Trichloroethylene (TCE)",
-          "exposure_defaults": {
-            "source": "kinetic_parameters",
-            "field": "TCE"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "non_genotoxic_clearance_proxy": {
-                  "rate_law": "derived_scale",
-                  "graph_node_id": null,
-                  "scale_of": "CYP2E1",
-                  "scale": 0.6,
-                  "tissue_weight_floor": 0.2,
-                  "confidence": "estimated",
-                  "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
-                  "provenance_ref": "classes.ChlorinatedSolvent.detox_terms.non_genotoxic_clearance_proxy"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6676,16 +6580,6 @@
       "detail": "Persistent organic pollutant acting through AhR signaling rather than direct metabolic activation. Induces CYP1A1/CYP1B1 expression, amplifying downstream PAH activation.",
       "group": "Dioxins",
       "kinetics_model": "receptor_mediated + receptor_mediated_proxy",
-      "flux_class_metadata": {
-        "Dioxin": {
-          "model_kind": "receptor_mediated_proxy",
-          "index_carcinogen": "TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)",
-          "exposure_defaults": {
-            "source": "kinetic_parameters",
-            "field": "TCDD"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6706,16 +6600,6 @@
       "detail": "Carcinogen group aggregating the 1 Estrogen member.",
       "group": "Estrogen",
       "kinetics_model": "semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "EstrogenMetabolites": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_estrogen_premenopausal_no_exogenous",
-            "field": "estimated_tissue_conc_uM"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
@@ -6731,25 +6615,6 @@
       "detail": "Heterocyclic amine formed in cooked meat. N-hydroxylation by CYP1A2/CYP1A1/CYP1B1 generates reactive N-OH-PhIP.",
       "group": "HCAs",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "HCA": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine)",
-          "aggregation": {
-            "exposure_default_field": "PhIP",
-            "vmax_field": {
-              "activation": "Vmax_nmol_min_nmolP450"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in nmol/min/nmolP450",
-            "detox_fraction_of_activation": 0.2,
-            "detox_entry": {
-              "name": "estimated_detox_fraction",
-              "confidence": "estimated"
-            }
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6765,50 +6630,6 @@
       "detail": "Heavy metals including arsenic, cadmium, chromium. Mechanism involves indirect genotoxicity — oxidative stress, DNA repair inhibition, epigenetic dysregulation rather than direct enzyme-mediated metabolism. Limited Michaelis-Menten parameters available.",
       "group": "Heavy Metals",
       "kinetics_model": "semi_quantitative + semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "HeavyMetal": {
-          "model_kind": "semi_quantitative_proxy",
-          "index_carcinogen": "Arsenic (inorganic)",
-          "exposure_defaults": {
-            "source": "kinetic_parameters",
-            "field": "arsenic"
-          }
-        ,
-          "class_level_terms": {
-              "activation_terms": {
-                "general_ROS": {
-                  "graph_node_id": null,
-                  "equation": "saturating",
-                  "scale": 5.0,
-                  "km": 1.0,
-                  "confidence": "estimated",
-                  "note": "Indirect genotoxicity proxy for oxidative DNA damage burden.",
-                  "supported_tissues": [
-                    "bladder",
-                    "lung",
-                    "skin",
-                    "liver"
-                  ],
-                  "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
-                },
-                "cadmium_stress_proxy": {
-                  "graph_node_id": null,
-                  "equation": "saturating",
-                  "scale": 2.0,
-                  "km": 0.5,
-                  "confidence": "estimated",
-                  "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure.",
-                  "supported_tissues": [
-                    "kidney",
-                    "liver",
-                    "lung",
-                    "prostate"
-                  ],
-                  "provenance_ref": "classes.HeavyMetal.activation_terms.cadmium_stress_proxy"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6843,23 +6664,6 @@
       "detail": "Mycotoxin requiring CYP-mediated epoxidation to the reactive AFB1-8,9-epoxide (AFBO); AFQ1 is a detoxification product",
       "group": "Mycotoxins",
       "kinetics_model": "mixed",
-      "flux_class_metadata": {
-        "Aflatoxin": {
-          "model_kind": "mixed",
-          "index_carcinogen": "Aflatoxin B1 (AFB1)",
-          "aggregation": {
-            "exposure_default_field": "AFB1",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_pmolP450",
-              "detoxification": "Vmax_pmol_min_pmolP450"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "All fluxes in pmol/min/pmolP450; GSTA1 Vmax is estimated",
-            "status": "dedicated_function",
-            "notes": "Dedicated function: term-factor sharing (CYP3A4_AFQ1 reuses CYP3A4 gm/tw) is model-specific. Term kinetics, estimates, fraction contributions, and the GSTA1 tissue-weight proxy live on the terms; entry/total rounding and the unit note are read from this block."
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6875,92 +6679,6 @@
       "detail": "Tobacco-specific nitrosamine. α-hydroxylation by CYP2A13 generates reactive methylating and pyridyloxobutylating species.",
       "group": "Nitrosamines",
       "kinetics_model": "michaelis_menten + semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "Nitrosamine": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "NNK (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone)",
-          "aggregation": {
-            "exposure_default_field": "NNK",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_pmolP450"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in pmol/min/pmolP450",
-            "derived_terms": {
-              "CYP2A6": {
-                "base_term": "CYP2A13",
-                "fraction": 0.005,
-                "form": "relative_to_base",
-                "confidence": "moderate"
-              }
-            },
-            "detox_fraction_of_activation": 0.3,
-            "detox_entry": {
-              "name": "NNAL_reduction",
-              "confidence": "estimated"
-            }
-          },
-          "class_level_terms": {
-            "detoxification": {
-              "carbonyl_reduction": {
-                "rate_law": "michaelis_menten",
-                "source_node_id": "NNK",
-                "dormant": true,
-                "reaction": "NNK → NNAL (reduction, detoxification product)",
-                "Km_uM": null,
-                "CLint_relative": "moderate",
-                "tissue_expression": [
-                  "liver",
-                  "lung",
-                  "blood"
-                ],
-                "confidence": "low",
-                "provenance_ref": "carcinogen_classes.Nitrosamine.pathways.detoxification.carbonyl_reduction",
-                "sources": [
-                  "Hecht SS nitrosamine review",
-                  "PMID:29788210 (Ashmore et al., Carcinogenesis 2018;39(8):1079-1088 — NNK carbonyl-reduction enzyme attribution)"
-                ],
-                "notes": "Carbonyl reduction to NNAL (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanol) — major competing pathway; exact kinetics not provided. Deliberately enzyme-less: the pathway is a multi-enzyme aggregate (cytosolic CBR1/AKR1C1–C4 forming (S)-NNAL, microsomal HSD17B12/HSD11B1 forming (R)-NNAL; Ashmore et al., Carcinogenesis 2018;39(8):1079-1088, PMID 29788210), carried at class level rather than bound to a single reductase."
-              }
-            }
-          }
-        },
-        "NDMA": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "N-Nitrosodimethylamine (NDMA)",
-          "aggregation": {
-            "exposure_default_field": "NDMA",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_mg"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in pmol/min/mg microsomal protein",
-            "detox_fraction_of_activation": 0.1,
-            "detox_entries": false
-          }
-        },
-        "NDEA": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_nitrosamines_dietary_general_population",
-            "field": "estimated_tissue_conc_uM"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "GSTP1": {
-                  "gene": "GSTP1",
-                  "equation": "michaelis_menten",
-                  "vmax": 8.0,
-                  "km": 0.02,
-                  "confidence": "estimated",
-                  "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
-                  "provenance_ref": "classes.NDEA.detox_terms.GSTP1"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -7000,37 +6718,6 @@
       "detail": "Polycyclic aromatic hydrocarbons — require metabolic activation to reactive diol-epoxide intermediates",
       "group": "PAHs",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "PAH": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "Benzo[a]pyrene",
-          "aggregation": {
-            "exposure_default_field": "BaP",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_pmolP450",
-              "detoxification": "kcat_s"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Activation in pmol/min/pmolP450; detox scaled via CLint normalization",
-            "activation_efficiency_term": {
-              "term": "EPHX1",
-              "reference_CLint": 40.0,
-              "output_field": "ephx1_efficiency"
-            },
-            "detox_total_scale": 764.0
-          },
-          "epidemiological_validation": {
-            "GSTM1_null_lung_cancer_OR": {
-              "value": "1.22-1.46",
-              "source": "Meta-analyses"
-            },
-            "CYP1A1_high_GSTM1_null_lung_cancer_OR": {
-              "value": "4.67",
-              "source": "Combined genotype studies"
-            }
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -7088,16 +6775,6 @@
       "detail": "Carcinogen group aggregating the 1 UV Radiation member.",
       "group": "UV Radiation",
       "kinetics_model": "damage_repair_proxy",
-      "flux_class_metadata": {
-        "UV_Radiation": {
-          "model_kind": "damage_repair_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_uv_radiation_general_population",
-            "field": "estimated_DNA_damage_relative"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
@@ -7113,75 +6790,6 @@
       "detail": "Carcinogen group aggregating the 1 Vinyl Chloride member.",
       "group": "Vinyl Chloride",
       "kinetics_model": "semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "VinylChloride": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "VinylChloride_general_population",
-            "field": "estimated_tissue_conc_uM"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "GSTM1": {
-                  "gene": "GSTM1",
-                  "equation": "michaelis_menten",
-                  "vmax": 9.0,
-                  "km": 30.0,
-                  "confidence": "estimated",
-                  "note": "Secondary GST detoxification proxy for vinyl-chloride metabolites.",
-                  "supported_tissues": [
-                    "liver",
-                    "lung",
-                    "kidney"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.detox_terms.GSTM1"
-                },
-                "EPHX1": {
-                  "gene": "EPHX1",
-                  "equation": "michaelis_menten",
-                  "vmax": 7.0,
-                  "km": 20.0,
-                  "confidence": "estimated",
-                  "note": "Epoxide hydrolysis proxy for reactive vinyl-chloride intermediates.",
-                  "supported_tissues": [
-                    "liver",
-                    "lung"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.detox_terms.EPHX1"
-                },
-                "ALDH2": {
-                  "gene": "ALDH2",
-                  "equation": "michaelis_menten",
-                  "vmax": 5.0,
-                  "km": 50.0,
-                  "confidence": "estimated",
-                  "note": "Aldehyde-handling proxy for downstream chloroacetaldehyde burden.",
-                  "supported_tissues": [
-                    "liver",
-                    "lung"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.detox_terms.ALDH2"
-                }
-              },
-              "repair_terms": {
-                "ERCC2": {
-                  "rate_law": "repair",
-                  "gene": "ERCC2",
-                  "scale": 0.35,
-                  "confidence": "estimated",
-                  "note": "NER proxy for etheno-adduct repair burden.",
-                  "supported_tissues": [
-                    "liver",
-                    "brain",
-                    "lung"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.repair_terms.ERCC2"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
