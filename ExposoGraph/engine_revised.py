@@ -21,7 +21,7 @@ import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import networkx as nx
 
@@ -214,7 +214,7 @@ class GraphEngine:
         return raw, {gene: _normalize(values) for gene, values in raw.items()}
 
     def _bake_tissue_expression(self) -> list[str]:
-        """Join the expression table on node id, not node type."""
+        """Join the expression table on node id."""
         raw, norm = self._expression()
         warnings = []
         for node_id, data in self.G.nodes(data=True):
