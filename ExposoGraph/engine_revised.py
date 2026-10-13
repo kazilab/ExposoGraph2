@@ -682,11 +682,9 @@ class GraphEngine:
                  for e in subgraph["edges"]]
         return {"nodes": nodes, "edges": edges}
 
-    def paths(self, carcinogen_id: str, *, reverse: bool = False,
+    def paths(self, source_node_id: str, *, reverse: bool = False,
               edge_types: Sequence[str] | None = None) -> list[Subgraph]:
         """Every maximal simple directed path from (or, ``reverse``, into) a Carcinogen."""
-        if self.get(carcinogen_id, key="type") != "Carcinogen":
-            raise ValueError(f"Node {carcinogen_id!r} is not a Carcinogen node")
         step = self.G.in_edges if reverse else self.G.out_edges
         found: list[Subgraph] = []
 
@@ -701,7 +699,7 @@ class GraphEngine:
                 found.append({"nodes": [dict(self.G.nodes[n]) for n in seen[order]],
                               "edges": [dict(e) for e in edges[order]]})
 
-        walk(carcinogen_id, [carcinogen_id], [])
+        walk(source_node_id, [source_node_id], [])
         return found
 
     # ── Serialization ────────────────────────────────────────────────────
