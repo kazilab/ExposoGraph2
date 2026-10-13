@@ -190,6 +190,7 @@ _FLUX_ROLE_KINDS = {
     "activation_terms": "activation",
     "detoxification": "detoxification",
     "detox_terms": "detoxification",
+    "repair": "repair",
     "repair_terms": "repair",
 }
 
@@ -752,13 +753,12 @@ class GraphEngine:
         storage would leak into ``to_dict()``/exports. GraphEngine is still
         the contract because the public getters live on it.
 
-        Precedence: classes present in both files (ChlorinatedSolvent,
-        Dioxin, HeavyMetal) keep only their proxy entries, matching current
-        flux-engine dispatch behavior; the kinetic entries are shadowed
-        (visible via ``get_flux_reaction_coverage`` source reporting) and
-        retained in ``_flux_shadowed_reactions`` so
-        :meth:`_apply_flux_edge_kinetics` can still bake their graph-edge
-        bindings.
+        Precedence is the class ``dispatch`` field, not file order. A class
+        present in both files marks the unused copy ``"shadowed"`` and the
+        copy that should run ``"active"``. Shadowed reactions stay in
+        ``_flux_shadowed_reactions`` so :meth:`_apply_flux_edge_kinetics`
+        can still bake their graph-edge bindings. Both copies active is a
+        warning, and the kinetic roster is left in place.
 
         Enzyme linkage: a term whose key exactly matches a node id resolves
         to it. Alias keys (``CYP2E1_liver``, ``ADH1B_star1``) resolve to
@@ -780,6 +780,7 @@ class GraphEngine:
         index: dict[str, list[FluxReaction]] = {}
         sources: dict[str, set[str]] = {}
         aggregations: dict[str, dict[str, Any]] = {}
+        kinetic_shadowed: set[str] = set()
 
         def _record(
             cls: str,
@@ -855,13 +856,16 @@ class GraphEngine:
                     )
             index[cls] = reactions
             sources[cls] = {"kinetic_parameters"}
+            if cls_data.get("dispatch") == "shadowed":
+                kinetic_shadowed.add(cls)
             aggregations[cls] = (
                 dict(cls_data.get("aggregation", {}))
                 if isinstance(cls_data.get("aggregation"), dict)
                 else {}
             )
 
-        # proxy_flux_parameters.json -- semi-quantitative classes; proxy wins
+        # proxy_flux_parameters.json -- same pathways/rate_law shape as the
+        # kinetic file. ``dispatch`` chooses the active copy when both exist.
         try:
             proxy_doc = json.loads(proxy_resolved.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
@@ -873,33 +877,40 @@ class GraphEngine:
             if not isinstance(cls_data, dict):
                 continue
             reactions = []
-            for block, terms in cls_data.items():
-                if not block.endswith("_terms") or not isinstance(terms, dict):
-                    continue
-                for term_key, term in terms.items():
-                    if term_key.startswith("_") or not isinstance(term, dict):
+            pathways = cls_data.get("pathways", {})
+            if isinstance(pathways, dict):
+                for block, terms in pathways.items():
+                    if not isinstance(terms, dict):
                         continue
-                    reactions.append(
-                        _record(
-                            cls,
-                            term_key,
-                            block,
-                            term,
-                            cls_data,
-                            "proxy_flux_parameters",
-                            f"classes.{cls}",
+                    for term_key, term in terms.items():
+                        if term_key.startswith("_") or not isinstance(term, dict):
+                            continue
+                        reactions.append(
+                            _record(
+                                cls,
+                                term_key,
+                                block,
+                                term,
+                                cls_data,
+                                "proxy_flux_parameters",
+                                f"classes.{cls}.pathways",
+                            )
                         )
-                    )
-            if cls in index:
-                # Proxy wins for dispatch, but the kinetic entries are
-                # retained as ``shadowed`` reactions so the graph-edge
-                # baking step can still attach their bindings (dispatch
-                # choice and graph knowledge are separate concerns).
+            if cls_data.get("dispatch") == "shadowed":
+                self._flux_shadowed_reactions.extend(reactions)
+                sources.setdefault(cls, set()).add("proxy_flux_parameters")
+            elif cls in kinetic_shadowed:
                 self._flux_shadowed_reactions.extend(index[cls])
                 sources[cls].add("proxy_flux_parameters")
+                index[cls] = reactions
+            elif cls in index:
+                warnings.append(
+                    f"{cls}: kinetic and proxy flux copies are both active; "
+                    "set dispatch on one of them"
+                )
             else:
                 sources[cls] = {"proxy_flux_parameters"}
-            index[cls] = reactions
+                index[cls] = reactions
             if isinstance(cls_data.get("exposure_default"), dict):
                 self._flux_proxy_exposure_defaults[cls] = dict(
                     cls_data["exposure_default"]

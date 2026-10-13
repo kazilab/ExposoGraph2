@@ -357,13 +357,15 @@ def export_proxy_flux(data: dict[str, Any], out: Path, stem: str) -> list[Path]:
                 {
                     k: v
                     for k, v in class_record.items()
-                    if k not in {"activation_terms", "detox_terms", "repair_terms"}
+                    if k not in {"pathways", "activation_terms", "detox_terms", "repair_terms"}
                 }
             )
         )
         summary_rows.append(summary)
-        for term_type in ("activation_terms", "detox_terms", "repair_terms"):
-            terms = class_record.get(term_type, {})
+        pathways = class_record.get("pathways", {})
+        if not isinstance(pathways, dict):
+            pathways = {}
+        for term_type, terms in pathways.items():
             if not isinstance(terms, dict):
                 continue
             for term_id, term_record in terms.items():
@@ -379,7 +381,7 @@ def export_proxy_flux(data: dict[str, Any], out: Path, stem: str) -> list[Path]:
     written.append(path)
 
     path = out / f"{stem}__terms.csv"
-    write_csv(path, term_rows, ["class", "term_type", "term_id", "gene", "equation", "km", "vmax", "confidence", "provenance_ref", "parameter_basis", "sources"])
+    write_csv(path, term_rows, ["class", "term_type", "term_id", "gene", "rate_law", "km", "vmax", "confidence", "provenance_ref", "parameter_basis", "sources"])
     written.append(path)
     return written
 
