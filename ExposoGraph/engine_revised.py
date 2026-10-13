@@ -6,10 +6,9 @@ join onto the graph: a payload with ``source_node_id`` / ``target_node_id``
 rides that edge; anything else rides the node whose id is the class id.
 Getters are then a path lookup or a filtered walk.
 
-Intentionally not a drop-in. Missing relative to ``engine.py``:
-``get_flux_reaction_coverage``, the genotype-modifier wrappers, and the
-per-filter getter names (``get_node``, ``nodes_by_type``, ``subgraph_by_*``).
-Those collapse onto ``get``, ``nodes``, ``values``, and ``subgraph``.
+Intentionally not a drop-in. The old per-filter getter names
+(``get_node``, ``nodes_by_type``, ``subgraph_by_*``) collapse onto ``get``,
+``nodes``, ``values``, and ``subgraph``.
 """
 
 from __future__ import annotations
@@ -358,6 +357,59 @@ class GraphEngine:
             return [walked[k] for k in sorted(walked)]
         return [walked.get((r.pathway, r.term_key), r) for r in roster]
 
+    def get_flux_reaction_coverage(self, cls: Any) -> dict[str, Any]:
+        """Binding-edge coverage for one class. Curation report, not a pass/fail check."""
+        cls = _key(cls)
+        active, shadowed, configs = self._flux_index()
+
+        def row(reaction: FluxReaction) -> dict[str, Any]:
+            source, target = reaction.params.get("source_node_id"), reaction.params.get("target_node_id")
+            edges = self._edges(source, target)
+            payload = any(
+                reaction.term_key in ((d.get("kinetics") or {}).get("flux_terms", {})
+                                      .get(cls, {}).get(reaction.pathway, {}))
+                for d in edges
+            )
+            return {
+                "term_key": reaction.term_key,
+                "pathway": reaction.pathway,
+                "role": reaction.role,
+                "rate_law": reaction.rate_law,
+                "enzyme_id": reaction.enzyme_id,
+                "source_node_id": source,
+                "target_node_id": target,
+                "resolved": reaction.enzyme_id in self.G if reaction.enzyme_id else False,
+                "binding_edge_present": bool(edges),
+                "binding_edge_types": sorted({d.get("type") for d in edges if d.get("type")}),
+                "edge_anchored": payload,
+            }
+
+        rows = [row(r) for r in active.get(cls, [])]
+        unresolved, unbound, missing_binding, missing_payload = [], [], [], []
+        for reaction, item in zip(active.get(cls, []), rows):
+            if not item["resolved"]:
+                unresolved.append(reaction.term_key)
+                continue
+            if not (item["source_node_id"] and item["target_node_id"]):
+                unbound.append(reaction.term_key)
+            elif not item["binding_edge_present"]:
+                missing_binding.append(reaction.term_key)
+            elif not item["edge_anchored"]:
+                missing_payload.append(reaction.term_key)
+        return {
+            "carcinogen_class": cls,
+            "sources": sorted(configs.get(cls, {})),
+            "reaction_count": len(rows),
+            "resolved_enzyme_count": len(rows) - len(unresolved),
+            "edge_anchored_count": sum(item["edge_anchored"] for item in rows),
+            "unresolved_terms": unresolved,
+            "unbound_terms": unbound,
+            "missing_binding_edges": missing_binding,
+            "missing_flux_payloads": missing_payload,
+            "shadowed_reactions": [row(r) for r in shadowed if r.carcinogen_class == cls],
+            "reactions": rows,
+        }
+
     def get_flux_class_config(self, cls: Any) -> dict[str, Any]:
         """Proxy-class block; empty for measured-kinetics-only classes."""
         return dict(dig(self._flux_index()[2], (_key(cls), "proxy_flux_parameters"), {}))
@@ -432,6 +484,22 @@ class GraphEngine:
 
     def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
         return self.get_parameter_provider().get_gsh_consumers(tissue=tissue)
+
+    def get_genotype_modifiers(self, gene: str | None = None) -> dict[str, Any]:
+        """Genotype catalog, or one gene's block."""
+        from .genotypes import load_genotypes
+
+        genes = load_genotypes()["genes"]
+        return genes if gene is None else genes.get(gene, {})
+
+    def get_genotype_modifier(self, diplotype: str, gene: str) -> float:
+        """Vmax activity fraction from ``genotypes.json``."""
+        from .genotypes import activity_fraction
+
+        return activity_fraction(gene, diplotype)
+
+    def get_proxy_genotype_modifier(self, diplotype: str, gene: str | None) -> float:
+        return 1.0 if not gene else self.get_genotype_modifier(diplotype, gene)
 
     def get_tissue_expression(self, gene: str) -> dict[str, float] | None:
         return self._expression()[1].get(gene)
