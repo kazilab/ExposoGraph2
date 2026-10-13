@@ -505,29 +505,25 @@ class GraphEngine:
         return self._ensure_tissue_expression().get(gene)
 
     def _apply_tissue_expression(self, path: str | Path | None = None) -> list[str]:
-        """(Re)apply ``tissue_expression_data_raw.json`` to the relevant enzyme nodes.
+        """(Re)apply ``tissue_expression_data_raw.json`` to matching nodes.
 
         The raw file covers the 10 canonical tissue keys and 76 genes -- a superset
         of the older, pre-normalized ``tissue_expression_data.json`` (8
         tissues, 59 genes), which remains bundled only for the separate
         GTEx lookup helpers in ``tissue_subgraphs.py``, not for this method.
 
-        For every ``Enzyme`` node with an entry in the source file's
-        ``expression`` table, the node's attributes are set to:
+        Every node whose id is in the source file's ``expression`` table
+        gets:
 
         - ``tissue_weights_raw``: the raw per-tissue expression values,
           taken directly from the source file.
         - ``tissue_weights``: the same values normalized by dividing by
-          the highest raw value across that enzyme's tissues (so the
-          most-expressing tissue is always ``1.0``). This overwrites
-          any ``tissue_weights`` the node already had (e.g. baked in by
-          the bundled graph-data.json), which is no longer trusted as a
-          data source once this method has run.
+          the highest raw value across that node's tissues (so the
+          most-expressing tissue is always ``1.0``).
 
-        Enzyme nodes with no entry in the source file are left with
-        neither attribute (any pre-existing ``tissue_weights`` on them is
-        also cleared, since it can no longer be attributed to this
-        source of truth) and are reported as a warning.
+        The join is the node id, not node type, so a Receptor in the
+        table is weighted the same way as an Enzyme. Enzyme nodes with
+        no entry are left with neither attribute and reported as a warning.
 
         Returns a list of warning messages for enzyme nodes present in
         the graph but absent from the tissue expression source file.
@@ -556,22 +552,17 @@ class GraphEngine:
                 )
 
         warnings: list[str] = []
-        enzyme_ids = [
-            node_id
-            for node_id, data in self.G.nodes(data=True)
-            if data.get("type") == "Enzyme"
-        ]
-        for enzyme_id in enzyme_ids:
-            node_data = self.G.nodes[enzyme_id]
-            raw = expression.get(enzyme_id)
-            if raw is None:
-                node_data.pop("tissue_weights", None)
-                node_data.pop("tissue_weights_raw", None)
-                warnings.append(f"No tissue expression data for enzyme: {enzyme_id}")
+        for node_id, node_data in self.G.nodes(data=True):
+            raw = expression.get(node_id)
+            if raw is not None:
+                node_data["tissue_weights_raw"] = raw
+                node_data["tissue_weights"] = normalized_by_gene[node_id]
                 continue
-
-            node_data["tissue_weights_raw"] = raw
-            node_data["tissue_weights"] = normalized_by_gene[enzyme_id]
+            if node_data.get("type") != "Enzyme":
+                continue
+            node_data.pop("tissue_weights", None)
+            node_data.pop("tissue_weights_raw", None)
+            warnings.append(f"No tissue expression data for enzyme: {node_id}")
 
         return warnings
 
@@ -2056,10 +2047,9 @@ class GraphEngine:
     def get_tissues(self) -> list[str]:
         """Return every tissue name present in any node's ``tissue_weights``.
 
-        Currently only Enzyme nodes carry ``tissue_weights`` (populated by
-        :meth:`_apply_tissue_expression` from ``tissue_expression_data_raw.json``
-        at load time), but this scans all node types so it stays correct if
-        that ever changes. Sorted, deduplicated; empty if no node has
+        Any node whose id is in ``tissue_expression_data_raw.json`` carries
+        ``tissue_weights`` after :meth:`_apply_tissue_expression` runs at
+        load time. Sorted, deduplicated; empty if no node has
         ``tissue_weights`` set.
         """
         tissues: set[str] = set()
