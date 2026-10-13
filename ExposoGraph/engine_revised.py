@@ -1,12 +1,11 @@
 """Streamlined GraphEngine, for comparison with ``engine.py``.
 
 Not imported by the package. ``graph-data.json`` is the topology contract
-and is read directly here. ``data/*.json`` supplies quantitative values and
-provenance. This module does not parse artifacts through ``exporter`` or
-ground records through ``grounding``. Load bakes the join onto the graph:
-a payload with ``source_node_id`` / ``target_node_id`` rides that edge;
-anything else rides the node whose id is the class id. Getters are then a
-path lookup or a filtered walk.
+and is read directly here. ``data/*.json`` is read only while baking.
+After that, getters read the graph: endpoint payloads ride edges, class
+rosters and class config ride the class node, and document-level blocks
+ride ``G.graph``. This module does not parse artifacts through ``exporter``
+or ground records through ``grounding``.
 
 Intentionally not a drop-in. The old per-filter getter names
 (``get_node``, ``nodes_by_type``, ``subgraph_by_*``) collapse onto ``get``,
@@ -18,6 +17,7 @@ from __future__ import annotations
 import json
 import logging
 import math
+import warnings
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -25,15 +25,12 @@ from typing import Any, Callable
 
 import networkx as nx
 
-from .interaction_schema import GSHConsumer, InductionRule
+from .interaction_schema import GSHConsumer, InductionRule, TissueContext
 from .models import Edge, KnowledgeGraph, Node
 from .parameter_provider import (
     INTERACTION_BLOCK_MARKER,
     INTERACTION_ENZYME_MARKER,
     INTERACTION_SUBSTRATE_MARKER,
-    InteractionParameterProvider,
-    JSONInteractionParameterProvider,
-    KGInteractionParameterProvider,
 )
 
 logger = logging.getLogger(__name__)
@@ -99,6 +96,42 @@ def _normalize(raw: Mapping[str, float]) -> dict[str, float]:
     return {t: (v / top if top else 0.0) for t, v in raw.items()}
 
 
+def _optional_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _activity_fraction(catalog: Mapping[str, Any], gene: str, diplotype: str) -> float:
+    """Same lookup as ``genotypes.activity_fraction``, against a baked catalog."""
+    key = diplotype.lower().strip()
+    gene_block = catalog.get("genes", {}).get(gene.upper().strip(), {})
+    for phenotype in gene_block.get("phenotypes", {}).values():
+        aliases = {str(alias).lower() for alias in phenotype.get("aliases", [])}
+        if key in aliases:
+            return float(phenotype["activity_fraction"])
+    for rule in gene_block.get("contains", []):
+        if str(rule["token"]).lower() in key:
+            return float(rule["activity_fraction"])
+    scale_key = catalog.get("label_aliases", {}).get(key)
+    if scale_key is not None:
+        return float(catalog["standard_scale"][scale_key])
+    try:
+        value = float(diplotype)
+    except (TypeError, ValueError):
+        value = None
+    if value is not None and 0.0 <= value <= 2.0:
+        return value
+    warnings.warn(
+        f"Unrecognized diplotype '{diplotype}' for gene '{gene}'; defaulting to NM (1.0)",
+        stacklevel=2,
+    )
+    return 1.0
+
+
 @dataclass(frozen=True)
 class FluxReaction:
     """One flux term. Its baked graph payload is ``asdict`` minus the nesting keys."""
@@ -128,16 +161,12 @@ class GraphEngine:
 
     # ── Sources ──────────────────────────────────────────────────────────
 
-    def doc(self, name: str) -> dict[str, Any]:
-        """Parsed ``data/<name>.json``, read once per engine."""
+    def _doc(self, name: str) -> dict[str, Any]:
+        """Load-time read of ``data/<name>.json``. Getters do not call this."""
         if name not in self._docs:
             path = self.data_dir / f"{name}.json"
             self._docs[name] = json.loads(path.read_text(encoding="utf-8"))
         return self._docs[name]
-
-    def param(self, name: str, path: str | Sequence[str], default: Any = None) -> Any:
-        """Path lookup into a source document, e.g. ``param("interaction_parameters", "gsh_depletion")``."""
-        return dig(self.doc(name), path, default)
 
     # ── Mutations ────────────────────────────────────────────────────────
 
@@ -164,7 +193,6 @@ class GraphEngine:
         self.G.clear()
         self._docs: dict[str, dict[str, Any]] = {}
         self._flux: tuple[dict, list, dict] | None = None
-        self._kg_provider: InteractionParameterProvider | None = None
 
     def _add_records(self, nodes: Iterable[Node | dict[str, Any]],
                      edges: Iterable[Edge | dict[str, Any]]) -> list[str]:
@@ -196,10 +224,19 @@ class GraphEngine:
         payload = json.loads(path.read_text(encoding="utf-8"))
         self.clear()
         warnings = self._add_records(payload.get("nodes", []), payload.get("edges", []))
+        self._bake_catalogs()
         for bake in (self._bake_tissue_expression, self._bake_interaction_kinetics,
                      self._bake_flux):
             warnings += bake()
         return warnings
+
+    def _bake_catalogs(self) -> None:
+        """Copy document-level quantitative blocks onto the graph. Load only."""
+        self.G.graph["flux_metadata"] = self._doc("kinetic_parameters").get("metadata", {})
+        self.G.graph["flux_provenance"] = self._doc("proxy_flux_provenance")
+        self.G.graph["exposure_scenarios"] = self._doc("exposure_database_revised").get(
+            "exposure_scenarios", {})
+        self.G.graph["genotypes"] = self._doc("genotypes")
 
     # ── Bakes ────────────────────────────────────────────────────────────
 
@@ -210,7 +247,7 @@ class GraphEngine:
                 if types is None or d.get("type") in types]
 
     def _expression(self) -> tuple[dict, dict]:
-        raw = self.doc("tissue_expression_data_raw")["expression"]
+        raw = self._doc("tissue_expression_data_raw")["expression"]
         return raw, {gene: _normalize(values) for gene, values in raw.items()}
 
     def _bake_tissue_expression(self) -> list[str]:
@@ -229,7 +266,9 @@ class GraphEngine:
         return warnings
 
     def _bake_interaction_kinetics(self) -> list[str]:
-        doc, warnings, seen = self.doc("interaction_parameters"), [], set()
+        doc, warnings, seen = self._doc("interaction_parameters"), [], set()
+        self.G.graph["enzyme_induction"] = doc.get("enzyme_induction", {})
+        self.G.graph["gsh_depletion"] = doc.get("gsh_depletion", {})
         for block in ("competitive_inhibition", "phase2_conjugation"):
             for enzyme, enzyme_block in _entries(doc.get(block)).items():
                 target = enzyme_block.get("target_node_id")
@@ -260,6 +299,10 @@ class GraphEngine:
         for reaction, status in tagged:
             payload = {k: v for k, v in asdict(reaction).items() if k not in _NESTING}
             payload["dispatch_status"] = status
+            if reaction.carcinogen_class in self.G:
+                bucket = "flux_shadowed" if status == "shadowed" else "flux_active"
+                self.G.nodes[reaction.carcinogen_class].setdefault(bucket, []).append(
+                    {"pathway": reaction.pathway, "term_key": reaction.term_key, **payload})
             ends = (reaction.params.get("source_node_id"), reaction.params.get("target_node_id"))
             if all(ends):
                 edges = self._edges(*ends)
@@ -273,7 +316,18 @@ class GraphEngine:
             else:
                 continue
             _nest(carrier, reaction.carcinogen_class, reaction.pathway)[reaction.term_key] = payload
+        self.G.graph["flux_class_order"] = list(active)
         for cls, by_doc in configs.items():
+            if cls not in self.G:
+                continue
+            node = self.G.nodes[cls]
+            proxy = by_doc.get("proxy_flux_parameters")
+            if proxy:
+                node["flux_class_config"] = dict(proxy)
+            aggregation = (by_doc.get("kinetic_parameters") or {}).get("aggregation")
+            if isinstance(aggregation, dict):
+                node["flux_aggregation"] = dict(aggregation)
+            node["flux_sources"] = sorted(by_doc)
             signal = dig(by_doc, "proxy_flux_parameters.signal")
             if signal:
                 for edge in self._edges(signal.get("source_node_id"), signal.get("target_node_id"))[:1]:
@@ -321,7 +375,7 @@ class GraphEngine:
             configs: dict[str, dict[str, dict]] = {}
             kinetic_shadowed: set[str] = set()
             for name, root, prefix in _FLUX_DOCS:
-                for cls, cfg in _entries(self.doc(name).get(root)).items():
+                for cls, cfg in _entries(self._doc(name).get(root)).items():
                     reactions = self._reactions(cls, cfg, name, prefix)
                     configs.setdefault(cls, {})[name] = cfg
                     if name == "kinetic_parameters":
@@ -338,34 +392,31 @@ class GraphEngine:
             self._flux = (active, shadowed, configs)
         return self._flux
 
+    def _baked_reaction(self, cls: str, record: Mapping[str, Any]) -> FluxReaction:
+        payload = {k: v for k, v in record.items() if k not in {"pathway", "term_key", "dispatch_status"}}
+        return FluxReaction(carcinogen_class=cls, pathway=record["pathway"],
+                            term_key=record["term_key"], **payload)
+
     def get_flux_classes(self) -> list[str]:
-        return list(self._flux_index()[0])
+        return [cls for cls in self.G.graph.get("flux_class_order", [])
+                if self.G.nodes[cls].get("flux_active")]
 
     def get_flux_reactions(self, cls: Any, role: str | None = None) -> list[FluxReaction]:
-        reactions = self._flux_index()[0].get(_key(cls), [])
+        cls = _key(cls)
+        records = self.G.nodes[cls].get("flux_active", []) if cls in self.G else []
+        reactions = [self._baked_reaction(cls, record) for record in records]
         return [r for r in reactions if role is None or r.role == role]
 
     def get_edge_flux_reactions(self, cls: Any) -> list[FluxReaction]:
-        """Active roster read back from the graph carriers; index order if incomplete."""
-        cls = _key(cls)
-        carriers = [d for _, _, d in self.G.edges(data=True)] + list(self.G.nodes.values())
-        walked = {
-            (pathway, key): FluxReaction(carcinogen_class=cls, pathway=pathway, term_key=key,
-                                         **{k: v for k, v in p.items() if k != "dispatch_status"})
-            for data in carriers
-            for pathway, terms in (dig(data, ("kinetics", "flux_terms", cls))
-                                   or dig(data, ("flux_terms", cls)) or {}).items()
-            for key, p in terms.items() if p.get("dispatch_status") == "active"
-        }
-        roster = self.get_flux_reactions(cls)
-        if {(r.pathway, r.term_key) for r in roster} <= walked.keys():
-            return [walked[k] for k in sorted(walked)]
-        return [walked.get((r.pathway, r.term_key), r) for r in roster]
+        """Active roster baked on the class node."""
+        return self.get_flux_reactions(cls)
 
     def get_flux_reaction_coverage(self, cls: Any) -> dict[str, Any]:
         """Binding-edge coverage for one class. Curation report, not a pass/fail check."""
         cls = _key(cls)
-        active, shadowed, configs = self._flux_index()
+        node = self.G.nodes[cls] if cls in self.G else {}
+        active = [self._baked_reaction(cls, record) for record in node.get("flux_active", [])]
+        shadowed = [self._baked_reaction(cls, record) for record in node.get("flux_shadowed", [])]
 
         def row(reaction: FluxReaction) -> dict[str, Any]:
             source, target = reaction.params.get("source_node_id"), reaction.params.get("target_node_id")
@@ -389,9 +440,9 @@ class GraphEngine:
                 "edge_anchored": payload,
             }
 
-        rows = [row(r) for r in active.get(cls, [])]
+        rows = [row(r) for r in active]
         unresolved, unbound, missing_binding, missing_payload = [], [], [], []
-        for reaction, item in zip(active.get(cls, []), rows):
+        for reaction, item in zip(active, rows):
             if not item["resolved"]:
                 unresolved.append(reaction.term_key)
                 continue
@@ -403,7 +454,7 @@ class GraphEngine:
                 missing_payload.append(reaction.term_key)
         return {
             "carcinogen_class": cls,
-            "sources": sorted(configs.get(cls, {})),
+            "sources": list(node.get("flux_sources", [])),
             "reaction_count": len(rows),
             "resolved_enzyme_count": len(rows) - len(unresolved),
             "edge_anchored_count": sum(item["edge_anchored"] for item in rows),
@@ -411,22 +462,24 @@ class GraphEngine:
             "unbound_terms": unbound,
             "missing_binding_edges": missing_binding,
             "missing_flux_payloads": missing_payload,
-            "shadowed_reactions": [row(r) for r in shadowed if r.carcinogen_class == cls],
+            "shadowed_reactions": [row(r) for r in shadowed],
             "reactions": rows,
         }
 
     def get_flux_class_config(self, cls: Any) -> dict[str, Any]:
-        """Proxy-class block; empty for measured-kinetics-only classes."""
-        return dict(dig(self._flux_index()[2], (_key(cls), "proxy_flux_parameters"), {}))
+        """Proxy-class block baked on the class node."""
+        cls = _key(cls)
+        return dict(self.G.nodes[cls].get("flux_class_config", {})) if cls in self.G else {}
 
     def get_flux_aggregation(self, cls: Any) -> dict[str, Any]:
-        return dig(self._flux_index()[2], (_key(cls), "kinetic_parameters", "aggregation"), {})
+        cls = _key(cls)
+        return dict(self.G.nodes[cls].get("flux_aggregation", {})) if cls in self.G else {}
 
     def get_flux_metadata(self) -> dict[str, Any]:
-        return self.param("kinetic_parameters", "metadata", {})
+        return dict(self.G.graph.get("flux_metadata") or {})
 
     def get_flux_provenance_entry(self, ref: str) -> dict[str, Any]:
-        entry = self.param("proxy_flux_provenance", ref)
+        entry = dig(self.G.graph.get("flux_provenance") or {}, ref)
         if entry is None:
             raise KeyError(ref)
         return entry
@@ -441,8 +494,8 @@ class GraphEngine:
             if value is not None:
                 return float(value)
         if spec.get("source") == "exposure_database":
-            value = self.param("exposure_database_revised",
-                               ("exposure_scenarios", spec.get("scenario_id"), spec.get("field")))
+            value = dig(self.G.graph.get("exposure_scenarios") or {},
+                        (spec.get("scenario_id"), spec.get("field")))
             if value is not None:
                 return float(value)
         return 0.1
@@ -473,41 +526,64 @@ class GraphEngine:
 
     # ── Interaction parameters ───────────────────────────────────────────
 
-    def get_parameter_provider(self) -> InteractionParameterProvider:
-        baked = any(dig(d, ("kinetics", INTERACTION_BLOCK_MARKER)) == "competitive_inhibition"
-                    for _, _, d in self.G.edges(data=True))
-        if not baked:
-            return JSONInteractionParameterProvider(self.data_dir)
-        if self._kg_provider is None:
-            self._kg_provider = KGInteractionParameterProvider(self, data_dir=self.data_dir)
-        return self._kg_provider
-
     def get_induction_rules(self, exposure_context: str | None = None,
                             tissue: str | None = None) -> list[InductionRule]:
-        rules = self.get_parameter_provider().get_induction_rules(tissue=tissue)
-        return [r for r in rules if exposure_context in (None, r.exposure_context)]
+        rules = []
+        for context, exposure_data in (self.G.graph.get("enzyme_induction") or {}).items():
+            if not isinstance(exposure_data, dict):
+                continue
+            for enzyme, rule_data in exposure_data.items():
+                if enzyme.startswith("_") or not isinstance(rule_data, dict):
+                    continue
+                if exposure_context not in (None, context):
+                    continue
+                specificity = rule_data.get("tissue_specificity")
+                if tissue and specificity and tissue.lower() not in str(specificity).lower():
+                    continue
+                rules.append(InductionRule(
+                    exposure_context=context,
+                    enzyme=enzyme,
+                    fold_induction=_optional_float(rule_data.get("fold_induction")),
+                    range_min=_optional_float(rule_data.get("range_min")),
+                    range_max=_optional_float(rule_data.get("range_max")),
+                    mechanism=rule_data.get("mechanism"),
+                    tissue_context=TissueContext(tissue=specificity),
+                    metadata=dict(rule_data),
+                ))
+        return rules
 
     def get_gsh_consumers(self, tissue: str | None = None) -> list[GSHConsumer]:
-        return self.get_parameter_provider().get_gsh_consumers(tissue=tissue)
+        consumers = (self.G.graph.get("gsh_depletion") or {}).get("consumers", {})
+        parsed = []
+        for name, data in consumers.items():
+            data = data if isinstance(data, dict) else {}
+            context = TissueContext(tissue=data.get("tissue"))
+            if tissue and context.tissue and context.tissue.lower() != tissue.lower():
+                continue
+            parsed.append(GSHConsumer(
+                name=name,
+                enzyme=data.get("enzyme"),
+                substrate_class=data.get("substrate_class"),
+                gsh_per_umol_substrate=_optional_float(data.get("gsh_per_umol_substrate")),
+                tissue_context=context,
+                metadata=dict(data),
+            ))
+        return parsed
 
     def get_genotype_modifiers(self, gene: str | None = None) -> dict[str, Any]:
-        """Genotype catalog, or one gene's block."""
-        from .genotypes import load_genotypes
-
-        genes = load_genotypes()["genes"]
+        """Baked genotype catalog, or one gene's block."""
+        genes = (self.G.graph.get("genotypes") or {}).get("genes", {})
         return genes if gene is None else genes.get(gene, {})
 
     def get_genotype_modifier(self, diplotype: str, gene: str) -> float:
-        """Vmax activity fraction from ``genotypes.json``."""
-        from .genotypes import activity_fraction
-
-        return activity_fraction(gene, diplotype)
+        """Vmax activity fraction from the catalog baked on the graph."""
+        return _activity_fraction(self.G.graph.get("genotypes") or {}, gene, diplotype)
 
     def get_proxy_genotype_modifier(self, diplotype: str, gene: str | None) -> float:
         return 1.0 if not gene else self.get_genotype_modifier(diplotype, gene)
 
     def get_tissue_expression(self, gene: str) -> dict[str, float] | None:
-        return self._expression()[1].get(gene)
+        return self.get(gene, key="tissue_weights")
 
     # ── Queries ──────────────────────────────────────────────────────────
 
