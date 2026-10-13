@@ -1,10 +1,12 @@
 """Streamlined GraphEngine, for comparison with ``engine.py``.
 
-Not imported by the package. ``graph-data.json`` is the topology contract.
-``data/*.json`` supplies quantitative values and provenance. Load bakes the
-join onto the graph: a payload with ``source_node_id`` / ``target_node_id``
-rides that edge; anything else rides the node whose id is the class id.
-Getters are then a path lookup or a filtered walk.
+Not imported by the package. ``graph-data.json`` is the topology contract
+and is read directly here. ``data/*.json`` supplies quantitative values and
+provenance. This module does not parse artifacts through ``exporter`` or
+ground records through ``grounding``. Load bakes the join onto the graph:
+a payload with ``source_node_id`` / ``target_node_id`` rides that edge;
+anything else rides the node whose id is the class id. Getters are then a
+path lookup or a filtered walk.
 
 Intentionally not a drop-in. The old per-filter getter names
 (``get_node``, ``nodes_by_type``, ``subgraph_by_*``) collapse onto ``get``,
@@ -23,8 +25,6 @@ from typing import Any
 
 import networkx as nx
 
-from .config import GraphMode
-from .grounding import prepare_knowledge_graph
 from .interaction_schema import GSHConsumer, InductionRule
 from .models import Edge, KnowledgeGraph, Node
 from .parameter_provider import (
@@ -166,19 +166,14 @@ class GraphEngine:
         self._flux: tuple[dict, list, dict] | None = None
         self._kg_provider: InteractionParameterProvider | None = None
 
-    def load(self, kg: KnowledgeGraph, *, mode: GraphMode | str = GraphMode.EXPLORATORY) -> list[str]:
-        self.clear()
-        return self.merge(kg, mode=mode)
-
-    def merge(self, kg: KnowledgeGraph, *, mode: GraphMode | str = GraphMode.EXPLORATORY) -> list[str]:
-        refs = None
-        if self.node_count:
-            current, _ = prepare_knowledge_graph(self.to_knowledge_graph(), mode=GraphMode.STRICT)
-            refs = [("current_graph", current)] if current.nodes else None
-        prepared, warnings = prepare_knowledge_graph(kg, mode=mode, reference_graphs=refs)
-        for node in prepared.nodes:
-            self.add_node(node)
-        for edge in prepared.edges:
+    def _add_records(self, nodes: Iterable[Node | dict[str, Any]],
+                     edges: Iterable[Edge | dict[str, Any]]) -> list[str]:
+        """Add records as given. No grounding and no strict-mode filtering."""
+        warnings: list[str] = []
+        for raw in nodes:
+            self.add_node(raw if isinstance(raw, Node) else Node(**raw))
+        for raw in edges:
+            edge = raw if isinstance(raw, Edge) else Edge(**raw)
             try:
                 self.add_edge(edge)
             except ValueError as exc:
@@ -186,11 +181,21 @@ class GraphEngine:
                 logger.warning("Skipped edge during merge: %s", exc)
         return warnings
 
+    def load(self, kg: KnowledgeGraph) -> list[str]:
+        self.clear()
+        return self.merge(kg)
+
+    def merge(self, kg: KnowledgeGraph) -> list[str]:
+        return self._add_records(kg.nodes, kg.edges)
+
     def load_reference_graph(self, graph_path: str | Path = GRAPH_PATH) -> list[str]:
         """Load ``graph-data.json`` and bake every ``data/*.json`` overlay onto it."""
-        from .exporter import parse_graph_artifact  # import cycle
-
-        warnings = self.load(parse_graph_artifact(Path(graph_path)))
+        path = Path(graph_path)
+        if path.suffix.lower() != ".json":
+            raise ValueError(f"engine_revised loads JSON only, not {path.name}")
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        self.clear()
+        warnings = self._add_records(payload.get("nodes", []), payload.get("edges", []))
         for bake in (self._bake_tissue_expression, self._bake_interaction_kinetics,
                      self._bake_flux):
             warnings += bake()
