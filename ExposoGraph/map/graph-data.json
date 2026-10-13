@@ -388,16 +388,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "lung, placenta, lymphocytes",
       "activity_score": 1.3,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.2487,
-        "prostate": 0.0151,
-        "bladder": 0.201,
-        "colon": 0.0477,
-        "breast": 0.3518,
-        "kidney": 0.0302,
-        "esophagus": 0.0452
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -440,16 +430,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "breast, prostate, uterus, lung",
       "activity_score": 1.3,
-      "tissue_weights": {
-        "liver": 0.2404,
-        "lung": 0.7596,
-        "prostate": 1.0,
-        "bladder": 0.2885,
-        "colon": 0.1587,
-        "breast": 0.8029,
-        "kidney": 0.5529,
-        "esophagus": 0.1923
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -492,16 +472,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver",
       "activity_score": 1.5,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -544,16 +514,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, nasal mucosa",
       "activity_score": 2.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -595,16 +555,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "lung, nasal mucosa",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0526,
-        "prostate": 0.0,
-        "bladder": 0.0526,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -643,16 +593,6 @@
       "detail": "Auxiliary xenobiotic CYP represented for expanded Phase I competition coverage, including NNK-linked activation context",
       "phase": "I",
       "role": "Activation",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0268,
-        "esophagus": 0.0
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -668,16 +608,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -720,16 +650,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.5,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0374
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -772,16 +692,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, brain, lung, GI tract",
       "activity_score": 2.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -824,16 +734,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung",
       "activity_score": 1.3,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -872,16 +772,6 @@
       "detail": "Pulmonary xenobiotic CYP represented for lung-specific benzene bioactivation and inhalation-focused competition context",
       "phase": "I",
       "role": "Activation",
-      "tissue_weights": {
-        "liver": 0.0,
-        "lung": 1.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.6364
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -897,16 +787,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -949,16 +829,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung",
       "activity_score": 1.25,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0871,
-        "prostate": 0.0915,
-        "bladder": 0.1152,
-        "colon": 0.0624,
-        "breast": 0.1334,
-        "kidney": 0.0742,
-        "esophagus": 0.1304
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -1000,16 +870,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "adrenal, gonad, prostate",
-      "tissue_weights": {
-        "liver": 0.4676,
-        "lung": 0.036,
-        "prostate": 0.036,
-        "bladder": 0.0216,
-        "colon": 0.0324,
-        "breast": 0.0288,
-        "kidney": 1.0,
-        "esophagus": 0.0647
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1051,16 +911,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "prostate, seminal vesicle, genital skin, liver",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0181,
-        "prostate": 0.5882,
-        "bladder": 0.0452,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1102,16 +952,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "skin, liver, prostate, breast",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0719,
-        "prostate": 0.0599,
-        "bladder": 0.0479,
-        "colon": 0.0719,
-        "breast": 0.0719,
-        "kidney": 0.1497,
-        "esophagus": 0.6467
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1153,16 +993,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "adipose, ovary, breast, placenta, brain",
-      "tissue_weights": {
-        "liver": 0.0,
-        "lung": 0.3,
-        "prostate": 0.15,
-        "bladder": 0.5,
-        "colon": 0.1,
-        "breast": 1.0,
-        "kidney": 0.05,
-        "esophagus": 0.05
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1201,16 +1031,6 @@
       "detail": "6β-hydroxylation of testosterone; AR nuclear translocation in prostate",
       "phase": "I",
       "role": "Mixed",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0297,
-        "prostate": 0.0729,
-        "bladder": 0.0276,
-        "colon": 0.0468,
-        "breast": 0.0241,
-        "kidney": 0.0379,
-        "esophagus": 0.0717
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1225,16 +1045,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "prostate, breast, liver, endometrium",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.1833,
-        "prostate": 0.0375,
-        "bladder": 0.2722,
-        "colon": 0.3788,
-        "breast": 0.4331,
-        "kidney": 0.4001,
-        "esophagus": 0.198
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1277,16 +1087,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0519,
-        "prostate": 0.0868,
-        "bladder": 0.2078,
-        "colon": 0.0619,
-        "breast": 0.1029,
-        "kidney": 0.058,
-        "esophagus": 0.2728
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -1370,16 +1170,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "lung, brain, placenta",
-      "tissue_weights": {
-        "liver": 0.0218,
-        "lung": 0.2291,
-        "prostate": 0.142,
-        "bladder": 0.1935,
-        "colon": 0.1446,
-        "breast": 0.1383,
-        "kidney": 0.2147,
-        "esophagus": 1.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -1422,16 +1212,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0522,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -1473,16 +1253,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "bladder, colon, breast, lung",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.2245,
-        "prostate": 0.4184,
-        "bladder": 0.1122,
-        "colon": 0.398,
-        "breast": 0.2041,
-        "kidney": 0.2449,
-        "esophagus": 0.2551
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1524,16 +1294,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, GI tract, platelets, brain",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.1863,
-        "prostate": 0.0306,
-        "bladder": 0.0445,
-        "colon": 0.1326,
-        "breast": 0.0628,
-        "kidney": 0.134,
-        "esophagus": 0.0206
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1576,16 +1336,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0128,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.0104,
-        "esophagus": 0.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -1627,16 +1377,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, kidney, GI tract, mammary",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.8118,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1679,16 +1419,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, lung, colon",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.0337,
-        "lung": 0.2312,
-        "prostate": 0.1149,
-        "bladder": 0.4591,
-        "colon": 0.2629,
-        "breast": 0.4391,
-        "kidney": 0.5403,
-        "esophagus": 1.0
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "canonical",
@@ -1730,16 +1460,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, breast, brain, endometrium",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.3269,
-        "prostate": 0.2993,
-        "bladder": 0.2854,
-        "colon": 0.259,
-        "breast": 0.2892,
-        "kidney": 0.2899,
-        "esophagus": 0.6899
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1781,16 +1501,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, prostate, intestine",
-      "tissue_weights": {
-        "liver": 0.1894,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 1.0,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1829,16 +1539,6 @@
       "detail": "Glucuronidation of DHT/androsterone; compensates for UGT2B17 deletion",
       "phase": "II",
       "role": "Detoxification",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0,
-        "colon": 0.0869,
-        "breast": 0.0,
-        "kidney": 0.0,
-        "esophagus": 0.0
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1850,16 +1550,6 @@
       "detail": "3β-Hydroxysteroid dehydrogenase type 2; DHEA→androstenedione conversion",
       "phase": "I",
       "role": "Activation",
-      "tissue_weights": {
-        "liver": 0.2532,
-        "lung": 0.0253,
-        "prostate": 0.0506,
-        "bladder": 0.0253,
-        "colon": 1.0,
-        "breast": 0.0253,
-        "kidney": 0.2278,
-        "esophagus": 0.0506
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1871,16 +1561,6 @@
       "detail": "3α-Hydroxysteroid dehydrogenase; DHT→3α-androstanediol inactivation",
       "phase": "II",
       "role": "Detoxification",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0522,
-        "prostate": 0.0243,
-        "bladder": 0.349,
-        "colon": 0.0517,
-        "breast": 0.4373,
-        "kidney": 0.0292,
-        "esophagus": 0.4268
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
@@ -1895,16 +1575,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, intestine, kidney, BBB, placenta",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.1692,
-        "prostate": 0.3692,
-        "bladder": 0.2308,
-        "colon": 0.5,
-        "breast": 0.5538,
-        "kidney": 0.6615,
-        "esophagus": 0.1692
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1946,16 +1616,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, kidney, intestine",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0,
-        "bladder": 0.0136,
-        "colon": 0.0,
-        "breast": 0.0,
-        "kidney": 0.1057,
-        "esophagus": 0.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -1997,16 +1657,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; ClinPGx",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "intestine, liver, placenta, mammary, BBB",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.2405,
-        "prostate": 0.5696,
-        "bladder": 0.2658,
-        "colon": 0.4747,
-        "breast": 0.3291,
-        "kidney": 0.1899,
-        "esophagus": 0.1646
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -2048,16 +1698,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
-      "tissue_weights": {
-        "liver": 0.5167,
-        "lung": 0.7943,
-        "prostate": 0.7895,
-        "bladder": 1.0,
-        "colon": 0.9067,
-        "breast": 0.89,
-        "kidney": 0.7703,
-        "esophagus": 0.7943
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -2100,16 +1740,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.8594,
-        "lung": 0.7266,
-        "prostate": 0.9023,
-        "bladder": 1.0,
-        "colon": 0.7305,
-        "breast": 0.9023,
-        "kidney": 0.8125,
-        "esophagus": 0.6289
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -2227,16 +1857,6 @@
       "source_db": "NCBI Gene; GTEx via HPA; CTD",
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.5797,
-        "prostate": 0.7391,
-        "bladder": 0.6957,
-        "colon": 0.6304,
-        "breast": 0.5797,
-        "kidney": 0.913,
-        "esophagus": 0.7536
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -2279,16 +1899,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous (nuclear + mitochondrial)",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.702,
-        "lung": 0.3843,
-        "prostate": 0.5412,
-        "bladder": 0.5294,
-        "colon": 0.5078,
-        "breast": 0.4431,
-        "kidney": 1.0,
-        "esophagus": 0.3373
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -2331,16 +1941,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "liver, colon, lung, brain",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.1303,
-        "prostate": 0.1652,
-        "bladder": 0.197,
-        "colon": 0.1577,
-        "breast": 0.2256,
-        "kidney": 0.2518,
-        "esophagus": 0.1557
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -3299,16 +2899,6 @@
       "tissue": "Liver",
       "variant": "rs3740393, rs7085104, rs11191454 — haplotypes alter MMA/DMA ratio and cancer risk",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0843,
-        "prostate": 0.2006,
-        "bladder": 0.0988,
-        "colon": 0.1265,
-        "breast": 0.1017,
-        "kidney": 0.2733,
-        "esophagus": 0.064
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3330,16 +2920,6 @@
       "tissue": "Liver, Kidney",
       "variant": "Ala140Asp (rs4925) — homozygous variant + high As: OR 4.79 for urothelial carcinoma",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.378,
-        "prostate": 0.1945,
-        "bladder": 0.2229,
-        "colon": 0.2189,
-        "breast": 0.2129,
-        "kidney": 0.3339,
-        "esophagus": 0.1957
-      },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3361,16 +2941,6 @@
       "tissue": "Liver",
       "variant": "Asn142Asp (rs156697) — associated with increased urinary iAs%",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.3043,
-        "lung": 0.2391,
-        "prostate": 0.8913,
-        "bladder": 0.3696,
-        "colon": 0.2391,
-        "breast": 0.413,
-        "kidney": 0.913,
-        "esophagus": 1.0
-      },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3392,16 +2962,6 @@
       "tissue": "Liver, Kidney, Ubiquitous",
       "variant": "rs11076161 AA genotype: associated with oral squamous cell carcinoma susceptibility",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.3021,
-        "prostate": 0.0682,
-        "bladder": 0.1301,
-        "colon": 0.0607,
-        "breast": 0.5011,
-        "kidney": 0.0672,
-        "esophagus": 0.0454
-      },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3423,16 +2983,6 @@
       "tissue": "Liver, Kidney, Ubiquitous",
       "variant": "rs1610216, rs10636 — haplotype G/A/C/T: OR 6.2 for OSCC",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.2028,
-        "prostate": 0.1045,
-        "bladder": 0.0583,
-        "colon": 0.0574,
-        "breast": 0.1621,
-        "kidney": 0.1346,
-        "esophagus": 0.0678
-      },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3453,16 +3003,6 @@
       "source_db": "Science 1993; PMID:8105536; PMC4685955",
       "tissue": "Antigen-presenting cells",
       "variant": "βGlu69 (multiple alleles, *0201 primary) — present in 97% of CBD cases vs 30% controls; OR >30",
-      "tissue_weights": {
-        "liver": 0.1395,
-        "lung": 1.0,
-        "prostate": 0.256,
-        "bladder": 0.2128,
-        "colon": 0.2207,
-        "breast": 0.4031,
-        "kidney": 0.3107,
-        "esophagus": 0.1601
-      },
       "tier": 1,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3484,16 +3024,6 @@
       "tissue": "Ubiquitous",
       "variant": "Functional inhibition by arsenic rather than genetic polymorphism",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.7807,
-        "lung": 0.5877,
-        "prostate": 0.6287,
-        "bladder": 1.0,
-        "colon": 0.9664,
-        "breast": 0.617,
-        "kidney": 0.4971,
-        "esophagus": 0.7895
-      },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3515,16 +3045,6 @@
       "tissue": "Macrophages, Intestine",
       "variant": "Multiple SNPs associated with metal accumulation levels in GWAS (PMC2898853)",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.0635,
-        "lung": 1.0,
-        "prostate": 0.0395,
-        "bladder": 0.0503,
-        "colon": 0.0401,
-        "breast": 0.0623,
-        "kidney": 0.0431,
-        "esophagus": 0.0251
-      },
       "tier": 3,
       "origin": "imported",
       "match_status": "unmatched",
@@ -3846,16 +3366,6 @@
       "role": "Detoxification",
       "tissue": "liver, esophagus, stomach",
       "variant": "rs671 (Glu504Lys)",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.1354,
-        "prostate": 0.0589,
-        "bladder": 0.1137,
-        "colon": 0.1284,
-        "breast": 0.1684,
-        "kidney": 0.1623,
-        "esophagus": 0.102
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3917,16 +3427,6 @@
       "role": "Activation",
       "tissue": "liver, stomach",
       "variant": "rs1229984 (His47Arg)",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.2176,
-        "prostate": 0.0149,
-        "bladder": 0.1846,
-        "colon": 0.1127,
-        "breast": 0.5562,
-        "kidney": 0.037,
-        "esophagus": 0.0606
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3944,16 +3444,6 @@
       "role": "Activation",
       "tissue": "liver, stomach",
       "variant": "rs698 (Ile349Val)",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.0,
-        "prostate": 0.0145,
-        "bladder": 0.0,
-        "colon": 0.1455,
-        "breast": 0.0282,
-        "kidney": 0.0104,
-        "esophagus": 0.0
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3970,16 +3460,6 @@
       "phase": "I",
       "role": "Detoxification",
       "tissue": "liver, ubiquitous",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.4219,
-        "prostate": 0.5191,
-        "bladder": 0.8942,
-        "colon": 0.804,
-        "breast": 0.6444,
-        "kidney": 0.5283,
-        "esophagus": 0.445
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -3996,16 +3476,6 @@
       "group": "DNA Repair (FA)",
       "role": "Repair",
       "tissue": "bone marrow, ubiquitous",
-      "tissue_weights": {
-        "liver": 0.1364,
-        "lung": 0.4545,
-        "prostate": 0.4091,
-        "bladder": 0.4091,
-        "colon": 0.4091,
-        "breast": 0.4545,
-        "kidney": 0.2273,
-        "esophagus": 1.0
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -4022,16 +3492,6 @@
       "role": "Transcription Factor",
       "tissue": "liver, lung, skin, immune cells",
       "variant": "rs2066853 (Arg554Lys)",
-      "tissue_weights": {
-        "liver": 0.6777,
-        "lung": 1.0,
-        "prostate": 0.4502,
-        "bladder": 0.9668,
-        "colon": 0.4408,
-        "breast": 0.872,
-        "kidney": 0.2038,
-        "esophagus": 0.4929
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -4084,16 +3544,6 @@
       "role": "Transcription Factor",
       "tissue": "ubiquitous",
       "variant": "rs2228099 (Ile471Val)",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.9461,
-        "prostate": 0.6432,
-        "bladder": 0.8797,
-        "colon": 0.7427,
-        "breast": 0.9212,
-        "kidney": 0.5436,
-        "esophagus": 0.6556
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -4109,16 +3559,6 @@
       "detail": "AhR repressor; negative feedback regulator. cg05575921 CpG hypomethylation is a validated blood-based biomarker for tobacco/TCDD exposure.",
       "role": "Transcription Factor",
       "tissue": "ubiquitous",
-      "tissue_weights": {
-        "liver": 0.4167,
-        "lung": 0.6667,
-        "prostate": 0.4167,
-        "bladder": 1.0,
-        "colon": 0.7917,
-        "breast": 0.3333,
-        "kidney": 0.4167,
-        "esophagus": 0.9167
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -4135,16 +3575,6 @@
       "phase": "II",
       "role": "Bioactivation",
       "tissue": "kidney (proximal tubule)",
-      "tissue_weights": {
-        "liver": 1.0,
-        "lung": 0.2712,
-        "prostate": 0.5932,
-        "bladder": 0.6017,
-        "colon": 0.3093,
-        "breast": 0.2627,
-        "kidney": 0.6441,
-        "esophagus": 0.4153
-      },
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": [
@@ -4846,16 +4276,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.9386,
-        "lung": 0.8421,
-        "prostate": 0.7456,
-        "bladder": 1.0,
-        "colon": 0.886,
-        "breast": 0.886,
-        "kidney": 0.693,
-        "esophagus": 0.8772
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -4898,16 +4318,6 @@
       "evidence": "Canonical human gene identifier and nomenclature.",
       "tissue": "ubiquitous",
       "activity_score": 1.0,
-      "tissue_weights": {
-        "liver": 0.439,
-        "lung": 0.5,
-        "prostate": 0.4512,
-        "bladder": 0.6341,
-        "colon": 0.6707,
-        "breast": 0.7805,
-        "kidney": 0.5244,
-        "esophagus": 1.0
-      },
       "tier": 2,
       "origin": "imported",
       "match_status": "canonical",
@@ -6487,30 +5897,6 @@
       "detail": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
       "group": "Aldehydes",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "Aldehyde": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "Acetaldehyde (from ethanol metabolism)",
-          "aggregation": {
-            "exposure_default_field": "acetaldehyde",
-            "vmax_field": {
-              "detoxification": "Vmax_U_per_mg",
-              "ethanol_oxidation": "Vmax_U_per_mg"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in U/mg; ratio dimensionally consistent",
-            "status": "dedicated_function",
-            "notes": "Hand-rolled: diplotype-driven parameter-row selection (ALDH2/ADH1B) and the ethanol substrate override (metadata exposure default, no gm/tw scaling) are model-specific."
-          },
-          "epidemiological_validation": {
-            "ALDH2_heterozygote_ESCC_OR": {
-              "value": "2.34-6.50",
-              "source": "Asian cohort studies"
-            },
-            "note": "800-fold CLint reduction in *2/*2; heterozygote ~25% wildtype — consistent with dose-response OR pattern"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6554,29 +5940,6 @@
       "detail": "Carcinogen group aggregating the 2 Aromatic Amines members.",
       "group": "Aromatic Amines",
       "kinetics_model": "semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "AromaticAmines": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_aromatic_amines_general_population",
-            "field": "estimated_tissue_conc_uM"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "GSTP1": {
-                  "gene": "GSTP1",
-                  "equation": "michaelis_menten",
-                  "vmax": 7.0,
-                  "km": 0.02,
-                  "confidence": "estimated",
-                  "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling.",
-                  "provenance_ref": "classes.AromaticAmines.detox_terms.GSTP1"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
@@ -6592,31 +5955,6 @@
       "detail": "Industrial/environmental chemical. CYP2E1-mediated oxidation to phenol, then further to catechol and benzoquinone — reactive hematotoxic/leukemogenic metabolites.",
       "group": "Benzene",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "Benzene": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "Benzene",
-          "aggregation": {
-            "exposure_default_field": "benzene",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_mg_estimated"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in pmol/min/mg (estimated Vmax)",
-            "entry_names": {
-              "CYP2E1_liver": "CYP2E1"
-            },
-            "derived_terms": {
-              "NQO1": {
-                "base_term": "CYP2E1_liver",
-                "fraction": 0.4,
-                "form": "fraction_of_base",
-                "confidence": "low"
-              }
-            }
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6632,30 +5970,6 @@
       "detail": "TCE oxidized by CYP2E1/CYP1A2 to trichloroethylene oxide → trichloroacetaldehyde → trichloroacetic acid and other metabolites. Also conjugated to GSH via GSTT1.",
       "group": "Chlorinated Solvents",
       "kinetics_model": "michaelis_menten + semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "ChlorinatedSolvent": {
-          "model_kind": "semi_quantitative_proxy",
-          "index_carcinogen": "Trichloroethylene (TCE)",
-          "exposure_defaults": {
-            "source": "kinetic_parameters",
-            "field": "TCE"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "non_genotoxic_clearance_proxy": {
-                  "rate_law": "derived_scale",
-                  "graph_node_id": null,
-                  "scale_of": "CYP2E1",
-                  "scale": 0.6,
-                  "tissue_weight_floor": 0.2,
-                  "confidence": "estimated",
-                  "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
-                  "provenance_ref": "classes.ChlorinatedSolvent.detox_terms.non_genotoxic_clearance_proxy"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6676,16 +5990,6 @@
       "detail": "Persistent organic pollutant acting through AhR signaling rather than direct metabolic activation. Induces CYP1A1/CYP1B1 expression, amplifying downstream PAH activation.",
       "group": "Dioxins",
       "kinetics_model": "receptor_mediated + receptor_mediated_proxy",
-      "flux_class_metadata": {
-        "Dioxin": {
-          "model_kind": "receptor_mediated_proxy",
-          "index_carcinogen": "TCDD (2,3,7,8-tetrachlorodibenzo-p-dioxin)",
-          "exposure_defaults": {
-            "source": "kinetic_parameters",
-            "field": "TCDD"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6706,16 +6010,6 @@
       "detail": "Carcinogen group aggregating the 1 Estrogen member.",
       "group": "Estrogen",
       "kinetics_model": "semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "EstrogenMetabolites": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_estrogen_premenopausal_no_exogenous",
-            "field": "estimated_tissue_conc_uM"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
@@ -6731,25 +6025,6 @@
       "detail": "Heterocyclic amine formed in cooked meat. N-hydroxylation by CYP1A2/CYP1A1/CYP1B1 generates reactive N-OH-PhIP.",
       "group": "HCAs",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "HCA": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "PhIP (2-amino-1-methyl-6-phenylimidazo[4,5-b]pyridine)",
-          "aggregation": {
-            "exposure_default_field": "PhIP",
-            "vmax_field": {
-              "activation": "Vmax_nmol_min_nmolP450"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in nmol/min/nmolP450",
-            "detox_fraction_of_activation": 0.2,
-            "detox_entry": {
-              "name": "estimated_detox_fraction",
-              "confidence": "estimated"
-            }
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6765,50 +6040,6 @@
       "detail": "Heavy metals including arsenic, cadmium, chromium. Mechanism involves indirect genotoxicity — oxidative stress, DNA repair inhibition, epigenetic dysregulation rather than direct enzyme-mediated metabolism. Limited Michaelis-Menten parameters available.",
       "group": "Heavy Metals",
       "kinetics_model": "semi_quantitative + semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "HeavyMetal": {
-          "model_kind": "semi_quantitative_proxy",
-          "index_carcinogen": "Arsenic (inorganic)",
-          "exposure_defaults": {
-            "source": "kinetic_parameters",
-            "field": "arsenic"
-          }
-        ,
-          "class_level_terms": {
-              "activation_terms": {
-                "general_ROS": {
-                  "graph_node_id": null,
-                  "equation": "saturating",
-                  "scale": 5.0,
-                  "km": 1.0,
-                  "confidence": "estimated",
-                  "note": "Indirect genotoxicity proxy for oxidative DNA damage burden.",
-                  "supported_tissues": [
-                    "bladder",
-                    "lung",
-                    "skin",
-                    "liver"
-                  ],
-                  "provenance_ref": "classes.HeavyMetal.activation_terms.general_ROS"
-                },
-                "cadmium_stress_proxy": {
-                  "graph_node_id": null,
-                  "equation": "saturating",
-                  "scale": 2.0,
-                  "km": 0.5,
-                  "confidence": "estimated",
-                  "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure.",
-                  "supported_tissues": [
-                    "kidney",
-                    "liver",
-                    "lung",
-                    "prostate"
-                  ],
-                  "provenance_ref": "classes.HeavyMetal.activation_terms.cadmium_stress_proxy"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6843,23 +6074,6 @@
       "detail": "Mycotoxin requiring CYP-mediated epoxidation to the reactive AFB1-8,9-epoxide (AFBO); AFQ1 is a detoxification product",
       "group": "Mycotoxins",
       "kinetics_model": "mixed",
-      "flux_class_metadata": {
-        "Aflatoxin": {
-          "model_kind": "mixed",
-          "index_carcinogen": "Aflatoxin B1 (AFB1)",
-          "aggregation": {
-            "exposure_default_field": "AFB1",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_pmolP450",
-              "detoxification": "Vmax_pmol_min_pmolP450"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "All fluxes in pmol/min/pmolP450; GSTA1 Vmax is estimated",
-            "status": "dedicated_function",
-            "notes": "Dedicated function: term-factor sharing (CYP3A4_AFQ1 reuses CYP3A4 gm/tw) is model-specific. Term kinetics, estimates, fraction contributions, and the GSTA1 tissue-weight proxy live on the terms; entry/total rounding and the unit note are read from this block."
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -6875,92 +6089,6 @@
       "detail": "Tobacco-specific nitrosamine. α-hydroxylation by CYP2A13 generates reactive methylating and pyridyloxobutylating species.",
       "group": "Nitrosamines",
       "kinetics_model": "michaelis_menten + semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "Nitrosamine": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "NNK (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanone)",
-          "aggregation": {
-            "exposure_default_field": "NNK",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_pmolP450"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in pmol/min/pmolP450",
-            "derived_terms": {
-              "CYP2A6": {
-                "base_term": "CYP2A13",
-                "fraction": 0.005,
-                "form": "relative_to_base",
-                "confidence": "moderate"
-              }
-            },
-            "detox_fraction_of_activation": 0.3,
-            "detox_entry": {
-              "name": "NNAL_reduction",
-              "confidence": "estimated"
-            }
-          },
-          "class_level_terms": {
-            "detoxification": {
-              "carbonyl_reduction": {
-                "rate_law": "michaelis_menten",
-                "source_node_id": "NNK",
-                "dormant": true,
-                "reaction": "NNK → NNAL (reduction, detoxification product)",
-                "Km_uM": null,
-                "CLint_relative": "moderate",
-                "tissue_expression": [
-                  "liver",
-                  "lung",
-                  "blood"
-                ],
-                "confidence": "low",
-                "provenance_ref": "carcinogen_classes.Nitrosamine.pathways.detoxification.carbonyl_reduction",
-                "sources": [
-                  "Hecht SS nitrosamine review",
-                  "PMID:29788210 (Ashmore et al., Carcinogenesis 2018;39(8):1079-1088 — NNK carbonyl-reduction enzyme attribution)"
-                ],
-                "notes": "Carbonyl reduction to NNAL (4-(methylnitrosamino)-1-(3-pyridyl)-1-butanol) — major competing pathway; exact kinetics not provided. Deliberately enzyme-less: the pathway is a multi-enzyme aggregate (cytosolic CBR1/AKR1C1–C4 forming (S)-NNAL, microsomal HSD17B12/HSD11B1 forming (R)-NNAL; Ashmore et al., Carcinogenesis 2018;39(8):1079-1088, PMID 29788210), carried at class level rather than bound to a single reductase."
-              }
-            }
-          }
-        },
-        "NDMA": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "N-Nitrosodimethylamine (NDMA)",
-          "aggregation": {
-            "exposure_default_field": "NDMA",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_mg"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Flux in pmol/min/mg microsomal protein",
-            "detox_fraction_of_activation": 0.1,
-            "detox_entries": false
-          }
-        },
-        "NDEA": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_nitrosamines_dietary_general_population",
-            "field": "estimated_tissue_conc_uM"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "GSTP1": {
-                  "gene": "GSTP1",
-                  "equation": "michaelis_menten",
-                  "vmax": 8.0,
-                  "km": 0.02,
-                  "confidence": "estimated",
-                  "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
-                  "provenance_ref": "classes.NDEA.detox_terms.GSTP1"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -7000,37 +6128,6 @@
       "detail": "Polycyclic aromatic hydrocarbons — require metabolic activation to reactive diol-epoxide intermediates",
       "group": "PAHs",
       "kinetics_model": "michaelis_menten",
-      "flux_class_metadata": {
-        "PAH": {
-          "model_kind": "michaelis_menten",
-          "index_carcinogen": "Benzo[a]pyrene",
-          "aggregation": {
-            "exposure_default_field": "BaP",
-            "vmax_field": {
-              "activation": "Vmax_pmol_min_pmolP450",
-              "detoxification": "kcat_s"
-            },
-            "km_field": "Km_uM",
-            "unit_note": "Activation in pmol/min/pmolP450; detox scaled via CLint normalization",
-            "activation_efficiency_term": {
-              "term": "EPHX1",
-              "reference_CLint": 40.0,
-              "output_field": "ephx1_efficiency"
-            },
-            "detox_total_scale": 764.0
-          },
-          "epidemiological_validation": {
-            "GSTM1_null_lung_cancer_OR": {
-              "value": "1.22-1.46",
-              "source": "Meta-analyses"
-            },
-            "CYP1A1_high_GSTM1_null_lung_cancer_OR": {
-              "value": "4.67",
-              "source": "Combined genotype studies"
-            }
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "kinetic_parameters.json",
@@ -7088,16 +6185,6 @@
       "detail": "Carcinogen group aggregating the 1 UV Radiation member.",
       "group": "UV Radiation",
       "kinetics_model": "damage_repair_proxy",
-      "flux_class_metadata": {
-        "UV_Radiation": {
-          "model_kind": "damage_repair_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "group_uv_radiation_general_population",
-            "field": "estimated_DNA_damage_relative"
-          }
-        }
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
@@ -7113,75 +6200,6 @@
       "detail": "Carcinogen group aggregating the 1 Vinyl Chloride member.",
       "group": "Vinyl Chloride",
       "kinetics_model": "semi_quantitative_proxy",
-      "flux_class_metadata": {
-        "VinylChloride": {
-          "model_kind": "semi_quantitative_proxy",
-          "exposure_defaults": {
-            "source": "exposure_database",
-            "scenario_id": "VinylChloride_general_population",
-            "field": "estimated_tissue_conc_uM"
-          }
-        ,
-          "class_level_terms": {
-              "detox_terms": {
-                "GSTM1": {
-                  "gene": "GSTM1",
-                  "equation": "michaelis_menten",
-                  "vmax": 9.0,
-                  "km": 30.0,
-                  "confidence": "estimated",
-                  "note": "Secondary GST detoxification proxy for vinyl-chloride metabolites.",
-                  "supported_tissues": [
-                    "liver",
-                    "lung",
-                    "kidney"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.detox_terms.GSTM1"
-                },
-                "EPHX1": {
-                  "gene": "EPHX1",
-                  "equation": "michaelis_menten",
-                  "vmax": 7.0,
-                  "km": 20.0,
-                  "confidence": "estimated",
-                  "note": "Epoxide hydrolysis proxy for reactive vinyl-chloride intermediates.",
-                  "supported_tissues": [
-                    "liver",
-                    "lung"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.detox_terms.EPHX1"
-                },
-                "ALDH2": {
-                  "gene": "ALDH2",
-                  "equation": "michaelis_menten",
-                  "vmax": 5.0,
-                  "km": 50.0,
-                  "confidence": "estimated",
-                  "note": "Aldehyde-handling proxy for downstream chloroacetaldehyde burden.",
-                  "supported_tissues": [
-                    "liver",
-                    "lung"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.detox_terms.ALDH2"
-                }
-              },
-              "repair_terms": {
-                "ERCC2": {
-                  "rate_law": "repair",
-                  "gene": "ERCC2",
-                  "scale": 0.35,
-                  "confidence": "estimated",
-                  "note": "NER proxy for etheno-adduct repair burden.",
-                  "supported_tissues": [
-                    "liver",
-                    "brain",
-                    "lung"
-                  ],
-                  "provenance_ref": "classes.VinylChloride.repair_terms.ERCC2"
-                }
-              }
-            }}
-      },
       "provenance": [
         {
           "source_db": "proxy_flux_parameters.json",
