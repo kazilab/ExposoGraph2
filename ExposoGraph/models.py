@@ -268,6 +268,7 @@ class Edge(BaseModel):
     type: EdgeType
     label: Optional[str] = None
     carcinogen: Optional[str] = None
+    substrate_node_id: Optional[str] = None
     source_db: Optional[str] = None
     evidence: Optional[str] = None
     pmid: Optional[str] = None
@@ -321,6 +322,10 @@ class KnowledgeGraph(BaseModel):
             if edge.carcinogen and edge.carcinogen not in node_ids:
                 bad.append(
                     f"Edge references missing carcinogen node: {edge.carcinogen!r}"
+                )
+            if edge.substrate_node_id and edge.substrate_node_id not in node_ids:
+                bad.append(
+                    f"Edge references missing substrate node: {edge.substrate_node_id!r}"
                 )
         if bad:
             raise ValueError(
