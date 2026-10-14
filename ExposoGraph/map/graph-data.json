@@ -2279,6 +2279,26 @@
       ]
     },
     {
+      "id": "Chloroacetaldehyde",
+      "label": "Chloroacetaldehyde",
+      "type": "Metabolite",
+      "detail": "Spontaneous rearrangement product of chloroethylene oxide. ALDH2 oxidizes it to chloroacetic acid.",
+      "reactivity": "High",
+      "source_db": "IARC",
+      "evidence": "Chloroethylene oxide rearranges to chloroacetaldehyde; ALDH2 oxidizes chloroacetaldehyde to chloroacetic acid.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "IARC",
+          "record_id": "Monograph 100F",
+          "evidence": "Vinyl chloride is oxidized to chloroethylene oxide, which rearranges to chloroacetaldehyde. ALDH2 converts chloroacetaldehyde to chloroacetic acid.",
+          "citation": "IARC Monographs Volume 100F, Vinyl chloride",
+          "url": "https://www.ncbi.nlm.nih.gov/books/NBK304420/"
+        }
+      ]
+    },
+    {
       "id": "PhIP_NAc",
       "label": "PhIP-N-acetyl",
       "type": "Metabolite",
@@ -7720,6 +7740,44 @@
       "provenance": [
         {
           "evidence": "Endpoint for classes.VinylChloride.pathways.detoxification.EPHX1. Estimated proxy, not an independent kinetic claim."
+        }
+      ]
+    },
+    {
+      "source": "Chloroethylene_oxide",
+      "target": "Chloroacetaldehyde",
+      "type": "TRANSFORMS_SPONTANEOUSLY",
+      "label": "Rearrangement to chloroacetaldehyde",
+      "carcinogen": "VinylChloride",
+      "evidence": "Chloroethylene oxide rearranges spontaneously to chloroacetaldehyde.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "IARC",
+          "record_id": "Monograph 100F",
+          "evidence": "Spontaneous rearrangement of chloroethylene oxide to chloroacetaldehyde.",
+          "citation": "IARC Monographs Volume 100F",
+          "url": "https://www.ncbi.nlm.nih.gov/books/NBK304420/"
+        }
+      ]
+    },
+    {
+      "source": "Chloroacetaldehyde",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
+      "label": "ALDH2 oxidation",
+      "carcinogen": "VinylChloride",
+      "evidence": "ALDH2 oxidizes chloroacetaldehyde to chloroacetic acid. Endpoint for the existing estimated vinyl-chloride ALDH2 proxy, not a new measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "IARC",
+          "record_id": "Monograph 100F",
+          "evidence": "ALDH2 converts chloroacetaldehyde to chloroacetic acid.",
+          "citation": "IARC Monographs Volume 100F",
+          "url": "https://www.ncbi.nlm.nih.gov/books/NBK304420/"
         }
       ]
     },

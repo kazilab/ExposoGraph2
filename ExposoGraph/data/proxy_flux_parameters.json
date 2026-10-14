@@ -365,11 +365,13 @@
             "rate_law": "michaelis_menten"
           },
           "ALDH2": {
+            "source_node_id": "Chloroacetaldehyde",
+            "target_node_id": "ALDH2",
             "gene": "ALDH2",
             "vmax": 5.0,
             "km": 50.0,
             "confidence": "estimated",
-            "note": "Aldehyde-handling proxy for downstream chloroacetaldehyde burden.",
+            "note": "Aldehyde-handling proxy for downstream chloroacetaldehyde burden. Affiliated with Chloroacetaldehyde to ALDH2. Not a new measurement.",
             "supported_tissues": ["liver", "lung"],
             "provenance_ref": "classes.VinylChloride.pathways.detoxification.ALDH2",
             "rate_law": "michaelis_menten"
