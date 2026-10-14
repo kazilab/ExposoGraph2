@@ -12,11 +12,6 @@ class AppMode(str, Enum):
     LOCAL = "local"
 
 
-class LLMProvider(str, Enum):
-    OPENAI = "openai"
-    OLLAMA = "ollama"
-
-
 class GraphMode(str, Enum):
     EXPLORATORY = "exploratory"
     STRICT = "strict"
