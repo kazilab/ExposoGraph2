@@ -5894,7 +5894,7 @@
       "id": "group_aldehydes",
       "label": "Aldehydes",
       "type": "CarcinogenGroup",
-      "detail": "Ethanol oxidized sequentially: ethanol → acetaldehyde (ADH) → acetate (ALDH2/ALDH1A1). Acetaldehyde is the proximate carcinogen.",
+      "detail": "Environmental and endogenous aldehyde carcinogens. Acetaldehyde is cleared by ALDH2 and ALDH1A1. Ethanol oxidation to intracellular acetaldehyde is the alcohols path (Ethanol to ADH to Acetaldehyde_int), not a member of this group.",
       "group": "Aldehydes",
       "kinetics_model": "michaelis_menten",
       "provenance": [
@@ -9604,6 +9604,40 @@
       "provenance": [
         {
           "evidence": "Cytosolic backup acetaldehyde oxidation; residual activity in ALDH2*2 homozygotes (PMC3525274)"
+        }
+      ]
+    },
+    {
+      "source": "Acetaldehyde",
+      "target": "ALDH2",
+      "type": "DETOXIFIED_BY",
+      "carcinogen": "Acetaldehyde",
+      "evidence": "Environmental acetaldehyde is the same ALDH2 substrate as intracellular acetaldehyde. Mitochondrial clearance; rs671 ALDH2*2 impairs oxidation (PMC4376259). Kinetics are the Acetaldehyde_int pair, not a separate measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PMC",
+          "record_id": "PMC4376259",
+          "evidence": "Same enzyme-substrate clearance as Acetaldehyde_int to ALDH2, applied to the environmental acetaldehyde node.",
+          "citation": "PMC4376259"
+        }
+      ]
+    },
+    {
+      "source": "Acetaldehyde",
+      "target": "ALDH1A1",
+      "type": "DETOXIFIED_BY",
+      "carcinogen": "Acetaldehyde",
+      "evidence": "Environmental acetaldehyde is the same ALDH1A1 substrate as intracellular acetaldehyde. Cytosolic backup oxidation, lower affinity than ALDH2 (PMC3525274). Kinetics are the Acetaldehyde_int pair, not a separate measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PMC",
+          "record_id": "PMC3525274",
+          "evidence": "Same enzyme-substrate clearance as Acetaldehyde_int to ALDH1A1, applied to the environmental acetaldehyde node.",
+          "citation": "PMC3525274"
         }
       ]
     },
