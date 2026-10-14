@@ -397,6 +397,63 @@
             "confidence": "high",
             "sources": ["PMC3525274"],
             "tissue_expression": ["liver", "lung", "stomach", "kidney"]
+          },
+          "ALDH2_star1_Acetaldehyde": {
+            "source_node_id": "Acetaldehyde",
+            "target_node_id": "ALDH2",
+            "rate_law": "michaelis_menten",
+            "diplotype": "*1/*1",
+            "reaction": "Acetaldehyde → Acetate",
+            "Km_uM": 0.20,
+            "Vmax_U_per_mg": 0.60,
+            "CLint": 3000.0,
+            "genotype_label": "wildtype — extremely high affinity and activity",
+            "confidence": "high",
+            "notes": "Same enzyme-substrate parameters as ALDH2_star1 on Acetaldehyde_int. Not an independent measurement.",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "heart", "muscle"]
+          },
+          "ALDH2_star2_homozygous_Acetaldehyde": {
+            "source_node_id": "Acetaldehyde",
+            "target_node_id": "ALDH2",
+            "rate_law": "michaelis_menten",
+            "diplotype": "*2/*2",
+            "reaction": "Acetaldehyde → Acetate",
+            "Km_uM": 4.6,
+            "Vmax_U_per_mg": 0.017,
+            "CLint": 3.70,
+            "genotype_label": "variant homozygous — ~800-fold reduction in CLint vs wildtype",
+            "activity_fraction": 0.001,
+            "confidence": "high",
+            "notes": "Same enzyme-substrate parameters as ALDH2_star2_homozygous on Acetaldehyde_int. Not an independent measurement.",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "heart", "muscle"]
+          },
+          "ALDH2_star1_star2_Acetaldehyde": {
+            "source_node_id": "Acetaldehyde",
+            "target_node_id": "ALDH2",
+            "diplotype": "*1/*2",
+            "reaction": "Acetaldehyde → Acetate",
+            "activity_fraction": 0.25,
+            "genotype_label": "heterozygote — partial dominance model; retains ~25% of homozygous wildtype activity",
+            "confidence": "moderate",
+            "notes": "Same partial-dominance note as ALDH2_star1_star2 on Acetaldehyde_int. No Km or Vmax on the source row, so none is invented here.",
+            "sources": ["PMC3525274 — partial dominance model"],
+            "tissue_expression": ["liver", "heart", "muscle"]
+          },
+          "ALDH1A1_Acetaldehyde": {
+            "source_node_id": "Acetaldehyde",
+            "target_node_id": "ALDH1A1",
+            "rate_law": "michaelis_menten",
+            "reaction": "Acetaldehyde → Acetate (backup pathway)",
+            "Km_uM": 33.0,
+            "Vmax_U_per_mg": 0.63,
+            "CLint": 19.09,
+            "genotype_label": "backup enzyme — lower affinity than ALDH2*1 but expressed ubiquitously",
+            "confidence": "high",
+            "notes": "Same enzyme-substrate parameters as ALDH1A1 on Acetaldehyde_int. Not an independent measurement.",
+            "sources": ["PMC3525274"],
+            "tissue_expression": ["liver", "lung", "stomach", "kidney"]
           }
         },
         "formaldehyde_oxidation": {
