@@ -70,11 +70,13 @@
             "rate_law": "michaelis_menten"
           },
           "GSTP1": {
+            "source_node_id": "NOH_4ABP",
+            "target_node_id": "GSTP1",
             "gene": "GSTP1",
             "vmax": 7.0,
             "km": 0.02,
             "confidence": "estimated",
-            "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling.",
+            "note": "Secondary GST proxy for bladder- and lung-relevant aromatic-amine handling. Affiliated with NOH_4ABP to GSTP1, parallel to the existing GSTM1 edge. Not a new measurement.",
             "provenance_ref": "classes.group_aromatic_amines.pathways.detoxification.GSTP1",
             "rate_law": "michaelis_menten"
           }
@@ -284,11 +286,13 @@
         },
         "detoxification": {
           "GSTP1": {
+            "source_node_id": "NDEA",
+            "target_node_id": "GSTP1",
             "gene": "GSTP1",
             "vmax": 8.0,
             "km": 0.02,
             "confidence": "estimated",
-            "note": "Secondary conjugation proxy for reactive nitrosamine intermediates.",
+            "note": "Secondary conjugation proxy for reactive nitrosamine intermediates. Affiliated with NDEA to GSTP1 because no reactive-intermediate node exists. Not a new measurement.",
             "provenance_ref": "classes.NDEA.pathways.detoxification.GSTP1",
             "rate_law": "michaelis_menten"
           }
@@ -337,21 +341,25 @@
             "rate_law": "michaelis_menten"
           },
           "GSTM1": {
+            "source_node_id": "Chloroethylene_oxide",
+            "target_node_id": "GSTM1",
             "gene": "GSTM1",
             "vmax": 9.0,
             "km": 30.0,
             "confidence": "estimated",
-            "note": "Secondary GST detoxification proxy for vinyl-chloride metabolites.",
+            "note": "Secondary GST detoxification proxy for vinyl-chloride metabolites. Affiliated with chloroethylene oxide to GSTM1, parallel to the GSTT1 edge. Not a new measurement.",
             "supported_tissues": ["liver", "lung", "kidney"],
             "provenance_ref": "classes.VinylChloride.pathways.detoxification.GSTM1",
             "rate_law": "michaelis_menten"
           },
           "EPHX1": {
+            "source_node_id": "Chloroethylene_oxide",
+            "target_node_id": "EPHX1",
             "gene": "EPHX1",
             "vmax": 7.0,
             "km": 20.0,
             "confidence": "estimated",
-            "note": "Epoxide hydrolysis proxy for reactive vinyl-chloride intermediates.",
+            "note": "Epoxide hydrolysis proxy for reactive vinyl-chloride intermediates. Affiliated with chloroethylene oxide to EPHX1. Not a new measurement.",
             "supported_tissues": ["liver", "lung"],
             "provenance_ref": "classes.VinylChloride.pathways.detoxification.EPHX1",
             "rate_law": "michaelis_menten"
@@ -369,11 +377,13 @@
         },
         "repair": {
           "ERCC2": {
+            "source_node_id": "etheno_dA",
+            "target_node_id": "ERCC2",
             "rate_law": "repair",
             "gene": "ERCC2",
             "scale": 0.35,
             "confidence": "estimated",
-            "note": "NER proxy for etheno-adduct repair burden.",
+            "note": "NER proxy for etheno-adduct repair burden. Affiliated with etheno_dA to ERCC2. Not a new measurement.",
             "supported_tissues": ["liver", "brain", "lung"],
             "provenance_ref": "classes.VinylChloride.pathways.repair.ERCC2"
           }
@@ -510,12 +520,14 @@
         },
         "detoxification": {
           "non_genotoxic_clearance_proxy": {
+            "source_node_id": "CYP2E1",
+            "target_node_id": "Chloral_hydrate",
             "rate_law": "derived_scale",
             "scale_of": "CYP2E1",
             "scale": 0.6,
             "tissue_weight_floor": 0.2,
             "confidence": "estimated",
-            "note": "Estimated downstream oxidative clearance balancing TCE bioactivation.",
+            "note": "Estimated downstream oxidative clearance balancing TCE bioactivation. Affiliated with the existing CYP2E1 to Chloral_hydrate edge. Not a new measurement.",
             "provenance_ref": "classes.group_chlorinated_solvents.pathways.detoxification.non_genotoxic_clearance_proxy"
           }
         }
@@ -598,19 +610,23 @@
       "pathways": {
         "activation": {
           "general_ROS": {
+            "source_node_id": "ROS_metal",
+            "target_node_id": "8_OHdG",
             "scale": 5.0,
             "km": 1.0,
             "confidence": "estimated",
-            "note": "Indirect genotoxicity proxy for oxidative DNA damage burden.",
+            "note": "Indirect genotoxicity proxy for oxidative DNA damage burden. Affiliated with the existing ROS_metal to 8_OHdG edge so the shared burden is not copied onto every metal. Not a new measurement.",
             "supported_tissues": ["bladder", "lung", "skin", "liver"],
             "provenance_ref": "classes.group_heavy_metals.pathways.activation.general_ROS",
             "rate_law": "saturating"
           },
           "cadmium_stress_proxy": {
+            "source_node_id": "Cd",
+            "target_node_id": "ROS_metal",
             "scale": 2.0,
             "km": 0.5,
             "confidence": "estimated",
-            "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure.",
+            "note": "Cadmium-like mitochondrial and DNA-damage stress proxy for mixed heavy-metal exposure. Affiliated with the existing Cd to ROS_metal edge. Not a new measurement.",
             "supported_tissues": ["kidney", "liver", "lung", "prostate"],
             "provenance_ref": "classes.group_heavy_metals.pathways.activation.cadmium_stress_proxy",
             "rate_law": "saturating"

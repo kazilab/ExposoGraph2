@@ -7549,6 +7549,21 @@
       "provenance": []
     },
     {
+      "source": "NOH_4ABP",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
+      "label": "Secondary GST proxy",
+      "carcinogen": "4ABP",
+      "evidence": "Affiliation for the existing estimated aromatic-amine GSTP1 proxy, parallel to NOH_4ABP to GSTM1. Not a new measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Endpoint for classes.group_aromatic_amines.pathways.detoxification.GSTP1. Estimated proxy, not an independent kinetic claim."
+        }
+      ]
+    },
+    {
       "source": "GSTM1",
       "target": "AFB1_GSH",
       "type": "PRODUCES",
@@ -7677,6 +7692,36 @@
       "canonical_predicate": "DETOXIFIED_BY",
       "canonical_namespace": "schema",
       "provenance": []
+    },
+    {
+      "source": "Chloroethylene_oxide",
+      "target": "GSTM1",
+      "type": "DETOXIFIED_BY",
+      "label": "Secondary GST proxy",
+      "carcinogen": "VinylChloride",
+      "evidence": "Affiliation for the existing estimated vinyl-chloride GSTM1 proxy, parallel to chloroethylene oxide to GSTT1. Not a new measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Endpoint for classes.VinylChloride.pathways.detoxification.GSTM1. Estimated proxy, not an independent kinetic claim."
+        }
+      ]
+    },
+    {
+      "source": "Chloroethylene_oxide",
+      "target": "EPHX1",
+      "type": "DETOXIFIED_BY",
+      "label": "Epoxide hydrolysis proxy",
+      "carcinogen": "VinylChloride",
+      "evidence": "Affiliation for the existing estimated EPHX1 proxy. Chloroethylene oxide is the epoxide on the vinyl-chloride path. Not a new measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Endpoint for classes.VinylChloride.pathways.detoxification.EPHX1. Estimated proxy, not an independent kinetic claim."
+        }
+      ]
     },
     {
       "source": "GSTT1",
@@ -8271,6 +8316,21 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "source": "etheno_dA",
+      "target": "ERCC2",
+      "type": "REPAIRED_BY",
+      "label": "NER proxy",
+      "carcinogen": "VinylChloride",
+      "evidence": "Affiliation for the existing estimated ERCC2 repair proxy. etheno_dA is formed from chloroethylene oxide. Not a new measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Endpoint for classes.VinylChloride.pathways.repair.ERCC2. Estimated proxy, not an independent kinetic claim."
+        }
+      ]
     },
     {
       "source": "8_OHdG",
@@ -9561,6 +9621,21 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "source": "NDEA",
+      "target": "GSTP1",
+      "type": "DETOXIFIED_BY",
+      "label": "Parent-edge GST proxy",
+      "carcinogen": "NDEA",
+      "evidence": "Affiliation for the existing estimated NDEA GSTP1 proxy. No NDEA reactive-intermediate node exists, so this sits on the parent compound. Not a new measurement.",
+      "origin": "seeded",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "evidence": "Endpoint for classes.NDEA.pathways.detoxification.GSTP1. Parent-compound approximation, not an independent kinetic claim."
+        }
+      ]
     },
     {
       "source": "TCE",
