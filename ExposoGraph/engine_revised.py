@@ -639,36 +639,112 @@ class GraphEngine:
         return {d["id"] for d in self.nodes(type="Enzyme")
                 if (d.get("tissue_weights") or {}).get(tissue, float("-inf")) >= threshold}
 
+    def _steps(self, node: str, arrival: str | None, *,
+               reverse: bool = False, edge_types: Sequence[str] | None = None):
+        """Outgoing steps that keep the substrate or agonist we arrived with.
+
+        An enzyme ``PRODUCES`` edge is taken only when its ``substrate_node_id``
+        is the node we entered from. A receptor ``INDUCES`` or ``INHIBITS``
+        edge is taken only when its ``agonist_node_id`` is that same node.
+        Reverse walks apply the same pairing from the downstream side.
+        """
+        ntype = self.G.nodes[node].get("type") if node in self.G else None
+        step = self.G.in_edges if reverse else self.G.out_edges
+        for u, v, d in step(node, data=True):
+            other = u if reverse else v
+            if edge_types is not None and d.get("type") not in edge_types:
+                continue
+            et = d.get("type")
+            if not reverse:
+                if et == "PRODUCES" and ntype == "Enzyme" and d.get("substrate_node_id") != arrival:
+                    continue
+                if et in ("INDUCES", "INHIBITS") and ntype == "Receptor" and d.get("agonist_node_id") != arrival:
+                    continue
+            elif ntype == "Enzyme" and et == "SUBSTRATE_OF":
+                if not any(p.get("type") == "PRODUCES" and p.get("target") == arrival
+                           and p.get("substrate_node_id") == other
+                           for _, _, p in self.G.out_edges(node, data=True)):
+                    continue
+            elif ntype == "Receptor" and et == "AGONIZES":
+                if not any(p.get("type") in ("INDUCES", "INHIBITS") and p.get("target") == arrival
+                           and p.get("agonist_node_id") == other
+                           for _, _, p in self.G.out_edges(node, data=True)):
+                    continue
+            yield other, d
+
+    def cone(self, *starts: str) -> Subgraph:
+        """Nodes and edges reached by a constrained walk from ``starts``.
+
+        The same enzyme may be entered from more than one substrate. Each
+        entry is expanded once. Edges are the ones the walk crossed, not
+        every edge among the reached nodes.
+        """
+        queued = {(s, None) for s in starts if s in self.G}
+        seen: set[tuple[str, str | None]] = set()
+        edges: list[dict] = []
+        taken: set[tuple[str, str, int]] = set()
+        while queued:
+            node, arrival = queued.pop()
+            if (node, arrival) in seen:
+                continue
+            seen.add((node, arrival))
+            for nxt, data in self._steps(node, arrival):
+                key = (data.get("source", node), data.get("target", nxt), id(data))
+                if key not in taken:
+                    taken.add(key)
+                    edges.append(dict(data))
+                queued.add((nxt, node))
+        node_ids = {n for n, _ in seen}
+        return {"nodes": [dict(self.G.nodes[n]) for n in node_ids], "edges": edges}
+
     def filtered_subgraph(self, *, group: str | None = None, tissue: str | None = None,
                           tissue_threshold: float | None = None, edge_type: str | None = None,
                           node_type: str | None = None) -> Subgraph:
-        """Edges satisfying every given axis (per-edge AND), plus their endpoints."""
+        """Constrained cone for a carcinogen group, then the other axes.
+
+        A group is the union of walks from its carcinogens, not every edge
+        tagged with those ids. Tissue, edge type, and node type still filter
+        that cone. With no group, those axes apply to the whole graph.
+        """
         if tissue_threshold is not None and tissue is None:
             raise ValueError("tissue_threshold requires tissue to also be given")
-        axes: list[Callable[[str, str, dict], bool]] = []
-        if edge_type is not None:
-            axes.append(lambda u, v, d: d.get("type") == edge_type)
         if group is not None:
-            ids = {d["id"] for d in self.nodes(type="Carcinogen", group=group)}
-            axes.append(lambda u, v, d: bool({u, v, d.get("carcinogen")} & ids))
+            starts = [d["id"] for d in self.nodes(type="Carcinogen", group=group)]
+            walked = self.cone(*starts)
+            edges = walked["edges"]
+        else:
+            edges = [dict(d) for _, _, d in self.G.edges(data=True)]
+        if edge_type is not None:
+            edges = [e for e in edges if e.get("type") == edge_type]
         if tissue is not None:
             ids_t = self._tissue_ids(tissue, tissue_threshold if tissue_threshold is not None else float("-inf"))
-            axes.append(lambda u, v, d: bool({u, v} & ids_t))
+            edges = [e for e in edges if {e.get("source"), e.get("target")} & ids_t]
         if node_type is not None:
             ids_n = {d["id"] for d in self.nodes(type=node_type)}
-            axes.append(lambda u, v, d: bool({u, v} & ids_n))
-        return self.subgraph(edge_where=lambda u, v, d: all(a(u, v, d) for a in axes))
+            edges = [e for e in edges if {e.get("source"), e.get("target")} & ids_n]
+        keep = {n for e in edges for n in (e.get("source"), e.get("target")) if n in self.G}
+        if group is not None:
+            keep |= {d["id"] for d in self.nodes(type="Carcinogen", group=group)}
+        return {"nodes": [dict(self.G.nodes[n]) for n in keep], "edges": edges}
 
     def map_viewer_subgraph(self, *, node_types: Sequence[str] | None = None,
                             carcinogen_groups: Sequence[str] | None = None,
                             exclude_types: Sequence[str] = _VIEWER_EXCLUDED) -> Subgraph:
-        """Induced subgraph: node-type axis ∩ nodes reachable from the groups' carcinogens."""
+        """Node-type filter over the constrained cone, not the induced descendant set."""
+        if carcinogen_groups:
+            starts = [d["id"] for g in carcinogen_groups for d in self.nodes(type="Carcinogen", group=g)]
+            walked = self.cone(*starts)
+            def allowed(node_id: str) -> bool:
+                kind = self.G.nodes[node_id].get("type")
+                return kind not in exclude_types and (not node_types or kind in node_types)
+
+            edges = [e for e in walked["edges"] if allowed(e["source"]) and allowed(e["target"])]
+            keep = {n for e in edges for n in (e["source"], e["target"])}
+            keep |= {s for s in starts if allowed(s)}
+            return {"nodes": [dict(self.G.nodes[n]) for n in keep], "edges": edges}
         keep = {d["id"] for d in self.nodes(
             where=lambda d: d.get("type") not in exclude_types
             and (not node_types or d.get("type") in node_types))}
-        if carcinogen_groups:
-            starts = [d["id"] for g in carcinogen_groups for d in self.nodes(type="Carcinogen", group=g)]
-            keep &= set(starts).union(*(nx.descendants(self.G, s) for s in starts))
         return self.subgraph(keep)
 
     def dim_by_tissue_threshold(self, subgraph: Subgraph, tissue: str, threshold: float) -> Subgraph:
@@ -684,22 +760,20 @@ class GraphEngine:
 
     def paths(self, source_node_id: str, *, reverse: bool = False,
               edge_types: Sequence[str] | None = None) -> list[Subgraph]:
-        """Every maximal simple directed path from (or, ``reverse``, into) a Carcinogen."""
-        step = self.G.in_edges if reverse else self.G.out_edges
+        """Every maximal simple path from a node, without fanning through a shared enzyme or receptor."""
         found: list[Subgraph] = []
 
-        def walk(node: str, seen: list[str], edges: list[dict]) -> None:
-            nxt = [(u if reverse else v, d) for u, v, d in step(node, data=True)
-                   if (edge_types is None or d.get("type") in edge_types)
-                   and (u if reverse else v) not in seen]
+        def walk(node: str, arrival: str | None, seen: list[str], edges: list[dict]) -> None:
+            nxt = [(nbr, data) for nbr, data in self._steps(
+                node, arrival, reverse=reverse, edge_types=edge_types) if nbr not in seen]
             for neighbor, data in nxt:
-                walk(neighbor, seen + [neighbor], edges + [data])
+                walk(neighbor, node, seen + [neighbor], edges + [data])
             if not nxt and edges:
                 order = slice(None, None, -1 if reverse else 1)
                 found.append({"nodes": [dict(self.G.nodes[n]) for n in seen[order]],
                               "edges": [dict(e) for e in edges[order]]})
 
-        walk(source_node_id, [source_node_id], [])
+        walk(source_node_id, None, [source_node_id], [])
         return found
 
     # ── Serialization ────────────────────────────────────────────────────
