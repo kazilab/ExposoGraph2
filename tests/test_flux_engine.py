@@ -13,7 +13,6 @@ from ExposoGraph.flux_engine import (
     RiskClassification,
     compute_full_profile,
     compute_pathway_flux,
-    genotype_modifier,
     qivive_intrinsic_clearance,
     solve_flux_steady_state,
 )
@@ -158,11 +157,12 @@ def test_compute_pathway_flux_supports_packaged_wave2_classes(
 
 
 def test_flux_engine_recognizes_manuscript_genotype_aliases():
-    assert genotype_modifier("*1F/*1F", "CYP1A2") == 1.5
-    assert genotype_modifier("PM", "CYP1A2") == 0.3
-    assert genotype_modifier("slow", "NAT2") == 0.2
-    assert genotype_modifier("null", "GSTM1") == 0.05
-    assert genotype_modifier("null", "GSTT1") == 0.05
+    modifier = flux_engine._get_flux_contract_engine().get_genotype_modifier
+    assert modifier("*1F/*1F", "CYP1A2") == 1.5
+    assert modifier("PM", "CYP1A2") == 0.3
+    assert modifier("slow", "NAT2") == 0.2
+    assert modifier("null", "GSTM1") == 0.05
+    assert modifier("null", "GSTT1") == 0.05
 
 
 def test_induction_factors_scale_activation_vmax_without_changing_inputs():
