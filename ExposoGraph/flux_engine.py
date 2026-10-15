@@ -979,7 +979,7 @@ def _compute_generic_proxy_flux(
     (receptor/signaling model) keeps its dedicated function: its model
     structure is not a term-sum proxy.
     """
-    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    active_engine = engine if engine is not None and hasattr(engine, "cone") else _get_flux_contract_engine()
     reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
     cfg = _active_proxy_class_params(carcinogen_class, engine)
 
@@ -1101,7 +1101,7 @@ def _compute_generic_mechanistic_flux(
     dedicated functions (their aggregation blocks carry a
     ``dedicated_function`` status note).
     """
-    active_engine = engine if engine is not None else _get_flux_contract_engine()
+    active_engine = engine if engine is not None and hasattr(engine, "cone") else _get_flux_contract_engine()
     reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
     agg = active_engine.get_flux_aggregation(carcinogen_class)
     vmax_fields: dict[str, Any] = dict(agg.get("vmax_field", {}))
@@ -1481,6 +1481,7 @@ def _flux_entry(row: "FluxReaction", value: float, modifier: float, weight: floa
 
 
 def _compute_aflatoxin_flux(
+    carcinogen_class: str,
     genotypes: GenotypeMap,
     tissue: str,
     S: float,
@@ -1488,10 +1489,10 @@ def _compute_aflatoxin_flux(
     *,
     engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
-    """AFB1 fluxes. Each edge is one measurement. Modifiers come from that edge."""
-    active_engine = engine if engine is not None else _get_flux_contract_engine()
-    reactions = active_engine.get_edge_flux_reactions("group_mycotoxins")
-    agg = active_engine.get_flux_aggregation("group_mycotoxins")
+    """Measured terms on the cone. Membership is the walk, not a class roster."""
+    active_engine = engine if engine is not None and hasattr(engine, "cone") else _get_flux_contract_engine()
+    reactions = active_engine.get_edge_flux_reactions(carcinogen_class)
+    agg = active_engine.get_flux_aggregation(carcinogen_class)
     activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
     total_activation = 0.0
@@ -1504,66 +1505,14 @@ def _compute_aflatoxin_flux(
             continue
         row, value, modifier, weight = evaluated
         gene = str(row.enzyme_id or row.params.get("target_node_id") or row.term_key)
+        source = str(row.params.get("source_node_id") or "")
+        key = gene if len(rows) > 1 or (source and row.term_key.endswith(source)) else row.term_key
         entry = _flux_entry(row, value, modifier, weight, genotypes.get(gene))
         if row.role == "activation":
-            activation_enzymes[row.term_key] = entry
+            activation_enzymes[key] = entry
             total_activation += value
         else:
-            detox_enzymes[row.term_key] = entry
-            total_detox += value
-    return {
-        "activation_enzymes": activation_enzymes,
-        "detox_enzymes": detox_enzymes,
-        "total_activation": total_activation,
-        "total_detox": total_detox,
-        "unit_note": agg["unit_note"],
-    }
-
-
-def _compute_aldehyde_flux(
-    genotypes: GenotypeMap,
-    tissue: str,
-    S: float,
-    tissue_weight_source: FluxTissueWeightSource,
-    *,
-    engine: "GraphEngine | None" = None,
-) -> FluxResultDict:
-    """Aldehyde clearance. Diplotype rows are alternatives, not extra enzymes.
-
-    Copied rows on a second substrate for the same enzyme are not a second
-    measurement. Which start owns ethanol oxidation is unchanged here.
-    """
-    active_engine = engine if engine is not None else _get_flux_contract_engine()
-    reactions = active_engine.get_edge_flux_reactions("group_aldehydes")
-    agg = active_engine.get_flux_aggregation("group_aldehydes")
-    grouped: dict[tuple, tuple] = {}
-    for (source, target, role), rows in _edge_groups(reactions).items():
-        if (target, role) in grouped:
-            continue
-        if not any(_measured_constants(row.params) for row in rows):
-            continue
-        grouped[(target, role)] = (source, rows)
-
-    activation_enzymes: dict[str, Any] = {}
-    detox_enzymes: dict[str, Any] = {}
-    total_activation = 0.0
-    total_detox = 0.0
-    ethanol = active_engine.get_flux_metadata()["exposure_defaults_uM"]["ethanol"]
-    for (target, _role), (source, rows) in grouped.items():
-        substrate = ethanol if source == "Ethanol" else S
-        evaluated = _evaluate_selected(
-            active_engine, rows, genotypes, tissue, substrate, tissue_weight_source
-        )
-        if evaluated is None:
-            continue
-        row, value, modifier, weight = evaluated
-        gene = str(row.enzyme_id or target)
-        entry = _flux_entry(row, value, modifier, weight, genotypes.get(gene))
-        if source == "Ethanol":
-            activation_enzymes[gene] = entry
-            total_activation += value
-        else:
-            detox_enzymes[gene] = entry
+            detox_enzymes[key] = entry
             total_detox += value
     return {
         "activation_enzymes": activation_enzymes,
@@ -1700,15 +1649,13 @@ _GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset(
 # passed (bare JSON fallback otherwise).
 _DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"group_dioxins"})
 
-# Dedicated functions that still choose which edges belong in the result.
-# Row selection inside them follows the graph: a measured diplotype row is
-# used as-is, and activity_fraction applies only when that row has no constants.
+# Measured classes whose diplotype rows are selected from the cone.
 _DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"group_mycotoxins", "group_aldehydes"})
 
 _DISPATCH: dict[str, FluxCalculator] = {
     "group_pahs": partial(_compute_generic_mechanistic_flux, "group_pahs"),
-    "group_mycotoxins": _compute_aflatoxin_flux,
-    "group_aldehydes": _compute_aldehyde_flux,
+    "group_mycotoxins": partial(_compute_aflatoxin_flux, "group_mycotoxins"),
+    "group_aldehydes": partial(_compute_aflatoxin_flux, "group_aldehydes"),
     "group_nitrosamines": partial(
         _compute_generic_mechanistic_flux, "group_nitrosamines"
     ),
