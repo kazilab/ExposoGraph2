@@ -910,22 +910,28 @@ def _get_proxy_class_params(class_name: str) -> JsonDict:
 _FLUX_CONTRACT_ENGINE: "GraphEngine | None" = None
 
 
-def _get_flux_contract_engine() -> "GraphEngine":
-    """Return the module-level bare engine serving the flux-reaction contract.
+def _induction_params_from_rules(rules) -> dict[str, Any]:
+    """Rebuild the induction block the lifestyle modifier still reads.
 
-    A bare GraphEngine is enough: ``get_flux_reactions`` and friends lazily
-    build the side index from the bundled parameter files without loading
-    the full graph, and ``get_edge_flux_reactions`` degrades to the index
-    when no graph is loaded. Callers that already hold a reference engine
-    (with the graph loaded and edge kinetics baked) pass it explicitly
-    through ``compute_pathway_flux(engine=...)`` so the mechanistic reads
-    walk ``Edge.kinetics`` instead.
+    The modifier wants ``enzyme_induction`` keyed by context, then enzyme.
+    The rules already carry that context, the enzyme, and the original
+    record in ``metadata``. This does not add a selection rule.
     """
+    sections: dict[str, dict] = {}
+    for rule in rules:
+        sections.setdefault(rule.exposure_context, {})[rule.enzyme] = dict(rule.metadata or {})
+    return {"enzyme_induction": sections}
+
+
+def _get_flux_contract_engine() -> "GraphEngine":
+    """Return the loaded revised engine that serves the flux contract."""
     global _FLUX_CONTRACT_ENGINE
     if _FLUX_CONTRACT_ENGINE is None:
-        from .engine import GraphEngine
+        from .engine_revised import GraphEngine
 
-        _FLUX_CONTRACT_ENGINE = GraphEngine()
+        engine = GraphEngine()
+        engine.load_reference_graph()
+        _FLUX_CONTRACT_ENGINE = engine
     return _FLUX_CONTRACT_ENGINE
 
 
@@ -1743,10 +1749,9 @@ def compute_pathway_flux(
         steady_state_context: Optional PBPK steady-state context override
             (body weight, central volume, tissue partition, blood-flow
             fraction, background clearance, and related first-order rates).
-        engine: Optional :class:`~ExposoGraph.engine.GraphEngine`. When
-            given, lifestyle-driven induction folds are resolved against
-            the engine's interaction-parameter document instead of the
-            interaction engine's own file loader.
+        engine: Optional loaded graph engine. When given, lifestyle-driven
+            induction folds are resolved from ``get_induction_rules()``
+            instead of the interaction engine's own file loader.
 
     Returns:
         :class:`PathwayFluxResult` with activation, detoxification,
@@ -1787,7 +1792,8 @@ def compute_pathway_flux(
         lifestyle,
         induction_factors,
         interaction_params=(
-            engine.get_interaction_parameters() if engine is not None else None
+            _induction_params_from_rules(engine.get_induction_rules())
+            if engine is not None else None
         ),
     )
     if (
