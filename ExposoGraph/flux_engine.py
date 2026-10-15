@@ -219,32 +219,6 @@ def apply_kinetic_modifier_once(
 # ── Modifier functions ─────────────────────────────────────────────────────
 
 
-def genotype_modifier(diplotype: str, gene: str) -> float:
-    """Return Vmax scaling factor (0.0-2.0) based on metaboliser phenotype.
-
-    Standard scale: PM=0.0, IM=0.5, NM=1.0, RM=1.5, UM=2.0.
-    Special cases for ALDH2 heterozygotes, GSTM1/GSTT1 copy-number states,
-    and cohort-specific CYP aliases used by the extension modules.
-
-    Delegates to ``GraphEngine.get_genotype_modifier``, which reads
-    ``genotypes.json``.
-
-    Args:
-        diplotype: Phenotype label (for example ``"NM"``, ``"null"``,
-            or ``"*1/*2"``).
-        gene: Gene name (for example ``"GSTM1"`` or ``"ALDH2"``).
-
-    Returns:
-        Scaling factor between 0.0 and 2.0.
-    """
-    return _get_flux_contract_engine().get_genotype_modifier(diplotype, gene)
-
-
-def _proxy_genotype_modifier(diplotype: str, gene: str | None) -> float:
-    """Return a silent genotype scaling factor for proxy-model terms."""
-    return _get_flux_contract_engine().get_proxy_genotype_modifier(diplotype, gene)
-
-
 def _normalize_tissue(tissue: str) -> str:
     """Lowercase a tissue string. Vocabulary keys are already lowercase."""
     return tissue.lower().strip()
@@ -316,17 +290,6 @@ def get_flux_tissue_weight(
     return float(weight)
 
 
-def tissue_weight(
-    gene: str,
-    tissue: str,
-    tissue_weight_source: FluxTissueWeightSource | str = FluxTissueWeightSource.CURATED,
-) -> float:
-    """Source-compatible alias for :func:`get_flux_tissue_weight`."""
-    return get_flux_tissue_weight(
-        gene, tissue, tissue_weight_source=tissue_weight_source
-    )
-
-
 # ── Risk classification ────────────────────────────────────────────────────
 
 
@@ -346,73 +309,6 @@ def classify_risk(net_ratio: float) -> RiskClassification:
         return RiskClassification.ELEVATED
     else:
         return RiskClassification.HIGH
-
-
-def _classify_risk(net_ratio: float) -> str:
-    """Source-compatible string wrapper around :func:`classify_risk`."""
-    return classify_risk(net_ratio).value
-
-
-# ── Helper ─────────────────────────────────────────────────────────────────
-
-
-def _get_default_concentration(carcinogen_class: str) -> float:
-    """Return default environmental exposure concentration in uM."""
-    return float(
-        _get_flux_contract_engine().get_default_concentration(carcinogen_class)
-    )
-
-
-_KNOWN_FLUX_GENE_PREFIXES = tuple(
-    sorted(
-        {
-            "ABCB1",
-            "ABCC2",
-            "ABCG2",
-            "ADH1B",
-            "ADH5",
-            "AHRR",
-            "ALDH1A1",
-            "ALDH2",
-            "AS3MT",
-            "COMT",
-            "CYP1A1",
-            "CYP1A2",
-            "CYP1B1",
-            "CYP2A6",
-            "CYP2A13",
-            "CYP2D6",
-            "CYP2E1",
-            "CYP3A4",
-            "EPHX1",
-            "ERCC2",
-            "GSTA1",
-            "GSTM1",
-            "GSTP1",
-            "GSTT1",
-            "MGMT",
-            "NAT1",
-            "NAT2",
-            "NQO1",
-            "OGG1",
-            "POLH",
-            "SULT1E1",
-            "UGT2B7",
-            "XPC",
-            "XRCC1",
-        },
-        key=len,
-        reverse=True,
-    )
-)
-
-
-def _term_gene_name(term_name: str) -> str | None:
-    """Resolve a result term name such as ``CYP3A4_AFQ1`` to a gene symbol."""
-    for gene in _KNOWN_FLUX_GENE_PREFIXES:
-        if term_name == gene or term_name.startswith(f"{gene}_"):
-            return gene
-    return None
 
 
 def _resolve_induction_factors(
@@ -468,8 +364,8 @@ def _rescale_flux_section_for_induction(
             old_flux = float(edata.get("flux", 0.0))
         except (TypeError, ValueError):
             old_flux = 0.0
-        gene = _term_gene_name(term_name)
-        factor = float(induction_factors.get(gene or "", 1.0))
+        gene = str(edata.get("gene") or term_name)
+        factor = float(induction_factors.get(gene, 1.0))
         new_flux = old_flux * factor
         edata["induction_modifier"] = _round_flux(factor)
         if not math.isclose(factor, 1.0):
@@ -803,7 +699,9 @@ def _compute_proxy_mm_term(
 ) -> tuple[float, float, float]:
     """Evaluate a Michaelis-Menten proxy term."""
     gene = cast(str | None, term.get("gene"))
-    gm = _proxy_genotype_modifier(_proxy_diplotype_for_gene(genotypes, gene), gene)
+    gm = _get_flux_contract_engine().get_proxy_genotype_modifier(
+        _proxy_diplotype_for_gene(genotypes, gene), gene
+    )
     tw = _pathway_tissue_weight(
         gene,
         tissue,
@@ -830,7 +728,9 @@ def _compute_proxy_saturating_term(
 ) -> tuple[float, float, float]:
     """Evaluate a simple saturating proxy term."""
     gene = cast(str | None, term.get("gene"))
-    gm = _proxy_genotype_modifier(_proxy_diplotype_for_gene(genotypes, gene), gene)
+    gm = _get_flux_contract_engine().get_proxy_genotype_modifier(
+        _proxy_diplotype_for_gene(genotypes, gene), gene
+    )
     tw = _pathway_tissue_weight(
         gene,
         tissue,
@@ -850,7 +750,9 @@ def _compute_proxy_hill_term(
 ) -> tuple[float, float, float]:
     """Evaluate a Hill-style damage or signaling proxy term."""
     gene = cast(str | None, term.get("gene"))
-    gm = _proxy_genotype_modifier(_proxy_diplotype_for_gene(genotypes, gene), gene)
+    gm = _get_flux_contract_engine().get_proxy_genotype_modifier(
+        _proxy_diplotype_for_gene(genotypes, gene), gene
+    )
     tw = _pathway_tissue_weight(
         gene,
         tissue,
@@ -876,7 +778,9 @@ def _compute_proxy_repair_term(
 ) -> tuple[float, float, float]:
     """Evaluate a repair-capacity proxy term derived from activation burden."""
     gene = cast(str | None, term.get("gene"))
-    gm = _proxy_genotype_modifier(_proxy_diplotype_for_gene(genotypes, gene), gene)
+    gm = _get_flux_contract_engine().get_proxy_genotype_modifier(
+        _proxy_diplotype_for_gene(genotypes, gene), gene
+    )
     tw = _pathway_tissue_weight(
         gene,
         tissue,
@@ -900,11 +804,6 @@ def _active_proxy_class_params(
     if not cfg:
         raise KeyError(class_name)
     return cast(JsonDict, cfg)
-
-
-def _get_proxy_class_params(class_name: str) -> JsonDict:
-    """Return the proxy flux config for a class (bare JSON-served engine)."""
-    return _active_proxy_class_params(class_name, None)
 
 
 _FLUX_CONTRACT_ENGINE: "GraphEngine | None" = None
@@ -988,6 +887,7 @@ def _compute_generic_proxy_flux(
     ) -> JsonDict:
         entry: JsonDict = {
             "flux": _round_flux(value),
+            "gene": str(reaction.params.get("gene") or reaction.enzyme_id or reaction.term_key),
             "genotype_modifier": gm,
             "tissue_weight": tw,
             "confidence": reaction.confidence,
@@ -1117,10 +1017,11 @@ def _compute_generic_mechanistic_flux(
         return str(reaction.enzyme_id or reaction.term_key)
 
     def _entry(
-        value: float, gm: float, tw: float, role: str, confidence: str
+        value: float, gm: float, tw: float, role: str, confidence: str, gene: str
     ) -> JsonDict:
         return {
             "flux": _round_flux(value),
+            "gene": gene,
             "genotype_modifier": gm,
             "tissue_weight": tw,
             "confidence": confidence,
@@ -1129,7 +1030,7 @@ def _compute_generic_mechanistic_flux(
     def _evaluate(reaction: "FluxReaction", role: str) -> tuple[float, float, float]:
         term = reaction.params
         gene = _gene(reaction)
-        gm = genotype_modifier(genotypes.get(gene, "NM"), gene)
+        gm = _get_flux_contract_engine().get_genotype_modifier(genotypes.get(gene, "NM"), gene)
         tw = get_flux_tissue_weight(gene, tissue, tissue_weight_source)
         vmax_field = vmax_fields.get(role) or vmax_fields.get("activation")
         if vmax_field is None:
@@ -1171,7 +1072,7 @@ def _compute_generic_mechanistic_flux(
         term_roles[reaction.term_key] = role
         entries = activation_entries if role == "activation" else detox_entries
         entries[entry_names.get(reaction.term_key, reaction.term_key)] = _entry(
-            value, gm, tw, role, reaction.confidence
+            value, gm, tw, role, reaction.confidence, _gene(reaction)
         )
 
     # Pass 2: derived terms (flux expressed from an already-evaluated base).
@@ -1181,7 +1082,7 @@ def _compute_generic_mechanistic_flux(
             raise ValueError(f"Derived term {name!r} has unevaluated base {base_key!r}")
         base_value, base_gm, base_tw = computed[base_key]
         fraction = float(spec["fraction"])
-        gm = genotype_modifier(genotypes.get(name, "NM"), name)
+        gm = _get_flux_contract_engine().get_genotype_modifier(genotypes.get(name, "NM"), name)
         form = str(spec.get("form", "fraction_of_base"))
         if form == "fraction_of_base":
             tw = 1.0
@@ -1200,7 +1101,7 @@ def _compute_generic_mechanistic_flux(
         term_roles[name] = role
         entries = activation_entries if role == "activation" else detox_entries
         entries[entry_names.get(name, name)] = _entry(
-            value, gm, tw, role, str(spec.get("confidence", ""))
+            value, gm, tw, role, str(spec.get("confidence", "")), name
         )
 
     # Totals: raw sums in entry order, then class-level aggregation.
@@ -1217,7 +1118,7 @@ def _compute_generic_mechanistic_flux(
             r for r in reactions if r.term_key == efficiency_spec["term"]
         )
         gene = _gene(eff_reaction)
-        eff_gm = genotype_modifier(genotypes.get(gene, "NM"), gene)
+        eff_gm = _get_flux_contract_engine().get_genotype_modifier(genotypes.get(gene, "NM"), gene)
         eff_tw = get_flux_tissue_weight(gene, tissue, tissue_weight_source)
         efficiency = min(
             1.0,
@@ -1447,7 +1348,7 @@ def _evaluate_selected(
     if constants is None:
         return None
     km, vmax = constants
-    modifier = fraction if fraction is not None else genotype_modifier(label or "NM", gene)
+    modifier = fraction if fraction is not None else _get_flux_contract_engine().get_genotype_modifier(label or "NM", gene)
     tissue_gene = str(row.params.get("tissue_weight_gene") or gene)
     weight = get_flux_tissue_weight(tissue_gene, tissue, tissue_weight_source)
     scaled = vmax * modifier * weight
@@ -1461,6 +1362,7 @@ def _evaluate_selected(
 def _flux_entry(row: "FluxReaction", value: float, modifier: float, weight: float, label: str | None) -> JsonDict:
     entry: JsonDict = {
         "flux": _round_flux(value),
+        "gene": str(row.enzyme_id or row.params.get("gene") or row.term_key),
         "genotype": label or "",
         "genotype_modifier": modifier,
         "tissue_weight": weight,
@@ -1543,12 +1445,12 @@ def _compute_dioxin_flux(
     )
 
     act1_p = cfg["pathways"]["activation"]["CYP1A1"]
-    gm1a1 = _proxy_genotype_modifier(genotypes.get("CYP1A1", "NM"), "CYP1A1")
+    gm1a1 = _get_flux_contract_engine().get_proxy_genotype_modifier(genotypes.get("CYP1A1", "NM"), "CYP1A1")
     tw1a1 = get_flux_tissue_weight("CYP1A1", tissue, tissue_weight_source)
     v1a1 = signal_strength * float(act1_p["induction_factor"]) * gm1a1 * tw1a1
 
     act2_p = cfg["pathways"]["activation"]["CYP1B1"]
-    gm1b1 = _proxy_genotype_modifier(genotypes.get("CYP1B1", "NM"), "CYP1B1")
+    gm1b1 = _get_flux_contract_engine().get_proxy_genotype_modifier(genotypes.get("CYP1B1", "NM"), "CYP1B1")
     tw1b1 = get_flux_tissue_weight("CYP1B1", tissue, tissue_weight_source)
     v1b1 = signal_strength * float(act2_p["induction_factor"]) * gm1b1 * tw1b1
 
@@ -1577,6 +1479,7 @@ def _compute_dioxin_flux(
         "detox_enzymes": {
             "AHRR_feedback": {
                 "flux": _round_flux(v_feedback),
+                "gene": "AHRR",
                 "genotype_modifier": 1.0,
                 "tissue_weight": tissue_signal,
                 "confidence": feedback_p["confidence"],
@@ -1615,42 +1518,6 @@ def _enzyme_flux_from_dict(name: str, d: JsonDict) -> EnzymeFlux:
 
 
 # ── Public API ─────────────────────────────────────────────────────────────
-
-# Proxy classes routed through the generic engine-contract loop.
-# Measured-kinetics classes routed through the generic mechanistic loop are
-# listed in _GENERIC_MECHANISTIC_FLUX_CLASSES below. Aflatoxin and Aldehyde
-# (in _DEDICATED_ENGINE_FLUX_CLASSES) keep hand-written control flow but
-# source their term parameters and aggregation blocks through the engine
-# contract. Dioxin keeps a fully hand-written function: its
-# receptor-mediated model (latent AHR signal gating induced terms) is not
-# a term-sum proxy. ChlorinatedSolvent collapsed into the generic loop when
-# it gained the ``derived_scale`` rate law (its only structural wrinkle,
-# the GSTT1 bioactivation inversion being a role annotation, not code).
-_GENERIC_PROXY_FLUX_CLASSES = frozenset(
-    {
-        "group_aromatic_amines",
-        "group_estrogen",
-        "NDEA",
-        "VinylChloride",
-        "group_uv_radiation",
-        "group_heavy_metals",
-        "group_chlorinated_solvents",
-    }
-)
-
-# Measured-kinetics classes whose term evaluation and aggregation are fully
-# described by the per-class "aggregation" block in kinetic_parameters.json.
-_GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset(
-    {"group_pahs", "group_nitrosamines", "NDMA", "group_hcas", "Benzene"}
-)
-
-# Dedicated proxy functions that now take the engine kwarg so their
-# class-config reads are served graph-first when a loaded engine is
-# passed (bare JSON fallback otherwise).
-_DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"group_dioxins"})
-
-# Measured classes whose diplotype rows are selected from the cone.
-_DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"group_mycotoxins", "group_aldehydes"})
 
 _DISPATCH: dict[str, FluxCalculator] = {
     "group_pahs": partial(_compute_generic_mechanistic_flux, "group_pahs"),
@@ -1750,7 +1617,9 @@ def compute_pathway_flux(
         )
 
     if substrate_conc_uM is None:
-        substrate_conc_uM = _get_default_concentration(cls_str)
+        substrate_conc_uM = float(
+            _get_flux_contract_engine().get_default_concentration(cls_str)
+        )
 
     resolved_induction = _resolve_induction_factors(
         lifestyle,
@@ -1760,17 +1629,9 @@ def compute_pathway_flux(
             if engine is not None else None
         ),
     )
-    if (
-        cls_str in _GENERIC_PROXY_FLUX_CLASSES
-        or cls_str in _GENERIC_MECHANISTIC_FLUX_CLASSES
-        or cls_str in _DEDICATED_ENGINE_FLUX_CLASSES
-        or cls_str in _DEDICATED_PROXY_ENGINE_FLUX_CLASSES
-    ):
-        result = _DISPATCH[cls_str](
-            genotypes, tissue, substrate_conc_uM, weight_source, engine=engine
-        )
-    else:
-        result = _DISPATCH[cls_str](genotypes, tissue, substrate_conc_uM, weight_source)
+    result = _DISPATCH[cls_str](
+        genotypes, tissue, substrate_conc_uM, weight_source, engine=engine
+    )
     result = _annotate_flux_result_metadata(cls_str, result, engine=engine)
     result = _apply_induction_modifiers(result, resolved_induction)
 
