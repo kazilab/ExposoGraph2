@@ -1358,6 +1358,128 @@ def _annotate_flux_result_metadata(
 # ── Pathway-specific flux calculators ──────────────────────────────────────
 
 
+def _measured_constants(params: Mapping[str, Any]) -> tuple[float, float] | None:
+    """Km and the numeric Vmax on a term, if both are present."""
+    km = params.get("Km_uM")
+    vmax = next(
+        (value for key, value in params.items()
+         if key.startswith("Vmax_") and isinstance(value, (int, float))),
+        None,
+    )
+    if km is None or vmax is None:
+        return None
+    return float(km), float(vmax)
+
+
+def _phenotype_aliases(engine: "GraphEngine", gene: str) -> list[set[str]]:
+    catalog = engine.G.graph.get("genotypes") or {}
+    block = (catalog.get("genes") or {}).get(gene) or {}
+    return [
+        {str(alias).lower() for alias in phenotype.get("aliases", [])}
+        for phenotype in (block.get("phenotypes") or {}).values()
+    ]
+
+
+def _label_matches_diplotype(engine: "GraphEngine", gene: str, label: str, diplotype: Any) -> bool:
+    """True when the caller label is this row, or shares a phenotype alias with it."""
+    if not label or not diplotype:
+        return False
+    if str(label).lower() == str(diplotype).lower():
+        return True
+    key, dip = str(label).lower(), str(diplotype).lower()
+    return any(key in aliases and dip in aliases for aliases in _phenotype_aliases(engine, gene))
+
+
+def _reference_row(engine: "GraphEngine", gene: str, rows: list) -> "FluxReaction":
+    """Measured sibling that is not itself a phenotype-alias row."""
+    measured = [row for row in rows if _measured_constants(row.params)]
+    aliased = set().union(*_phenotype_aliases(engine, gene)) if rows else set()
+    plain = [
+        row for row in measured
+        if str(row.params.get("diplotype") or "").lower() not in aliased
+    ]
+    return (plain or measured or rows)[0]
+
+
+def _select_row(engine: "GraphEngine", gene: str, label: str | None, rows: list):
+    """Measurement for this label, and a multiplier only when the match has no constants.
+
+    A matched row with Km and Vmax is used as measured. Its activity_fraction
+    is not applied again. A matched row with only activity_fraction scales the
+    reference measurement. No match leaves the multiplier to the catalog.
+    """
+    matched = [
+        row for row in rows
+        if _label_matches_diplotype(engine, gene, label or "", row.params.get("diplotype"))
+    ]
+    measured = [row for row in matched if _measured_constants(row.params)]
+    if measured:
+        return measured[0], 1.0
+    if matched and matched[0].params.get("activity_fraction") is not None:
+        return _reference_row(engine, gene, rows), float(matched[0].params["activity_fraction"])
+    return _reference_row(engine, gene, rows), None
+
+
+def _edge_groups(reactions: list) -> dict[tuple, list]:
+    grouped: dict[tuple, list] = {}
+    for reaction in reactions:
+        key = (
+            reaction.params.get("source_node_id"),
+            reaction.params.get("target_node_id"),
+            reaction.role,
+        )
+        grouped.setdefault(key, []).append(reaction)
+    return grouped
+
+
+def _evaluate_selected(
+    engine: "GraphEngine",
+    rows: list,
+    genotypes: GenotypeMap,
+    tissue: str,
+    substrate: float,
+    tissue_weight_source: FluxTissueWeightSource,
+) -> tuple["FluxReaction", float, float, float] | None:
+    gene = str(rows[0].enzyme_id or rows[0].params.get("target_node_id") or rows[0].term_key)
+    label = genotypes.get(gene)
+    row, fraction = _select_row(engine, gene, label, rows)
+    constants = _measured_constants(row.params)
+    if constants is None:
+        return None
+    km, vmax = constants
+    modifier = fraction if fraction is not None else genotype_modifier(label or "NM", gene)
+    tissue_gene = str(row.params.get("tissue_weight_gene") or gene)
+    weight = get_flux_tissue_weight(tissue_gene, tissue, tissue_weight_source)
+    scaled = vmax * modifier * weight
+    if row.rate_law == "hill":
+        value = hill_equation(substrate, scaled, km, float(row.params.get("hill_n", 1.0)))
+    else:
+        value = michaelis_menten(substrate, scaled, km)
+    return row, value, modifier, weight
+
+
+def _flux_entry(row: "FluxReaction", value: float, modifier: float, weight: float, label: str | None) -> JsonDict:
+    entry: JsonDict = {
+        "flux": _round_flux(value),
+        "genotype": label or "",
+        "genotype_modifier": modifier,
+        "tissue_weight": weight,
+        "confidence": row.confidence,
+        "kinetics": row.rate_law,
+    }
+    if row.params.get("fraction_contribution") is not None:
+        entry["fraction_contribution"] = row.params["fraction_contribution"]
+    if row.rate_law == "hill" and row.params.get("hill_n") is not None:
+        entry["n"] = row.params["hill_n"]
+    constants = _measured_constants(row.params)
+    if constants is not None:
+        km, vmax = constants
+        entry["CLint"] = _round_flux((vmax * modifier * weight) / km)
+    if row.params.get("reaction"):
+        entry["reaction"] = row.params["reaction"]
+    return entry
+
+
 def _compute_aflatoxin_flux(
     genotypes: GenotypeMap,
     tissue: str,
@@ -1366,90 +1488,29 @@ def _compute_aflatoxin_flux(
     *,
     engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
-    """Compute AFB1 activation and detoxification fluxes."""
+    """AFB1 fluxes. Each edge is one measurement. Modifiers come from that edge."""
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {
-        r.term_key: r for r in active_engine.get_edge_flux_reactions("group_mycotoxins")
-    }
+    reactions = active_engine.get_edge_flux_reactions("group_mycotoxins")
     agg = active_engine.get_flux_aggregation("group_mycotoxins")
     activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
-
-    # CYP3A4 — Hill kinetics
-    cyp3a4_p = terms["CYP3A4"].params
-    gm3a4 = genotype_modifier(genotypes.get("CYP3A4", "NM"), "CYP3A4")
-    tw3a4 = get_flux_tissue_weight("CYP3A4", tissue, tissue_weight_source)
-    v_cyp3a4 = hill_equation(
-        S,
-        cyp3a4_p["Vmax_pmol_min_pmolP450"] * gm3a4 * tw3a4,
-        cyp3a4_p["Km_uM"],
-        cyp3a4_p["hill_n"],
-    )
-    activation_enzymes["CYP3A4"] = {
-        "flux": _round_flux(v_cyp3a4),
-        "kinetics": "hill",
-        "n": cyp3a4_p["hill_n"],
-        "genotype_modifier": gm3a4,
-        "tissue_weight": tw3a4,
-        "confidence": terms["CYP3A4"].confidence,
-        "fraction_contribution": cyp3a4_p["fraction_contribution"],
-    }
-
-    # CYP1A2 — Michaelis-Menten
-    cyp1a2_p = terms["CYP1A2"].params
-    gm1a2 = genotype_modifier(genotypes.get("CYP1A2", "NM"), "CYP1A2")
-    tw1a2 = get_flux_tissue_weight("CYP1A2", tissue, tissue_weight_source)
-    v_cyp1a2 = michaelis_menten(
-        S,
-        cyp1a2_p["Vmax_pmol_min_pmolP450"] * gm1a2 * tw1a2,
-        cyp1a2_p["Km_uM"],
-    )
-    activation_enzymes["CYP1A2"] = {
-        "flux": _round_flux(v_cyp1a2),
-        "kinetics": "michaelis_menten",
-        "genotype_modifier": gm1a2,
-        "tissue_weight": tw1a2,
-        "confidence": terms["CYP1A2"].confidence,
-        "fraction_contribution": cyp1a2_p["fraction_contribution"],
-    }
-
-    total_activation = v_cyp3a4 + v_cyp1a2
-
-    # CYP3A4 AFQ1 (detox)
-    afq1_p = terms["CYP3A4_AFQ1"].params
-    v_afq1 = hill_equation(
-        S,
-        afq1_p["Vmax_pmol_min_pmolP450"] * gm3a4 * tw3a4,
-        afq1_p["Km_uM"],
-        afq1_p["hill_n"],
-    )
-    detox_enzymes["CYP3A4_AFQ1"] = {
-        "flux": _round_flux(v_afq1),
-        "genotype_modifier": gm3a4,
-        "tissue_weight": tw3a4,
-        "confidence": terms["CYP3A4_AFQ1"].confidence,
-    }
-
-    # GSTA1 (estimated)
-    gsta1_p = terms["GSTA1"].params
-    gsta1_gm = genotype_modifier(genotypes.get("GSTA1", "NM"), "GSTA1")
-    gsta1_tw = get_flux_tissue_weight(
-        gsta1_p.get("tissue_weight_gene", "GSTA1"), tissue, tissue_weight_source
-    )
-    v_gsta1 = michaelis_menten(
-        S,
-        gsta1_p["Vmax_pmol_min_pmolP450_estimated"] * gsta1_gm * gsta1_tw,
-        gsta1_p["Km_uM"],
-    )
-    detox_enzymes["GSTA1_conjugation"] = {
-        "flux": _round_flux(v_gsta1),
-        "genotype_modifier": gsta1_gm,
-        "tissue_weight": gsta1_tw,
-        "confidence": terms["GSTA1"].confidence,
-    }
-
-    total_detox = v_afq1 + v_gsta1
-
+    total_activation = 0.0
+    total_detox = 0.0
+    for rows in _edge_groups(reactions).values():
+        evaluated = _evaluate_selected(
+            active_engine, rows, genotypes, tissue, S, tissue_weight_source
+        )
+        if evaluated is None:
+            continue
+        row, value, modifier, weight = evaluated
+        gene = str(row.enzyme_id or row.params.get("target_node_id") or row.term_key)
+        entry = _flux_entry(row, value, modifier, weight, genotypes.get(gene))
+        if row.role == "activation":
+            activation_enzymes[row.term_key] = entry
+            total_activation += value
+        else:
+            detox_enzymes[row.term_key] = entry
+            total_detox += value
     return {
         "activation_enzymes": activation_enzymes,
         "detox_enzymes": detox_enzymes,
@@ -1467,93 +1528,47 @@ def _compute_aldehyde_flux(
     *,
     engine: "GraphEngine | None" = None,
 ) -> FluxResultDict:
-    """Compute aldehyde (acetaldehyde) clearance flux."""
+    """Aldehyde clearance. Diplotype rows are alternatives, not extra enzymes.
+
+    Copied rows on a second substrate for the same enzyme are not a second
+    measurement. Which start owns ethanol oxidation is unchanged here.
+    """
     active_engine = engine if engine is not None else _get_flux_contract_engine()
-    terms = {
-        r.term_key: r for r in active_engine.get_edge_flux_reactions("group_aldehydes")
-    }
+    reactions = active_engine.get_edge_flux_reactions("group_aldehydes")
     agg = active_engine.get_flux_aggregation("group_aldehydes")
+    grouped: dict[tuple, tuple] = {}
+    for (source, target, role), rows in _edge_groups(reactions).items():
+        if (target, role) in grouped:
+            continue
+        if not any(_measured_constants(row.params) for row in rows):
+            continue
+        grouped[(target, role)] = (source, rows)
+
+    activation_enzymes: dict[str, Any] = {}
     detox_enzymes: dict[str, Any] = {}
-
-    # Determine ALDH2 genotype
-    aldh2_gt = genotypes.get("ALDH2", "*1/*1")
-    if aldh2_gt in ("*1/*1", "NM", "WT", "wildtype"):
-        aldh2_term = terms["ALDH2_star1"]
-        aldh2_p = aldh2_term.params
-        aldh2_gm = 1.0
-        aldh2_km = aldh2_p["Km_uM"]
-        aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
-    elif aldh2_gt in ("*1/*2", "heterozygote"):
-        aldh2_term = terms["ALDH2_star1"]
-        aldh2_p = aldh2_term.params
-        aldh2_gm = genotype_modifier("*1/*2", "ALDH2")  # 0.25
-        aldh2_km = aldh2_p["Km_uM"]
-        aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
-    elif aldh2_gt in ("*2/*2", "PM", "PM_ALDH2"):
-        aldh2_term = terms["ALDH2_star2_homozygous"]
-        aldh2_p = aldh2_term.params
-        aldh2_gm = 1.0  # parameters already reflect variant
-        aldh2_km = aldh2_p["Km_uM"]
-        aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
-    else:
-        aldh2_term = terms["ALDH2_star1"]
-        aldh2_p = aldh2_term.params
-        aldh2_gm = genotype_modifier(aldh2_gt, "ALDH2")
-        aldh2_km = aldh2_p["Km_uM"]
-        aldh2_vmax = aldh2_p["Vmax_U_per_mg"]
-
-    tw_aldh2 = get_flux_tissue_weight("ALDH2", tissue, tissue_weight_source)
-    v_aldh2 = michaelis_menten(S, aldh2_vmax * aldh2_gm * tw_aldh2, aldh2_km)
-    detox_enzymes["ALDH2"] = {
-        "flux": _round_flux(v_aldh2),
-        "genotype": aldh2_gt,
-        "genotype_modifier": aldh2_gm,
-        "tissue_weight": tw_aldh2,
-        "CLint": _round_flux((aldh2_vmax * aldh2_gm * tw_aldh2) / aldh2_km),
-        "confidence": aldh2_term.confidence,
-    }
-
-    # ALDH1A1 (backup)
-    aldh1a1_p = terms["ALDH1A1"].params
-    aldh1a1_gm = genotype_modifier(genotypes.get("ALDH1A1", "NM"), "ALDH1A1")
-    tw_aldh1a1 = get_flux_tissue_weight("ALDH1A1", tissue, tissue_weight_source)
-    v_aldh1a1 = michaelis_menten(
-        S, aldh1a1_p["Vmax_U_per_mg"] * aldh1a1_gm * tw_aldh1a1, aldh1a1_p["Km_uM"]
-    )
-    detox_enzymes["ALDH1A1"] = {
-        "flux": _round_flux(v_aldh1a1),
-        "genotype_modifier": aldh1a1_gm,
-        "tissue_weight": tw_aldh1a1,
-        "confidence": terms["ALDH1A1"].confidence,
-    }
-
-    total_detox = v_aldh2 + v_aldh1a1
-
-    # Ethanol -> Acetaldehyde production
-    adh_gt = genotypes.get("ADH1B", "*1/*1")
-    if adh_gt in ("*2/*2", "fast", "RM"):
-        adh_params = terms["ADH1B_star2"].params
-        adh_confidence = terms["ADH1B_star2"].confidence
-    else:
-        adh_params = terms["ADH1B_star1"].params
-        adh_confidence = terms["ADH1B_star1"].confidence
-
-    eth_conc = active_engine.get_flux_metadata()["exposure_defaults_uM"]["ethanol"]
-    v_adh = michaelis_menten(eth_conc, adh_params["Vmax_U_per_mg"], adh_params["Km_uM"])
-
+    total_activation = 0.0
+    total_detox = 0.0
+    ethanol = active_engine.get_flux_metadata()["exposure_defaults_uM"]["ethanol"]
+    for (target, _role), (source, rows) in grouped.items():
+        substrate = ethanol if source == "Ethanol" else S
+        evaluated = _evaluate_selected(
+            active_engine, rows, genotypes, tissue, substrate, tissue_weight_source
+        )
+        if evaluated is None:
+            continue
+        row, value, modifier, weight = evaluated
+        gene = str(row.enzyme_id or target)
+        entry = _flux_entry(row, value, modifier, weight, genotypes.get(gene))
+        if source == "Ethanol":
+            activation_enzymes[gene] = entry
+            total_activation += value
+        else:
+            detox_enzymes[gene] = entry
+            total_detox += value
     return {
-        "activation_enzymes": {
-            "ADH1B": {
-                "reaction": "Ethanol -> Acetaldehyde",
-                "flux": _round_flux(v_adh),
-                "genotype": adh_gt,
-                "genotype_modifier": 1.0,
-                "tissue_weight": 1.0,
-                "confidence": adh_confidence,
-            }
-        },
+        "activation_enzymes": activation_enzymes,
         "detox_enzymes": detox_enzymes,
-        "total_activation": v_adh,
+        "total_activation": total_activation,
         "total_detox": total_detox,
         "unit_note": agg["unit_note"],
     }
@@ -1685,7 +1700,9 @@ _GENERIC_MECHANISTIC_FLUX_CLASSES = frozenset(
 # passed (bare JSON fallback otherwise).
 _DEDICATED_PROXY_ENGINE_FLUX_CLASSES = frozenset({"group_dioxins"})
 
-# Dedicated functions that still take the engine kwarg for their parameters.
+# Dedicated functions that still choose which edges belong in the result.
+# Row selection inside them follows the graph: a measured diplotype row is
+# used as-is, and activity_fraction applies only when that row has no constants.
 _DEDICATED_ENGINE_FLUX_CLASSES = frozenset({"group_mycotoxins", "group_aldehydes"})
 
 _DISPATCH: dict[str, FluxCalculator] = {
