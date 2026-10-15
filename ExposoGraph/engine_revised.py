@@ -408,8 +408,33 @@ class GraphEngine:
         return [r for r in reactions if role is None or r.role == role]
 
     def get_edge_flux_reactions(self, cls: Any) -> list[FluxReaction]:
-        """Active roster baked on the class node."""
-        return self.get_flux_reactions(cls)
+        """Active terms on edges the constrained walk from ``cls`` crossed.
+
+        The class node is the start. A term counts only when its binding
+        edge was crossed. Terms on edges the walk does not reach, including
+        a different start such as ethanol, are not returned.
+        """
+        cls = _key(cls)
+        if cls not in self.G:
+            return []
+        found: list[FluxReaction] = []
+        seen: set[tuple[str, str]] = set()
+        for edge in self.cone(cls)["edges"]:
+            blocks = ((edge.get("kinetics") or {}).get("flux_terms") or {}).get(cls) or {}
+            if not isinstance(blocks, dict):
+                continue
+            for pathway, terms in blocks.items():
+                if not isinstance(terms, dict):
+                    continue
+                for term_key, payload in terms.items():
+                    if not isinstance(payload, dict) or payload.get("dispatch_status") == "shadowed":
+                        continue
+                    if (pathway, term_key) in seen:
+                        continue
+                    seen.add((pathway, term_key))
+                    found.append(self._baked_reaction(
+                        cls, {"pathway": pathway, "term_key": term_key, **payload}))
+        return found
 
     def get_flux_reaction_coverage(self, cls: Any) -> dict[str, Any]:
         """Binding-edge coverage for one class. Curation report, not a pass/fail check."""
