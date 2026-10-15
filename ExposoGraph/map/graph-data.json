@@ -2361,6 +2361,27 @@
       "provenance": []
     },
     {
+      "id": "NDEA_hydroxyl",
+      "label": "NDEA alpha-hydroxylated intermediate",
+      "type": "Metabolite",
+      "detail": "Unstable alpha-hydroxy-NDEA. Decomposes to ethyldiazonium, which ethylates DNA at O6-guanine (PMID:35060643).",
+      "reactivity": "Intermediate",
+      "source_db": "PubMed",
+      "evidence": "CYP2E1 and CYP2A6 alpha-hydroxylate NDEA; the intermediate yields ethyldiazonium and O6-ethylguanine (PMID:35060643).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "35060643",
+          "evidence": "NDEA alpha-hydroxylation by CYP2E1 and CYP2A6 forms ethyldiazonium, which produces O6-ethylguanine.",
+          "pmid": "35060643",
+          "citation": "Li and Hecht, Metabolic activation and DNA interactions of carcinogenic N-nitrosamines.",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9105260/"
+        }
+      ]
+    },
+    {
       "id": "NDMA_hydroxyl",
       "label": "NDMA alpha-hydroxylated intermediate",
       "type": "Metabolite",
@@ -7183,6 +7204,65 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "source": "CYP2E1",
+      "target": "NDEA_hydroxyl",
+      "type": "PRODUCES",
+      "label": "Alpha-hydroxylation",
+      "carcinogen": "NDEA",
+      "substrate_node_id": "NDEA",
+      "evidence": "CYP2E1 alpha-hydroxylates NDEA to the intermediate that yields ethyldiazonium (PMID:35060643).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "35060643",
+          "evidence": "NDEA metabolic activation is principally catalyzed by CYP2E1 and CYP2A6.",
+          "pmid": "35060643",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9105260/"
+        }
+      ]
+    },
+    {
+      "source": "CYP2A6",
+      "target": "NDEA_hydroxyl",
+      "type": "PRODUCES",
+      "label": "Alpha-hydroxylation",
+      "carcinogen": "NDEA",
+      "substrate_node_id": "NDEA",
+      "evidence": "CYP2A6 alpha-hydroxylates NDEA alongside CYP2E1 (PMID:35060643).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "35060643",
+          "evidence": "NDEA metabolic activation is principally catalyzed by CYP2E1 and CYP2A6.",
+          "pmid": "35060643",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9105260/"
+        }
+      ]
+    },
+    {
+      "source": "NDEA_hydroxyl",
+      "target": "O6_ethyl_dG",
+      "type": "FORMS_ADDUCT",
+      "label": "ethylation",
+      "carcinogen": "NDEA",
+      "evidence": "The alpha-hydroxy intermediate decomposes to ethyldiazonium, which forms O6-ethylguanine (PMID:35060643).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "35060643",
+          "evidence": "Ethyldiazonium from NDEA alpha-hydroxylation produces O6-ethylguanine.",
+          "pmid": "35060643",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9105260/"
+        }
+      ]
     },
     {
       "source": "CYP2E1",
