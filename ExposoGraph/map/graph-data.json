@@ -8973,6 +8973,25 @@
       "provenance": []
     },
     {
+      "source": "E2_depurin",
+      "target": "XRCC1",
+      "type": "REPAIRED_BY",
+      "carcinogen": "E2",
+      "evidence": "Depurinating estrogen-DNA adducts leave apurinic sites; XRCC1 is the BER scaffold for their repair (PMID:17261777).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "17261777",
+          "evidence": "Catechol estrogen-3,4-quinones form depurinating N3-adenine and N7-guanine adducts; error-prone repair of the apurinic sites is the proposed initiation step.",
+          "pmid": "17261777",
+          "citation": "Cavalieri et al., catechol quinones of estrogens in the initiation of cancer.",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/17261777/"
+        }
+      ]
+    },
+    {
       "source": "E2_quinone",
       "target": "hsa00140",
       "type": "PATHWAY",

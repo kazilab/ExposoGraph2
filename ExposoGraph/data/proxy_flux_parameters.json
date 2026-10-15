@@ -206,7 +206,7 @@
         },
         "repair": {
           "XRCC1": {
-            "source_node_id": "8_OHdG",
+            "source_node_id": "E2_depurin",
             "target_node_id": "XRCC1",
             "rate_law": "repair",
             "gene": "XRCC1",
