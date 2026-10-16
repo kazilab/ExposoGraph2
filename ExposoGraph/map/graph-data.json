@@ -12927,6 +12927,44 @@
     },
     {
       "source": "NNK",
+      "target": "AKR1C2",
+      "type": "SUBSTRATE_OF",
+      "carcinogen": "NNK",
+      "evidence": "AKR1C2 reduces NNK to NNAL. No kinetic constants are attached (PMID:30496348).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "30496348",
+          "evidence": "Cytosolic AKR1C1, AKR1C2, and CBR1 reduce NNK to NNAL.",
+          "pmid": "30496348",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6296469/"
+        }
+      ]
+    },
+    {
+      "source": "AKR1C2",
+      "target": "NNAL",
+      "type": "PRODUCES",
+      "label": "carbonyl reduction",
+      "carcinogen": "NNK",
+      "substrate_node_id": "NNK",
+      "evidence": "AKR1C2 produces NNAL from NNK. NNAL remains carcinogenic and is not a detoxification fraction (PMID:30496348).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "30496348",
+          "evidence": "The major route of NNK metabolism is carbonyl reduction to NNAL by AKR1C1, AKR1C2, and CBR1.",
+          "pmid": "30496348",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6296469/"
+        }
+      ]
+    },
+    {
+      "source": "NNK",
       "target": "CYP2E1",
       "type": "SUBSTRATE_OF",
       "carcinogen": "NNK",
