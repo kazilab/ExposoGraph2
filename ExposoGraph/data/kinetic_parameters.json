@@ -261,8 +261,8 @@
         },
         "detoxification": {
           "CYP3A4_AFQ1": {
-            "source_node_id": "AFB1",
-            "target_node_id": "CYP3A4",
+            "source_node_id": "CYP3A4",
+            "target_node_id": "AFQ1",
             "rate_law": "hill",
             "hill_n": 2.0,
             "reaction": "AFB1 → AFQ1 (hydroxylation, non-reactive detox product)",

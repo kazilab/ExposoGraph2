@@ -2127,6 +2127,26 @@
       ]
     },
     {
+      "id": "AFQ1",
+      "label": "Aflatoxin Q1",
+      "type": "Metabolite",
+      "detail": "3-Hydroxy detoxification product of AFB1 formed by CYP3A4. Less reactive than the 8,9-epoxide (PMID:8975785).",
+      "reactivity": "Low",
+      "source_db": "PubMed",
+      "evidence": "CYP3A4 hydroxylates AFB1 to AFQ1, a competing product of epoxidation (PMID:8975785).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "8975785",
+          "evidence": "Human CYP3A4 forms aflatoxin Q1 from AFB1 as well as the 8,9-epoxide.",
+          "pmid": "8975785",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/8975785/"
+        }
+      ]
+    },
+    {
       "id": "AFB1_epoxide",
       "label": "AFB1-8,9-epoxide",
       "type": "Metabolite",
@@ -7409,6 +7429,26 @@
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
+    },
+    {
+      "source": "CYP3A4",
+      "target": "AFQ1",
+      "type": "PRODUCES",
+      "label": "3-hydroxylation",
+      "carcinogen": "AFB1",
+      "substrate_node_id": "AFB1",
+      "evidence": "CYP3A4 produces AFQ1 from AFB1, competing with epoxidation (PMID:8975785).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "8975785",
+          "evidence": "CYP3A4 forms both aflatoxin Q1 and the 8,9-epoxide from AFB1.",
+          "pmid": "8975785",
+          "url": "https://pubmed.ncbi.nlm.nih.gov/8975785/"
+        }
+      ]
     },
     {
       "source": "CYP3A4",
