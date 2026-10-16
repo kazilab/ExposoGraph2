@@ -16,7 +16,7 @@ from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
 
-from .engine import GraphEngine
+from .engine_revised import GraphEngine
 from .exporter import subgraph_to_html_string
 from .models import NodeType
 
@@ -37,8 +37,21 @@ _SELECTABLE_NODE_TYPES = [
 _NO_TISSUE_OPTION = "(none — no tissue dimming)"
 
 
-def render(engine: GraphEngine) -> None:
-    """Render the Reference Map viewer, filtered/dimmed via `engine`."""
+def reference_engine() -> GraphEngine:
+    """Revised engine for this tab only. Manual entry still uses the session engine."""
+    if "map_engine" not in st.session_state:
+        engine = GraphEngine()
+        try:
+            engine.load_reference_graph()
+        except Exception as exc:
+            st.warning(f"Could not pre-load reference map: {exc}")
+        st.session_state.map_engine = engine
+    return st.session_state.map_engine
+
+
+def render(engine: GraphEngine | None = None) -> None:
+    """Render the Reference Map viewer from the revised engine."""
+    engine = reference_engine() if engine is None else engine
     st.markdown("#### Reference Map")
     st.caption(
         "Force-directed graph rendered from the loaded reference graph. "
