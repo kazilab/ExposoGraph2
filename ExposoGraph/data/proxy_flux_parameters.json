@@ -157,7 +157,7 @@
         },
         "detoxification": {
           "COMT": {
-            "source_node_id": "estradiol_2_OH",
+            "source_node_id": "2OHE2",
             "target_node_id": "COMT",
             "gene": "COMT",
             "vmax": 16.0,
@@ -181,7 +181,7 @@
             "rate_law": "michaelis_menten"
           },
           "UGT2B7": {
-            "source_node_id": "estradiol_2_OH",
+            "source_node_id": "2OHE2",
             "target_node_id": "UGT2B7",
             "gene": "UGT2B7",
             "vmax": 10.0,

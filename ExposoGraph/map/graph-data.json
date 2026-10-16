@@ -6896,6 +6896,26 @@
       "provenance": []
     },
     {
+      "source": "2OHE2",
+      "target": "COMT",
+      "type": "DETOXIFIED_BY",
+      "carcinogen": "E2",
+      "evidence": "COMT O-methylates 2-hydroxyestradiol. The proxy is moved off the unproduced estradiol_2_OH key.",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
+      "source": "2OHE2",
+      "target": "UGT2B7",
+      "type": "DETOXIFIED_BY",
+      "carcinogen": "E2",
+      "evidence": "UGT2B7 glucuronidates 2-hydroxyestradiol. The proxy is moved off the unproduced estradiol_2_OH key.",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": []
+    },
+    {
       "source": "CYP1A1",
       "target": "hsa00980",
       "type": "PATHWAY",
@@ -8350,7 +8370,7 @@
       "type": "PRODUCES",
       "label": "O-methylation",
       "carcinogen": "E2",
-      "substrate_node_id": "estradiol_2_OH",
+      "substrate_node_id": "2OHE2",
       "origin": "imported",
       "match_status": "unmatched",
       "provenance": []
