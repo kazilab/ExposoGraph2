@@ -10170,6 +10170,25 @@
     },
     {
       "source": "AHR",
+      "target": "AHRR",
+      "type": "INDUCES",
+      "carcinogen": "TCDD",
+      "agonist_node_id": "TCDD",
+      "evidence": "TCDD-activated AHR induces AHRR, which then feeds back on AHR (PMID:19439405).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "19439405",
+          "evidence": "AHRR is a DRE-regulated gene induced by AHR activation, including by TCDD.",
+          "pmid": "19439405",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2701375/"
+        }
+      ]
+    },
+    {
+      "source": "AHR",
       "target": "CYP1A1",
       "type": "INDUCES",
       "carcinogen": "TCDD",
