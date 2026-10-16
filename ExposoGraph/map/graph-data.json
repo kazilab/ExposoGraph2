@@ -8249,9 +8249,38 @@
       "type": "PRODUCES",
       "label": "glucuronidation",
       "carcinogen": "PhIP",
+      "substrate_node_id": "NOH_PhIP",
+      "evidence": "UGT1A1 glucuronidates N-hydroxy-PhIP. No kinetic constants are attached (PMID:11470795).",
       "origin": "imported",
       "match_status": "unmatched",
-      "provenance": []
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "11470795",
+          "evidence": "UGT1A1 has the highest capacity among tested UGTs to form N-hydroxy-PhIP-N2-glucuronide.",
+          "pmid": "11470795",
+          "url": "https://academic.oup.com/carcin/article/22/7/1087/2529930"
+        }
+      ]
+    },
+    {
+      "source": "NOH_PhIP",
+      "target": "UGT1A1",
+      "type": "DETOXIFIED_BY",
+      "label": "N-glucuronidation",
+      "carcinogen": "PhIP",
+      "evidence": "N-hydroxy-PhIP is glucuronidated by UGT1A1. No kinetic constants are attached (PMID:11470795).",
+      "origin": "imported",
+      "match_status": "unmatched",
+      "provenance": [
+        {
+          "source_db": "PubMed",
+          "record_id": "11470795",
+          "evidence": "UGT1A1 converts N-hydroxy-PhIP to N-hydroxy-PhIP-N2-glucuronide.",
+          "pmid": "11470795",
+          "url": "https://academic.oup.com/carcin/article/22/7/1087/2529930"
+        }
+      ]
     },
     {
       "source": "HydroxyE2",
