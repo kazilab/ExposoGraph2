@@ -620,6 +620,15 @@ class GraphEngine:
     def edge_count(self) -> int:
         return self.G.number_of_edges()
 
+    def get_tissues(self) -> list[str]:
+        tissues = {key for _, data in self.G.nodes(data=True) for key in (data.get("tissue_weights") or {})}
+        return sorted(tissues)
+
+    def get_carcinogen_groups(self) -> list[str]:
+        groups = {data["group"] for _, data in self.G.nodes(data=True)
+                  if data.get("type") == "Carcinogen" and data.get("group")}
+        return sorted(groups)
+
     def get(self, source: str, target: str | None = None, key: str | Sequence[str] | None = None,
             *, edge_key: Any = None, default: Any = None) -> Any:
         """Node (``target=None``) or edge attributes, optionally drilled to ``key``."""
