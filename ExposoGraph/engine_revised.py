@@ -105,8 +105,14 @@ def _optional_float(value: Any) -> float | None:
         return None
 
 
-def _activity_fraction(catalog: Mapping[str, Any], gene: str, diplotype: str) -> float:
-    """Same lookup as ``genotypes.activity_fraction``, against a baked catalog."""
+def _activity_fraction(catalog: Mapping[str, Any], gene: str, diplotype: str, *,
+                        allow_generic: bool = True) -> float:
+    """Activity fraction from a baked genotype catalog.
+
+    Gene aliases and ``contains`` rules win. ``allow_generic=False`` stops
+    before the PM/IM/NM scale, which is how the interaction matrix treats a
+    phenotype that is not on that gene.
+    """
     key = diplotype.lower().strip()
     gene_block = catalog.get("genes", {}).get(gene.upper().strip(), {})
     for phenotype in gene_block.get("phenotypes", {}).values():
@@ -116,6 +122,8 @@ def _activity_fraction(catalog: Mapping[str, Any], gene: str, diplotype: str) ->
     for rule in gene_block.get("contains", []):
         if str(rule["token"]).lower() in key:
             return float(rule["activity_fraction"])
+    if not allow_generic:
+        return 1.0
     scale_key = catalog.get("label_aliases", {}).get(key)
     if scale_key is not None:
         return float(catalog["standard_scale"][scale_key])
@@ -153,6 +161,8 @@ class FluxReaction:
 
 class GraphEngine:
     """MultiDiGraph wrapper; JSON sources are baked on load, getters read paths."""
+
+    _bundled: "GraphEngine | None" = None
 
     def __init__(self, data_dir: str | Path = DATA_DIR) -> None:
         self.G: nx.MultiDiGraph = nx.MultiDiGraph()
@@ -215,6 +225,15 @@ class GraphEngine:
 
     def merge(self, kg: KnowledgeGraph) -> list[str]:
         return self._add_records(kg.nodes, kg.edges)
+
+    @classmethod
+    def bundled(cls) -> "GraphEngine":
+        """Loaded reference graph, created once for callers that have no engine."""
+        if cls._bundled is None:
+            engine = cls()
+            engine.load_reference_graph()
+            cls._bundled = engine
+        return cls._bundled
 
     def load_reference_graph(self, graph_path: str | Path = GRAPH_PATH) -> list[str]:
         """Load ``graph-data.json`` and bake every ``data/*.json`` overlay onto it."""
@@ -600,12 +619,26 @@ class GraphEngine:
         genes = (self.G.graph.get("genotypes") or {}).get("genes", {})
         return genes if gene is None else genes.get(gene, {})
 
-    def get_genotype_modifier(self, diplotype: str, gene: str) -> float:
+    def get_genotype_modifier(self, diplotype: str, gene: str, *,
+                              allow_generic: bool = True) -> float:
         """Vmax activity fraction from the catalog baked on the graph."""
-        return _activity_fraction(self.G.graph.get("genotypes") or {}, gene, diplotype)
+        return _activity_fraction(
+            self.G.graph.get("genotypes") or {}, gene, diplotype, allow_generic=allow_generic)
 
     def get_proxy_genotype_modifier(self, diplotype: str, gene: str | None) -> float:
         return 1.0 if not gene else self.get_genotype_modifier(diplotype, gene)
+
+    def risk_fold_rows(self) -> list[tuple[str, str, dict[str, float]]]:
+        """Exposure matches that carry a per-member risk fold, from the baked catalog."""
+        rows: list[tuple[str, str, dict[str, float]]] = []
+        genes = (self.G.graph.get("genotypes") or {}).get("genes", {})
+        for gene, block in genes.items():
+            for phenotype in block.get("phenotypes", {}).values():
+                folds = phenotype.get("risk_folds")
+                match = phenotype.get("exposure_match")
+                if isinstance(folds, dict) and match:
+                    rows.append((gene, str(match), {str(k): float(v) for k, v in folds.items()}))
+        return rows
 
     def get_tissue_expression(self, gene: str) -> dict[str, float] | None:
         return self.get(gene, key="tissue_weights")
