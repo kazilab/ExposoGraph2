@@ -519,7 +519,6 @@ ExposoGraph/
 ├── exporter.py              # JSON, D3.js, HTML, GEXF export
 ├── graph_filters.py         # Validated/exploratory graph filtering helpers
 ├── graph_analysis.py        # Shortest path, centrality, metabolism chains
-├── grounding.py             # Canonical grounding and strict-mode preparation
 ├── llm_backend.py           # Pluggable LLM backends (OpenAI, Ollama)
 ├── llm_extractor.py         # LLM prompt + extraction pipeline
 ├── models.py                # Pydantic data models (Node, Edge, KnowledgeGraph)
