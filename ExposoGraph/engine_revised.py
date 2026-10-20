@@ -4,8 +4,7 @@ Not imported by the package. ``graph-data.json`` is the topology contract
 and is read directly here. ``data/*.json`` is read only while baking.
 After that, getters read the graph: endpoint payloads ride edges, class
 rosters and class config ride the class node, and document-level blocks
-ride ``G.graph``. This module does not parse artifacts through ``exporter``
-or ground records through ``grounding``.
+ride ``G.graph``. This module does not parse artifacts through ``exporter``.
 
 Intentionally not a drop-in. The old per-filter getter names
 (``get_node``, ``nodes_by_type``, ``subgraph_by_*``) collapse onto ``get``,
