@@ -522,7 +522,6 @@ ExposoGraph/
 ├── llm_backend.py           # Pluggable LLM backends (OpenAI, Ollama)
 ├── llm_extractor.py         # LLM prompt + extraction pipeline
 ├── models.py                # Pydantic data models (Node, Edge, KnowledgeGraph)
-├── reference_data.py        # Gene panels and activity scores
 ├── seeder.py                # DB-to-KnowledgeGraph conversion
 ├── storage.py               # SQLite revision history
 ├── flux_engine.py           # Measured kinetics plus data-driven proxy flux modeling
