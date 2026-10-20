@@ -1154,15 +1154,6 @@ class GraphEngine:
         """Return the ``gsh_depletion`` block (scalars, consumers, biology model)."""
         return self.get_interaction_parameters().get("gsh_depletion", {})
 
-    def get_genotype_modifiers(self, gene: str | None = None) -> dict[str, Any]:
-        """Return the genotype catalog, or one gene's block when ``gene`` is given."""
-        from .genotypes import load_genotypes
-
-        genes = load_genotypes()["genes"]
-        if gene is None:
-            return genes
-        return genes.get(gene, {})
-
     def get_interaction_rules(self) -> dict[str, Any]:
         """Return the ``interaction_rules`` block (thresholds, synergies, antagonisms)."""
         return self.get_interaction_parameters().get("interaction_rules", {})
@@ -1472,22 +1463,6 @@ class GraphEngine:
         """
         self._ensure_flux_index()
         return self._flux_metadata or {}
-
-    def get_genotype_modifier(self, diplotype: str, gene: str) -> float:
-        """Return the Vmax activity fraction for a gene and diplotype.
-
-        Read from ``genotypes.json``. Gene phenotype entries win over the
-        generic PM/IM/NM scale.
-        """
-        from .genotypes import activity_fraction
-
-        return activity_fraction(gene, diplotype)
-
-    def get_proxy_genotype_modifier(self, diplotype: str, gene: str | None) -> float:
-        """Return the same activity fraction used by measured-kinetics terms."""
-        if not gene:
-            return 1.0
-        return self.get_genotype_modifier(diplotype, gene)
 
     def get_qivive_context(
         self,
