@@ -12,9 +12,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
-from ExposoGraph.reference_data import build_full_panel
-
 ROOT = Path(__file__).resolve().parents[1]
+GRAPH_PATH = ROOT / "ExposoGraph" / "map" / "graph-data.json"
 DATA_PATH = ROOT / "ExposoGraph" / "data" / "tissue_expression_data.json"
 OUT_DIR = ROOT / "Supplementary_Tables"
 XLSX_PATH = OUT_DIR / "Supplementary_Table_S3_ExposoGraph_tissue_expression.xlsx"
@@ -39,22 +38,22 @@ def _load_data() -> dict[str, Any]:
         return json.load(fh)
 
 
-def _panel_nodes() -> list[Any]:
-    return build_full_panel().nodes
+def _panel_nodes() -> list[dict[str, Any]]:
+    payload = json.loads(GRAPH_PATH.read_text(encoding="utf-8"))
+    return [node for node in payload["nodes"] if node.get("tier")]
 
 
 def _node_metadata() -> dict[str, dict[str, Any]]:
-    nodes = _panel_nodes()
     return {
-        node.id: {
-            "gene": node.id,
-            "tier": node.tier,
-            "phase_or_group": node.phase or node.group or "",
-            "role": node.role or "",
-            "package_tissue_annotation": node.tissue or "",
-            "detail": node.detail or "",
+        node["id"]: {
+            "gene": node["id"],
+            "tier": node.get("tier"),
+            "phase_or_group": node.get("phase") or node.get("group") or "",
+            "role": node.get("role") or "",
+            "package_tissue_annotation": node.get("tissue") or "",
+            "detail": node.get("detail") or "",
         }
-        for node in nodes
+        for node in _panel_nodes()
     }
 
 
