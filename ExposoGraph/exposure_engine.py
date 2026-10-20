@@ -198,12 +198,12 @@ def _genotype_matches(modifier_key: str, geno_val: str) -> bool:
 
 def compute_flux_ratio(genotypes: dict[str, str], member_carcinogen_ids: list[str]) -> float:
     """Genotype multiplier for one scenario. Applied once per matching modifier."""
-    from .genotypes import risk_fold_rows
+    from .engine_revised import GraphEngine
 
     members = set(member_carcinogen_ids)
     norm = {key.upper(): value.lower() for key, value in genotypes.items()}
     flux = 1.0
-    for gene, match, folds in risk_fold_rows():
+    for gene, match, folds in GraphEngine.bundled().risk_fold_rows():
         if not _genotype_matches(match, norm.get(gene, "")):
             continue
         matched = [value for member_id, value in folds.items() if member_id in members]

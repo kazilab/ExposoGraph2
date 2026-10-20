@@ -666,17 +666,17 @@ def _genotype_activity_multiplier(
     interaction_params: Mapping[str, Any] | None = None,
     engine: "GraphEngine | None" = None,
 ) -> float:
-    """Return the activity fraction for this gene and phenotype.
+    """Activity fraction from the revised engine's baked catalog.
 
-    Read from ``genotypes.json``. A phenotype that is not an alias on that
-    gene returns 1.0. The retained arguments are unused; callers still pass
-    the interaction document and a loaded engine.
+    A phenotype that is not an alias on that gene returns 1.0. The
+    interaction document is unused; callers still pass it.
     """
     if not phenotype:
         return 1.0
-    from .genotypes import activity_fraction
+    from .engine_revised import GraphEngine
 
-    return activity_fraction(gene, phenotype, allow_generic=False)
+    source = engine if isinstance(engine, GraphEngine) else GraphEngine.bundled()
+    return source.get_genotype_modifier(phenotype, gene, allow_generic=False)
 
 
 _PULMONARY_TISSUES: frozenset[str] = frozenset(
