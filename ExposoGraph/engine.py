@@ -14,7 +14,6 @@ from typing import Any, cast
 import networkx as nx
 
 from .config import GraphMode
-from .grounding import prepare_knowledge_graph
 from .interaction_schema import GSHConsumer, InductionRule
 from .models import Edge, KnowledgeGraph, Node
 from .parameter_provider import (
@@ -316,29 +315,13 @@ class GraphEngine:
 
     # ── Bulk operations ──────────────────────────────────────────────────
 
-    def _validated_reference_graph(self) -> KnowledgeGraph | None:
-        if self.node_count == 0:
-            return None
-        current_graph = self.to_knowledge_graph()
-        validated_graph, _warnings = prepare_knowledge_graph(
-            current_graph,
-            mode=GraphMode.STRICT,
-        )
-        if not validated_graph.nodes:
-            return None
-        return validated_graph
-
     def load(
         self,
         kg: KnowledgeGraph,
         *,
         mode: GraphMode | str = GraphMode.EXPLORATORY,
     ) -> list[str]:
-        """Replace the current graph with *kg*.
-
-        Clears all existing nodes and edges before loading.
-        Returns a list of warning messages for any skipped edges.
-        """
+        """Replace the current graph with *kg* as given."""
         self.clear()
         return self.merge(kg, mode=mode)
 
@@ -348,23 +331,12 @@ class GraphEngine:
         *,
         mode: GraphMode | str = GraphMode.EXPLORATORY,
     ) -> list[str]:
-        """Additive merge — new nodes/edges are added, existing ones updated.
-
-        Returns a list of warning messages for any skipped edges.
-        """
-        reference_graphs: list[tuple[str, KnowledgeGraph]] = []
-        validated_graph = self._validated_reference_graph()
-        if validated_graph is not None:
-            reference_graphs.append(("current_graph", validated_graph))
-
-        prepared_graph, warnings = prepare_knowledge_graph(
-            kg,
-            mode=mode,
-            reference_graphs=reference_graphs or None,
-        )
-        for node in prepared_graph.nodes:
+        """Add nodes and edges as given. ``mode`` is accepted and ignored."""
+        del mode
+        warnings: list[str] = []
+        for node in kg.nodes:
             self.add_node(node)
-        for edge in prepared_graph.edges:
+        for edge in kg.edges:
             try:
                 self.add_edge(edge)
             except ValueError as exc:
