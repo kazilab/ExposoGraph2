@@ -28,20 +28,25 @@ export default function (component) {
   ensureFonts();
   let inst = instances.get(parentElement);
   if (!inst) {
-    inst = { template: parentElement.querySelector(".app").cloneNode(true), teardown: null };
+    inst = {
+      template: parentElement.querySelector(".app").cloneNode(true),
+      teardown: null,
+      // Kept across re-renders of this mounted component (see renderMap).
+      view: { layout: {}, zoom: null },
+    };
     instances.set(parentElement, inst);
   }
   if (inst.teardown) inst.teardown();
   const root = inst.template.cloneNode(true);
   parentElement.querySelector(".app").replaceWith(root);
-  inst.teardown = renderMap(root, data.graph, data.style);
+  inst.teardown = renderMap(root, data.graph, data.style, inst.view);
   return () => {
     if (inst.teardown) inst.teardown();
     inst.teardown = null;
   };
 }
 
-function renderMap(root, GRAPH_DATA, MAP_STYLE) {
+function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   const byId = id => root.querySelector(`#${id}`);
 
   // Node/edge colors, legend labels, and sizes come from Python
@@ -193,13 +198,12 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE) {
   const g = svg.append("g");
 
   // Zoom
-  const ZOOM_KEY = "exposograph.map.zoom.v1";
   const zoom = d3.zoom()
     .scaleExtent([0.15, 5])
     .on("zoom", (e) => {
       g.attr("transform", e.transform);
       const { x, y, k } = e.transform;
-      try { sessionStorage.setItem(ZOOM_KEY, JSON.stringify([x, y, k])); } catch (err) {}
+      view.zoom = [x, y, k];
     });
   svg.call(zoom);
 
@@ -326,23 +330,19 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE) {
   resetGraphVisibility();
 
   // ── Layout persistence ───────────────────────────────────────────────
-  // Every Streamlit widget change re-renders this document in a fresh iframe,
-  // which would otherwise restart the force layout from scratch. Node positions
-  // are kept in sessionStorage (keyed by node id) so a re-render restores the
+  // Every Streamlit widget change rebuilds the map with new data, which would
+  // otherwise restart the force layout from scratch. Node positions are kept in
+  // the component's `view` state (keyed by node id) so a re-render restores the
   // previous layout instead of re-running it. Positions for nodes that are not
   // in the current subgraph are kept, so toggling them back restores them too.
-  const LAYOUT_KEY = "exposograph.map.layout.v1";
   let tickCount = 0;
 
   function loadLayout() {
-    try { return JSON.parse(sessionStorage.getItem(LAYOUT_KEY)) || {}; }
-    catch (e) { return {}; }
+    return view.layout;
   }
 
   function saveLayout() {
-    const saved = loadLayout();
-    nodes.forEach(n => { saved[n.id] = [n.x, n.y]; });
-    try { sessionStorage.setItem(LAYOUT_KEY, JSON.stringify(saved)); } catch (e) {}
+    nodes.forEach(n => { view.layout[n.id] = [n.x, n.y]; });
   }
 
   const savedLayout = loadLayout();
@@ -732,9 +732,8 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE) {
   });
 
   // Initial fit
-  let savedZoom = null;
+  const savedZoom = view.zoom;
   let initialFitTimer = null;
-  try { savedZoom = JSON.parse(sessionStorage.getItem(ZOOM_KEY)); } catch (err) {}
   if (savedZoom) {
     const [x, y, k] = savedZoom;
     svg.call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(k));
