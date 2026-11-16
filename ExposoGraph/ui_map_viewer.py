@@ -18,7 +18,7 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
-from .engine_revised import GraphEngine
+from .engine import GraphEngine
 from .validation.models import NodeType
 
 _MAP_DIR = Path(__file__).resolve().parent / "map"

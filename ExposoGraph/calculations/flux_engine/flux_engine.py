@@ -832,7 +832,7 @@ def _get_flux_contract_engine() -> GraphEngine:
     """Return the loaded revised engine that serves the flux contract."""
     global _FLUX_CONTRACT_ENGINE
     if _FLUX_CONTRACT_ENGINE is None:
-        from ...engine_revised import GraphEngine
+        from ...engine import GraphEngine
 
         engine = GraphEngine()
         engine.load_reference_graph()

@@ -11,7 +11,7 @@ from ._app_shared import (
     NODE_SEARCH_FIELDS,
     matches_query,
 )
-from .engine_revised import GraphEngine
+from .engine import GraphEngine
 
 
 def render(engine: GraphEngine) -> None:
@@ -118,7 +118,9 @@ def render(engine: GraphEngine) -> None:
         for _, data in filtered_nodes:
             ntype = data.get("type", "?")
             color = NODE_COLORS.get(ntype, "#888")
-            with st.expander(f":{color[1:]}[●] {data.get('label', data.get('id'))} — {ntype}"):
+            with st.expander(
+                f":{color[1:]}[●] {data.get('label', data.get('id'))} — {ntype}"
+            ):
                 st.json(data)
                 if st.button("Delete", key=f"del_node_{data['id']}"):
                     engine.remove_node(data["id"])

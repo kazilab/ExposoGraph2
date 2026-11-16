@@ -10,7 +10,7 @@ from typing import Any
 import streamlit as st
 
 from .config import get_app_mode, persistence_enabled
-from .engine_revised import GraphEngine
+from .engine import GraphEngine
 from .validation.models import (
     CurationConfidence,
     CurationRecord,

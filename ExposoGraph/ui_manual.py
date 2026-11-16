@@ -5,7 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from ._app_shared import build_curation_record, build_provenance_record
-from .engine_revised import GraphEngine
+from .engine import GraphEngine
 from .validation.models import (
     CurationConfidence,
     CurationStatus,
@@ -42,8 +42,12 @@ def _render_add_node(engine: GraphEngine) -> None:
 
         c3, c4, c5 = st.columns(3)
         with c3:
-            n_group = st.text_input("Group / Class", placeholder="PAH, DNA Repair (BER), …")
-            n_iarc = st.selectbox("IARC", [None, "Group 1", "Group 2A", "Group 2B", "Group 3"])
+            n_group = st.text_input(
+                "Group / Class", placeholder="PAH, DNA Repair (BER), …"
+            )
+            n_iarc = st.selectbox(
+                "IARC", [None, "Group 1", "Group 2A", "Group 2B", "Group 3"]
+            )
         with c4:
             n_phase = st.selectbox("Phase", [None, "I", "II", "III"])
             n_role = st.selectbox(
@@ -51,22 +55,38 @@ def _render_add_node(engine: GraphEngine) -> None:
                 [None, "Activation", "Detoxification", "Mixed", "Transport", "Repair"],
             )
         with c5:
-            n_reactivity = st.selectbox("Reactivity", [None, "High", "Intermediate", "Low"])
+            n_reactivity = st.selectbox(
+                "Reactivity", [None, "High", "Intermediate", "Low"]
+            )
 
         with st.expander("Provenance & Curation", expanded=False):
             a1, a2 = st.columns(2)
             with a1:
-                n_source_db = st.text_input("Source DB", placeholder="NCBI Gene; GTEx; ClinPGx")
-                n_record_id = st.text_input("Record ID / Accession", placeholder="e.g. 1543 or CYP1A1")
+                n_source_db = st.text_input(
+                    "Source DB", placeholder="NCBI Gene; GTEx; ClinPGx"
+                )
+                n_record_id = st.text_input(
+                    "Record ID / Accession", placeholder="e.g. 1543 or CYP1A1"
+                )
                 n_pmid = st.text_input("PMID", placeholder="e.g. 29134625")
-                n_citation = st.text_input("Citation", placeholder="Short citation or paper title")
+                n_citation = st.text_input(
+                    "Citation", placeholder="Short citation or paper title"
+                )
                 n_variant = st.text_input("Variant", placeholder="e.g. CYP1A1*2C")
             with a2:
-                n_tissue = st.text_input("Tissue", placeholder="e.g. lung, liver, bladder")
+                n_tissue = st.text_input(
+                    "Tissue", placeholder="e.g. lung, liver, bladder"
+                )
                 n_url = st.text_input("URL", placeholder="https://...")
-                n_phenotype = st.text_input("Phenotype", placeholder="e.g. poor metabolizer")
-                n_activity_score = st.text_input("Activity score", placeholder="e.g. 1.5")
-            n_evidence = st.text_area("Evidence", placeholder="Short provenance or evidence note", height=80)
+                n_phenotype = st.text_input(
+                    "Phenotype", placeholder="e.g. poor metabolizer"
+                )
+                n_activity_score = st.text_input(
+                    "Activity score", placeholder="e.g. 1.5"
+                )
+            n_evidence = st.text_area(
+                "Evidence", placeholder="Short provenance or evidence note", height=80
+            )
 
             curation_col1, curation_col2 = st.columns(2)
             with curation_col1:
@@ -81,7 +101,9 @@ def _render_add_node(engine: GraphEngine) -> None:
                 )
                 n_curator = st.text_input("Curator", placeholder="Name or initials")
             with curation_col2:
-                n_reviewed_by = st.text_input("Reviewed by", placeholder="Reviewer name")
+                n_reviewed_by = st.text_input(
+                    "Reviewed by", placeholder="Reviewer name"
+                )
                 n_reviewed_at = st.text_input("Reviewed at", placeholder="YYYY-MM-DD")
                 n_curation_notes = st.text_area(
                     "Curation notes",
@@ -164,19 +186,29 @@ def _render_add_edge(engine: GraphEngine) -> None:
             e_label = st.text_input("Label", placeholder="e.g. epoxidation")
         with c5:
             carcinogen_ids = [
-                n for n in node_ids
+                n
+                for n in node_ids
                 if (nd := engine.get(n)) is not None and nd.get("type") == "Carcinogen"
             ]
             e_carcin = st.selectbox("Carcinogen (context)", [""] + carcinogen_ids)
 
         with st.expander("Provenance & Curation", expanded=False):
-            e_source_db = st.text_input("Source DB", placeholder="NCBI Gene; CTD; ClinPGx")
-            e_record_id = st.text_input("Record ID / Accession", placeholder="e.g. rs2228001 or pathway accession")
+            e_source_db = st.text_input(
+                "Source DB", placeholder="NCBI Gene; CTD; ClinPGx"
+            )
+            e_record_id = st.text_input(
+                "Record ID / Accession",
+                placeholder="e.g. rs2228001 or pathway accession",
+            )
             e_pmid = st.text_input("PMID", placeholder="e.g. 25786862")
             e_tissue = st.text_input("Tissue", placeholder="e.g. liver, lung")
-            e_citation = st.text_input("Citation", placeholder="Short citation or paper title")
+            e_citation = st.text_input(
+                "Citation", placeholder="Short citation or paper title"
+            )
             e_url = st.text_input("URL", placeholder="https://...")
-            e_evidence = st.text_area("Evidence", placeholder="Short provenance or evidence note", height=80)
+            e_evidence = st.text_area(
+                "Evidence", placeholder="Short provenance or evidence note", height=80
+            )
             curation_col1, curation_col2 = st.columns(2)
             with curation_col1:
                 e_status = st.selectbox(
@@ -190,7 +222,9 @@ def _render_add_edge(engine: GraphEngine) -> None:
                 )
                 e_curator = st.text_input("Curator", placeholder="Name or initials")
             with curation_col2:
-                e_reviewed_by = st.text_input("Reviewed by", placeholder="Reviewer name")
+                e_reviewed_by = st.text_input(
+                    "Reviewed by", placeholder="Reviewer name"
+                )
                 e_reviewed_at = st.text_input("Reviewed at", placeholder="YYYY-MM-DD")
                 e_curation_notes = st.text_area(
                     "Curation notes",
