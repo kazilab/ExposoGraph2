@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from .interaction_engine.interaction_schema import (
+from ...validation.interaction_schema import (
     AssumptionWarning,
     EvidenceGrade,
     EvidenceRecord,
