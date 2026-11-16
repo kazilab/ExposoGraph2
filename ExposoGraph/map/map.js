@@ -441,17 +441,26 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   }
 
   // ── Drag ─────────────────────────────────────────────────────────────
-  function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
+  // d3.drag starts a gesture on every mousedown, including a plain click on a
+  // node. The layout is only reheated once the pointer has actually moved the
+  // node, so clicking a node (e.g. to open its details) never moves the graph.
+  const DRAG_THRESHOLD_PX = 3;
+  let dragMoved = false;
+  function dragstarted() {
+    dragMoved = false;
   }
   function dragged(event, d) {
+    if (!dragMoved) {
+      if (Math.hypot(event.x - d.x, event.y - d.y) < DRAG_THRESHOLD_PX) return;
+      dragMoved = true;
+      simulation.alphaTarget(0.3).restart();
+    }
     d.fx = event.x;
     d.fy = event.y;
   }
   function dragended(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
+    if (!dragMoved) return;
+    simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
     saveLayout();
