@@ -530,85 +530,13 @@ body.is-resizing * { user-select: none !important; }
 // Knowledge Graph Visualization — D3.js Force-Directed Layout
 // ═══════════════════════════════════════════════════════════════════════
 
-const NODE_COLORS = {
-  Carcinogen: "#e05565",
-  Enzyme: "#4f98a3",
-  Receptor: "#c74fb0",
-  Gene: "#3d8b8b",
-  Metabolite: "#e8945a",
-  DNA_Adduct: "#a86fdf",
-  Pathway: "#5591c7",
-  Tissue: "#c2855a"
-};
-
-const NODE_LABELS = {
-  Carcinogen: "Carcinogens (IARC-classified)",
-  Enzyme: "Enzymes (Phase I/II/III + Repair)",
-  Receptor: "Receptors (Nuclear/Ligand-Activated Sensors)",
-  Gene: "Genes (Receptors & Variant Loci)",
-  Metabolite: "Metabolites (Intermediates & Conjugates)",
-  DNA_Adduct: "DNA Adducts (Lesion Types)",
-  Pathway: "Pathways (KEGG References)",
-  Tissue: "Tissues (Expression Context)"
-};
-
-const EDGE_COLORS = {
-  // Legacy edge types (retained for backward compatibility; rarely/never
-  // emitted into graph-data.json anymore -- see EdgeType in models.py)
-  ACTIVATES: "#e05565",
-  DETOXIFIES: "#6daa45",
-  TRANSPORTS: "#5591c7",
-  REPAIRS: "#e8af34",
-  EXPRESSED_IN: "#c2855a",
-  ENCODES: "#3d8b8b",
-  CUSTOM: "#9ea9bd",
-  // Directional-schema edge types actually emitted into graph-data.json
-  FORMS_ADDUCT: "#a86fdf",
-  PRODUCES: "#d9704a",
-  DETOXIFIED_BY: "#6daa45",
-  TRANSPORTED_BY: "#5591c7",
-  REPAIRED_BY: "#e8af34",
-  SUBSTRATE_OF: "#9b8b3f",
-  AGONIZES: "#d1638f",
-  INDUCES: "#4fa382",
-  INHIBITS: "#a84a3c",
-  TRANSFORMS_SPONTANEOUSLY: "#7d8ba1",
-  SCHEMATIC_LINKAGE: "#a3a3a3",
-  PATHWAY: "#555b6a"
-};
-
-const EDGE_LABELS = {
-  ACTIVATES: "Activates (procarcinogen → reactive metabolite)",
-  DETOXIFIES: "Detoxifies (conjugation / inactivation)",
-  TRANSPORTS: "Transports (efflux of conjugates)",
-  REPAIRS: "Repairs (DNA damage removal)",
-  EXPRESSED_IN: "Expressed in (gene → tissue)",
-  ENCODES: "Encodes (variant locus → gene or enzyme)",
-  CUSTOM: "Custom curated relation",
-  FORMS_ADDUCT: "Forms Adduct (metabolite → DNA lesion)",
-  PRODUCES: "Produces (enzyme → downstream metabolite/carcinogen)",
-  DETOXIFIED_BY: "Detoxified by (compound → detoxifying enzyme)",
-  TRANSPORTED_BY: "Transported by (compound → transporter enzyme)",
-  REPAIRED_BY: "Repaired by (DNA lesion → repair enzyme)",
-  SUBSTRATE_OF: "Substrate of (compound → metabolizing enzyme)",
-  AGONIZES: "Agonizes (ligand → receptor)",
-  INDUCES: "Induces (upregulates enzyme/receptor)",
-  INHIBITS: "Inhibits (downregulates enzyme/receptor)",
-  TRANSFORMS_SPONTANEOUSLY: "Transforms spontaneously (non-enzymatic)",
-  SCHEMATIC_LINKAGE: "Mechanism consolidated/summarized (dashed)",
-  PATHWAY: "Pathway membership"
-};
-
-const NODE_SIZES = {
-  Carcinogen: 12,
-  Enzyme: 9,
-  Receptor: 8,
-  Gene: 8,
-  Metabolite: 7,
-  DNA_Adduct: 8,
-  Pathway: 10,
-  Tissue: 9
-};
+// Node/edge colors, legend labels, and sizes come from Python
+// (_app_shared.py) via MAP_STYLE, injected alongside GRAPH_DATA.
+const NODE_COLORS = MAP_STYLE.node_colors;
+const NODE_LABELS = MAP_STYLE.node_labels;
+const EDGE_COLORS = MAP_STYLE.edge_colors;
+const EDGE_LABELS = MAP_STYLE.edge_labels;
+const NODE_SIZES = MAP_STYLE.node_sizes;
 
 // ── Setup ────────────────────────────────────────────────────────────
 const container = document.getElementById("graph-container");

@@ -18,6 +18,13 @@ from typing import Any
 import streamlit as st
 import streamlit.components.v1 as components
 
+from ._app_shared import (
+    EDGE_COLORS,
+    EDGE_LABELS,
+    NODE_COLORS,
+    NODE_LABELS,
+    NODE_SIZES,
+)
 from .engine import GraphEngine
 from .validation.models import NodeType
 
@@ -54,9 +61,19 @@ def _inline_graph_data_script(template: str, data_script: str) -> str:
 
 
 def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
-    """Embed *graph* as ``GRAPH_DATA`` in the bundled ``map/index.html``."""
+    """Embed *graph* as ``GRAPH_DATA`` (plus ``MAP_STYLE``) in ``map/index.html``."""
     template = _MAP_TEMPLATE.read_text(encoding="utf-8")
-    data_script = f"const GRAPH_DATA = {json.dumps(_clean_for_js(graph), indent=2)};"
+    style = {
+        "node_colors": NODE_COLORS,
+        "node_labels": NODE_LABELS,
+        "node_sizes": NODE_SIZES,
+        "edge_colors": EDGE_COLORS,
+        "edge_labels": EDGE_LABELS,
+    }
+    data_script = (
+        f"const GRAPH_DATA = {json.dumps(_clean_for_js(graph), indent=2)};\n"
+        f"const MAP_STYLE = {json.dumps(style, indent=2)};"
+    )
     return _inline_graph_data_script(template, data_script)
 
 
