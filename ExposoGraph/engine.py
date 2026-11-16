@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import logging
 import math
-import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,10 +12,7 @@ from typing import Any, cast
 
 import networkx as nx
 
-from .config import GraphMode
-from .interaction_schema import GSHConsumer, InductionRule
-from .models import Edge, KnowledgeGraph, Node
-from .parameter_provider import (
+from .calculations.burden_attribution.parameter_provider import (
     INTERACTION_BLOCK_MARKER,
     INTERACTION_ENZYME_MARKER,
     INTERACTION_SUBSTRATE_MARKER,
@@ -24,6 +20,12 @@ from .parameter_provider import (
     JSONInteractionParameterProvider,
     KGInteractionParameterProvider,
 )
+from .calculations.interaction_engine.interaction_schema import (
+    GSHConsumer,
+    InductionRule,
+)
+from .config import GraphMode
+from .validation.models import Edge, KnowledgeGraph, Node
 
 _PACKAGE_DIR = Path(__file__).resolve().parent
 _DEFAULT_GRAPH_DATA_PATH = _PACKAGE_DIR / "map" / "graph-data.json"

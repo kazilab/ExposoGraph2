@@ -17,7 +17,6 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from ExposoGraph import (
     ui_data,
-    ui_flux,
     ui_manual,
     ui_map_viewer,
 )
@@ -73,10 +72,9 @@ st.markdown(f"## {APP_NAME}")
 st.caption(f"{APP_TAGLINE} · Version {APP_VERSION}")
 st.caption(f"{DEVELOPED_BY} · {CONTACT_EMAIL} · Copyright {COPYRIGHT_HOLDER}")
 
-tab_map, tab_flux, tab_manual, tab_data = st.tabs(
+tab_map, tab_manual, tab_data = st.tabs(
     [
         "Reference Map",
-        "Flux Engine",
         "Manual Entry",
         "Raw Data",
     ]
@@ -85,8 +83,6 @@ tab_map, tab_flux, tab_manual, tab_data = st.tabs(
 with tab_map:
     ui_map_viewer.render()
 
-with tab_flux:
-    ui_flux.render()
 
 with tab_manual:
     ui_manual.render(engine)

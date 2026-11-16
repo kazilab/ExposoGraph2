@@ -12,13 +12,15 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
-from ExposoGraph.reference_data import build_full_panel
+from ExposoGraph.calculations.burden_attribution.reference_data import build_full_panel
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = ROOT / "ExposoGraph" / "data" / "tissue_expression_data.json"
 OUT_DIR = ROOT / "Supplementary_Tables"
 XLSX_PATH = OUT_DIR / "Supplementary_Table_S3_ExposoGraph_tissue_expression.xlsx"
-CSV_PANEL_LONG = OUT_DIR / "Supplementary_Table_S3_ExposoGraph_tier1_2_expression_long.csv"
+CSV_PANEL_LONG = (
+    OUT_DIR / "Supplementary_Table_S3_ExposoGraph_tier1_2_expression_long.csv"
+)
 CSV_TABLE2 = OUT_DIR / "Table_2_representative_ExposoGraph_tissue_weights.csv"
 
 REPRESENTATIVE_GENES = [
@@ -176,7 +178,8 @@ def _add_sheet(wb: Workbook, title: str, rows: list[dict[str, Any]]) -> None:
     for column_cells in ws.columns:
         header = str(column_cells[0].value)
         max_len = max(
-            len(str(cell.value)) if cell.value is not None else 0 for cell in column_cells[:200]
+            len(str(cell.value)) if cell.value is not None else 0
+            for cell in column_cells[:200]
         )
         width = min(max(max_len + 2, len(header) + 2, 10), 42)
         ws.column_dimensions[column_cells[0].column_letter].width = width
@@ -211,7 +214,10 @@ def _add_metadata_sheet(wb: Workbook, data: dict[str, Any]) -> None:
             ", ".join(meta.get("hpa_unavailable_graph_enzymes", [])),
         ),
         ("Panel genes absent from current expression matrix", "GSTT1; SULT1E1"),
-        ("HPA tissue data page", "https://www.proteinatlas.org/humanproteome/tissue/data"),
+        (
+            "HPA tissue data page",
+            "https://www.proteinatlas.org/humanproteome/tissue/data",
+        ),
         (
             "HPA transcriptomics methods",
             "https://www.proteinatlas.org/humanproteome/tissue/method/transcriptomics",
@@ -260,13 +266,19 @@ def build_outputs() -> None:
     wb = Workbook()
     wb.remove(wb.active)
     _add_sheet(wb, "Table2_Representative", representative)
-    _add_sheet(wb, "S3A_Panel38_nTPM", _wide_rows(panel_genes, tissues, data, "expression"))
-    _add_sheet(wb, "S3B_Panel38_Weights", _wide_rows(panel_genes, tissues, data, "weights"))
+    _add_sheet(
+        wb, "S3A_Panel38_nTPM", _wide_rows(panel_genes, tissues, data, "expression")
+    )
+    _add_sheet(
+        wb, "S3B_Panel38_Weights", _wide_rows(panel_genes, tissues, data, "weights")
+    )
     _add_sheet(wb, "S3C_Panel38_Long", panel_long)
     _add_sheet(
         wb,
         "S3D_All59_nTPM",
-        _wide_rows(all_genes, tissues, data, "expression", include_panel_metadata=False),
+        _wide_rows(
+            all_genes, tissues, data, "expression", include_panel_metadata=False
+        ),
     )
     _add_sheet(
         wb,

@@ -16,7 +16,7 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from ExposoGraph.flux_engine import compute_pathway_flux  # noqa: E402
+from ExposoGraph.calculations.flux_engine.flux_engine import compute_pathway_flux
 
 OUT_DIR = ROOT / "Supplementary_Tables"
 XLSX_PATH = OUT_DIR / "Supplementary_Table_S4_ExposoGraph_flux_ratios.xlsx"
@@ -203,7 +203,9 @@ def _scenario_rows() -> list[dict[str, Any]]:
                 scenario["reference_genotypes"],
             )
         )
-        rows.append(_result_row(scenario, scenario["high_label"], scenario["high_genotypes"]))
+        rows.append(
+            _result_row(scenario, scenario["high_label"], scenario["high_genotypes"])
+        )
 
     for tissue, genotypes in ESTROGEN_TISSUE_SCENARIOS:
         result = compute_pathway_flux("EstrogenMetabolites", genotypes, tissue=tissue)
@@ -214,7 +216,9 @@ def _scenario_rows() -> list[dict[str, Any]]:
                 "scenario": f"Reference tissue contrast: {tissue}",
                 "substrate": "Estradiol/metabolite proxy",
                 "tissue": tissue,
-                "genotypes": _format_genotypes(genotypes) if genotypes else "default NM",
+                "genotypes": _format_genotypes(genotypes)
+                if genotypes
+                else "default NM",
                 "substrate_concentration_uM": result.substrate_concentration_uM,
                 "total_activation": result.total_activation,
                 "total_detox": result.total_detox,
@@ -293,7 +297,8 @@ def _add_sheet(wb: Workbook, title: str, rows: list[dict[str, Any]]) -> None:
     for column_cells in ws.columns:
         header = str(column_cells[0].value)
         max_len = max(
-            len(str(cell.value)) if cell.value is not None else 0 for cell in column_cells[:200]
+            len(str(cell.value)) if cell.value is not None else 0
+            for cell in column_cells[:200]
         )
         width = min(max(max_len + 2, len(header) + 2, 10), 55)
         ws.column_dimensions[column_cells[0].column_letter].width = width
