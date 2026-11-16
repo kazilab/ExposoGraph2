@@ -287,6 +287,9 @@ class GraphEngine:
             "exposure_scenarios", {}
         )
         self.G.graph["genotypes"] = self._doc("genotypes")
+        self.G.graph["tissue_expression_metadata"] = self._doc(
+            "tissue_expression_data_raw"
+        )["metadata"]
 
     # ── Bakes ────────────────────────────────────────────────────────────
 
@@ -794,6 +797,9 @@ class GraphEngine:
 
     def get_tissue_expression(self, gene: str) -> dict[str, float] | None:
         return self.get(gene, key="tissue_weights")
+
+    def get_tissue_expression_metadata(self) -> dict[str, Any]:
+        return dict(self.G.graph["tissue_expression_metadata"])
 
     # ── Queries ──────────────────────────────────────────────────────────
 

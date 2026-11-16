@@ -69,19 +69,39 @@ def _clean_for_js(obj: Any) -> Any:
     return obj
 
 
+def _tissue_note(meta: dict[str, Any]) -> str:
+    """How the nodes' tissue weights were derived, from the expression table's metadata."""
+    labels = meta["tissue_labels"]
+    mapped = [
+        f"{labels[tissue]} {'averages' if len(sources) > 1 else 'uses'} "
+        + " and ".join(sources)
+        for tissue, sources in meta["source_tissue_map"].items()
+        if sources != [labels[tissue]]
+    ]
+    return " ".join(
+        [
+            f"{meta['source']}, {meta['unit']}; weights are each gene's value "
+            "divided by its maximum across the bundled tissues.",
+            "; ".join(mapped) + ".",
+            f"No value in the source table for {', '.join(meta['hpa_unavailable_graph_enzymes'])}.",
+        ]
+    )
+
+
 def _edge_key(edge: dict[str, Any]) -> str:
     """How map.js identifies an edge (it has no id of its own)."""
     return f"{edge['source']}|{edge['target']}|{edge['type']}"
 
 
 def _map_payload(
-    graph: dict[str, list[Any]], shown: dict[str, list[Any]]
+    graph: dict[str, list[Any]], shown: dict[str, list[Any]], tissue_note: str
 ) -> dict[str, Any]:
     """Data for the map component.
 
     ``graph`` is the full viewer graph, which the map lays out once; ``shown``
     is the filtered subgraph of it, whose nodes/edges the map shows (dimming
-    those flagged ``_dimmed``) while hiding the rest.
+    those flagged ``_dimmed``) while hiding the rest. ``tissue_note`` is shown
+    with a node's tissue weights in its details.
     """
     style = {
         "node_colors": NODE_COLORS,
@@ -101,6 +121,7 @@ def _map_payload(
             "edges": [_edge_key(e) for e in shown["edges"] if e.get("_dimmed")],
         },
         "style": style,
+        "notes": {"tissue": tissue_note},
     }
 
 
@@ -172,7 +193,11 @@ def render(engine: GraphEngine) -> None:
                 subgraph, selected_tissue, threshold
             )
 
-        payload = _map_payload(engine.map_viewer_subgraph(), subgraph)
+        payload = _map_payload(
+            engine.map_viewer_subgraph(),
+            subgraph,
+            _tissue_note(engine.get_tissue_expression_metadata()),
+        )
 
     st.caption(
         f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."
