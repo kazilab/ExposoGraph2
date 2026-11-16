@@ -1,7 +1,14 @@
 /* ── Reset & Base ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
+/* Mounted in a shadow root by st.components.v2 (see ui_map_viewer.py).
+   `all: initial` keeps Streamlit's inherited page styles out; the host is the
+   size container standing in for the old iframe viewport (vw/vh/@media). */
+:host {
+  all: initial;
+  display: block;
+  container-type: inline-size;
+  --map-height: 920px;
   --bg: #f0f2f5;
   --surface: #ffffff;
   --surface-2: #f7f8fa;
@@ -25,8 +32,8 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-html, body { height: 100%; overflow: hidden; }
-body {
+.app {
+  overflow: hidden;
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
@@ -37,11 +44,11 @@ body {
 .app {
   /* Sidebar width scales with viewport, then the user can drag the splitter
      to override it. The JS resizer writes an inline --sidebar-w value. */
-  --sidebar-w: clamp(280px, 22vw, 420px);
+  --sidebar-w: clamp(280px, 22cqw, 420px);
   display: grid;
   grid-template-columns: var(--sidebar-w) 5px 1fr;
   grid-template-rows: 56px 1fr;
-  height: 100vh;
+  height: var(--map-height);
 }
 
 /* ── Sidebar resizer ──────────────────────────────────────────── */
@@ -61,8 +68,8 @@ body {
 }
 .sidebar-resizer:hover,
 .sidebar-resizer.dragging { background: var(--teal-light); }
-body.is-resizing { cursor: col-resize; user-select: none; }
-body.is-resizing * { user-select: none !important; }
+.app.is-resizing { cursor: col-resize; user-select: none; }
+.app.is-resizing * { user-select: none !important; }
 
 /* ── Header ───────────────────────────────────────────────────── */
 .header {
@@ -416,7 +423,7 @@ body.is-resizing * { user-select: none !important; }
 .graph-footer a:hover { color: var(--teal-light); }
 
 /* Responsive */
-@media (max-width: 768px) {
+@container (max-width: 768px) {
   .app { grid-template-columns: 1fr; }
   .sidebar,
   .sidebar-resizer { display: none; }

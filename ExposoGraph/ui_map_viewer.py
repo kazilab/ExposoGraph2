@@ -3,20 +3,19 @@
 Filtering (node type, carcinogen group, tissue threshold) is decided here in
 Python via `GraphEngine.map_viewer_subgraph`/`GraphEngine.dim_by_tissue_threshold`
 -- never in JavaScript. The Streamlit widgets below recompute the filtered
-subgraph on every interaction and hand it to `_subgraph_to_html`, which renders
-it with the force-directed `ExposoGraph/map/map.{html,css,js}`
-D3 renderer. That renderer no longer contains any filtering logic of its own;
-see `docs/design/refactor_ui_map_viewer_plan.md` for the full rationale.
+subgraph on every interaction and pass it (via `_map_payload`) to the map
+component, which draws it with the force-directed
+`ExposoGraph/map/map.{html,css,js}` D3 renderer. That renderer no longer
+contains any filtering logic of its own; see
+`docs/design/refactor_ui_map_viewer_plan.md` for the full rationale.
 """
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from ._app_shared import (
     EDGE_COLORS,
@@ -35,9 +34,14 @@ _MAP_JS = _MAP_DIR / "map.js"
 # D3 v7.9.2 (ISC, see map/vendor/d3.LICENSE), vendored from the npm package
 # so the map doesn't depend on a CDN.
 _D3_JS = _MAP_DIR / "vendor" / "d3.v7.9.2.min.js"
-_FONTS_URL = (
-    "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700"
-    "&family=JetBrains+Mono:wght@400;500&display=swap"
+
+# Registered once at import; Streamlit mounts it into the app page (in a shadow
+# root) instead of an iframe. D3 is prepended so map.js can use the global.
+_MAP_COMPONENT = st.components.v2.component(
+    "exposograph_reference_map",
+    html=_MAP_HTML.read_text(encoding="utf-8"),
+    css=_MAP_CSS.read_text(encoding="utf-8"),
+    js=_D3_JS.read_text(encoding="utf-8") + "\n" + _MAP_JS.read_text(encoding="utf-8"),
 )
 
 # Substrate and CarcinogenGroup nodes are part of the underlying knowledge
@@ -63,9 +67,8 @@ def _clean_for_js(obj: Any) -> Any:
     return obj
 
 
-def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
-    """Assemble the map document from ``map/map.{html,css,js}`` with *graph*
-    embedded as ``GRAPH_DATA`` (plus ``MAP_STYLE``)."""
+def _map_payload(graph: dict[str, list[Any]]) -> dict[str, Any]:
+    """Data for the map component: the subgraph to draw and the style config."""
     style = {
         "node_colors": NODE_COLORS,
         "node_labels": NODE_LABELS,
@@ -73,21 +76,7 @@ def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
         "edge_colors": EDGE_COLORS,
         "edge_labels": EDGE_LABELS,
     }
-    data_script = (
-        f"const GRAPH_DATA = {json.dumps(_clean_for_js(graph), indent=2)};\n"
-        f"const MAP_STYLE = {json.dumps(style, indent=2)};"
-    )
-    return (
-        '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n'
-        f"<script>\n{_D3_JS.read_text(encoding='utf-8')}\n</script>\n"
-        f'<link href="{_FONTS_URL}" rel="stylesheet">\n'
-        f"<style>\n{_MAP_CSS.read_text(encoding='utf-8')}</style>\n"
-        "</head>\n<body>\n"
-        f"{_MAP_HTML.read_text(encoding='utf-8')}"
-        f"<script>\n{data_script}\n</script>\n"
-        f"<script>\n{_MAP_JS.read_text(encoding='utf-8')}</script>\n"
-        "</body>\n</html>\n"
-    )
+    return {"graph": _clean_for_js(graph), "style": style}
 
 
 def render(engine: GraphEngine) -> None:
@@ -158,9 +147,9 @@ def render(engine: GraphEngine) -> None:
                 subgraph, selected_tissue, threshold
             )
 
-        html = _subgraph_to_html(subgraph)
+        payload = _map_payload(subgraph)
 
     st.caption(
         f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."
     )
-    components.html(html, height=920, scrolling=True)
+    _MAP_COMPONENT(key="reference_map", data=payload)
