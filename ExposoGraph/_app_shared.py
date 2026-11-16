@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import os
 import re
 from pathlib import Path
@@ -12,7 +11,6 @@ import streamlit as st
 
 from .config import get_app_mode, persistence_enabled
 from .engine_revised import GraphEngine
-from .exporter import parse_graph_data_text
 from .validation.models import (
     CurationConfidence,
     CurationRecord,
@@ -185,15 +183,6 @@ def slugify_project_name(value: str) -> str:
 
 def saved_project_paths() -> list[Path]:
     return sorted(list(PROJECTS_DIR.glob("*.html")) + list(PROJECTS_DIR.glob("*.json")))
-
-
-def parse_uploaded_graph(name: str, raw_text: str) -> KnowledgeGraph:
-    suffix = Path(name).suffix.lower()
-    if suffix == ".json":
-        return KnowledgeGraph(**json.loads(raw_text))
-    if suffix in {".html", ".js"}:
-        return parse_graph_data_text(raw_text)
-    raise ValueError(f"Unsupported upload type: {suffix}")
 
 
 def build_provenance_record(
