@@ -210,9 +210,6 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
   const tissueNote = NOTES.tissue;
 
   function updateBundleSubtitle() {
-    const heavyMetalDetected = nodes.some(
-      n => n.group === "Heavy Metals" || ["As", "Cr_V", "Ni2+", "Cd", "Be"].includes(n.id),
-    );
     const subtitleBits = [
       `${shownNodeIds.size} nodes / ${shownEdgeIdx.size} edges`
     ];
@@ -435,22 +432,12 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
     updateHeaderStats();
   }
 
-  function normalizeString(value) {
-    return String(value || "").toLowerCase();
-  }
-
   function sortedTissueEntries(weights) {
     return Object.entries(weights || {}).sort((a, b) => b[1] - a[1]);
   }
 
-  function formatTissueWeights(weights, preferredTissue = null, limit = 4) {
-    let entries = sortedTissueEntries(weights);
-    if (preferredTissue) {
-      const preferred = entries.find(([name]) => name === preferredTissue);
-      const others = entries.filter(([name]) => name !== preferredTissue);
-      entries = preferred ? [preferred, ...others] : entries;
-    }
-    return entries
+  function formatTissueWeights(weights, limit) {
+    return sortedTissueEntries(weights)
       .slice(0, limit)
       .map(([name, value]) => `${name} ${Number(value).toFixed(2)}`)
       .join(" · ");
@@ -512,7 +499,7 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
     }
     if (d.type === "Tissue" && d.tissue) typeExtra = ` · ${d.tissue}`;
     const tissueWeightsHtml = d.tissue_weights
-      ? `<div class="tooltip-desc"><b>GTEx/HPA nTPM weights:</b> ${formatTissueWeights(d.tissue_weights, null, 3)}</div>`
+      ? `<div class="tooltip-desc"><b>GTEx/HPA nTPM weights:</b> ${formatTissueWeights(d.tissue_weights, 3)}</div>`
       : "";
 
     tooltip.innerHTML = `
@@ -620,7 +607,7 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
       d.role ? `<div><b>Role:</b> ${d.role}</div>` : "",
       d.reactivity ? `<div><b>Reactivity:</b> ${d.reactivity}</div>` : "",
       d.tissue ? `<div><b>Tissue:</b> ${d.tissue}</div>` : "",
-      d.tissue_weights ? `<div><b>GTEx/HPA nTPM Weights:</b> ${formatTissueWeights(d.tissue_weights, null, 8)}</div>` : "",
+      d.tissue_weights ? `<div><b>GTEx/HPA nTPM Weights:</b> ${formatTissueWeights(d.tissue_weights, 8)}</div>` : "",
       d.tissue_weights ? `<div><b>Tissue Data:</b> ${tissueNote}</div>` : "",
       d.variant ? `<div><b>Variant:</b> ${d.variant}</div>` : "",
       d.phenotype ? `<div><b>Phenotype:</b> ${d.phenotype}</div>` : "",
