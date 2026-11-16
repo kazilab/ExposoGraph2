@@ -13,10 +13,9 @@ from typing import Any
 import pyjson5
 
 from .branding import APP_NAME, APP_VERSION
-from .config import GraphVisibility, normalize_graph_visibility
-from .engine import GraphEngine
-from .graph_filters import filtered_engine
-from .models import KnowledgeGraph
+from .config import GraphVisibility
+from .engine_revised import GraphEngine
+from .validation.models import KnowledgeGraph
 
 _NODE_COLORS: dict[str, str] = {
     "Carcinogen": "#e05565",
@@ -675,14 +674,7 @@ def _export_engine(
     engine: GraphEngine,
     visibility: GraphVisibility | str = GraphVisibility.ALL,
 ) -> GraphEngine:
-    normalized = (
-        visibility
-        if isinstance(visibility, GraphVisibility)
-        else normalize_graph_visibility(visibility)
-    )
-    if normalized == GraphVisibility.ALL:
-        return engine
-    return filtered_engine(engine, normalized)
+    return engine
 
 
 def _require_plotly() -> Any:

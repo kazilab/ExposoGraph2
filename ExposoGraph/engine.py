@@ -20,7 +20,7 @@ from .calculations.burden_attribution.parameter_provider import (
     JSONInteractionParameterProvider,
     KGInteractionParameterProvider,
 )
-from .calculations.interaction_engine.interaction_schema import (
+from .validation.interaction_schema import (
     GSHConsumer,
     InductionRule,
 )

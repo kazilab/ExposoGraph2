@@ -18,7 +18,7 @@ import streamlit.components.v1 as components
 
 from .engine_revised import GraphEngine
 from .exporter import subgraph_to_html_string
-from .models import NodeType
+from .validation.models import NodeType
 
 _MAP_DIR = Path(__file__).resolve().parent / "map"
 _MAP_TEMPLATE = _MAP_DIR / "index.html"

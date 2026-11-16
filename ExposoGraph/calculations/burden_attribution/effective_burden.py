@@ -17,7 +17,7 @@ from .gsh_redox_capacity import (
     GSHRedoxCapacityResult,
     compute_gsh_redox_capacity,
 )
-from .interaction_schema import (
+from ...validation.interaction_schema import (
     AssumptionWarning,
     EvidenceGrade,
     EvidenceRecord,

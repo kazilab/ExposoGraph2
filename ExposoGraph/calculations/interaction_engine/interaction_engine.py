@@ -53,7 +53,7 @@ from .interaction_equations import (
 from .interaction_equations import (
     pairwise_synergy_factor as _pairwise_synergy_factor,
 )
-from .interaction_schema import (
+from ...validation.interaction_schema import (
     ApplicabilityDomain,
     AssumptionWarning,
     ConcentrationBasis,

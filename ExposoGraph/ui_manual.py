@@ -5,8 +5,8 @@ from __future__ import annotations
 import streamlit as st
 
 from ._app_shared import build_curation_record, build_provenance_record
-from .engine import GraphEngine
-from .models import (
+from .engine_revised import GraphEngine
+from .validation.models import (
     CurationConfidence,
     CurationStatus,
     Edge,
@@ -165,7 +165,7 @@ def _render_add_edge(engine: GraphEngine) -> None:
         with c5:
             carcinogen_ids = [
                 n for n in node_ids
-                if (nd := engine.get_data(n)) is not None and nd.get("type") == "Carcinogen"
+                if (nd := engine.get(n)) is not None and nd.get("type") == "Carcinogen"
             ]
             e_carcin = st.selectbox("Carcinogen (context)", [""] + carcinogen_ids)
 

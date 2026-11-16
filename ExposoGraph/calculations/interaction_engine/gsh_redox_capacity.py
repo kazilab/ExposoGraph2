@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from .interaction_schema import (
+from ...validation.interaction_schema import (
     AssumptionWarning,
     EvidenceGrade,
     EvidenceRecord,

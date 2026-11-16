@@ -11,9 +11,7 @@ from ._app_shared import (
     NODE_SEARCH_FIELDS,
     matches_query,
 )
-from .config import GraphVisibility
-from .engine import GraphEngine
-from .graph_filters import filter_knowledge_graph, graph_visibility_label
+from .engine_revised import GraphEngine
 
 
 def render(engine: GraphEngine) -> None:
@@ -24,8 +22,7 @@ def render(engine: GraphEngine) -> None:
         st.info("Graph is empty.")
         return
 
-    visibility = st.session_state.get("graph_visibility", GraphVisibility.ALL.value)
-    visible_graph = filter_knowledge_graph(engine.to_knowledge_graph(), visibility)
+    visible_graph = engine.to_knowledge_graph()
     all_nodes = [
         (node.id, node.model_dump(exclude_none=True, mode="json"))
         for node in visible_graph.nodes
@@ -41,8 +38,6 @@ def render(engine: GraphEngine) -> None:
     ]
     node_type_options = sorted({data.get("type", "?") for _, data in all_nodes})
     edge_type_options = sorted({data.get("type", "?") for _, _, _, data in all_edges})
-
-    st.caption(f"Visibility: {graph_visibility_label(visibility)}")
 
     col_f1, col_f2, col_f3 = st.columns(3)
     with col_f1:

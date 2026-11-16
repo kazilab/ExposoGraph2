@@ -1,4 +1,4 @@
-﻿﻿"""Provider layer for typed interaction parameter data.
+﻿"""Provider layer for typed interaction parameter data.
 
 The JSON provider reads only bundled local JSON files and preserves local values
 as typed records. It does not infer reaction-role semantics or risk direction
