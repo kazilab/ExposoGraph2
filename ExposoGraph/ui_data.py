@@ -5,9 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from ._app_shared import (
-    EDGE_COLORS,
     EDGE_SEARCH_FIELDS,
-    NODE_COLORS,
     NODE_SEARCH_FIELDS,
     matches_query,
 )
@@ -115,27 +113,34 @@ def render(engine: GraphEngine) -> None:
         st.markdown(f"**Nodes ({len(filtered_nodes)})**")
         if node_rows:
             st.dataframe(node_rows, use_container_width=True, hide_index=True)
-        for _, data in filtered_nodes:
-            ntype = data.get("type", "?")
-            color = NODE_COLORS.get(ntype, "#888")
-            with st.expander(
-                f":{color[1:]}[●] {data.get('label', data.get('id'))} — {ntype}"
-            ):
-                st.json(data)
-                if st.button("Delete", key=f"del_node_{data['id']}"):
-                    engine.remove_node(data["id"])
-                    st.rerun()
+        node = st.selectbox(
+            "Inspect node",
+            filtered_nodes,
+            format_func=lambda item: f"{item[1].get('label', item[0])} — {item[1].get('type', '?')}",
+            index=None,
+            key="data_inspect_node",
+        )
+        if node is not None:
+            node_id, data = node
+            st.json(data)
+            if st.button("Delete", key=f"del_node_{node_id}"):
+                engine.remove_node(node_id)
+                st.rerun()
 
     with col_e:
         st.markdown(f"**Edges ({len(filtered_edges)})**")
         if edge_rows:
             st.dataframe(edge_rows, use_container_width=True, hide_index=True)
-        for i, (u, v, edge_key, data) in enumerate(filtered_edges):
-            etype = data.get("type", "?")
-            color = EDGE_COLORS.get(etype, "#555")
-            lbl = data.get("label", etype)
-            with st.expander(f":{color[1:]}[→] {u} → {v}  ({lbl})"):
-                st.json(data)
-                if st.button("Delete", key=f"del_edge_{i}_{edge_key}"):
-                    engine.remove_edge(u, v, edge_key)
-                    st.rerun()
+        edge = st.selectbox(
+            "Inspect edge",
+            filtered_edges,
+            format_func=lambda item: f"{item[0]} → {item[1]}  ({item[3].get('label', item[3].get('type', '?'))})",
+            index=None,
+            key="data_inspect_edge",
+        )
+        if edge is not None:
+            u, v, edge_key, data = edge
+            st.json(data)
+            if st.button("Delete", key=f"del_edge_{edge_key}"):
+                engine.remove_edge(u, v, edge_key)
+                st.rerun()
