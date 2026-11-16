@@ -32,7 +32,9 @@ _MAP_DIR = Path(__file__).resolve().parent / "map"
 _MAP_HTML = _MAP_DIR / "map.html"
 _MAP_CSS = _MAP_DIR / "map.css"
 _MAP_JS = _MAP_DIR / "map.js"
-_D3_URL = "https://d3js.org/d3.v7.min.js"
+# D3 v7.9.2 (ISC, see map/vendor/d3.LICENSE), vendored from the npm package
+# so the map doesn't depend on a CDN.
+_D3_JS = _MAP_DIR / "vendor" / "d3.v7.9.2.min.js"
 _FONTS_URL = (
     "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700"
     "&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -77,7 +79,7 @@ def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
     )
     return (
         '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n'
-        f'<script src="{_D3_URL}"></script>\n'
+        f"<script>\n{_D3_JS.read_text(encoding='utf-8')}\n</script>\n"
         f'<link href="{_FONTS_URL}" rel="stylesheet">\n'
         f"<style>\n{_MAP_CSS.read_text(encoding='utf-8')}</style>\n"
         "</head>\n<body>\n"
