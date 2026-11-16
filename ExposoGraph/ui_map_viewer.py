@@ -3,21 +3,22 @@
 Filtering (node type, carcinogen group, tissue threshold) is decided here in
 Python via `GraphEngine.map_viewer_subgraph`/`GraphEngine.dim_by_tissue_threshold`
 -- never in JavaScript. The Streamlit widgets below recompute the filtered
-subgraph on every interaction and hand it to `exporter.subgraph_to_html_string`,
-which renders it against the existing `ExposoGraph/map/index.html` force-directed
+subgraph on every interaction and hand it to `_subgraph_to_html`, which renders
+it against the existing `ExposoGraph/map/index.html` force-directed
 D3 template. That template no longer contains any filtering logic of its own;
 see `docs/design/refactor_ui_map_viewer_plan.md` for the full rationale.
 """
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
+from typing import Any
 
 import streamlit as st
 import streamlit.components.v1 as components
 
 from .engine_revised import GraphEngine
-from .exporter import subgraph_to_html_string
 from .validation.models import NodeType
 
 _MAP_DIR = Path(__file__).resolve().parent / "map"
@@ -35,6 +36,36 @@ _SELECTABLE_NODE_TYPES = [
 ]
 
 _NO_TISSUE_OPTION = "(none — no tissue dimming)"
+
+
+def _clean_for_js(obj: Any) -> Any:
+    """Strip None values so the JS side sees clean objects."""
+    if isinstance(obj, dict):
+        return {k: _clean_for_js(v) for k, v in obj.items() if v is not None}
+    if isinstance(obj, list):
+        return [_clean_for_js(i) for i in obj]
+    return obj
+
+
+def _inline_graph_data_script(template: str, data_script: str) -> str:
+    script_tag = f"<script>\n{data_script.rstrip()}\n</script>"
+    external_tag = '<script src="./graph-data.js"></script>'
+
+    if external_tag in template:
+        return template.replace(external_tag, script_tag, 1)
+
+    head_close = "</head>"
+    if head_close in template:
+        return template.replace(head_close, f"{script_tag}\n{head_close}", 1)
+
+    return f"{script_tag}\n{template}"
+
+
+def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
+    """Embed *graph* as ``GRAPH_DATA`` in the bundled ``map/index.html``."""
+    template = _MAP_TEMPLATE.read_text(encoding="utf-8")
+    data_script = f"const GRAPH_DATA = {json.dumps(_clean_for_js(graph), indent=2)};"
+    return _inline_graph_data_script(template, data_script)
 
 
 def reference_engine() -> GraphEngine:
@@ -122,7 +153,7 @@ def render(engine: GraphEngine | None = None) -> None:
                 subgraph, selected_tissue, threshold
             )
 
-        html = subgraph_to_html_string(subgraph, template_path=_MAP_TEMPLATE)
+        html = _subgraph_to_html(subgraph)
 
     st.caption(
         f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."
