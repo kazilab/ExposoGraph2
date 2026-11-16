@@ -16,7 +16,7 @@ from .validation.models import (
 
 # ── Node/edge styles ──────────────────────────────────────────────────────
 # Single source for the colors, legend labels, and sizes used by the
-# Reference Map (passed into map/index.html) and the Raw Data tab.
+# Reference Map (passed into the map renderer) and the Raw Data tab.
 
 NODE_COLORS = {
     "Carcinogen": "#e05565",
