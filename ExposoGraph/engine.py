@@ -64,6 +64,8 @@ _NESTING = {"carcinogen_class", "pathway", "term_key"}
 _REACTION_EDGES = {"SUBSTRATE_OF", "DETOXIFIED_BY"}
 _FRACTIONS = {"absorption_fraction", "tissue_blood_flow_fraction"}
 _VIEWER_EXCLUDED = ("Substrate", "CarcinogenGroup")
+# Node attributes GraphEngine.search_subgraph matches a search query against.
+_SEARCH_FIELDS = ("label", "id", "detail", "group", "tissue", "variant", "phenotype")
 
 Subgraph = dict[str, list[dict[str, Any]]]
 
@@ -1055,6 +1057,35 @@ class GraphEngine:
             )
         }
         return self.subgraph(keep)
+
+    def search_subgraph(self, subgraph: Subgraph, query: str) -> Subgraph:
+        """Nodes of ``subgraph`` matching ``query``, their direct neighbours, and the edges among them.
+
+        A node matches when ``query`` occurs (case-insensitively) in its label,
+        id, detail, group, tissue, variant, phenotype, or one of its tissue
+        weights' tissue names.
+        """
+        q = query.lower()
+
+        def matches(n: dict) -> bool:
+            fields = [n.get(f) for f in _SEARCH_FIELDS] + list(n.get("tissue_weights") or {})
+            return any(q in str(v).lower() for v in fields if v)
+
+        hits = {n["id"] for n in subgraph["nodes"] if matches(n)}
+        near = set(hits)
+        for e in subgraph["edges"]:
+            if e["source"] in hits:
+                near.add(e["target"])
+            if e["target"] in hits:
+                near.add(e["source"])
+        return {
+            "nodes": [n for n in subgraph["nodes"] if n["id"] in near],
+            "edges": [
+                e
+                for e in subgraph["edges"]
+                if e["source"] in near and e["target"] in near
+            ],
+        }
 
     def dim_by_tissue_threshold(
         self, subgraph: Subgraph, tissue: str, threshold: float
