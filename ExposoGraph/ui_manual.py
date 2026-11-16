@@ -6,7 +6,7 @@ import streamlit as st
 
 from ._app_shared import build_curation_record, build_provenance_record
 from .engine_revised import GraphEngine
-from .models import (
+from .validation.models import (
     CurationConfidence,
     CurationStatus,
     Edge,
