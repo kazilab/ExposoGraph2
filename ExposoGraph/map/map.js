@@ -3,12 +3,12 @@
 // ═══════════════════════════════════════════════════════════════════════
 
 // Streamlit custom component (st.components.v2), registered in
-// ui_map_viewer.py. Python passes {graph, shown, dimmed, style, notes} as `data`:
+// ui_map_viewer.py. Python passes {graph, shown, dimmed, style} as `data`:
 // `graph` is the full viewer graph, laid out once; `shown`/`dimmed` say which
 // of its nodes and edges the current filters show and gray out. Every time
 // that data changes, Streamlit calls the default export again on the same
 // mounted element. A filter change is applied to the existing map in place;
-// only a change to `graph`, `style` or `notes` rebuilds the map from a pristine
+// only a change to `graph` or `style` itself rebuilds the map from a pristine
 // copy of map.html's markup.
 
 const FONTS_URL =
@@ -47,19 +47,19 @@ export default function (component) {
   };
   // Rebuilding the DOM on every filter change made Safari reset the page's
   // scroll position, and re-ran the layout; so filters only toggle what's shown.
-  const source = JSON.stringify([data.graph, data.style, data.notes]);
+  const source = JSON.stringify([data.graph, data.style]);
   if (!inst.map || inst.source !== source) {
     cleanup();
     const root = inst.template.cloneNode(true);
     parentElement.querySelector(".app").replaceWith(root);
-    inst.map = renderMap(root, data.graph, data.style, data.notes, inst.view);
+    inst.map = renderMap(root, data.graph, data.style, inst.view);
     inst.source = source;
   }
   inst.map.show(data.shown, data.dimmed);
   return cleanup;
 }
 
-function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
+function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   const byId = id => root.querySelector(`#${id}`);
 
   // Node/edge colors, legend labels, and sizes come from Python
@@ -205,9 +205,6 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
   // ui_map_viewer.py) -- this document receives the full viewer GRAPH_DATA plus
   // the resulting shown/dimmed node and edge sets, applied by show() below.
   const headerSubtitle = byId("header-subtitle");
-  // How tissue weights were derived, from the expression table's metadata
-  // (ui_map_viewer._tissue_note).
-  const tissueNote = NOTES.tissue;
 
   function updateBundleSubtitle() {
     const subtitleBits = [
@@ -608,7 +605,6 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, NOTES, view) {
       d.reactivity ? `<div><b>Reactivity:</b> ${d.reactivity}</div>` : "",
       d.tissue ? `<div><b>Tissue:</b> ${d.tissue}</div>` : "",
       d.tissue_weights ? `<div><b>GTEx/HPA nTPM Weights:</b> ${formatTissueWeights(d.tissue_weights, 8)}</div>` : "",
-      d.tissue_weights ? `<div><b>Tissue Data:</b> ${tissueNote}</div>` : "",
       d.variant ? `<div><b>Variant:</b> ${d.variant}</div>` : "",
       d.phenotype ? `<div><b>Phenotype:</b> ${d.phenotype}</div>` : "",
       d.source_db ? `<div><b>Source DB:</b> ${d.source_db}</div>` : "",
