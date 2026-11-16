@@ -14,7 +14,7 @@ import pyjson5
 
 from .branding import APP_NAME, APP_VERSION
 from .config import GraphVisibility, normalize_graph_visibility
-from .engine import GraphEngine
+from .engine_revised import GraphEngine
 from .graph_filters import filtered_engine
 from .models import KnowledgeGraph
 

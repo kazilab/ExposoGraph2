@@ -12,7 +12,7 @@ from ._app_shared import (
     matches_query,
 )
 from .config import GraphVisibility
-from .engine import GraphEngine
+from .engine_revised import GraphEngine
 from .graph_filters import filter_knowledge_graph, graph_visibility_label
 
 

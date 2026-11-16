@@ -5,7 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from ._app_shared import build_curation_record, build_provenance_record
-from .engine import GraphEngine
+from .engine_revised import GraphEngine
 from .models import (
     CurationConfidence,
     CurationStatus,

@@ -11,7 +11,7 @@ from typing import Any
 import streamlit as st
 
 from .config import get_app_mode, persistence_enabled
-from .engine import GraphEngine
+from .engine_revised import GraphEngine
 from .exporter import parse_graph_data_text
 from .validation.models import (
     CurationConfidence,
