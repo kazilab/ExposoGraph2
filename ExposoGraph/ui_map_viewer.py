@@ -3,8 +3,10 @@
 Filtering (node type, carcinogen group, tissue threshold) is decided here in
 Python via `GraphEngine.map_viewer_subgraph`/`GraphEngine.dim_by_tissue_threshold`
 -- never in JavaScript. The Streamlit widgets below recompute the filtered
-subgraph on every interaction and pass it (via `_map_payload`) to the map
-component, which draws it with the force-directed
+subgraph on every interaction and pass it (via `_map_payload`), alongside
+the full viewer graph, to the map component, which lays out the full graph once
+and only shows, hides, or dims its nodes and edges as the filters change. It is
+drawn with the force-directed
 `ExposoGraph/map/map.{html,css,js}` D3 renderer. That renderer no longer
 contains any filtering logic of its own; see
 `docs/design/refactor_ui_map_viewer_plan.md` for the full rationale.
@@ -67,8 +69,20 @@ def _clean_for_js(obj: Any) -> Any:
     return obj
 
 
-def _map_payload(graph: dict[str, list[Any]]) -> dict[str, Any]:
-    """Data for the map component: the subgraph to draw and the style config."""
+def _edge_key(edge: dict[str, Any]) -> str:
+    """How map.js identifies an edge (it has no id of its own)."""
+    return f"{edge['source']}|{edge['target']}|{edge['type']}"
+
+
+def _map_payload(
+    graph: dict[str, list[Any]], shown: dict[str, list[Any]]
+) -> dict[str, Any]:
+    """Data for the map component.
+
+    ``graph`` is the full viewer graph, which the map lays out once; ``shown``
+    is the filtered subgraph of it, whose nodes/edges the map shows (dimming
+    those flagged ``_dimmed``) while hiding the rest.
+    """
     style = {
         "node_colors": NODE_COLORS,
         "node_labels": NODE_LABELS,
@@ -76,7 +90,18 @@ def _map_payload(graph: dict[str, list[Any]]) -> dict[str, Any]:
         "edge_colors": EDGE_COLORS,
         "edge_labels": EDGE_LABELS,
     }
-    return {"graph": _clean_for_js(graph), "style": style}
+    return {
+        "graph": _clean_for_js(graph),
+        "shown": {
+            "nodes": [n["id"] for n in shown["nodes"]],
+            "edges": [_edge_key(e) for e in shown["edges"]],
+        },
+        "dimmed": {
+            "nodes": [n["id"] for n in shown["nodes"] if n.get("_dimmed")],
+            "edges": [_edge_key(e) for e in shown["edges"] if e.get("_dimmed")],
+        },
+        "style": style,
+    }
 
 
 def render(engine: GraphEngine) -> None:
@@ -147,7 +172,7 @@ def render(engine: GraphEngine) -> None:
                 subgraph, selected_tissue, threshold
             )
 
-        payload = _map_payload(subgraph)
+        payload = _map_payload(engine.map_viewer_subgraph(), subgraph)
 
     st.caption(
         f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."

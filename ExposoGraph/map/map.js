@@ -3,9 +3,13 @@
 // ═══════════════════════════════════════════════════════════════════════
 
 // Streamlit custom component (st.components.v2), registered in
-// ui_map_viewer.py. Python passes {graph, style} as `data`; every time that
-// data changes, Streamlit calls the default export again on the same mounted
-// element, and the map is rebuilt from a pristine copy of map.html's markup.
+// ui_map_viewer.py. Python passes {graph, shown, dimmed, style} as `data`:
+// `graph` is the full viewer graph, laid out once; `shown`/`dimmed` say which
+// of its nodes and edges the current filters show and gray out. Every time
+// that data changes, Streamlit calls the default export again on the same
+// mounted element. A filter change is applied to the existing map in place;
+// only a change to `graph` or `style` itself rebuilds the map from a pristine
+// copy of map.html's markup.
 
 const FONTS_URL =
   "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700"
@@ -30,20 +34,29 @@ export default function (component) {
   if (!inst) {
     inst = {
       template: parentElement.querySelector(".app").cloneNode(true),
-      teardown: null,
+      map: null,
+      source: null,
       // Kept across re-renders of this mounted component (see renderMap).
       view: { layout: {}, zoom: null },
     };
     instances.set(parentElement, inst);
   }
-  if (inst.teardown) inst.teardown();
-  const root = inst.template.cloneNode(true);
-  parentElement.querySelector(".app").replaceWith(root);
-  inst.teardown = renderMap(root, data.graph, data.style, inst.view);
-  return () => {
-    if (inst.teardown) inst.teardown();
-    inst.teardown = null;
+  const cleanup = () => {
+    if (inst.map) inst.map.teardown();
+    inst.map = null;
   };
+  // Rebuilding the DOM on every filter change made Safari reset the page's
+  // scroll position, and re-ran the layout; so filters only toggle what's shown.
+  const source = JSON.stringify([data.graph, data.style]);
+  if (!inst.map || inst.source !== source) {
+    cleanup();
+    const root = inst.template.cloneNode(true);
+    parentElement.querySelector(".app").replaceWith(root);
+    inst.map = renderMap(root, data.graph, data.style, inst.view);
+    inst.source = source;
+  }
+  inst.map.show(data.shown, data.dimmed);
+  return cleanup;
 }
 
 function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
@@ -73,6 +86,15 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   // instead of being hidden, per the "gray out, don't remove" filter semantics.
   const DIMMED_OPACITY = 0.12;
 
+  // Which nodes/edges the current filters show and dim, set by show(). Edges
+  // are matched to Python's by "source|target|type" (see ui_map_viewer.py).
+  // Hidden nodes stay in the simulation, so their positions are kept.
+  const edgeKeys = edges.map(e => `${e.source}|${e.target}|${e.type}`);
+  let shownNodeIds = new Set(nodes.map(n => n.id));
+  let shownEdgeIdx = new Set(edges.keys());
+  let dimmedNodeIds = new Set();
+  let dimmedEdgeIdx = new Set();
+
   // ── Header Stats (dynamic, reflect current selection) ──────────────
   const statNodeCount = byId("node-count");
   const statEdgeCount = byId("edge-count");
@@ -81,17 +103,14 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
 
   /**
    * Update the four header counters.
-   *   visibleNodeIds:    Set<string> of node ids currently "active"; null = all.
-   *   visibleEdgeIndices: Set<number> of edge array indices active; null = all.
+   *   visibleNodeIds:    Set<string> of node ids currently "active".
+   *   visibleEdgeIndices: Set<number> of edge array indices active.
+   * Both default to everything the current filters show.
    * Type counts reflect the distinct node/edge types present in the visible set.
    */
-  function updateHeaderStats(visibleNodeIds = null, visibleEdgeIndices = null) {
-    const activeNodes = visibleNodeIds
-      ? nodes.filter(n => visibleNodeIds.has(n.id))
-      : nodes;
-    const activeEdges = visibleEdgeIndices
-      ? edges.filter((_, i) => visibleEdgeIndices.has(i))
-      : edges;
+  function updateHeaderStats(visibleNodeIds = shownNodeIds, visibleEdgeIndices = shownEdgeIdx) {
+    const activeNodes = nodes.filter(n => visibleNodeIds.has(n.id));
+    const activeEdges = edges.filter((_, i) => visibleEdgeIndices.has(i));
     const nodeTypes = new Set(activeNodes.map(n => n.type));
     const edgeTypes = new Set(activeEdges.map(e => e.type));
     statNodeCount.textContent = activeNodes.length;
@@ -149,35 +168,42 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   }
 
   const nodeLegend = byId("node-legend");
-  Object.entries(NODE_COLORS).forEach(([type, color]) => {
-    const count = nodes.filter(n => n.type === type).length;
-    if (count === 0) return;
-    const item = document.createElement("div");
-    item.className = "legend-item";
-    item.dataset.type = type;
-    item.innerHTML = `${buildNodeLegendGlyph(type, color)}
-      <span class="legend-label">${NODE_LABELS[type]}</span>
-      <span class="legend-count">${count}</span>`;
-    nodeLegend.appendChild(item);
-  });
-
   const edgeLegend = byId("edge-legend");
-  Object.entries(EDGE_COLORS).forEach(([type, color]) => {
-    const count = edges.filter(e => e.type === type).length;
-    if (count === 0) return;
-    const item = document.createElement("div");
-    item.className = "edge-legend-item";
-    item.innerHTML = `<span class="edge-line" style="background:${color}"></span>
-      <span class="legend-label">${EDGE_LABELS[type]}</span>
-      <span class="legend-count">${count}</span>`;
-    edgeLegend.appendChild(item);
-  });
+
+  // Counts reflect what the current filters show; rebuilt by show().
+  function updateLegends() {
+    nodeLegend.replaceChildren();
+    Object.entries(NODE_COLORS).forEach(([type, color]) => {
+      const count = nodes.filter(n => shownNodeIds.has(n.id) && n.type === type).length;
+      if (count === 0) return;
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      item.dataset.type = type;
+      item.innerHTML = `${buildNodeLegendGlyph(type, color)}
+        <span class="legend-label">${NODE_LABELS[type]}</span>
+        <span class="legend-count">${count}</span>`;
+      nodeLegend.appendChild(item);
+    });
+
+    edgeLegend.replaceChildren();
+    Object.entries(EDGE_COLORS).forEach(([type, color]) => {
+      const count = edges.filter((e, i) => shownEdgeIdx.has(i) && e.type === type).length;
+      if (count === 0) return;
+      const item = document.createElement("div");
+      item.className = "edge-legend-item";
+      item.innerHTML = `<span class="edge-line" style="background:${color}"></span>
+        <span class="legend-label">${EDGE_LABELS[type]}</span>
+        <span class="legend-count">${count}</span>`;
+      edgeLegend.appendChild(item);
+    });
+  }
+
+  updateLegends();
 
   // Node-type, carcinogen-group, and tissue-threshold filtering all happen in
   // Python now (see GraphEngine.map_viewer_subgraph/dim_by_tissue_threshold and
-  // ui_map_viewer.py) -- this document only ever receives the already-filtered
-  // GRAPH_DATA it's rendering, plus a per-node/edge `_dimmed` flag for the
-  // tissue-threshold overlay (applied below in resetGraphVisibility()).
+  // ui_map_viewer.py) -- this document receives the full viewer GRAPH_DATA plus
+  // the resulting shown/dimmed node and edge sets, applied by show() below.
   const headerSubtitle = byId("header-subtitle");
   const tissueSourceNote = "GTEx v8 nTPM via Human Protein Atlas v25; weights are per-gene max-normalized across the bundled tissue panel.";
   const tissueCaveatNote = "Colon averages sigmoid/transverse; Breast uses mammary tissue; Kidney uses cortex; Esophagus uses mucosa. GSTT1 has no bundled HPA/GTEx nTPM value.";
@@ -187,7 +213,7 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
       n => n.group === "Heavy Metals" || ["As", "Cr_V", "Ni2+", "Cd", "Be"].includes(n.id),
     );
     const subtitleBits = [
-      `${nodes.length} nodes / ${edges.length} edges`
+      `${shownNodeIds.size} nodes / ${shownEdgeIdx.size} edges`
     ];
     headerSubtitle.textContent = `Bundled reference graph · ${subtitleBits.join(" · ")}`;
   }
@@ -324,17 +350,15 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
     .attr("stroke", "var(--bg)")
     .attr("stroke-width", 3);
 
-  // Apply the initial opacity baseline (full for ordinary nodes/edges, dimmed
-  // for anything the Python side flagged via _dimmed) before the simulation
-  // starts, rather than waiting for a search/hover interaction to trigger it.
+  // Apply the initial opacity baseline before the simulation starts, rather
+  // than waiting for a search/hover interaction to trigger it.
   resetGraphVisibility();
 
   // ── Layout persistence ───────────────────────────────────────────────
-  // Every Streamlit widget change rebuilds the map with new data, which would
-  // otherwise restart the force layout from scratch. Node positions are kept in
-  // the component's `view` state (keyed by node id) so a re-render restores the
-  // previous layout instead of re-running it. Positions for nodes that are not
-  // in the current subgraph are kept, so toggling them back restores them too.
+  // A change to the graph itself (e.g. a Manual Entry edit) rebuilds the map,
+  // which would otherwise restart the force layout from scratch. Node positions
+  // are kept in the component's `view` state (keyed by node id) so a rebuild
+  // restores the previous layout instead of re-running it.
   let tickCount = 0;
 
   function loadLayout() {
@@ -390,8 +414,8 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   }
 
   function ticked() {
-    // Checkpoint the layout while it is still animating, so a widget change
-    // before the first layout finishes still has positions to restore.
+    // Checkpoint the layout while it is still animating, so a rebuild before
+    // the first layout finishes still has positions to restore.
     if (++tickCount % 25 === 0) saveLayout();
     link
       .attr("x1", d => d.source.x)
@@ -403,9 +427,9 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   }
 
   function resetGraphVisibility() {
-    node.style("opacity", d => d._dimmed ? DIMMED_OPACITY : 1);
+    node.style("opacity", d => dimmedNodeIds.has(d.id) ? DIMMED_OPACITY : 1);
     link
-      .style("stroke-opacity", d => d._dimmed ? DIMMED_OPACITY : DEFAULT_EDGE_OPACITY(d))
+      .style("stroke-opacity", (d, i) => dimmedEdgeIdx.has(i) ? DIMMED_OPACITY : DEFAULT_EDGE_OPACITY(d))
       .style("stroke-width", d => DEFAULT_EDGE_WIDTH(d));
     updateHeaderStats();
   }
@@ -441,17 +465,26 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   }
 
   // ── Drag ─────────────────────────────────────────────────────────────
-  function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
+  // d3.drag starts a gesture on every mousedown, including a plain click on a
+  // node. The layout is only reheated once the pointer has actually moved the
+  // node, so clicking a node (e.g. to open its details) never moves the graph.
+  const DRAG_THRESHOLD_PX = 3;
+  let dragMoved = false;
+  function dragstarted() {
+    dragMoved = false;
   }
   function dragged(event, d) {
+    if (!dragMoved) {
+      if (Math.hypot(event.x - d.x, event.y - d.y) < DRAG_THRESHOLD_PX) return;
+      dragMoved = true;
+      simulation.alphaTarget(0.3).restart();
+    }
     d.fx = event.x;
     d.fy = event.y;
   }
   function dragended(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
+    if (!dragMoved) return;
+    simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
     saveLayout();
@@ -492,7 +525,8 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
     // Highlight connected
     const connectedIds = new Set();
     connectedIds.add(d.id);
-    edges.forEach(e => {
+    edges.forEach((e, i) => {
+      if (!shownEdgeIdx.has(i)) return;
       const sid = typeof e.source === "object" ? e.source.id : e.source;
       const tid = typeof e.target === "object" ? e.target.id : e.target;
       if (sid === d.id) connectedIds.add(tid);
@@ -542,7 +576,8 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
     // Find connections
     const outgoing = [];
     const incoming = [];
-    edges.forEach(e => {
+    edges.forEach((e, i) => {
+      if (!shownEdgeIdx.has(i)) return;
       const sid = typeof e.source === "object" ? e.source.id : e.source;
       const tid = typeof e.target === "object" ? e.target.id : e.target;
       if (sid === d.id) {
@@ -610,6 +645,7 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
 
     const matchIds = new Set();
     nodes.forEach(n => {
+      if (!shownNodeIds.has(n.id)) return;
       const tissueWeightText = n.tissue_weights
         ? Object.entries(n.tissue_weights).map(([name, value]) => `${name} ${value}`).join(" ")
         : "";
@@ -626,7 +662,8 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
 
     // Also highlight connected nodes
     const expandedIds = new Set(matchIds);
-    edges.forEach(e => {
+    edges.forEach((e, i) => {
+      if (!shownEdgeIdx.has(i)) return;
       const sid = typeof e.source === "object" ? e.source.id : e.source;
       const tid = typeof e.target === "object" ? e.target.id : e.target;
       if (matchIds.has(sid)) expandedIds.add(tid);
@@ -635,6 +672,7 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
 
     const visibleEdgeIdx = new Set();
     edges.forEach((e, i) => {
+      if (!shownEdgeIdx.has(i)) return;
       const sid = typeof e.source === "object" ? e.source.id : e.source;
       const tid = typeof e.target === "object" ? e.target.id : e.target;
       if (expandedIds.has(sid) && expandedIds.has(tid)) visibleEdgeIdx.add(i);
@@ -746,12 +784,33 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
     }, 2000);
   }
 
-  // Stop everything this render started, so the next render (new data from
-  // Python) or an unmount doesn't leave a running simulation or observers.
-  return () => {
-    simulation.stop();
-    resizeObserver?.disconnect();
-    clearTimeout(initialFitTimer);
-    svg.interrupt();
+  // ── Filters (from Python) ────────────────────────────────────────────
+  // Hide what the current filters exclude and gray out what they dim, without
+  // touching the layout or the zoom.
+  function show(shown, dimmed) {
+    const shownEdgeKeys = new Set(shown.edges);
+    const dimmedEdgeKeys = new Set(dimmed.edges);
+    shownNodeIds = new Set(shown.nodes);
+    shownEdgeIdx = new Set([...edges.keys()].filter(i => shownEdgeKeys.has(edgeKeys[i])));
+    dimmedNodeIds = new Set(dimmed.nodes);
+    dimmedEdgeIdx = new Set([...edges.keys()].filter(i => dimmedEdgeKeys.has(edgeKeys[i])));
+    node.style("display", d => shownNodeIds.has(d.id) ? null : "none");
+    link.style("display", (d, i) => shownEdgeIdx.has(i) ? null : "none");
+    byId("detail-panel").classList.remove("visible");
+    updateLegends();
+    updateBundleSubtitle();
+    restoreView();
+  }
+
+  return {
+    show,
+    // Stop everything this render started, so a rebuild (new graph from
+    // Python) or an unmount doesn't leave a running simulation or observers.
+    teardown() {
+      simulation.stop();
+      resizeObserver?.disconnect();
+      clearTimeout(initialFitTimer);
+      svg.interrupt();
+    },
   };
 }
