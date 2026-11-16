@@ -3,9 +3,11 @@
 // ═══════════════════════════════════════════════════════════════════════
 
 // Streamlit custom component (st.components.v2), registered in
-// ui_map_viewer.py. Python passes {graph, shown, dimmed, style} as `data`:
-// `graph` is the full viewer graph, laid out once; `shown`/`dimmed` say which
-// of its nodes and edges the current filters show and gray out. Every time
+// ui_map_viewer.py. Python passes {graph, shown, dimmed, search, highlight,
+// style} as `data`: `graph` is the full viewer graph, laid out once;
+// `shown`/`dimmed` say which of its nodes and edges the current filters show
+// and gray out; `highlight` is what matches the search box text `search`,
+// which the map sends to Python as the `search` state value. Every time
 // that data changes, Streamlit calls the default export again on the same
 // mounted element. A filter change is applied to the existing map in place;
 // only a change to `graph` or `style` itself rebuilds the map from a pristine
@@ -28,7 +30,7 @@ function ensureFonts() {
 const instances = new WeakMap();
 
 export default function (component) {
-  const { parentElement, data } = component;
+  const { parentElement, data, setStateValue } = component;
   ensureFonts();
   let inst = instances.get(parentElement);
   if (!inst) {
@@ -52,14 +54,16 @@ export default function (component) {
     cleanup();
     const root = inst.template.cloneNode(true);
     parentElement.querySelector(".app").replaceWith(root);
-    inst.map = renderMap(root, data.graph, data.style, inst.view);
+    inst.map = renderMap(root, data.graph, data.style, inst.view,
+      query => setStateValue("search", query));
+    root.querySelector("#search-input").value = data.search;
     inst.source = source;
   }
-  inst.map.show(data.shown, data.dimmed);
+  inst.map.show(data.shown, data.dimmed, data.highlight);
   return cleanup;
 }
 
-function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
+function renderMap(root, GRAPH_DATA, MAP_STYLE, view, onSearch) {
   const byId = id => root.querySelector(`#${id}`);
 
   // Node/edge colors, legend labels, and sizes come from Python
@@ -94,6 +98,9 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   let shownEdgeIdx = new Set(edges.keys());
   let dimmedNodeIds = new Set();
   let dimmedEdgeIdx = new Set();
+  // What matches the search box (from Python); null when it is empty.
+  let highlightNodeIds = null;
+  let highlightEdgeIdx = null;
 
   // ── Header Stats (dynamic, reflect current selection) ──────────────
   const statNodeCount = byId("node-count");
@@ -440,13 +447,12 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
       .join(" · ");
   }
 
-  // The only remaining client-side "view" is free-text search; everything else
-  // (node type, carcinogen group, tissue threshold) is decided in Python before
-  // this document is rendered. Re-applying the current search box value here
-  // restores either the active search highlight or the tissue-dimmed baseline
-  // (applySearch("") falls through to resetGraphVisibility()).
+  // The search highlight and everything else (node type, carcinogen group,
+  // tissue threshold) are decided in Python. Re-applying the current search highlight here
+  // restores either that highlight or the tissue-dimmed baseline
+  // (applyHighlight() with no search falls through to resetGraphVisibility()).
   function restoreView() {
-    applySearch(searchInput.value.toLowerCase().trim());
+    applyHighlight();
   }
 
   // ── Drag ─────────────────────────────────────────────────────────────
@@ -621,56 +627,24 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
   }
 
   // ── Search ───────────────────────────────────────────────────────────
-  function applySearch(q) {
-    if (!q) {
+  // Matching and neighbour expansion happen in Python
+  // (GraphEngine.search_subgraph); typing sends the text there, debounced.
+  function applyHighlight() {
+    if (!highlightNodeIds) {
       resetGraphVisibility();
       return;
     }
-
-    const matchIds = new Set();
-    nodes.forEach(n => {
-      if (!shownNodeIds.has(n.id)) return;
-      const tissueWeightText = n.tissue_weights
-        ? Object.entries(n.tissue_weights).map(([name, value]) => `${name} ${value}`).join(" ")
-        : "";
-      if (n.label.toLowerCase().includes(q) || n.id.toLowerCase().includes(q) ||
-          (n.detail && n.detail.toLowerCase().includes(q)) ||
-          (n.group && n.group.toLowerCase().includes(q)) ||
-          (n.tissue && n.tissue.toLowerCase().includes(q)) ||
-          tissueWeightText.toLowerCase().includes(q) ||
-          (n.variant && n.variant.toLowerCase().includes(q)) ||
-          (n.phenotype && n.phenotype.toLowerCase().includes(q))) {
-        matchIds.add(n.id);
-      }
-    });
-
-    // Also highlight connected nodes
-    const expandedIds = new Set(matchIds);
-    edges.forEach((e, i) => {
-      if (!shownEdgeIdx.has(i)) return;
-      const sid = typeof e.source === "object" ? e.source.id : e.source;
-      const tid = typeof e.target === "object" ? e.target.id : e.target;
-      if (matchIds.has(sid)) expandedIds.add(tid);
-      if (matchIds.has(tid)) expandedIds.add(sid);
-    });
-
-    const visibleEdgeIdx = new Set();
-    edges.forEach((e, i) => {
-      if (!shownEdgeIdx.has(i)) return;
-      const sid = typeof e.source === "object" ? e.source.id : e.source;
-      const tid = typeof e.target === "object" ? e.target.id : e.target;
-      if (expandedIds.has(sid) && expandedIds.has(tid)) visibleEdgeIdx.add(i);
-    });
-
-    node.style("opacity", n => expandedIds.has(n.id) ? 1 : 0.08);
-    link.style("stroke-opacity", (e, i) => visibleEdgeIdx.has(i) ? 0.6 : 0.02);
-
-    updateHeaderStats(expandedIds, visibleEdgeIdx);
+    node.style("opacity", n => highlightNodeIds.has(n.id) ? 1 : 0.08);
+    link.style("stroke-opacity", (e, i) => highlightEdgeIdx.has(i) ? 0.6 : 0.02);
+    updateHeaderStats(highlightNodeIds, highlightEdgeIdx);
   }
 
+  const SEARCH_DEBOUNCE_MS = 250;
+  let searchTimer = null;
   const searchInput = byId("search-input");
   searchInput.addEventListener("input", function() {
-    applySearch(this.value.toLowerCase().trim());
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => onSearch(this.value.trim()), SEARCH_DEBOUNCE_MS);
   });
 
   // Node-type highlighting, carcinogen-group filtering, and tissue-threshold
@@ -770,17 +744,28 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
 
   // ── Filters (from Python) ────────────────────────────────────────────
   // Hide what the current filters exclude and gray out what they dim, without
-  // touching the layout or the zoom.
-  function show(shown, dimmed) {
+  // touching the layout or the zoom. A search alone (same filters) keeps an
+  // open details panel open.
+  let lastFilters = null;
+  function show(shown, dimmed, highlight) {
+    const filters = JSON.stringify([shown, dimmed]);
+    if (filters !== lastFilters) byId("detail-panel").classList.remove("visible");
+    lastFilters = filters;
     const shownEdgeKeys = new Set(shown.edges);
     const dimmedEdgeKeys = new Set(dimmed.edges);
     shownNodeIds = new Set(shown.nodes);
     shownEdgeIdx = new Set([...edges.keys()].filter(i => shownEdgeKeys.has(edgeKeys[i])));
     dimmedNodeIds = new Set(dimmed.nodes);
     dimmedEdgeIdx = new Set([...edges.keys()].filter(i => dimmedEdgeKeys.has(edgeKeys[i])));
+    if (highlight) {
+      const highlightEdgeKeys = new Set(highlight.edges);
+      highlightNodeIds = new Set(highlight.nodes);
+      highlightEdgeIdx = new Set([...edges.keys()].filter(i => highlightEdgeKeys.has(edgeKeys[i])));
+    } else {
+      highlightNodeIds = highlightEdgeIdx = null;
+    }
     node.style("display", d => shownNodeIds.has(d.id) ? null : "none");
     link.style("display", (d, i) => shownEdgeIdx.has(i) ? null : "none");
-    byId("detail-panel").classList.remove("visible");
     updateLegends();
     updateBundleSubtitle();
     restoreView();
@@ -794,6 +779,7 @@ function renderMap(root, GRAPH_DATA, MAP_STYLE, view) {
       simulation.stop();
       resizeObserver?.disconnect();
       clearTimeout(initialFitTimer);
+      clearTimeout(searchTimer);
       svg.interrupt();
     },
   };
