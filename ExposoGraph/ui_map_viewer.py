@@ -3,20 +3,19 @@
 Filtering (node type, carcinogen group, tissue threshold) is decided here in
 Python via `GraphEngine.map_viewer_subgraph`/`GraphEngine.dim_by_tissue_threshold`
 -- never in JavaScript. The Streamlit widgets below recompute the filtered
-subgraph on every interaction and hand it to `_subgraph_to_html`, which renders
-it against the existing `ExposoGraph/map/index.html` force-directed
-D3 template. That template no longer contains any filtering logic of its own;
-see `docs/design/refactor_ui_map_viewer_plan.md` for the full rationale.
+subgraph on every interaction and pass it (via `_map_payload`) to the map
+component, which draws it with the force-directed
+`ExposoGraph/map/map.{html,css,js}` D3 renderer. That renderer no longer
+contains any filtering logic of its own; see
+`docs/design/refactor_ui_map_viewer_plan.md` for the full rationale.
 """
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
 import streamlit as st
-import streamlit.components.v1 as components
 
 from ._app_shared import (
     EDGE_COLORS,
@@ -29,7 +28,21 @@ from .engine import GraphEngine
 from .validation.models import NodeType
 
 _MAP_DIR = Path(__file__).resolve().parent / "map"
-_MAP_TEMPLATE = _MAP_DIR / "index.html"
+_MAP_HTML = _MAP_DIR / "map.html"
+_MAP_CSS = _MAP_DIR / "map.css"
+_MAP_JS = _MAP_DIR / "map.js"
+# D3 v7.9.2 (ISC, see map/vendor/d3.LICENSE), vendored from the npm package
+# so the map doesn't depend on a CDN.
+_D3_JS = _MAP_DIR / "vendor" / "d3.v7.9.2.min.js"
+
+# Registered once at import; Streamlit mounts it into the app page (in a shadow
+# root) instead of an iframe. D3 is prepended so map.js can use the global.
+_MAP_COMPONENT = st.components.v2.component(
+    "exposograph_reference_map",
+    html=_MAP_HTML.read_text(encoding="utf-8"),
+    css=_MAP_CSS.read_text(encoding="utf-8"),
+    js=_D3_JS.read_text(encoding="utf-8") + "\n" + _MAP_JS.read_text(encoding="utf-8"),
+)
 
 # Substrate and CarcinogenGroup nodes are part of the underlying knowledge
 # graph but must never appear in this viewer (they're intermediate bookkeeping
@@ -54,15 +67,8 @@ def _clean_for_js(obj: Any) -> Any:
     return obj
 
 
-def _inline_graph_data_script(template: str, data_script: str) -> str:
-    script_tag = f"<script>\n{data_script.rstrip()}\n</script>"
-    external_tag = '<script src="./graph-data.js"></script>'
-    return template.replace(external_tag, script_tag, 1)
-
-
-def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
-    """Embed *graph* as ``GRAPH_DATA`` (plus ``MAP_STYLE``) in ``map/index.html``."""
-    template = _MAP_TEMPLATE.read_text(encoding="utf-8")
+def _map_payload(graph: dict[str, list[Any]]) -> dict[str, Any]:
+    """Data for the map component: the subgraph to draw and the style config."""
     style = {
         "node_colors": NODE_COLORS,
         "node_labels": NODE_LABELS,
@@ -70,11 +76,7 @@ def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
         "edge_colors": EDGE_COLORS,
         "edge_labels": EDGE_LABELS,
     }
-    data_script = (
-        f"const GRAPH_DATA = {json.dumps(_clean_for_js(graph), indent=2)};\n"
-        f"const MAP_STYLE = {json.dumps(style, indent=2)};"
-    )
-    return _inline_graph_data_script(template, data_script)
+    return {"graph": _clean_for_js(graph), "style": style}
 
 
 def render(engine: GraphEngine) -> None:
@@ -84,10 +86,6 @@ def render(engine: GraphEngine) -> None:
         "Force-directed graph rendered from the loaded reference graph. "
         "Filters below run against the knowledge graph in Python"
     )
-
-    if not _MAP_TEMPLATE.exists():
-        st.error(f"Bundled map template is missing: {_MAP_TEMPLATE.name}")
-        return
 
     if engine.node_count == 0:
         st.info("No data yet — use LLM Extract or Manual Entry to add nodes.")
@@ -149,9 +147,9 @@ def render(engine: GraphEngine) -> None:
                 subgraph, selected_tissue, threshold
             )
 
-        html = _subgraph_to_html(subgraph)
+        payload = _map_payload(subgraph)
 
     st.caption(
         f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."
     )
-    components.html(html, height=920, scrolling=True)
+    _MAP_COMPONENT(key="reference_map", data=payload)
