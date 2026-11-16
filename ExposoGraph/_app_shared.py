@@ -2,34 +2,17 @@
 
 from __future__ import annotations
 
-import os
-import re
-from pathlib import Path
 from typing import Any
 
 import streamlit as st
 
-from .config import get_app_mode, persistence_enabled
 from .engine import GraphEngine
 from .validation.models import (
     CurationConfidence,
     CurationRecord,
     CurationStatus,
-    KnowledgeGraph,
     ProvenanceRecord,
 )
-
-# ── Path constants ────────────────────────────────────────────────────────
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-REPOSITORY_PATH = DATA_DIR / "ExposoGraph.sqlite3"
-PROJECTS_DIR = PROJECT_ROOT / "saved_graphs"
-APP_MODE = get_app_mode()
-PERSISTENCE_ENABLED = persistence_enabled(APP_MODE)
-if PERSISTENCE_ENABLED:
-    DATA_DIR.mkdir(exist_ok=True)
-    PROJECTS_DIR.mkdir(exist_ok=True)
 
 # ── Color maps ────────────────────────────────────────────────────────────
 
@@ -109,29 +92,13 @@ def start_engine(engine: GraphEngine) -> None:
     """
     if "graph_initialized" not in st.session_state:
         try:
-            warnings = engine.load_reference_graph()
+            engine.load_reference_graph()
             st.session_state.graph_initialized = True
-            st.session_state.graph_load_warnings = warnings
         except Exception as e:
             st.warning(f"Could not pre-load reference map: {e}")
 
 
-def get_pending_extraction() -> KnowledgeGraph | None:
-    raw = st.session_state.get("pending_extraction")
-    if raw is None:
-        return None
-    return KnowledgeGraph(**raw)
-
-
 # ── Pure helpers ──────────────────────────────────────────────────────────
-
-
-def get_secret(key: str, default: str = "") -> str:
-    """Read a secret from Streamlit secrets (Cloud) or env vars (local)."""
-    try:
-        return str(st.secrets[key])
-    except (KeyError, FileNotFoundError):
-        return os.environ.get(key, default)
 
 
 def matches_query(data: dict[str, Any], query: str, fields: tuple[str, ...]) -> bool:
@@ -158,31 +125,6 @@ def matches_query(data: dict[str, Any], query: str, fields: tuple[str, ...]) -> 
         values.extend(_flatten(data.get(field)))
     haystack = " ".join(values)
     return query.lower() in haystack.lower()
-
-
-def relative_path(path: Path) -> str:
-    try:
-        return str(path.relative_to(PROJECT_ROOT))
-    except ValueError:
-        return str(path)
-
-
-def load_into_engine(
-    engine: GraphEngine, kg: KnowledgeGraph, *, replace: bool
-) -> list[str]:
-    if replace:
-        return engine.load(kg)
-    return engine.merge(kg)
-
-
-def slugify_project_name(value: str) -> str:
-    slug = re.sub(r"[^A-Za-z0-9._-]+", "_", value.strip())
-    slug = slug.strip("._")
-    return slug or "knowledge_graph"
-
-
-def saved_project_paths() -> list[Path]:
-    return sorted(list(PROJECTS_DIR.glob("*.html")) + list(PROJECTS_DIR.glob("*.json")))
 
 
 def build_provenance_record(
@@ -228,41 +170,3 @@ def build_curation_record(
         reviewed_at=reviewed_at or None,
         notes=notes or None,
     )
-
-
-def annotation_lines(data: dict[str, Any]) -> list[str]:
-    lines: list[str] = []
-    for label, key in [
-        ("Source", "source_db"),
-        ("Evidence", "evidence"),
-        ("PMID", "pmid"),
-        ("Tissue", "tissue"),
-        ("Variant", "variant"),
-        ("Phenotype", "phenotype"),
-    ]:
-        value = data.get(key)
-        if value:
-            lines.append(f"{label}: {value}")
-    provenance = data.get("provenance") or []
-    if provenance:
-        record_ids = []
-        for record in provenance:
-            record_id = record.get("record_id")
-            if record_id and record_id not in record_ids:
-                record_ids.append(record_id)
-        if record_ids:
-            lines.append(f"Record IDs: {'; '.join(record_ids)}")
-        lines.append(f"Provenance records: {len(provenance)}")
-    curation = data.get("curation") or {}
-    for label, key in [
-        ("Status", "status"),
-        ("Confidence", "confidence"),
-        ("Curator", "curator"),
-        ("Reviewed by", "reviewed_by"),
-    ]:
-        value = curation.get(key)
-        if value:
-            lines.append(f"{label}: {value}")
-    if data.get("activity_score") is not None:
-        lines.append(f"Activity score: {data['activity_score']}")
-    return lines

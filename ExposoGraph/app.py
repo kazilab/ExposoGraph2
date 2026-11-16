@@ -52,19 +52,7 @@ st.markdown(
 # ── Session state bootstrap ──────────────────────────────────────────────
 
 engine = get_engine()
-# repository = get_repository()
 start_engine(engine)
-
-if "extract_text" not in st.session_state:
-    st.session_state.extract_text = ""
-if "project_name" not in st.session_state:
-    st.session_state.project_name = "knowledge_graph"
-if "revision_note" not in st.session_state:
-    st.session_state.revision_note = ""
-
-# ── Sidebar ──────────────────────────────────────────────────────────────
-
-# ui_sidebar.render(engine, repository)
 
 # ── Main area tabs ───────────────────────────────────────────────────────
 

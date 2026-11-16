@@ -50,15 +50,7 @@ def _clean_for_js(obj: Any) -> Any:
 def _inline_graph_data_script(template: str, data_script: str) -> str:
     script_tag = f"<script>\n{data_script.rstrip()}\n</script>"
     external_tag = '<script src="./graph-data.js"></script>'
-
-    if external_tag in template:
-        return template.replace(external_tag, script_tag, 1)
-
-    head_close = "</head>"
-    if head_close in template:
-        return template.replace(head_close, f"{script_tag}\n{head_close}", 1)
-
-    return f"{script_tag}\n{template}"
+    return template.replace(external_tag, script_tag, 1)
 
 
 def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
@@ -68,21 +60,8 @@ def _subgraph_to_html(graph: dict[str, list[Any]]) -> str:
     return _inline_graph_data_script(template, data_script)
 
 
-def reference_engine() -> GraphEngine:
-    """Revised engine for this tab only. Manual entry still uses the session engine."""
-    if "map_engine" not in st.session_state:
-        engine = GraphEngine()
-        try:
-            engine.load_reference_graph()
-        except Exception as exc:
-            st.warning(f"Could not pre-load reference map: {exc}")
-        st.session_state.map_engine = engine
-    return st.session_state.map_engine
-
-
-def render(engine: GraphEngine | None = None) -> None:
-    """Render the Reference Map viewer from the revised engine."""
-    engine = reference_engine() if engine is None else engine
+def render(engine: GraphEngine) -> None:
+    """Render the Reference Map viewer from the session engine."""
     st.markdown("#### Reference Map")
     st.caption(
         "Force-directed graph rendered from the loaded reference graph. "
