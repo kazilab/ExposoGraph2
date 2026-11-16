@@ -14,28 +14,84 @@ from .validation.models import (
     ProvenanceRecord,
 )
 
-# ── Color maps ────────────────────────────────────────────────────────────
+# ── Node/edge styles ──────────────────────────────────────────────────────
+# Single source for the colors, legend labels, and sizes used by the
+# Reference Map (passed into map/index.html) and the Raw Data tab.
 
 NODE_COLORS = {
     "Carcinogen": "#e05565",
     "Enzyme": "#4f98a3",
+    "Receptor": "#c74fb0",
     "Gene": "#3d8b8b",
     "Metabolite": "#e8945a",
     "DNA_Adduct": "#a86fdf",
     "Pathway": "#5591c7",
     "Tissue": "#c2855a",
 }
+NODE_LABELS = {
+    "Carcinogen": "Carcinogens (IARC-classified)",
+    "Enzyme": "Enzymes (Phase I/II/III + Repair)",
+    "Receptor": "Receptors (Nuclear/Ligand-Activated Sensors)",
+    "Gene": "Genes (Receptors & Variant Loci)",
+    "Metabolite": "Metabolites (Intermediates & Conjugates)",
+    "DNA_Adduct": "DNA Adducts (Lesion Types)",
+    "Pathway": "Pathways (KEGG References)",
+    "Tissue": "Tissues (Expression Context)",
+}
+NODE_SIZES = {
+    "Carcinogen": 12,
+    "Enzyme": 9,
+    "Receptor": 8,
+    "Gene": 8,
+    "Metabolite": 7,
+    "DNA_Adduct": 8,
+    "Pathway": 10,
+    "Tissue": 9,
+}
 EDGE_COLORS = {
+    # Legacy edge types (retained for backward compatibility; rarely/never
+    # emitted into graph-data.json anymore -- see EdgeType in models.py)
     "ACTIVATES": "#e05565",
     "DETOXIFIES": "#6daa45",
     "TRANSPORTS": "#5591c7",
-    "FORMS_ADDUCT": "#a86fdf",
     "REPAIRS": "#e8af34",
-    "PATHWAY": "#888888",
     "EXPRESSED_IN": "#c2855a",
-    "INDUCES": "#d4a843",
-    "INHIBITS": "#8b4a6b",
     "ENCODES": "#3d8b8b",
+    "CUSTOM": "#9ea9bd",
+    # Directional-schema edge types actually emitted into graph-data.json
+    "FORMS_ADDUCT": "#a86fdf",
+    "PRODUCES": "#d9704a",
+    "DETOXIFIED_BY": "#6daa45",
+    "TRANSPORTED_BY": "#5591c7",
+    "REPAIRED_BY": "#e8af34",
+    "SUBSTRATE_OF": "#9b8b3f",
+    "AGONIZES": "#d1638f",
+    "INDUCES": "#4fa382",
+    "INHIBITS": "#a84a3c",
+    "TRANSFORMS_SPONTANEOUSLY": "#7d8ba1",
+    "SCHEMATIC_LINKAGE": "#a3a3a3",
+    "PATHWAY": "#555b6a",
+}
+EDGE_LABELS = {
+    "ACTIVATES": "Activates (procarcinogen → reactive metabolite)",
+    "DETOXIFIES": "Detoxifies (conjugation / inactivation)",
+    "TRANSPORTS": "Transports (efflux of conjugates)",
+    "REPAIRS": "Repairs (DNA damage removal)",
+    "EXPRESSED_IN": "Expressed in (gene → tissue)",
+    "ENCODES": "Encodes (variant locus → gene or enzyme)",
+    "CUSTOM": "Custom curated relation",
+    "FORMS_ADDUCT": "Forms Adduct (metabolite → DNA lesion)",
+    "PRODUCES": "Produces (enzyme → downstream metabolite/carcinogen)",
+    "DETOXIFIED_BY": "Detoxified by (compound → detoxifying enzyme)",
+    "TRANSPORTED_BY": "Transported by (compound → transporter enzyme)",
+    "REPAIRED_BY": "Repaired by (DNA lesion → repair enzyme)",
+    "SUBSTRATE_OF": "Substrate of (compound → metabolizing enzyme)",
+    "AGONIZES": "Agonizes (ligand → receptor)",
+    "INDUCES": "Induces (upregulates enzyme/receptor)",
+    "INHIBITS": "Inhibits (downregulates enzyme/receptor)",
+    "TRANSFORMS_SPONTANEOUSLY": "Transforms spontaneously (non-enzymatic)",
+    "SCHEMATIC_LINKAGE": "Mechanism consolidated/summarized (dashed)",
+    "PATHWAY": "Pathway membership",
 }
 
 # ── Search field tuples ───────────────────────────────────────────────────
