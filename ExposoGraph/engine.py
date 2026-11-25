@@ -1149,7 +1149,12 @@ class GraphEngine:
         )
 
     def to_json(self, indent: int = 2) -> str:
-        return json.dumps(self.to_dict(), indent=indent, default=str)
+        """Nodes, edges, and the graph-level blocks baked at load (genotypes,
+        enzyme induction, GSH depletion, flux metadata/provenance/class order,
+        exposure scenarios) under ``"graph"``."""
+        return json.dumps(
+            {**self.to_dict(), "graph": dict(self.G.graph)}, indent=indent, default=str
+        )
 
     def validate(self) -> list[str]:
         return [
