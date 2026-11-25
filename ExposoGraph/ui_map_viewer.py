@@ -75,13 +75,18 @@ def _edge_key(edge: dict[str, Any]) -> str:
 
 
 def _map_payload(
-    graph: dict[str, list[Any]], shown: dict[str, list[Any]]
+    graph: dict[str, list[Any]],
+    shown: dict[str, list[Any]],
+    search: str,
+    highlight: dict[str, list[Any]] | None,
 ) -> dict[str, Any]:
     """Data for the map component.
 
     ``graph`` is the full viewer graph, which the map lays out once; ``shown``
     is the filtered subgraph of it, whose nodes/edges the map shows (dimming
-    those flagged ``_dimmed``) while hiding the rest.
+    those flagged ``_dimmed``) while hiding the rest. ``highlight`` is the part
+    of ``shown`` matching the map's search box text ``search`` (None when it
+    is empty).
     """
     style = {
         "node_colors": NODE_COLORS,
@@ -99,6 +104,13 @@ def _map_payload(
         "dimmed": {
             "nodes": [n["id"] for n in shown["nodes"] if n.get("_dimmed")],
             "edges": [_edge_key(e) for e in shown["edges"] if e.get("_dimmed")],
+        },
+        "search": search,
+        "highlight": None
+        if highlight is None
+        else {
+            "nodes": [n["id"] for n in highlight["nodes"]],
+            "edges": [_edge_key(e) for e in highlight["edges"]],
         },
         "style": style,
     }
@@ -172,9 +184,17 @@ def render(engine: GraphEngine) -> None:
                 subgraph, selected_tissue, threshold
             )
 
-        payload = _map_payload(engine.map_viewer_subgraph(), subgraph)
+        # The map's search box sends its text back as component state.
+        search = (st.session_state.get("reference_map") or {}).get("search", "")
+        highlight = engine.search_subgraph(subgraph, search) if search else None
+        payload = _map_payload(engine.map_viewer_subgraph(), subgraph, search, highlight)
 
     st.caption(
         f"{len(subgraph['nodes'])} nodes / {len(subgraph['edges'])} edges shown."
     )
-    _MAP_COMPONENT(key="reference_map", data=payload)
+    _MAP_COMPONENT(
+        key="reference_map",
+        data=payload,
+        default={"search": ""},
+        on_search_change=lambda: None,
+    )
